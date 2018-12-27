@@ -13,12 +13,15 @@ public class DownloadView implements Serializable {
 
     private static final long serialVersionUID = 8178603164200909341L;
     private Integer id;
+    private Integer uId;
+    private String userName;
+    private String password;
     private String creator;
     private String lastUpdator;
     private String fileName;
-    private String salor;
-    private String orderNo;
-    private String projectName;
+    private String salor;//业务员
+    private String orderNo;//订单编号
+    private String projectName;//项目名称
     private String lastUpdateTime;
     private String createTime;
     private Integer totalUpdateNum;
@@ -27,6 +30,39 @@ public class DownloadView implements Serializable {
     private String seePrivilege; //查看权限  1
     private String updatePrivilege; //修改权限  2
     private String cancelPrivilege; //取消权限  3
+    private String flag;
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    public Integer getuId() {
+        return uId;
+    }
+
+    public void setuId(Integer uId) {
+        this.uId = uId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getSeePrivilege() {
         if(opRight!=null && opRight.trim().length()>0 && opRight.contains("1")) {
@@ -40,10 +76,11 @@ public class DownloadView implements Serializable {
     }
 
     public String getUpdatePrivilege() {
-        if(opRight!=null && opRight.trim().length()>0 && opRight.contains("2")) {
+        if (opRight != null && opRight.trim().length() > 0 && opRight.contains("2")) {
             return "2";
         }
         return updatePrivilege;
+
     }
 
     public void setUpdatePrivilege(String updatePrivilege) {
