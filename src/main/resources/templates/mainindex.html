@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>设计文件</title>
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<meta charset="utf-8">
+<title>深圳柯赛标识工程有限公司</title>
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
 
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
 
-    <script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+<script src="/lib/jQuery-Knob/js/jquery.knob.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".knob").knob();
+    });
+</script>
 
 
-    <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
-    <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
 
 </head>
 <body class=" theme-blue">
@@ -26,18 +31,6 @@
 
 <script type="text/javascript">
     $(function () {
-
-        var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
-        if(flag=="1"){
-            alert("文件上传成功！");
-        }else if(flag=="0"){
-            alert("文件不能为空，请选择文件再上传!")
-        }else if(flag == "-1"){
-            alert("文件上传失败！");
-        }
-        var salorid = $("#salorid").val("");
-        var orderid = $("#orderid").val("");
-        var projectid = $("#projectid").val("");
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
         if (color) {
@@ -105,47 +98,43 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
-    </div>
+        <a class="" href="index.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a></div>
 
     <div class="navbar-collapse collapse" style="height: 1px;">
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
-                <div th:if="${view!=null and view.userName!=null}">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
 
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>
-                    <p th:text="${view.userName}"></p>
-                    <!--<i class="fa fa-caret-down"></i>-->
+                <i class="fa fa-caret-down"></i>
+            </a>
 
-                </div>
-                <div th:if="${view==null or view.userName==null}">
-                    <a th:href="@{/account/tologin}" class="dropdown-toggle">
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>请登录
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-                </div>
+            <ul class="dropdown-menu">
+                <li><a th:href="@{/account/logout}">退出登录</a></li>
 
+            </ul>
             </li>
         </ul>
 
     </div>
 </div>
-</div>
 
 
 <div class="sidebar-nav">
     <ul>
-        <li><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i
+        <li ><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i
                 class="fa fa-fw fa-dashboard"></i> 文件<i class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="dashboard-menu nav nav-list collapse in">
+                <!--<li><a href="mainindex.html"><span class="fa fa-caret-right"></span> Main</a></li>-->
                 <li>
-                    <a th:href="@{/fileupdown/toprivilegemanagepage(userName=${view.userName},password=${view.password})}"><span
+                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
                             class="fa fa-caret-right"></span> 设计文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
+                <!--<li ><a href="user.html"><span class="fa fa-caret-right"></span> User Profile</a></li>-->
+                <!--<li ><a href="media.html"><span class="fa fa-caret-right"></span> Media</a></li>-->
+                <!--<li ><a href="calendar.html"><span class="fa fa-caret-right"></span> Calendar</a></li>-->
             </ul>
         </li>
 
@@ -156,7 +145,8 @@
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menu nav nav-list collapse">
-                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span>
+                <li class="visible-xs visible-sm"><a href="#"><span>- Premium features require a license -</span></a>
+                </li>
                 <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>
                 <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>
                 <li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>
@@ -176,7 +166,7 @@
         </li>
 
         <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
-                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
+                class="fa fa-fw fa-briefcase"></i> 报表 <span class="label label-info">+3</span></a></li>
         <li>
             <ul class="accounts-menu nav nav-list collapse">
                 <li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
@@ -184,40 +174,37 @@
                 <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
             </ul>
         </li>
-   </ul>
+
+        <!--<li><a href="#" data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse"><i-->
+        <!--class="fa fa-fw fa-legal"></i> Legal<i class="fa fa-collapse"></i></a></li>-->
+        <!--<li>-->
+        <!--<ul class="legal-menu nav nav-list collapse">-->
+        <!--<li><a href="privacy-policy.html"><span class="fa fa-caret-right"></span> Privacy Policy</a></li>-->
+        <!--<li><a href="terms-and-conditions.html"><span class="fa fa-caret-right"></span> Terms and Conditions</a>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--</li>-->
+
+        <!--<li><a href="help.html" class="nav-header"><i class="fa fa-fw fa-question-circle"></i> Help</a></li>-->
+        <!--<li><a href="faq.html" class="nav-header"><i class="fa fa-fw fa-comment"></i> Faq</a></li>-->
+        <!--<li><a href="http://portnine.com/bootstrap-themes/aircraft" class="nav-header" target="blank"><i-->
+        <!--class="fa fa-fw fa-heart"></i> Get Premium</a></li>-->
+    </ul>
 </div>
 
 <div class="content">
-
-    <div id="tabs">
-        <ul>
-            <a class="btn btn-primary" th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password})}">上传</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"> 下载</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
-        </ul>
-
-        <div id="uploadpage">
-
-            <form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">
-                    <input type="hidden" th:field="*{userName}" >
-                    <input type="hidden" th:field="*{password}" >
-                <input id="uploadflag" th:field="*{flag}" type="hidden" >
-                    <input type="file" id="file" name="file">
-
-
-                    业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>
-                    订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>
-                    项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>
-                    <input type="submit" onclick="return checksalormessage()" value="确认提交">
-                    <br/>
-                    <div id="showuploadstatusmessage" style="display:none;">
-                    </div>
-                    <div id="showtipmessage" style="display:none;" ></div>
-
-
-
-            </form>
+    <div class="header">
+        <div class="stats">
+            <p class="stat"><span class="label label-info">5</span> Tickets</p>
+            <p class="stat"><span class="label label-success">27</span> Tasks</p>
+            <p class="stat"><span class="label label-danger">15</span> Overdue</p>
         </div>
+
+        <h1 class="page-title">Dashboard</h1>
+        <ul class="breadcrumb">
+            <li><a href="mainindex.html">Home</a></li>
+            <li class="active">Dashboard</li>
+        </ul>
 
     </div>
 
@@ -226,27 +213,6 @@
 
 <script src="/lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
-
-    function checksalormessage() {
-        var salorid = $("#salorid").val().trim();
-        var orderid = $("#orderid").val().trim();
-        var projectid = $("#projectid").val().trim();
-        $("#showtipmessage").html("");
-        $("#showtipmessage").hide();
-        var fileInput = $('#file').val();
-        if(salorid==""|| orderid==""||projectid==""){
-            $("#showtipmessage").html("<h5><font color=\"#FF0000\">文件上传信息不能为空</font></h5>");
-            $("#showtipmessage").show();
-            return false;
-        }
-        if(fileInput=="" || fileInput==null || fileInput.trim().length<=0){
-            $("#showtipmessage").html("<h5><font color=\"#FF0000\">请选择上传文件</font></h5>");
-            $("#showtipmessage").show();
-            return false;
-        }
-        return true;
-    }
-
     $("[rel=tooltip]").tooltip();
     $(function () {
         $('.demo-cancel-click').click(function () {

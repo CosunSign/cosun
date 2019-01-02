@@ -15,6 +15,8 @@
     <script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
+    <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
 
 </head>
 <body class=" theme-blue">
@@ -37,8 +39,8 @@
 
     });
 
-    function altRows(id){
-        if(document.getElementsByTagName){
+    function altRows(id) {
+        if (document.getElementsByTagName) {
 
             var table = document.getElementById(id);
             var rows = table.getElementsByTagName("tr");
@@ -50,16 +52,18 @@
 <style type="text/css">
 
     table.grid {
-        font-family: verdana,arial,sans-serif;
-        font-size:13px;
+        font-family: verdana, arial, sans-serif;
+        font-size: 13px;
         border-width: 1px;
         border-collapse: collapse;
     }
+
     table.grid th {
         border-width: 1px;
         padding: 8px;
         border-style: solid;
     }
+
     table.grid td {
         border-width: 1px;
         padding: 8px;
@@ -67,30 +71,34 @@
     }
 
     table.altrowstable {
-        font-family: verdana,arial,sans-serif;
-        font-size:13px;
-        color:#333333;
+        font-family: verdana, arial, sans-serif;
+        font-size: 13px;
+        color: #333333;
         border-width: 1px;
         border-color: #D1EEEE;
         border-collapse: collapse;
     }
+
     table.altrowstable th {
         border-width: 1px;
         padding: 8px;
         border-style: solid;
         border-color: #D1EEEE;
     }
+
     table.altrowstable td {
         border-width: 1px;
         padding: 8px;
         border-style: solid;
         border-color: #D1EEEE;
     }
-    .oddrowcolor{
-        background-color:#D1EEEE;
+
+    .oddrowcolor {
+        background-color: #D1EEEE;
     }
-    .evenrowcolor{
-        background-color:#c3dde0;
+
+    .evenrowcolor {
+        background-color: #c3dde0;
     }
 
     #line-chart {
@@ -146,7 +154,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="" href="index.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识公司</span></a>
+        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
     </div>
 
     <div class="navbar-collapse collapse" style="height: 1px;">
@@ -183,7 +191,7 @@
         <li>
             <ul class="dashboard-menu nav nav-list collapse in">
                 <li>
-                    <a th:href="@{/fileupdown/toprivilegemanagepage(userName=${view.userName},password=${view.password})}"><span
+                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password})}"><span
                             class="fa fa-caret-right"></span> 设计文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
@@ -220,52 +228,56 @@
                 class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
         <li>
             <ul class="accounts-menu nav nav-list collapse">
-                <li><a href="sign-in.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
+                <li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
                 <li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>
                 <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
             </ul>
         </li>
-   </ul>
+    </ul>
 </div>
 
-<div class="content">
+<div class="content" id="some-element">
 
     <div id="tabs">
         <ul>
-            <a class="btn btn-primary" href="#uploadpage">上传</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password})}"> 下载</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
+            <a class="btn btn-default"
+               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password})}">上传</a>
+            <a class="btn btn-default"
+               th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
+                下载</a>
+            <a class="btn btn-primary"
+               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
         </ul>
 
         <div id="some-element">
-        <form >
-            用户 <select name="selectuser" id="selectuser" th:each="userinfo : ${userInfos}">
-                <option th:value="${userinfo.uId}" th:text="${userinfo.userName}"></option>
-        </select>
-            <input type="button" onclick="submitprivilegestatus()" value="确认">
-        </form>
-        <br/>
-        <br/>
-
-        <div id="privimanage">
             <form>
-                <table class="grid" style="width: 100%" id="privilegetable">
-                    <thead>
-                    <tr>
-                        <td>编号</td>
-                        <td>创建者</td>
-                        <td>最后修改者</td>
-                        <td>文件名</td>
-                        <td>业务员</td>
-                        <td>订单编码</td>
-                        <td>顶目名称</td>
-                        <td>创建时间</td>
-                        <td>更新时间</td>
-                        <td>权限设置</td>
-                    </tr>
-                    </thead>
-                    <tbody id="showlistbody">
-                        <tr th:each="downloadView ,iterStat: ${downloadViewList}"  th:id="${downloadView.id}">
+                用户 <select name="selectuser" id="selectuser" th:each="userinfo : ${userInfos}">
+                <option th:value="${userinfo.uId}" th:text="${userinfo.userName}"></option>
+            </select>
+                <input type="button" onclick="submitprivilegestatus()" value="确认">
+            </form>
+            <br/>
+            <br/>
+
+            <div id="privimanage">
+                <form>
+                    <table class="grid" style="width: 100%" id="privilegetable">
+                        <thead>
+                        <tr>
+                            <td>编号</td>
+                            <td>创建者</td>
+                            <td>最后修改者</td>
+                            <td>文件名</td>
+                            <td>业务员</td>
+                            <td>订单编码</td>
+                            <td>顶目名称</td>
+                            <td>创建时间</td>
+                            <td>更新时间</td>
+                            <td>权限设置</td>
+                        </tr>
+                        </thead>
+                        <tbody id="showlistbody">
+                        <tr th:each="downloadView ,iterStat: ${downloadViewList}" th:id="${downloadView.id}">
                             <td th:text="${iterStat.index+1}"></td>
                             <td th:text="${downloadView.creator}"></td>
                             <td th:text="${downloadView.lastUpdator}"></td>
@@ -275,17 +287,20 @@
                             <td th:text="${downloadView.projectName}"></td>
                             <td th:text="${downloadView.createTime}"></td>
                             <td th:text="${downloadView.lastUpdateTime}"></td>
-                            <td ><input th:name="'privilegenum'+${downloadView.id}"  type="checkbox"  th:checked="${downloadView.seePrivilege eq '1' }"  th:value="1">查看
-                                <input th:name="'privilegenum'+${downloadView.id}"  type="checkbox" th:checked="${downloadView.updatePrivilege eq '2' }" th:value="2">修改
-                                <input th:name="'privilegenum'+${downloadView.id}"  type="checkbox" th:checked="${downloadView.cancelPrivilege eq '3' }" th:value="3">取消</a></td>
+                            <td><input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.seePrivilege eq '1' }" th:value="1">查看
+                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.updatePrivilege eq '2' }" th:value="2">修改
+                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.cancelPrivilege eq '3' }" th:value="3">取消</a></td>
                         </tr>
-                    </tbody>
-                </table>
-            </form>
+                        </tbody>
+                    </table>
+                </form>
+
+            </div>
 
         </div>
-
-    </div>
     </div>
 
 </div>
@@ -295,83 +310,87 @@
 <script type="text/javascript">
 
     function submitprivilegestatus() {
+        $("#some-element").busyLoad("show");
         // 显示loading
-        var privilelist=new Array();
+        var privilelist = new Array();
 
         var selectuser = $("#selectuser").val();
         var trs = $("#privilegetable tr");
-        privilelist[0]= selectuser;
+        privilelist[0] = selectuser;
         for (var i = 1; i < trs.length; i++) {
             var trid = trs[i].id;//privilegenum
-            privilelist[i]=trid;
-            $('input[name="privilegenum' + trid + '"]:checked').each(function(){//拼接是重点  容易拼接出错
-                privilelist[i]+=","+$(this).val();
+            privilelist[i] = trid;
+            $('input[name="privilegenum' + trid + '"]:checked').each(function () {//拼接是重点  容易拼接出错
+                privilelist[i] += "," + $(this).val();
             });
         }
         $.ajax({
-            data:JSON.stringify(privilelist),
-            type:"POST",
+            data: JSON.stringify(privilelist),
+            type: "POST",
             dataType: 'json',
             contentType: 'application/json;charset=UTF-8', //内容类型
-            contentType :"application/json",  // 这种方式必须要
-            async : false,//是否异步请求
+            contentType: "application/json",  // 这种方式必须要
+            async: false,//是否异步请求
             traditional: true,
-            url:"/fileupdown/updateandsaveprivilegestatus",
-            success:function(msg){
+            url: "/fileupdown/updateandsaveprivilegestatus",
+            success: function (msg) {
                 var data = eval(msg);//将msg化为数;
                 var num = 0;
-                var tr="";
-                var td="";
+                var tr = "";
+                var td = "";
                 var tbody = $("#showlistbody");
                 tbody.html("");
                 var vililegeflags;
-                $.each(data, function (num){
+                $.each(data, function (num) {
 
-                    tr = $("<tr id='"+data[num].id+"'></tr>");
+                    tr = $("<tr id='" + data[num].id + "'></tr>");
                     tr.append("<td>" + (num + 1) + "</td>");
                     tr.append("<td>" + isNull(data[num].creator) + "</td>");
-                    tr.append("<td>" + isNull(data[num].lastUpdator)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].fileName)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].salor)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].orderNo)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].projectName)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].createTime)  + "</td>");
-                    tr.append("<td>" + isNull(data[num].lastUpdateTime)  + "</td>");
+                    tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+                    tr.append("<td>" + isNull(data[num].fileName) + "</td>");
+                    tr.append("<td>" + isNull(data[num].salor) + "</td>");
+                    tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
+                    tr.append("<td>" + isNull(data[num].projectName) + "</td>");
+                    tr.append("<td>" + isNull(data[num].createTime) + "</td>");
+                    tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
                     td = "<td>";
 
                     vililegeflags = data[num].opRight;
-                    if(isNull(vililegeflags)!=""){
+                    if (isNull(vililegeflags) != "") {
                         td = "<td>";
-                        if(vililegeflags.indexOf("1") > -1){
-                            td += ('<input name="privilegenum'+data[num].id+'" checked="checked" type="checkbox" value="1" />查看');
-                        }else {
-                            td += ('<input name="privilegenum'+data[num].id+'"  type="checkbox" value="1" />查看');
+                        if (vililegeflags.indexOf("1") > -1) {
+                            td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="1" />查看');
+                        } else {
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="1" />查看');
                         }
-                        if(vililegeflags.indexOf("2") > -1){
-                            td += ('<input name="privilegenum'+data[num].id+'" checked="checked" type="checkbox" value="2" />修改');
-                        }else{
-                            td += ('<input name="privilegenum'+data[num].id+'"  type="checkbox" value="2" />修改');
+                        if (vililegeflags.indexOf("2") > -1) {
+                            td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="2" />修改');
+                        } else {
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="2" />修改');
                         }
-                        if(vililegeflags.indexOf("3") > -1){
-                            td += ('<input name="privilegenum'+data[num].id+'" checked="checked" type="checkbox" value="3" />取消');
-                        }else{
-                            td += ('<input name="privilegenum'+data[num].id+'"  type="checkbox" value="3" />取消');
+                        if (vililegeflags.indexOf("3") > -1) {
+                            td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="3" />取消');
+                        } else {
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="3" />取消');
                         }
                         td += "</td>";
                     } else {
-                        td = ('<td><input name="privilegenum'+data[num].id+'"  type="checkbox" value="1" />查看');
-                        td += ('<input name="privilegenum'+data[num].id+'"  type="checkbox" value="2" />修改');
-                        td += ('<input name="privilegenum'+data[num].id+'"  type="checkbox" value="3" />取消</td>');
+                        td = ('<td><input name="privilegenum' + data[num].id + '"  type="checkbox" value="1" />查看');
+                        td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="2" />修改');
+                        td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="3" />取消</td>');
                     }
 
                     tr.append(td);
                     tr.appendTo(tbody);
                     // 隐藏loading
+                    $("#some-element").busyLoad("hide");
                 });
+                $("#some-element").busyLoad("hide");
 
             },
-            error:function(data){
+            error: function (data) {
                 // 隐藏loading
+                $("#some-element").busyLoad("hide");
                 alert("失败");
             }
 
@@ -379,9 +398,8 @@
 
     }
 
-    function isNull(arg1)
-    {
-        if(arg1 == "null" || arg1 == null) {
+    function isNull(arg1) {
+        if (arg1 == "null" || arg1 == null) {
             return "";
         }
         return arg1;

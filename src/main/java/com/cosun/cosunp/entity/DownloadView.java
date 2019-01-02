@@ -1,6 +1,7 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author:homey Wong
@@ -18,7 +19,7 @@ public class DownloadView implements Serializable {
     private String password;
     private String creator;
     private String lastUpdator;
-    private String fileName;
+    private String fileName; //文件名称
     private String salor;//业务员
     private String orderNo;//订单编号
     private String projectName;//项目名称
@@ -31,6 +32,109 @@ public class DownloadView implements Serializable {
     private String updatePrivilege; //修改权限  2
     private String cancelPrivilege; //取消权限  3
     private String flag;
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 15;
+    private int currentPageTotalNum;
+    private int preCurrentPage;
+    private int aftCurrentPage;
+
+    private Date startNewestSaveDate; //最新上传开始时间
+    private Date endNewestSaveDate;//最新上传结束时间
+    private String startNewestSaveDateStr;
+    private String endNewestSaveDateStr;
+
+    public Date getStartNewestSaveDate() {
+        return startNewestSaveDate;
+    }
+
+    public void setStartNewestSaveDate(Date startNewestSaveDate) {
+        this.startNewestSaveDate = startNewestSaveDate;
+    }
+
+    public Date getEndNewestSaveDate() {
+        return endNewestSaveDate;
+    }
+
+    public void setEndNewestSaveDate(Date endNewestSaveDate) {
+        this.endNewestSaveDate = endNewestSaveDate;
+    }
+
+    public String getStartNewestSaveDateStr() {
+        return startNewestSaveDate.toString()+" 00:00:00";
+    }
+
+    public void setStartNewestSaveDateStr(String startNewestSaveDateStr) {
+        this.startNewestSaveDateStr = startNewestSaveDateStr;
+    }
+
+    public String getEndNewestSaveDateStr() {
+        return endNewestSaveDate.toString()+" 23:59:59";
+    }
+
+    public void setEndNewestSaveDateStr(String endNewestSaveDateStr) {
+        this.endNewestSaveDateStr = endNewestSaveDateStr;
+    }
+
+    public int getPreCurrentPage() {
+
+        return currentPage-1;
+    }
+
+    public void setPreCurrentPage(int preCurrentPage) {
+        this.preCurrentPage = preCurrentPage;
+    }
+
+    public int getAftCurrentPage() {
+        return currentPage+1;
+    }
+
+    public void setAftCurrentPage(int aftCurrentPage) {
+        this.aftCurrentPage = aftCurrentPage;
+    }
+
+    public int getCurrentPageTotalNum() {
+        return (currentPage-1)*pageSize;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
     public String getFlag() {
         return flag;

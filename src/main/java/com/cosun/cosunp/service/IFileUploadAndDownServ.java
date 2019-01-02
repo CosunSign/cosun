@@ -15,9 +15,16 @@ public interface IFileUploadAndDownServ {
 
     void addFileDataByUpload(FilemanRight filemanRight, FilemanUrl filemanUrl, FileManFileInfo fileManFileInfo);
 
+    List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize);
     List<DownloadView> findAllUploadFileByUserId(Integer uid);
 
     List<UserInfo> findAllUser();
 
     void saveOrUpdateFilePrivilege(Integer selectuser,Integer filesId,String privileflag);
+
+    int findAllUploadFileCountByUserId(Integer uId);
+
+    List<DownloadView> findAllUploadFileByParaCondition(DownloadView view);
+
+    int findAllUploadFileCountByParaCondition(DownloadView view);
 }

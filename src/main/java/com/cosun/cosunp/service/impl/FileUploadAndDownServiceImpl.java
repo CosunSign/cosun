@@ -48,15 +48,48 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     }
 
+
     /**
-      *@author:homey Wong
-      *@Date: 2018.12.21
-      */
+     *@author:homey Wong
+     *@Date: 2018.12.21
+     */
     @Override
     public List<DownloadView> findAllUploadFileByUserId(Integer uid) {
         List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByUserId(uid);
         return list;
     }
 
+    /**
+      *@author:homey Wong
+      *@Date: 2018.12.21
+      */
+    @Override
+    public List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize) {
+        List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByCondition(uid,currentPageTotalNum,PageSize);
+        return list;
+    }
 
+    /**
+     * 功能描述:分页
+     * @auther: homey Wong
+     * @date: 2018/12/29 0029 上午 9:47
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    public int findAllUploadFileCountByUserId(Integer uId) {
+        return  fileUploadAndDownMapper.findAllUploadFileCountByUserId(uId);
+
+    }
+
+    @Override
+    public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view){
+        return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
+    }
+
+    @Override
+    public int findAllUploadFileCountByParaCondition(DownloadView view){
+        return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
+    }
 }

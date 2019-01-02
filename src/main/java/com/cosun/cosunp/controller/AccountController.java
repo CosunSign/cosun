@@ -5,10 +5,7 @@ import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IUserInfoServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -30,7 +27,7 @@ public class AccountController {
     @ResponseBody
     @RequestMapping(value = "/tologin")
     public ModelAndView toLoginPage() throws Exception {
-        ModelAndView mav = new ModelAndView("sign-in");
+        ModelAndView mav = new ModelAndView(INDEX);
         DownloadView downloadView = new DownloadView();
         downloadView.setFlag("true");
         mav.addObject("view",downloadView);
@@ -51,13 +48,14 @@ public class AccountController {
         ModelAndView mav;
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(),view.getPassword());
         if (userInfo != null && userInfo.getUserName() != null) {
-            mav = new ModelAndView(INDEX);
+            session.setAttribute("account",userInfo);
+            mav = new ModelAndView("mainindex");
             session.setAttribute("username", userInfo.getUserName());
             session.setAttribute("password", userInfo.getUserPwd());
             mav.addObject("view",view);
             return mav;
         }
-        mav = new ModelAndView("sign-in");
+        mav = new ModelAndView(INDEX);
         view.setUserName(null);
         view.setPassword(null);
         view.setFlag("false");
@@ -65,4 +63,17 @@ public class AccountController {
         return mav;
 
     }
+
+
+    @GetMapping("/logout")
+    public ModelAndView logout(HttpSession session) {
+        ModelAndView view = new ModelAndView(INDEX);
+        // 移除session
+        session.removeAttribute("account");
+        DownloadView downloadView = new DownloadView();
+        downloadView.setFlag("true");
+        view.addObject("view",downloadView);
+        return view;
+    }
+
 }

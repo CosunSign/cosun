@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
@@ -81,6 +82,7 @@ public class FileUploadAndDownController {
 
     /**
      * 功能描述:跳转管理页面
+     *
      * @auther: homey Wong
      * @date: 2018/12/27 0027 上午 10:07
      * @param:
@@ -106,10 +108,11 @@ public class FileUploadAndDownController {
     /**
      * @author:homey Wong
      * @Date: 2018.12.21 18:18
+     * 跳转到主页面
      */
     @ResponseBody
-    @RequestMapping(value = "/toprivilegemanagepage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password, HttpServletRequest request) {
+    @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
+    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -163,21 +166,68 @@ public class FileUploadAndDownController {
 
     /**
      * @author:homey Wong
-     * @date:2018.12.21
+     * @date:2018.12.21 12/29 做分页
      */
     //下载清单
     @ResponseBody
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ModelAndView toFileDownPage(String userName, String password, HttpServletResponse response) throws Exception {
+    public ModelAndView toFileDownPage(String userName, String password, int currentPage, HttpServletResponse response) throws Exception {
         ModelAndView mav = new ModelAndView("downloadpage");
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
-        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         DownloadView view = new DownloadView();
+        view.setCurrentPage(currentPage);
+        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         mav.addObject("view", view);
         mav.addObject("downloadViewList", downloadViewList);
         return mav;
+    }
+
+
+    /**
+     * 功能描述:按条件查询需下载的文件
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/2 0002 下午 5:27
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
+    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception {
+        view.setCurrentPage(view.getCurrentPage());
+        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
+        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+       if(dataList!=null && dataList.size()>0) {
+           dataList.get(0).setMaxPage(maxPage);
+           dataList.get(0).setRecordCount(recordCount);
+       }
+        String str1 = null;
+        if (dataList != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str1 = x.writeValueAsString(dataList);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
