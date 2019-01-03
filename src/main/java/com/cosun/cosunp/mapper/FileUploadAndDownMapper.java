@@ -34,7 +34,7 @@ public interface FileUploadAndDownMapper {
 
 
     @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
-            "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.updatetime as lastUpdateTime" +
+            "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime" +
             ",ffi.updatecount as totalUpdateNum,fmu.opright as opRight,fmu.logur1 as urlAddr,ffi.createtime as createTime,fmu.opRight  " +
             "    from filemanfileinfo ffi" +
             "    LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId" +
@@ -42,7 +42,7 @@ public interface FileUploadAndDownMapper {
     List<DownloadView> findAllUploadFileByCondition(Integer uId, int currentPageTotalNum, int PageSize);
 
     @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
-            "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.updatetime as lastUpdateTime" +
+            "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime" +
             ",ffi.updatecount as totalUpdateNum,fmu.opright as opRight,fmu.logur1 as urlAddr,ffi.createtime as createTime,fmu.opRight  " +
             "    from filemanfileinfo ffi" +
             "    LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId" +
@@ -103,11 +103,11 @@ public interface FileUploadAndDownMapper {
                 sql.append(" and ffi.filename like  CONCAT('%',#{fileName},'%')");
             }
 
-            if(view.getStartNewestSaveDate()!=null && view.getEndNewestSaveDate()!=null){
-                sql.append(" and ffi.createtime  >= #{startNewestSaveDateStr} and ffi.createtime  <= #{view.endNewestSaveDateStr}");
-            }else if(view.getStartNewestSaveDate()!=null){
+            if(view.getStartNewestSaveDateStr()!=null && view.getEndNewestSaveDateStr()!=null){
+                sql.append(" and ffi.createtime  >= #{startNewestSaveDateStr} and ffi.createtime  <= #{endNewestSaveDateStr}");
+            }else if(view.getStartNewestSaveDateStr()!=null){
                 sql.append(" and ffi.createtime >= #{startNewestSaveDateStr}");
-            } else if(view.getEndNewestSaveDate()!=null) {
+            } else if(view.getEndNewestSaveDateStr()!=null) {
                 sql.append( " and ffi.createtime <= #{endNewestSaveDateStr}");
             }
 
@@ -118,7 +118,7 @@ public interface FileUploadAndDownMapper {
 
         public String findAllByParaCondition(DownloadView view) {
             StringBuilder sql=new StringBuilder(" select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor,");
-                                sql.append("  ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.updatetime as lastUpdateTime");
+                                sql.append("  ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime");
                     sql.append("            ,ffi.updatecount as totalUpdateNum,fmu.opright as opRight,fmu.logur1 as urlAddr,ffi.createtime as createTime,fmu.opRight  " );
                     sql.append("                from filemanfileinfo ffi " );
                     sql.append("                LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId" );
@@ -140,15 +140,15 @@ public interface FileUploadAndDownMapper {
                         sql.append(" and ffi.filename like  CONCAT('%',#{fileName},'%')");
                     }
 
-                    if(view.getStartNewestSaveDate()!=null && view.getEndNewestSaveDate()!=null){
-                        sql.append(" and ffi.createtime  >= #{startNewestSaveDateStr} and ffi.createtime  <= #{view.endNewestSaveDateStr}");
-                    }else if(view.getStartNewestSaveDate()!=null){
+                    if(view.getStartNewestSaveDateStr()!=null && view.getEndNewestSaveDateStr()!=null){
+                        sql.append(" and ffi.createtime  >= #{startNewestSaveDateStr} and ffi.createtime  <= #{endNewestSaveDateStr}");
+                    }else if(view.getStartNewestSaveDateStr()!=null){
                         sql.append(" and ffi.createtime >= #{startNewestSaveDateStr}");
-                    } else if(view.getEndNewestSaveDate()!=null) {
+                    } else if(view.getEndNewestSaveDateStr()!=null) {
                         sql.append( " and ffi.createtime <= #{endNewestSaveDateStr}");
                     }
 
-                    sql.append( " order by ffi.createtime desc limit #{currentPageTotalNum},#{pageSize}");
+                    sql.append( "  order by ffi.createtime desc limit #{currentPageTotalNum},#{pageSize}");
             return sql.toString();
 
         }

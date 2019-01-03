@@ -203,12 +203,16 @@ public class FileUploadAndDownController {
     public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception {
         view.setCurrentPage(view.getCurrentPage());
         UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+        view.setuId(userInfo.getuId());
         List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
         int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
        if(dataList!=null && dataList.size()>0) {
            dataList.get(0).setMaxPage(maxPage);
            dataList.get(0).setRecordCount(recordCount);
+           dataList.get(0).setUserName(userInfo.getUserName());
+           dataList.get(0).setPassword(userInfo.getUserPwd());
+           dataList.get(0).setCurrentPage(view.getCurrentPage());
        }
         String str1 = null;
         if (dataList != null) {

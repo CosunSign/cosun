@@ -250,153 +250,182 @@
                th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
         </ul>
 
-        <form id="form" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
-              style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
+        <div id="some-element">
+            <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
+                  style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
 
-            <div>
-                <fieldset>
-                    <!--<legend>查询条件</legend>-->
-                    <table width="100%">
+
+                <div>
+                    <fieldset>
+                        <!--<legend>查询条件</legend>-->
+                        <table width="100%">
+                            <tr>
+                                <td align="right">
+                                    业务员:
+                                </td>
+                                <td><input type="text" id="salor" name="view.salor" style="width:80px" form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                </td>
+                                <td align="right">订单编码:</td>
+                                <td><input type="text" id="orderno" name="view.orderNo" style="width:120px" form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                </td>
+                                <td align="right"> 顶目名称:</td>
+                                <td><input type="text" id="projectname" name="view.projectName" style="width:120px"
+                                           form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                </td>
+
+
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td align="right">文件名称:</td>
+                                <td><input type="text" id="filename" name="view.fileName" style="width:80px"
+                                           form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                </td>
+                                <td align="right">最新上传时间:</td>
+                                <td colspan="2" th:align="left">
+                                    <input type="text" style="width:120px" id="startnewestsavedate" readOnly="true"
+                                           name="view.startNewestSaveDate" class="Wdate" form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
+                                    至：
+                                    <input type="text" id="endnewestsavedate" style="width:120px"
+                                           name="view.endnewestsavedate" class="Wdate" form="form0"
+                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
+                                </td>
+
+                                <td th:align="right">
+                                    <input type="button" id="submitQueryByConditionbutton"
+                                           onclick="submitQueryByCondition()" value="查询"/>
+                                    <input type="button" onclick="exportDataByCondition()" value="导出"/></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div>
+            </form>
+
+            <div id="downloadpage">
+                <form th:action="@{/fileupdown/downloadbyquerycondition}" method="post" id="form0">
+                    <input type="hidden" id="maxPage" th:value="${view.maxPage}">
+                    <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
+                    <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
+                    <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
+                    <table class="grid" style="width: 100%" id="tablecss">
+                        <thead>
                         <tr>
-                            <td align="right">
-                                业务员:
-                            </td>
-                            <td><input type="text" id="salor" name="view.salor" style="width:80px"/></td>
-                            <td align="right">订单编码:</td>
-                            <td><input type="text" id="orderno" name="view.orderNo" style="width:120px"/></td>
-                            <td align="right"> 顶目名称:</td>
-                            <td><input type="text" id="projectname" name="view.projectName" style="width:120px"/></td>
-
-
-                            </td>
-
+                            <td>编号</td>
+                            <td>创建者</td>
+                            <td>最后修改者</td>
+                            <td>文件名</td>
+                            <td>业务员</td>
+                            <td>订单编码</td>
+                            <td>顶目名称</td>
+                            <td>最后更新时间</td>
+                            <td>更新次数</td>
+                            <td>操作权限</td>
+                            <td>路径</td>
                         </tr>
-                        <tr>
-                            <td align="right">文件名称:</td>
-                            <td><input type="text" id="filename" name="view.fileName" style="width:80px"/></td>
-                            <td align="right">最新上传时间:</td>
-                            <td colspan="2" th:align="left">
-                                <input type="text" style="width:120px" id="startnewestsavedate" readOnly="true"
-                                       name="view.startNewestSaveDate" class="Wdate"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
-                                至：
-                                <input type="text" id="endnewestsavedate" style="width:120px"
-                                       name="view.endnewestsavedate" class="Wdate"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
-                            </td>
+                        </thead>
+                        <tbody id="showdatatable">
+                        <div th:unless="${#lists.isEmpty(downloadViewList)}">
+                            <tr th:each="downloadView ,iterStat: ${downloadViewList}">
+                                <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
+                                <td th:text="${downloadView.creator}"></td>
+                                <td th:text="${downloadView.lastUpdator}"></td>
+                                <td th:text="${downloadView.fileName}"></td>
+                                <td th:text="${downloadView.salor}"></td>
+                                <td th:text="${downloadView.orderNo}"></td>
+                                <td th:text="${downloadView.projectName}"></td>
+                                <td th:text="${downloadView.lastUpdateTime}"></td>
+                                <td th:text="${downloadView.totalUpdateNum}"></td>
+                                <td th:text="${downloadView.opRight}"></td>
+                                <td>
+                                    <a th:href="@{/fileupdown/downloadfile(filename=${downloadView.fileName},urlname=${downloadView.urlAddr})}"
+                                       th:text="${downloadView.urlAddr}"></a></td>
+                            </tr>
+                        </div>
+                        <div th:if="${#lists.isEmpty(downloadViewList)}">
+                            <tr>
+                                <td colspan="11" align="center">暂无文件清单信息</td>
+                            </tr>
+                        </div>
+                        </tbody>
 
-                            <td th:align="right">
-                                <input type="button" onclick="submitQueryByCondition()" value="查询"/>
-                                <input type="button" onclick="exportDataByCondition()" value="导出"/></td>
-                        </tr>
-                    </table>
-                </fieldset>
-            </div>
-        </form>
+                        <tfoot id="s_tfoot">  <!-- 分页-->
 
-        <div id="downloadpage">
-            <form th:action="@{/fileupdown/download}" method="get" id="form0">
-                <input type="hidden" id="maxPage" th:value="${view.maxPage}">
-                <input type="hidden" id="n_currentPage" name="currentPage" th:value="${view.currentPage}"/>
-                <input type="hidden" id="userName" name="userName" th:value="${view.userName}">
-                <input type="hidden" id="passWord" name="password" th:value="${view.password}">
-                <table class="grid" style="width: 100%" id="tablecss">
-                    <thead>
-                    <tr>
-                        <td>编号</td>
-                        <td>创建者</td>
-                        <td>最后修改者</td>
-                        <td>文件名</td>
-                        <td>业务员</td>
-                        <td>订单编码</td>
-                        <td>顶目名称</td>
-                        <td>最后更新时间</td>
-                        <td>更新次数</td>
-                        <td>操作权限</td>
-                        <td>路径</td>
-                    </tr>
-                    </thead>
-                    <tbody id="showdatatable">
-                    <tr th:each="downloadView ,iterStat: ${downloadViewList}">
-                        <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
-                        <td th:text="${downloadView.creator}"></td>
-                        <td th:text="${downloadView.lastUpdator}"></td>
-                        <td th:text="${downloadView.fileName}"></td>
-                        <td th:text="${downloadView.salor}"></td>
-                        <td th:text="${downloadView.orderNo}"></td>
-                        <td th:text="${downloadView.projectName}"></td>
-                        <td th:text="${downloadView.lastUpdateTime}"></td>
-                        <td th:text="${downloadView.totalUpdateNum}"></td>
-                        <td th:text="${downloadView.opRight}"></td>
-                        <td>
-                            <a th:href="@{/fileupdown/downloadfile(filename=${downloadView.fileName},urlname=${downloadView.urlAddr})}"
-                               th:text="${downloadView.urlAddr}"></a></td>
-                    </tr>
-                    </tbody>
+                        <tr id="showdiv">
 
-                    <tfoot id="s_tfoot">  <!-- 分页-->
-                    <tr>
-                        <td colspan="11" align="center">
-                            <span id="spanno1">第</span>
-                            <span th:text="${view.currentPage}" id="currentpagespan"> </span>
-                            <span>页|共</span>
-                            <span th:text="${view.maxPage}" id="maxpagespan"> </span>
-                            <span>页|共</span>
-                            <span th:text="${view.recordCount}" id="recordcountspan"> </span>
-                            <span>条记录 </span>
+                            <td colspan="11" align="center">
+                                <span>第</span>
+                                <span th:text="${view.currentPage}" id="currentpagespan"> </span>
+                                <span>页|共</span>
+                                <span th:text="${view.maxPage}" id="maxpagespan"> </span>
+                                <span>页|共</span>
+                                <span th:text="${view.recordCount}" id="recordcountspan"> </span>
+                                <span>条记录 </span>
+                                <span id="image01">
                             <span th:if="${view.currentPage gt 1}">
-                                <a th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><img
-                                        src="/images/page/sy-2.jpg" align="middle" border="0"
-                                        style="width: 20px; height: 20px; vertical-align: middle"/>
-                                </a>
-                                <a th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.preCurrentPage})}">
-                                    <img src="/images/page/syy-2.jpg" align="middle" border="0"
+                                    <img src="/images/page/sy-2.jpg" align="middle" border="0"
+                                         style="width: 20px; height: 20px; vertical-align: middle"
+                                         onClick="goPageone()"/>
+                                    <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPrePage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-                                </a>
                                 </span>
+                                </span>
+                                <span id="image02">
                             <span th:if="${view.currentPage le 1}">
                                 <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
                             </span>
-                            <span th:if="${view.currentPage lt view.maxPage}">
-                                <a th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.aftCurrentPage})}"><img
-                                        src="/images/page/xyy-2.jpg" align="middle" border="0"
-                                        style="width: 20px; height: 20px; vertical-align: middle"/>
-                                </a>
-                                <a th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.maxPage})}"><img
-                                        src="/images/page/my-2.jpg" align="middle" border="0"
-                                        style="width: 20px; height: 20px; vertical-align: middle"/>
-                                </a>
                             </span>
+                                <span id="image03">
+                            <span th:if="${view.currentPage lt view.maxPage}">
+                                    <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                                    <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                            </span>
+                                </span>
+                                <span id="image04">
                             <span th:if="${view.currentPage ge view.maxPage}">
                                 <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                             </span>
+                            </span>
 
-                            |&nbsp;到第
-                            <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}" style="width: 50px"
-                                   id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
-                            页&nbsp;
-                            <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
-                                 style="width:20px;height:20px;vertical-align:middle">
-                        </td>
-                    </tr>
-                    <!--<tr>-->
-                    <!--<td colspan="5" align="center">-->
-                    <!--<input type="button" onclick="saveSupplierData()" value="保存"/>-->
-                    <!--<input type="button" onclick="cancelSupplierData()" value="取消"/>-->
-                    <!--</td>-->
-                    <!--</tr>-->
+                                |&nbsp;到第
+                                <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
+                                       style="width: 50px"
+                                       id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
+                                页&nbsp;
+                                <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
+                                     style="width:20px;height:20px;vertical-align:middle">
+                            </td>
+
+                        </tr>
 
 
-                    </tfoot>
-                </table>
-            </form>
+                        <tr style="display:none;" id="nodatadiv">
+                            <td colspan="11" align="center">
+                                查无数据
+                            </td>
+                        </tr>
 
+
+                        </tfoot>
+                    </table>
+                </form>
+
+            </div>
         </div>
 
     </div>
@@ -408,6 +437,10 @@
 <script type="text/javascript">
     var currentPage; //当前页
     var totalPage; //总多少页
+    var totaldata; //总共多少记录
+    var pageSize;//当前每页多少条
+    var username;
+    var password;
 
 
     function submitQueryByCondition() {
@@ -418,7 +451,8 @@
             "projectName": $("#projectname").val(), //项目编号
             "fileName": $("#filename").val(), //文件名
             "startNewestSaveDateStr": $("#startnewestsavedate").val(), //查询开始时间
-            "endNewestSaveDateStr": $("#endnewestsavedate").val() //查询结束时间
+            "endNewestSaveDateStr": $("#endnewestsavedate").val(), //查询结束时间
+            "currentPage": $("#n_currentPage").val()
         };
         var data = JSON.stringify(jsonarray);
         $.ajax({
@@ -430,26 +464,99 @@
                 var data = eval(msg);//将msg化为数;
                 var num = 0;
                 var tr = "";
+                var image01 = $("#image01");
+                var image02 = $("#image02");
+                var image03 = $("#image03");
+                var image04 = $("#image04");
+                var maxpageid = $("#maxPage");
+                var n_currentPage = $("#n_currentPage");
+                var inputpage = $("#_tp");
+                image01.html("");
+                image02.html("");
+                image03.html("");
+                image04.html("");
                 var td = "";
                 var tbody = $("#showdatatable");
+                var tfoot = $("#s_tfoot");
                 tbody.html("");
-                var vililegeflags;
-                $.each(data, function (num) {
 
-                    tr = $("<tr id='" + data[num].id + "'></tr>");
-                    tr.append("<td>" + (num + 1) + "</td>");
-                    tr.append("<td>" + isNull(data[num].creator) + "</td>");
-                    tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
-                    tr.append("<td>" + isNull(data[num].fileName) + "</td>");
-                    tr.append("<td>" + isNull(data[num].salor) + "</td>");
-                    tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
-                    tr.append("<td>" + isNull(data[num].projectName) + "</td>");
-                    tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
-                    tr.append("<td>" + isNull(data[num].totalUpdateNum) + "</td>");
-                    tr.append("<td>" + isNull(data[num].opRight) + "</td>");
 
-                });
-                tbody.append(tr);
+                if (data != null && data != "") {
+                    $("#nodatadiv").hide();
+                    $("#showdiv").show();
+                    currentPage = data[0].currentPage; //当前页
+                    totalPage = data[0].maxPage; //总多少页
+                    totaldata = data[0].recordCount; //总共多少记录
+                    username = data[0].userName;
+                    password = data[0].userPwd;
+                    pageSize = data[0].pageSize;
+                    maxpageid.val(totalPage);
+                    n_currentPage.val(currentPage);
+                    inputpage.val(currentPage);
+
+                    $.each(data, function (num) {
+
+                        tr = $("<tr id='" + data[num].id + "'></tr>");
+                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].creator) + "</td>");
+                        tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
+                        tr.append("<td>" + isNull(data[num].projectName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
+                        tr.append("<td>" + isNull(data[num].totalUpdateNum) + "</td>");
+                        tr.append("<td>" + isNull(data[num].opRight) + "</td>");
+                        tr.append('<td><a href="/fileupdown/downloadfile?filename=' + data[num].fileName + '&urlname=' + data[num].urlAddr + '">' + data[num].urlAddr + '</a></td>');
+                        tr.append(td);
+                        tr.appendTo(tbody);
+                    });
+
+
+                    $("#currentpagespan").html(currentPage);
+                    $("#maxpagespan").html(totalPage);
+                    $("#recordcountspan").html(totaldata);
+                    if (currentPage > 1) {
+                        var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image01.html(imange01str);
+                    } else {
+                        image01.html("");
+                    }
+                    if (currentPage <= 1) {
+                        var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image02.html(image02str);
+                    } else {
+                        image02.html("");
+                    }
+                    if (currentPage < totalPage) {
+                        var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image03.html(imange03str);
+                    } else {
+                        image03.html("");
+                    }
+                    if (currentPage >= totalPage) {
+                        var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image04.html(image04str);
+
+
+                    } else {
+                        image04.html("");
+                    }
+
+
+                } else {
+                    $("#nodatadiv").show();
+                    $("#showdiv").hide();
+                }
+
 
                 // 隐藏loading
                 $("#some-element").busyLoad("hide");
@@ -464,7 +571,32 @@
     }
 
     function exportDataByCondition() {
+        alert("此功能暂未做")
+    }
 
+    function goPageone() {
+        $("#n_currentPage").val(1);
+        submitQueryByCondition();
+    }
+
+    function goPrePage() {
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 - 1 * 1);
+        submitQueryByCondition();
+    }
+
+    function goAftPage() {
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 + 1 * 1);
+        submitQueryByCondition();
+    }
+
+
+    function goMaxPage() {
+
+
+        $("#n_currentPage").val($("#maxPage").val());
+        submitQueryByCondition();
     }
 
     function goPage2() {
@@ -474,16 +606,20 @@
         var r = /^\+?[0-9][0-9]*$/;
         if (!(r.test(tp))) {
             alert("页数输入有误，请重新输入!");
+            $("#_tp").val(max);
             return false;
         } else if (parseInt(tp) == 0) {
             alert("页数必须大于0!");
+            $("#_tp").val(max);
             return false;
         } else if (parseInt(tp) > parseInt(max)) {
             alert("不能大于总页数!");
+            $("#_tp").val(max);
             return false;
         } else {
             $("#n_currentPage").val(tp);
-            document.forms["form0"].submit();
+            // document.forms["form0"].submit();
+            submitQueryByCondition();
         }
     }
 
@@ -546,6 +682,12 @@
         }
     }
 
+    function isNull(arg1) {
+        if (arg1 == "null" || arg1 == null) {
+            return "";
+        }
+        return arg1;
+    }
 
     //验证正整数
     function isInt(str) {

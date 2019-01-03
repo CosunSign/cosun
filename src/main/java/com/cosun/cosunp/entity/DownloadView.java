@@ -64,7 +64,9 @@ public class DownloadView implements Serializable {
     }
 
     public String getStartNewestSaveDateStr() {
-        return startNewestSaveDate.toString()+" 00:00:00";
+        if(startNewestSaveDateStr!=null&&startNewestSaveDateStr.trim().length()>0)
+        return startNewestSaveDateStr.toString()+" 00:00:00";
+        return null;
     }
 
     public void setStartNewestSaveDateStr(String startNewestSaveDateStr) {
@@ -72,7 +74,9 @@ public class DownloadView implements Serializable {
     }
 
     public String getEndNewestSaveDateStr() {
-        return endNewestSaveDate.toString()+" 23:59:59";
+        if(endNewestSaveDateStr!=null&&endNewestSaveDateStr.trim().length()>0)
+        return endNewestSaveDateStr.toString()+" 23:59:59";
+        return null;
     }
 
     public void setEndNewestSaveDateStr(String endNewestSaveDateStr) {
@@ -235,6 +239,8 @@ public class DownloadView implements Serializable {
     }
 
     public String getFileName() {
+        if(fileName!=null)
+            return fileName.trim();
         return fileName;
     }
 
@@ -243,6 +249,8 @@ public class DownloadView implements Serializable {
     }
 
     public String getSalor() {
+        if(salor!=null)
+            return salor.trim();
         return salor;
     }
 
@@ -251,6 +259,9 @@ public class DownloadView implements Serializable {
     }
 
     public String getOrderNo() {
+        if(orderNo!=null) {
+            return orderNo.trim();
+        }
         return orderNo;
     }
 
@@ -259,6 +270,8 @@ public class DownloadView implements Serializable {
     }
 
     public String getProjectName() {
+        if(projectName!=null)
+            return projectName.trim();
         return projectName;
     }
 
