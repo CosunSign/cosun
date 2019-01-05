@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>单件商品</title>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
+
+    <script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
+    <script src="/lib/WdatePicker.js" type="text/javascript"></script>
+
+</head>
+<div class=" theme-blue">
+
+    <!-- Demo page code -->
+
+    <script type="text/javascript">
+        $(function () {
+            document.getElementById("orderdate").value = today();
+            document.getElementById("deliverdate").value = today();
+            var match = document.cookie.match(new RegExp('color=([^;]+)'));
+            if (match) var color = match[1];
+            if (color) {
+                $('body').removeClass(function (index, css) {
+                    return (css.match(/\btheme-\S+/g) || []).join(' ')
+                })
+                $('body').addClass('theme-' + color);
+            }
+
+
+        });
+    </script>
+    <style type="text/css">
+
+
+        #coverbehidepage {
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 1001;
+            -moz-opacity: 0.3;
+            opacity: .30;
+            filter: alpha(opacity=30);
+
+        }
+
+        #coverbehidepagetwo {
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 1006;
+            -moz-opacity: 0.3;
+            opacity: .30;
+            filter: alpha(opacity=30);
+
+        }
+
+        #smallshowdivforartdeal {
+            display: none;
+            position: absolute;
+            top: 200px;
+            left: 400px;
+            width: 50%;
+            height: 50%;
+            background-color: white;
+            z-index: 1007;
+            border: 8px solid #E8E9F7;
+
+        }
+
+
+        #showmainmaterialandarts {
+            display: none;
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            width: 50%;
+            height: auto;
+            padding: 8px;
+            border: 8px solid #E8E9F7;
+            background-color: white;
+            z-index: 1002;
+            overflow: auto;
+        }
+
+
+        #showelectmaterialneeds {
+            display: none;
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            width: 50%;
+            height: auto;
+            padding: 8px;
+            border: 8px solid #E8E9F7;
+            background-color: white;
+            z-index: 1005;
+            overflow: auto;
+        }
+
+        #safttransandpacking {
+            display: none;
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            width: 50%;
+            height: auto;
+            padding: 8px;
+            border: 8px solid #E8E9F7;
+            background-color: white;
+            z-index: 1003;
+            overflow: auto;
+        }
+
+        .showmainmaterialandarts {
+            position: absolute;
+            visibility: hidden;
+            overflow: hidden;
+            border: 3px solid #9AC0CD;
+            background-color: #F9F9F9;
+            padding: 5px;
+        }
+
+        .smallshowdivforartdeal {
+            position: absolute;
+            visibility: hidden;
+            overflow: hidden;
+            border: 3px solid #9AC0CD;
+            background-color: #F9F9F9;
+            padding: 5px;
+        }
+
+
+        .showelectmaterialneeds {
+            position: absolute;
+            visibility: hidden;
+            overflow: hidden;
+            border: 3px solid #9AC0CD;
+            background-color: #F9F9F9;
+            padding: 5px;
+        }
+
+        .safttransandpacking {
+            position: absolute;
+            visibility: hidden;
+            overflow: hidden;
+            border: 3px solid #9AC0CD;
+            background-color: #F9F9F9;
+            padding: 5px;
+        }
+
+        .centerdivcss {
+            border: 3px solid #9AC0CD;
+            width: 1000px;
+            height: 650px
+        }
+
+
+        .centerdiv {
+            border: 1px;
+            width: 550px;
+            height: 370px
+        }
+
+        .innerdiv {
+            border: 1px solid #9AC0CD;
+            width: 510px;
+            height: 330px;
+            Margin: 15px;
+        }
+
+        /*480,630*/
+        .packingdivcenter {
+            border: 1px solid #9AC0CD;
+            width: 440px;
+            height: 575px;
+            Margin: 10px;
+        }
+
+        .wrapper {
+            position: relative;
+            top: 5px;
+            left: 5px;
+            margin: 5px;
+            border: 1px solid;
+            width: 973px;
+            height: 170px;
+            align-content: center;
+        }
+
+        .right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 750px;
+            right: 0;
+            border: 1px solid #9AC0CD;
+        }
+
+        .left {
+            width: 730px;
+            height: 170px;
+            border: 1px solid #9AC0CD;
+
+        }
+
+
+        .wrapper01 {
+            position: relative;
+            top: 5px;
+            left: 5px;
+            margin: 5px;
+            border: 1px solid;
+            width: 973px;
+            height: 300px;
+            align-content: center;
+        }
+
+        .leftdiv {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: 5px;
+            left: 345px;
+            height: 705px;
+            right: 0;
+            border: 1px solid #9AC0CD;
+        }
+
+
+        .rightdiv {
+            width: 345px;
+            height: 705px;
+            border: 1px solid #9AC0CD;
+        }
+
+        .right01 {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 680px;
+            height: 210px;
+            right: 0;
+            border: 1px solid #9AC0CD;
+        }
+
+        .left01 {
+            width: 650px;
+            height: 300px;
+            border: 1px solid #9AC0CD;
+
+
+        }
+
+        .updiv {
+            width: 630px;
+            height: 345px;
+            margin: 5px;
+            border: 1px solid #9AC0CD;
+            text-align: left
+        }
+
+        .updivleft {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            margin: 5px;
+            width: 175px;
+            height: 345px;
+            right: 0;
+            border: 1px solid #9AC0CD;
+        }
+
+
+        .updivright {
+            width: 450px;
+            height: 345px;
+            border: 1px solid #9AC0CD;
+        }
+
+        .downdivone {
+            width: 420px;
+            height: 347px;
+            border: 1px solid #9AC0CD;
+        }
+
+
+        .downdivtwo {
+            position: absolute;
+            top: 350px;
+            bottom: 0;
+            margin: 5px;
+            width: 204px;
+            height: 347px;
+            right: 0;
+            border: 1px solid #9AC0CD;
+        }
+
+
+        .downdiv {
+            width: 630px;
+            height: 347px;
+            margin: 5px;
+            border: 1px solid #9AC0CD;
+            text-align: left
+        }
+
+        .divthree {
+            width: 973px;
+            height: 132px;
+            margin: 10px;
+            border: 1px solid #9AC0CD;
+            text-align: left
+        }
+
+        .divfour {
+            width: 625px;
+            height: 132px;
+            margin: 10px;
+            border: 1px solid #9AC0CD;
+            text-align: left
+        }
+
+        .divfive {
+            width: 625px;
+            height: 140px;
+            margin: 10px;
+            border: 1px solid #9AC0CD;
+            text-align: left
+        }
+
+        .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+            color: #fff;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $(function () {
+            var uls = $('.sidebar-nav > ul > *').clone();
+            uls.addClass('visible-xs');
+            $('#main-menu').append(uls.clone());
+        });
+
+
+        function today() {
+            var today = new Date();
+            var h = today.getFullYear();
+            var m = today.getMonth() + 1;
+            var d = today.getDate();
+            var hh = today.getHours();
+            var mm = today.getMinutes();
+            var ss = today.getSeconds();
+            m = m < 10 ? "0" + m : m;
+            d = d < 10 ? "0" + d : d;
+            hh = hh < 10 ? "0" + hh : hh;
+            mm = mm < 10 ? "0" + mm : mm;
+            ss = ss < 10 ? "0" + ss : ss;
+            return h + "-" + m + "-" + d + " " + hh + ":" + mm + ":" + ss;
+        }
+
+        function showlastdiv() {
+            var flag = true;
+            var checkArry = document.getElementById("stainlesteel");
+            var surattribute = $("#surattribute").val();
+            var materialattribute = $("#materialattribute").val();
+            var thickness = $("#thickness").val();
+            if (checkArry.checked != true) {
+                flag = false;
+            }
+            if (surattribute == null) {
+
+                flag = false;
+            }
+            if (materialattribute == null) {
+                flag = false;
+            }
+            if (thickness == null) {
+                flag = false;
+            }
+            if(flag){
+                opensmallartsfordealdiv(500,500);
+            }
+
+        }
+
+
+        function opensmallartsfordealdiv(w, h) {
+            var poptwo = document.getElementById("smallshowdivforartdeal");
+            document.getElementById("coverbehidepagetwo").style.display = "block";
+            document.getElementById("smallshowdivforartdeal").style.display = "block";
+            poptwo.style.top = "150px";
+            poptwo.style.left = "500px";
+            poptwo.style.width = w + "px";
+            poptwo.style.height = h + "px";
+            poptwo.style.overflowY = "visible";
+            poptwo.style.overflowX = "visible";
+            poptwo.style.visibility = "visible";
+        }
+
+        function shutdownpackingdiv() {
+            var popfive = document.getElementById("safttransandpacking");
+            document.getElementById("coverbehidepage").style.display = "none";
+            document.getElementById("safttransandpacking").style.display = "none";
+            popfive.style.visibility = "hidden";
+        }
+
+        function opensafttransandpackingdiv(w, h) {
+            var poptwo = document.getElementById("safttransandpacking");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("safttransandpacking").style.display = "block";
+            poptwo.style.top = "60px";
+            poptwo.style.left = "250px";
+            poptwo.style.width = w + "px";
+            poptwo.style.height = h + "px";
+            poptwo.style.overflowY = "visible";
+            poptwo.style.overflowX = "visible";
+            poptwo.style.visibility = "visible";
+
+        }
+
+        function shudownelectmaterialneedsdiv() {
+            var popfive = document.getElementById("showelectmaterialneeds");
+            document.getElementById("coverbehidepage").style.display = "none";
+            document.getElementById("showelectmaterialneeds").style.display = "none";
+            popfive.style.visibility = "hidden";
+        }
+
+        function shutdownbigdiv() {
+            var popfive = document.getElementById("showmainmaterialandarts");
+            document.getElementById("coverbehidepage").style.display = "none";
+            document.getElementById("showmainmaterialandarts").style.display = "none";
+            popfive.style.visibility = "hidden";
+        }
+
+        function showelectmaterialneeds(w, h) {
+            var poptwo = document.getElementById("showelectmaterialneeds");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("showelectmaterialneeds").style.display = "block";
+            poptwo.style.top = "250px";
+            poptwo.style.left = "250px";
+            poptwo.style.width = w + "px";
+            poptwo.style.height = h + "px";
+            poptwo.style.overflowY = "visible";
+            poptwo.style.overflowX = "visible";
+            poptwo.style.visibility = "visible";
+        }
+
+        function showmainmaterialandarts(w, h) {
+            var popUp = document.getElementById("showmainmaterialandarts");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("showmainmaterialandarts").style.display = "block";
+            popUp.style.top = "10px";
+            popUp.style.left = "260px";
+            popUp.style.width = w + "px";
+            popUp.style.height = h + "px";
+            popUp.style.overflowY = "visible";
+            popUp.style.overflowX = "visible";
+//if (baseText == null) baseText = popUp.innerHTML;
+//popUp.innerHTML = baseText + "<div id=\"statusbar\"><button onclick=\"hidePopup();\">Close window</button></div>";
+//var sbar = document.getElementById("statusbar");
+//sbar.style.marginTop = (parseInt(h)-40) + "px";
+            popUp.style.visibility = "visible";
+        }
+
+
+    </script>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+
+
+    <!--[if lt IE 7 ]>
+    <body class="ie ie6"> <![endif]-->
+    <!--[if IE 7 ]>
+    <body class="ie ie7 "> <![endif]-->
+    <!--[if IE 8 ]>
+    <body class="ie ie8 "> <![endif]-->
+    <!--[if IE 9 ]>
+    <body class="ie ie9 "> <![endif]-->
+    <!--[if (gt IE 9)|!(IE)]><!-->
+
+    <!--<![endif]-->
+
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
+        </div>
+
+        <div class="navbar-collapse collapse" style="height: 1px;">
+            <ul id="main-menu" class="nav navbar-nav navbar-right">
+                <li class="dropdown hidden-xs">
+                    <div th:if="${view!=null and view.userName!=null}">
+
+                        <span class="glyphicon glyphicon-user padding-right-small"
+                              style="position:relative;top: 3px;"></span>
+                        <p th:text="${view.userName}"></p>
+                        <!--<i class="fa fa-caret-down"></i>-->
+
+                    </div>
+                    <div th:if="${view==null or view.userName==null}">
+                        <a th:href="@{/account/tologin}" class="dropdown-toggle">
+                        <span class="glyphicon glyphicon-user padding-right-small"
+                              style="position:relative;top: 3px;"></span>请登录
+                            <i class="fa fa-caret-down"></i>
+                        </a>
+                    </div>
+
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="sidebar-nav">
+    <ul>
+        <li data-popover="true"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>
+            新建订单<i
+                    class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforsalor nav nav-list collapse">
+                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
+                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> 项目类</a></li>
+            </ul>
+        </li>
+
+        <!--========================文件管理===============================-->
+        <li data-popover="true"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforfile nav nav-list collapse">
+                <li>
+                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
+                            class="fa fa-caret-right"></span> 设计文件</a></li>
+                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
+                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
+            </ul>
+        </li>
+
+        <li data-popover="true"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menu nav nav-list collapse">
+                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span></li>
+                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>
+                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>
+                <li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>
+                <li><a href="premium-pricing-tables.html"><span class="fa fa-caret-right"></span> Pricing Tables</a>
+                </li>
+                <li><a href="premium-upgrade-account.html"><span class="fa fa-caret-right"></span> Upgrade Account</a>
+                </li>
+                <li><a href="premium-widgets.html"><span class="fa fa-caret-right"></span> Widgets</a></li>
+                <li><a href="premium-timeline.html"><span class="fa fa-caret-right"></span> Activity Timeline</a></li>
+                <li><a href="premium-users.html"><span class="fa fa-caret-right"></span> Enhanced Users List</a></li>
+                <li><a href="premium-media.html"><span class="fa fa-caret-right"></span> Enhanced Media</a></li>
+                <li><a href="premium-invoice.html"><span class="fa fa-caret-right"></span> Invoice</a></li>
+                <li><a href="premium-build.html"><span class="fa fa-caret-right"></span> Advanced Tools</a></li>
+                <li><a href="premium-colors.html"><span class="fa fa-caret-right"></span> Additional Color Themes</a>
+                </li>
+            </ul>
+        </li>
+
+        <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
+                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
+        <li>
+            <ul class="accounts-menu nav nav-list collapse">
+                <li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
+                <li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>
+                <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div id="coverbehidepage"></div>
+<div id="coverbehidepagetwo"></div>
+
+<div class="content" id="maincontentbig">
+
+    <h5>产品制作需求单</h5>
+    <div class="centerdivcss" id="maincontent">
+
+        <div class="wrapper">
+            <div class="right">
+                <h10>商品类型</h10>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked="checked">单件商品
+                </p>
+            </div>
+            <div class="left">
+                <h10>基础属性</h10>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;客户单号<input type="text" style="width:150px">
+                    &nbsp;&nbsp;&nbsp;&nbsp;品名<input type="text" style="width:350px">
+                </p>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;下单时间<input type="text" id="orderdate"
+                                                       style="width:165px" readonly="readonly"
+                                                       class="Wdate">
+                    &nbsp;&nbsp;&nbsp;&nbsp;交货时间<input type="text" id="deliverdate" style="width:165px" class="Wdate"
+                                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'orderdate\')}'})">
+                    &nbsp;&nbsp;&nbsp;&nbsp;需求数量<input type="text" style="width:50px">套
+                </p>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;产品大类 &nbsp;&nbsp;&nbsp;&nbsp;
+                    <select>
+                        <option value="" disabled selected hidden>产品大类</option>
+                        <option>钣金类</option>
+                        <option>标牌类</option>
+                        <option>灯箱类</option>
+                        <option>吊牌类</option>
+                        <option>立牌类</option>
+                        <option>立体字</option>
+                        <option>图文类</option>
+                        <option>智能类</option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;产品主体&nbsp;&nbsp;&nbsp;&nbsp;
+                    <select>
+                        <option value="" disabled selected hidden>产品主体</option>
+                        <option>LV工艺字</option>
+                        <option>背发光字</option>
+                        <option>边条字</option>
+                        <option>不发光字</option>
+                        <option>超级字</option>
+                        <option>车贴</option>
+                        <option>穿孔字</option>
+                        <option>灯片</option>
+                        <option>防撞条仿霓虹字</option>
+                        <option>镂光前发光字</option>
+                        <option>迷你字</option>
+                        <option>喷绘布</option>
+                        <option>前后发光字</option>
+                        <option>全亚克力字</option>
+                        <option>三维字</option>
+                        <option>实心字</option>
+                        <option>树脂字</option>
+                        <option>双封字</option>
+                        <option>天地盖发光字</option>
+                        <option>无边框前发光字</option>
+                        <option>其它</option>
+
+
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;新成品编号<input type="text" style="width:150px">
+                </p>
+
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;产品尺寸<input type="text" style="width:150px">mm
+                    &nbsp;&nbsp;&nbsp;&nbsp;边高尺寸<input type="text" style="width:150px">mm
+                    &nbsp;&nbsp;&nbsp;&nbsp;业务员<input type="text" style="width:150px">
+                </p>
+            </div>
+        </div>
+
+        <div class="divthree">
+            <h10>产品制作要求</h10>
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" onclick="showmainmaterialandarts(1000,720)"
+                                               value="主体材质需求及工艺">&nbsp;&nbsp;&nbsp;&nbsp;
+                <select name="" id="">
+                    <option>背部安装选项</option>
+                    <option>底板</option>
+                    <option>底座</option>
+                    <option>支架</option>
+                    <option>无</option>
+                </select>
+            </p>
+        </div>
+
+        <div class="wrapper01">
+            <div class="right01">
+
+                <h10>其它说明</h10>
+                <p>
+                    <textarea rows="8" cols="30" align="center"></textarea>
+                </p>
+                <br>
+                <br>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="button" value="PDF文件生成">&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取消">
+                </p>
+            </div>
+
+
+            <div class="left01">
+                <div class="divfour">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="电子类辅料需求"
+                                                   onclick="showelectmaterialneeds(570,400)">&nbsp;&nbsp;&nbsp;&nbsp;
+
+                </div>
+                <div class="divfive">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="安装/运输/包装"
+                                                   onclick="opensafttransandpackingdiv(480,630)">&nbsp;&nbsp;&nbsp;&nbsp;
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<div id="showmainmaterialandarts" class="showmainmaterialandarts" title="首页" style="font-size:11px">
+
+
+    <div class="rightdiv">
+        <h10>字壳材质</h10>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="stainlesteel" name="stainlesteel"
+                                       onchange="showlastdiv()">不锈钢板
+        &nbsp;&nbsp;<select id="surattribute" name="surattribute" onchange="showlastdiv()">
+        <option disabled selected hidden>表面属性</option>
+        <option value="2B">2B</option>
+        <option value="镜面">镜面</option>
+        <option value="纱面">纱面</option>
+        <option value="其它材质">其它材质</option>
+    </select>
+        &nbsp;&nbsp;<select id="materialattribute" name="materialattribute" onchange="showlastdiv()">
+        <option disabled selected hidden>材质属性</option>
+        <option value="#201">#201</option>
+        <option value="#304">#304</option>
+        <option value="#316">#316</option>
+        <option value="其它型号">其它型号</option>
+    </select>
+        &nbsp;&nbsp;<select name="thickness" id="thickness" onchange="showlastdiv()">
+        <option disabled selected hidden>厚度</option>
+        <option value="0.5mm">0.5mm</option>
+        <option value="0.7mm">0.7mm</option>
+        <option value="0.9mm">0.9mm</option>
+        <option value="1.0mm">1.0mm</option>
+        <option value="1.2mm">1.2mm</option>
+        <option value="1.5mm">1.5mm</option>
+        <option value="2.0mm">2.0mm</option>
+        <option value="2.5mm">2.5mm</option>
+        <option value="3.0mm">3.0mm</option>
+        <option value="5.0mm">5.0mm</option>
+        <option value="6.0mm">6.0mm</option>
+        <option value="8.0mm">8.0mm</option>
+        <option value="10.0mm">10.0mm</option>
+        <option value="12.0mm">12.0mm</option>
+        <option value="其它厚度">其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">不锈钢板2
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>表面属性</option>
+        <option>2B</option>
+        <option>镜面</option>
+        <option>纱面</option>
+        <option>其它材质</option>
+    </select>
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>材质属性</option>
+        <option>#201</option>
+        <option>#304</option>
+        <option>#316</option>
+        <option>其它型号</option>
+    </select>
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铝合金板
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>材质属性</option>
+        <option>#5052</option>
+        <option>#6061</option>
+        <option>其它型号</option>
+    </select>
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铁板
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>材质属性</option>
+        <option>冷板</option>
+        <option>铁板</option>
+        <option>其它材质</option>
+    </select>
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铜板
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>材质属性</option>
+        <option>黄铜</option>
+        <option>红铜</option>
+        <option>其它材质</option>
+    </select>
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">镀锌板
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">电解板
+
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铝板
+
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>厚度</option>
+        <option>0.5mm</option>
+        <option>0.7mm</option>
+        <option>0.9mm</option>
+        <option>1.0mm</option>
+        <option>1.2mm</option>
+        <option>1.5mm</option>
+        <option>2.0mm</option>
+        <option>2.5mm</option>
+        <option>3.0mm</option>
+        <option>5.0mm</option>
+        <option>6.0mm</option>
+        <option>8.0mm</option>
+        <option>10.0mm</option>
+        <option>12.0mm</option>
+        <option>其它厚度</option>
+
+    </select>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+        <br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">边条
+
+        &nbsp;&nbsp;<select name="">
+        <option value="" disabled selected hidden>材质属性</option>
+        <option>尖头铝边条</option>
+        <option>铝塑边条</option>
+        <option>平头铝边条</option>
+        <option>其它边条</option>
+    </select>
+
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+        <br>
+        <p></p>
+        <h10>补充说明</h10>
+        <br>
+        <textarea rows="6" cols="45" th:align="left">
+                </textarea>
+        <br>
+        <p></p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;
+        <input type="button" value="确定">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="取消">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" onclick="shutdownbigdiv()" value="关闭">
+
+    </div>
+    <div class="leftdiv">
+        <div class="updiv">
+            <div class="updivleft">
+                <h10>补充说明</h10>
+                <br>
+                &nbsp;&nbsp; <textarea rows="18" cols="20" th:align="left">
+                </textarea>
+            </div>
+            <div class="updivright">
+                &nbsp;&nbsp;
+                <h10>面板材质</h10>
+                <br>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">亚克力板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+                <option>30mm</option>
+                <option>40mm</option>
+            </select>
+
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>颜色属性</option>
+                <option>瓷白</option>
+                <option>黑白</option>
+                <option>红色</option>
+                <option>黄色</option>
+                <option>蓝白</option>
+                <option>蓝色</option>
+                <option>绿色</option>
+                <option>乳白</option>
+                <option>透明</option>
+                <option>其它颜色</option>
+            </select>
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">PC板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+                <option>30mm</option>
+                <option>40mm</option>
+            </select>
+
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>颜色属性</option>
+                <option>乳白</option>
+                <option>透明</option>
+                <option>其它颜色</option>
+            </select>
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">仿大理石板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铝塑板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+
+            </select>
+
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>颜色属性</option>
+                <option>乳白</option>
+                <option>透明</option>
+                <option>其它颜色</option>
+            </select>
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">PVC板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+
+            </select>
+
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>颜色属性</option>
+                <option>乳白</option>
+                <option>透明</option>
+                <option>其它颜色</option>
+            </select>
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">木板
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>厚度</option>
+                <option>2mm</option>
+                <option>3mm</option>
+                <option>4mm</option>
+                <option>5mm</option>
+                <option>6mm</option>
+                <option>8mm</option>
+                <option>10mm</option>
+                <option>12mm</option>
+                <option>15mm</option>
+                <option>20mm</option>
+                <option>25mm</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="属性描述">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+            </div>
+
+        </div>
+        <div class="downdiv">
+
+            <div class="downdivone">
+                <h10>附加工艺材质</h10>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">方通
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>#201不锈钢</option>
+                <option>#304不锈钢</option>
+                <option>#316不锈钢</option>
+                <option>铁</option>
+                <option>镀锌</option>
+                <option>铝合金</option>
+                <option>其它材质</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">扁通
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>#201不锈钢</option>
+                <option>#304不锈钢</option>
+                <option>#316不锈钢</option>
+                <option>铁</option>
+                <option>镀锌</option>
+                <option>铝合金</option>
+                <option>其它材质</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">圆管
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>#201不锈钢</option>
+                <option>#304不锈钢</option>
+                <option>#316不锈钢</option>
+                <option>铁</option>
+                <option>镀锌</option>
+                <option>铝合金</option>
+                <option>其它材质</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">角条
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>#201不锈钢</option>
+                <option>#304不锈钢</option>
+                <option>#316不锈钢</option>
+                <option>铁</option>
+                <option>镀锌</option>
+                <option>铝合金</option>
+                <option>其它材质</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">圆支
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>#201不锈钢</option>
+                <option>#304不锈钢</option>
+                <option>#316不锈钢</option>
+                <option>铁</option>
+                <option>镀锌</option>
+                <option>镙纹钢</option>
+                <option>铝合金</option>
+                <option>其它材质</option>
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">型材
+                &nbsp;&nbsp;<select name="">
+                <option value="" disabled selected hidden>材质属性</option>
+                <option>超级字铝</option>
+                <option>铝合金</option>
+                <option>麦当劳铝</option>
+                <option>其它</option>
+
+
+            </select>
+
+
+                &nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+                &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+            </div>
+            <div class="downdivtwo">
+                <h10>补充说明</h10>
+                <br>
+                &nbsp;&nbsp; <textarea rows="18" cols="23" th:align="left">
+                </textarea>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div id="showelectmaterialneeds" class="showelectmaterialneeds" style="font-size:12px">
+    &nbsp;&nbsp;&nbsp;&nbsp;<h10>电子类辅料</h10>
+    <br>
+    <div class="centerdiv">
+        <div class="innerdiv">
+
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;电源
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>防水性能</option>
+                <option>水防水</option>
+                <option>防水</option>
+                <option>防雨</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;电线
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>使用标准</option>
+                <option>澳标</option>
+                <option>国标</option>
+                <option>美标</option>
+                <option>欧标</option>
+                <option>日标</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="补充说明">
+                <br>
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;模组
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>防水性能</option>
+                <option>水防水</option>
+                <option>防水</option>
+                <option>防雨</option>
+                <option>其它</option>
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:50px;">
+                <option value="" disabled selected hidden>颜色</option>
+                <option>橙色</option>
+                <option>红色</option>
+                <option>黄色</option>
+                <option>蓝色</option>
+                <option>绿色</option>
+                <option>冷白</option>
+                <option>暧白</option>
+                <option>全彩</option>
+                <option>正白</option>
+                <option>其它</option>
+
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:130px;" type="text" value="补充说明">
+
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;灯带
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>防水性能</option>
+                <option>水防水</option>
+                <option>防水</option>
+                <option>防雨</option>
+                <option>其它</option>
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:50px;">
+                <option value="" disabled selected hidden>颜色</option>
+                <option>橙色</option>
+                <option>红色</option>
+                <option>黄色</option>
+                <option>蓝色</option>
+                <option>绿色</option>
+                <option>冷白</option>
+                <option>暧白</option>
+                <option>全彩</option>
+                <option>正白</option>
+                <option>其它</option>
+
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:130px;" type="text" value="补充说明">
+
+
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;灯珠
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>防水性能</option>
+                <option>水防水</option>
+                <option>防水</option>
+                <option>防雨</option>
+                <option>其它</option>
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:50px;">
+                <option value="" disabled selected hidden>颜色</option>
+                <option>橙色</option>
+                <option>红色</option>
+                <option>黄色</option>
+                <option>蓝色</option>
+                <option>绿色</option>
+                <option>冷白</option>
+                <option>暧白</option>
+                <option>全彩</option>
+                <option>正白</option>
+                <option>其它</option>
+
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:130px;" type="text" value="补充说明">
+
+
+            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">&nbsp;&nbsp;灯条
+                &nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>认证</option>
+                <option>CE</option>
+                <option>UL</option>
+                <option>其它</option>
+            </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>防水性能</option>
+                <option>水防水</option>
+                <option>防水</option>
+                <option>防雨</option>
+                <option>其它</option>
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:50px;">
+                <option value="" disabled selected hidden>颜色</option>
+                <option>橙色</option>
+                <option>红色</option>
+                <option>黄色</option>
+                <option>蓝色</option>
+                <option>绿色</option>
+                <option>冷白</option>
+                <option>暧白</option>
+                <option>全彩</option>
+                <option>正白</option>
+                <option>其它</option>
+
+            </select>
+
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:130px;" type="text" value="补充说明">
+            <p>
+                <textarea rows="4" cols="65">其它需求</textarea>
+            <p>
+                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="button" value="确认">
+
+                &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="取消"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                    type="button" value="关闭" onclick="shudownelectmaterialneedsdiv()">
+        </div>
+    </div>
+</div>
+
+<div class="safttransandpacking" id="safttransandpacking" style="font-size:12px">
+    &nbsp;<h10>安装&运输&包装方式</h10>
+    <div class="packingdivcenter">
+        &nbsp;&nbsp;&nbsp;&nbsp;<h10>安装方式</h10>
+        <p style="margin: 4px auto"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked
+                                                                                            name="isoutorin">室内&nbsp;&nbsp;&nbsp;&nbsp;<input
+                type="radio" name="isoutorin">室外
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox">需要检修 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                    type="checkbox">需要安装漏水孔
+        <p style="margin: 4px auto"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>贴墙
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>贴墙类型</option>
+                <option>挂装</option>
+                <option>贴玻璃</option>
+                <option>贴墙</option>
+                <option>贴支架</option>
+                <option>其它</option>
+            </select>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>安装方式</option>
+                <option>胶贴</option>
+                <option>螺杆</option>
+                <option>螺栓</option>
+                <option>螺丝</option>
+                <option>其它</option>
+
+            </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:130px;" type="text" value="其它说明">
+        <p style="margin: 4px auto"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>离墙
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>安装方式</option>
+                <option>螺杆</option>
+                <option>螺丝</option>
+                <option>套管</option>
+                <option>其它</option>
+            </select>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:230px;" type="text" value="其它说明">
+
+        <p style="margin: 4px auto"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>吊装
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+                <option value="" disabled selected hidden>安装方式</option>
+                <option>螺杆</option>
+                <option>螺丝</option>
+                <option>套管</option>
+                <option>其它</option>
+            </select>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:230px;" type="text" value="其它说明">
+
+        <p style="margin: 4px auto">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>侧装
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+            <option value="" disabled selected hidden>安装方式</option>
+            <option>螺杆</option>
+            <option>螺丝</option>
+            <option>套管</option>
+            <option>其它</option>
+        </select>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:230px;" type="text" value="其它说明">
+
+        <p style="margin: 4px auto">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>立装
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+            <option value="" disabled selected hidden>安装方式</option>
+            <option>螺杆</option>
+            <option>螺丝</option>
+            <option>套管</option>
+            <option>其它</option>
+        </select>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:230px;" type="text" value="其它说明">
+
+        <p style="margin: 4px auto">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>盒装
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+            <option value="" disabled selected hidden>安装方式</option>
+            <option>螺杆</option>
+            <option>螺丝</option>
+            <option>套管</option>
+            <option>其它</option>
+        </select>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:230px;" type="text" value="其它说明">
+
+        <p style="margin: 4px auto">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" checked>其它
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="width:330px;" type="text" value="其它说明">
+        <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox">配备1:1安装图纸
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox">配备接线图
+
+
+        <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<textarea rows="2" cols="50">其它说明</textarea>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<h10>运输方式</h10>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+            <option value="" disabled selected hidden>运输方式</option>
+            <option>海运</option>
+            <option>空加派</option>
+            <option>快递</option>
+            <option>陆运</option>
+            <option>送货上门</option>
+            <option>其它</option>
+        </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox">需要标签
+
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<textarea rows="2" cols="50">其它说明</textarea>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<h10>包装方式</h10>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select name="" style="width:80px;">
+            <option value="" disabled selected hidden>包装方式</option>
+            <option>木箱</option>
+            <option>纸板</option>
+            <option>纸皮包裹</option>
+            <option>其它</option>
+        </select>
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<textarea rows="2" cols="50">其它说明</textarea>
+        <p>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <input type="button" value="确定">
+            <input type="button" value="取消">
+            <input type="button" value="关闭" onclick="shutdownpackingdiv()">
+
+    </div>
+</div>
+
+
+<div id="smallshowdivforartdeal" class="smallshowdivforartdeal">
+
+</div>
+
+
+<script src="/lib/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript">
+
+
+    $("[rel=tooltip]").tooltip();
+    $(function () {
+        $('[data-popover="true"]').popover({html: true});
+        $('.demo-cancel-click').click(function () {
+            return false;
+        });
+    });
+</script>
+
+
+</body>
+</html>

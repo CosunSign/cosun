@@ -137,12 +137,28 @@
 
 <div class="sidebar-nav">
     <ul>
-        <li><a href="#" data-target=".dashboard-menu" class="nav-header" data-toggle="collapse"><i
-                class="fa fa-fw fa-dashboard"></i> 文件<i class="fa fa-collapse"></i></a></li>
+        <li data-popover="true"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
+                class="fa fa-collapse"></i></a></li>
         <li>
-            <ul class="dashboard-menu nav nav-list collapse in">
+            <ul class="premium-menuforsalor nav nav-list collapse">
+                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
+                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> 项目类</a></li>
+            </ul>
+        </li>
+
+        <!--========================文件管理===============================-->
+        <li data-popover="true"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforfile nav nav-list collapse">
                 <li>
-                    <a th:href="@{/fileupdown/toprivilegemanagepage(userName=${view.userName},password=${view.password})}"><span
+                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
                             class="fa fa-caret-right"></span> 设计文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
                 <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>

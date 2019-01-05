@@ -43,7 +43,7 @@ public class AccountController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
+    @RequestMapping(value = "/login")
     public ModelAndView login(@ModelAttribute(value="view") DownloadView view, HttpSession session) throws Exception{
         ModelAndView mav;
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(),view.getPassword());
