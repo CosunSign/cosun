@@ -18,6 +18,8 @@
 
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
+    <link rel="stylesheet" type="text/css" href="/cssforhtml/singleordercss.css">
+    <script language="javascript" src="/jsforhtml/singleorderjs.js"></script>
     <script src="/lib/WdatePicker.js" type="text/javascript"></script>
 
 </head>
@@ -42,324 +44,6 @@
         });
     </script>
     <style type="text/css">
-
-
-        #coverbehidepage {
-            display: none;
-            position: absolute;
-            top: 0%;
-            left: 0%;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 1001;
-            -moz-opacity: 0.3;
-            opacity: .30;
-            filter: alpha(opacity=30);
-
-        }
-
-        #coverbehidepagetwo {
-            display: none;
-            position: absolute;
-            top: 0%;
-            left: 0%;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 1006;
-            -moz-opacity: 0.3;
-            opacity: .30;
-            filter: alpha(opacity=30);
-
-        }
-
-        #lastsmalldivtable {
-            border-collapse: separate;
-            border-spacing: 3px;
-        }
-
-        #smallshowdivforartdeal {
-            display: none;
-            position: absolute;
-            top: 200px;
-            left: 400px;
-            width: 50%;
-            height: 50%;
-            background-color: white;
-            z-index: 1007;
-            border: 8px solid #E8E9F7;
-
-        }
-
-
-        #showmainmaterialandarts {
-            display: none;
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            width: 50%;
-            height: auto;
-            padding: 8px;
-            border: 8px solid #E8E9F7;
-            background-color: white;
-            z-index: 1002;
-            overflow: auto;
-        }
-
-
-        #showelectmaterialneeds {
-            display: none;
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            width: 50%;
-            height: auto;
-            padding: 8px;
-            border: 8px solid #E8E9F7;
-            background-color: white;
-            z-index: 1005;
-            overflow: auto;
-        }
-
-        #safttransandpacking {
-            display: none;
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            width: 50%;
-            height: auto;
-            padding: 8px;
-            border: 8px solid #E8E9F7;
-            background-color: white;
-            z-index: 1003;
-            overflow: auto;
-        }
-
-        .showmainmaterialandarts {
-            position: absolute;
-            visibility: hidden;
-            overflow: hidden;
-            border: 3px solid #9AC0CD;
-            background-color: #F9F9F9;
-            padding: 5px;
-        }
-
-        .smallshowdivforartdeal {
-            position: absolute;
-            visibility: hidden;
-            overflow: hidden;
-            border: 3px solid #9AC0CD;
-            background-color: #F9F9F9;
-            padding: 5px;
-        }
-
-
-        .showelectmaterialneeds {
-            position: absolute;
-            visibility: hidden;
-            overflow: hidden;
-            border: 3px solid #9AC0CD;
-            background-color: #F9F9F9;
-            padding: 5px;
-        }
-
-        .safttransandpacking {
-            position: absolute;
-            visibility: hidden;
-            overflow: hidden;
-            border: 3px solid #9AC0CD;
-            background-color: #F9F9F9;
-            padding: 5px;
-        }
-
-        .centerdivcss {
-            border: 3px solid #9AC0CD;
-            width: 1000px;
-            height: 650px
-        }
-
-
-        .centerdiv {
-            border: 1px;
-            width: 550px;
-            height: 370px
-        }
-
-        .innerdiv {
-            border: 1px solid #9AC0CD;
-            width: 510px;
-            height: 330px;
-            Margin: 15px;
-        }
-
-        /*480,630*/
-        .packingdivcenter {
-            border: 1px solid #9AC0CD;
-            width: 440px;
-            height: 575px;
-            Margin: 10px;
-        }
-
-        .inntersmallshowdivforartdeal {
-            border: 1px solid #9AC0CD;
-            width: 455px;
-            height: 450px;
-            Margin: 5px;
-            background-color: #F9F9F9;
-        }
-
-        .wrapper {
-            position: relative;
-            top: 5px;
-            left: 5px;
-            margin: 5px;
-            border: 1px solid;
-            width: 973px;
-            height: 170px;
-            align-content: center;
-        }
-
-        .right {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 750px;
-            right: 0;
-            border: 1px solid #9AC0CD;
-        }
-
-        .left {
-            width: 730px;
-            height: 170px;
-            border: 1px solid #9AC0CD;
-
-        }
-
-
-        .wrapper01 {
-            position: relative;
-            top: 5px;
-            left: 5px;
-            margin: 5px;
-            border: 1px solid;
-            width: 973px;
-            height: 300px;
-            align-content: center;
-        }
-
-        .leftdiv {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            margin: 5px;
-            left: 345px;
-            height: 705px;
-            right: 0;
-            border: 1px solid #9AC0CD;
-        }
-
-
-        .rightdiv {
-            width: 345px;
-            height: 705px;
-            border: 1px solid #9AC0CD;
-        }
-
-        .right01 {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 680px;
-            height: 210px;
-            right: 0;
-            border: 1px solid #9AC0CD;
-        }
-
-        .left01 {
-            width: 650px;
-            height: 300px;
-            border: 1px solid #9AC0CD;
-
-
-        }
-
-        .updiv {
-            width: 630px;
-            height: 345px;
-            margin: 5px;
-            border: 1px solid #9AC0CD;
-            text-align: left
-        }
-
-        .updivleft {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            margin: 5px;
-            width: 175px;
-            height: 345px;
-            right: 0;
-            border: 1px solid #9AC0CD;
-        }
-
-
-        .updivright {
-            width: 450px;
-            height: 345px;
-            border: 1px solid #9AC0CD;
-        }
-
-        .downdivone {
-            width: 420px;
-            height: 347px;
-            border: 1px solid #9AC0CD;
-        }
-
-
-        .downdivtwo {
-            position: absolute;
-            top: 350px;
-            bottom: 0;
-            margin: 5px;
-            width: 204px;
-            height: 347px;
-            right: 0;
-            border: 1px solid #9AC0CD;
-        }
-
-
-        .downdiv {
-            width: 630px;
-            height: 347px;
-            margin: 5px;
-            border: 1px solid #9AC0CD;
-            text-align: left
-        }
-
-        .divthree {
-            width: 973px;
-            height: 132px;
-            margin: 10px;
-            border: 1px solid #9AC0CD;
-            text-align: left
-        }
-
-        .divfour {
-            width: 625px;
-            height: 132px;
-            margin: 10px;
-            border: 1px solid #9AC0CD;
-            text-align: left
-        }
-
-        .divfive {
-            width: 625px;
-            height: 140px;
-            margin: 10px;
-            border: 1px solid #9AC0CD;
-            text-align: left
-        }
 
         .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
             color: #fff;
@@ -389,490 +73,6 @@
             ss = ss < 10 ? "0" + ss : ss;
             return h + "-" + m + "-" + d + " " + hh + ":" + mm + ":" + ss;
         }
-
-        function trimstr(str) { //删除左右两端的空格
-            if (str != null) {
-                return str.replace(/(^\s*)|(\s*$)/g, "");
-            }
-            return "";
-        }
-
-        function submitartdealdatafail(alertip, submitflag) {
-            alert(alertip);
-
-        }
-
-        function submitartdealdata() {
-            var submitflag = true;
-            var alerttip = "";
-            var flag = false;
-            var showmessage = "";
-            var tipmessage = "颜色值等信息补充";
-            //
-            var needrefersamplestr = document.getElementById("needrefersample");//复选框
-
-            if (needrefersamplestr.checked == true) {
-                flag = true;
-                showmessage += needrefersamplestr.value + " ";
-            }
-            var uvprintstr = document.getElementById("uvprint");
-            var uvprintplusmessagestr = $("#uvprintplusmessage").val();
-            if (uvprintstr.checked == true) {
-                flag = true;
-                showmessage += uvprintstr.value + " ";
-                if (tipmessage == uvprintplusmessagestr || trimstr(uvprintplusmessagestr).length <= 0) {
-                    alerttip = "请为UV选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(uvprintplusmessagestr) + " ";
-            }
-
-            var polishingstr = document.getElementById("polishing");//复选框
-            var sandblastingstr = document.getElementById("sandblasting");//复选框
-            var doruststr = document.getElementById("dorust");//复选框
-            var silkprintstr = document.getElementById("silkprint");//复选框
-            var silkprintplusmesstr = $("#silkprintplusmes").val();
-            if (polishingstr.checked == true) {
-                flag = true;
-                showmessage += polishingstr.value + " ";
-            }
-            if (sandblastingstr.checked == true) {
-                flag = true;
-                showmessage += sandblastingstr.value + " ";
-            }
-            if (doruststr.checked == true) {
-                flag = true;
-                showmessage += doruststr.value + " ";
-            }
-
-            if (silkprintstr.checked == true) {
-                flag = true;
-                showmessage += silkprintstr.value + " ";
-                if (tipmessage == silkprintplusmesstr || trimstr(silkprintplusmesstr).length <= 0) {
-                    alerttip = "请为丝印打印选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(silkprintplusmesstr) + " ";
-            }
-
-            var wiredrawlinesstr = $('#wiredrawlines option:selected').val();
-            var wiredrawingstr = document.getElementById("wiredrawing");//复选框
-            if (wiredrawingstr.checked == true) {
-                flag = true;
-                showmessage += wiredrawingstr.value + " ";
-                if (wiredrawlinesstr == "拉丝纹路" || wiredrawlinesstr==0) {
-                    alerttip = "请为拉丝选择纹路."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += wiredrawlinesstr + " ";
-            }
-
-            var watertranprintplusmesstr = $("#watertranprintplusmes").val();
-            var watertranprintstr = document.getElementById("watertranprint");//复选框
-            if (watertranprintstr.checked == true) {
-                flag = true;
-                showmessage += watertranprintstr.value + " ";
-                if (tipmessage == watertranprintplusmesstr || trimstr(watertranprintplusmesstr).length <= 0) {
-                    alerttip = "请为水转印选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(watertranprintplusmesstr) + " ";
-            }
-
-            var bakingpaintplusmesstr = $("#bakingpaintplusmes").val();
-            var bakingpaintstr = document.getElementById("bakingpaint");//复选框
-            if (bakingpaintstr.checked == true) {
-                flag = true;
-                showmessage += bakingpaintstr.value + " ";
-                if (tipmessage == bakingpaintplusmesstr || trimstr(bakingpaintplusmesstr).length <= 0) {
-                    alerttip = "请为烤漆选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(bakingpaintplusmesstr) + " ";
-            }
-
-            var hottransprintplusmesstr = $("#hottransprintplusmes").val();
-            var hottransprintstr = document.getElementById("hottransprint");//复选框
-            if (hottransprintstr.checked == true) {
-                flag = true;
-                showmessage += hottransprintstr.value + " ";
-                if (tipmessage == hottransprintplusmesstr || trimstr(hottransprintplusmesstr).length <= 0) {
-                    alerttip = "请为热转印选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(hottransprintplusmesstr) + " ";
-            }
-
-            var dustplusmessagestr = $("#dustplusmessage").val();
-            var dustingstr = document.getElementById("dusting");//复选框
-            if (dustingstr.checked == true) {
-                flag = true;
-                showmessage += dustingstr.value + " ";
-                if (tipmessage == dustplusmessagestr || trimstr(dustplusmessagestr).length <= 0) {
-                    alerttip = "请为喷粉选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(dustplusmessagestr) + " ";
-            }
-
-            var patchplusmesstr = $("#patchplusmes").val();
-            var patchstr = document.getElementById("patch");//复选框
-            if (patchstr.checked == true) {
-                flag = true;
-                showmessage += patchstr.value + " ";
-                if (tipmessage == patchplusmesstr || trimstr(patchplusmesstr).length <= 0) {
-                    alerttip = "请为贴膜选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(patchplusmesstr) + " ";
-            }
-
-            var elecplateplusmesstr = $("#elecplateplusmes").val();
-            var elecplatestr = document.getElementById("elecplate");//复选框
-            if (elecplatestr.checked == true) {
-                flag = true;
-                showmessage += elecplatestr.value + " ";
-                if (tipmessage == elecplateplusmesstr || trimstr(elecplateplusmesstr).length <= 0) {
-                    alerttip = "请为电镀选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(elecplateplusmesstr) + " ";
-            }
-
-            var corrosionplusmesstr = $("#corrosionplusmes").val();
-            var corrosionstr = document.getElementById("corrosion");//复选框
-            if (corrosionstr.checked == true) {
-                flag = true;
-                showmessage += corrosionstr.value + " ";
-                if (tipmessage == corrosionplusmesstr || trimstr(corrosionplusmesstr).length <= 0) {
-                    alerttip = "请为腐蚀选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(corrosionplusmesstr) + " ";
-            }
-
-            var waterplatingplusmesstr = $("#waterplatingplusmes").val();
-            var waterplatingstr = document.getElementById("waterplating");//复选框
-            if (waterplatingstr.checked == true) {
-                flag = true;
-                showmessage += waterplatingstr.value + " ";
-                if (tipmessage == waterplatingplusmesstr || trimstr(waterplatingplusmesstr).length <= 0) {
-                    alerttip = "请为水镀选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(waterplatingplusmesstr) + " ";
-            }
-
-            var superglueplusmesstr = $("#superglueplusmes").val();
-            var supergluestr = document.getElementById("superglue");//复选框
-            if (supergluestr.checked == true) {
-                flag = true;
-                showmessage += supergluestr.value + " ";
-                if (tipmessage == superglueplusmesstr || trimstr(superglueplusmesstr).length <= 0) {
-                    alerttip = "请为灌超级胶选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(superglueplusmesstr) + " ";
-            }
-
-            var anodicoxidplusmesstr = $("#anodicoxidplusmes").val();
-            var anodicoxidstr = document.getElementById("anodicoxid");//复选框
-            if (anodicoxidstr.checked == true) {
-                flag = true;
-                showmessage += anodicoxidstr.value + " ";
-                if (tipmessage == anodicoxidplusmesstr || trimstr(anodicoxidplusmesstr).length <= 0) {
-                    alerttip = "请为阳极氧化选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(anodicoxidplusmesstr) + " ";
-            }
-
-            var resinplusmesstr = $("#resinplusmes").val();
-            var resinstr = document.getElementById("resin");//复选框
-            if (resinstr.checked == true) {
-                flag = true;
-                showmessage += resinstr.value + " ";
-                if (tipmessage == resinplusmesstr || trimstr(resinplusmesstr).length <= 0) {
-                    alerttip = "请为灌树脂选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(resinplusmesstr) + " ";
-            }
-
-            var paintfillplusmesstr = $("#paintfillplusmes").val();
-            var paintfillstr = document.getElementById("paintfill");//复选框
-            if (paintfillstr.checked == true) {
-                flag = true;
-                showmessage += paintfillstr.value + " ";
-                if (tipmessage == paintfillplusmesstr || trimstr(paintfillplusmesstr).length <= 0) {
-                    alerttip = "请为填漆选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(paintfillplusmesstr) + " ";
-            }
-
-            var coverprotemethodplumesstr = $("#coverprotemethodplumes").val();
-            var coverprotemethodstr = document.getElementById("coverprotemethod");//复选框
-            if (coverprotemethodstr.checked == true) {
-                flag = true;
-                showmessage += coverprotemethodstr.value + " ";
-                if (tipmessage == coverprotemethodplumesstr || trimstr(coverprotemethodplumesstr).length <= 0 || coverprotemethodplumesstr==0) {
-                    alerttip = "请为表面保护方式选择颜色."
-                    submitflag = false;
-                    submitartdealdatafail(alerttip, submitflag);
-                    return;
-                }
-                showmessage += trimstr(coverprotemethodplumesstr) + " ";
-            }
-
-            var otherartsstr = $("#otherarts").val();
-            if ("其它工艺" != otherartsstr && trimstr(otherartsstr).length > 0) {
-                flag = true;
-                showmessage += trimstr(otherartsstr) + " ";
-            }
-            if (trimstr(showmessage).length <= 0) {
-                showmessage = "无";
-            }
-            if (submitflag) {
-                document.getElementById("coverbehidepagetwo").style.display = "none";
-                document.getElementById("smallshowdivforartdeal").style.display = "none";
-                var tipsforwherestr = $("#tipsforwhere").val();
-                $("#" + tipsforwherestr).val(showmessage);
-
-            } else {
-                alert(alerttip);
-            }
-
-        }
-
-        function closeartdealdatadiv() {
-
-        }
-
-        function closesmallshowdivforartdeal() {
-            document.getElementById("coverbehidepagetwo").style.display = "none";
-            document.getElementById("smallshowdivforartdeal").style.display = "none";
-        }
-
-
-        function showlastdiv() {
-            var flag = true;
-            var checkArry = document.getElementById("stainlesteel");
-            var surattribute = $("#surattribute").val();
-            var materialattribute = $("#materialattribute").val();
-            var thickness = $("#thickness").val();
-
-            if (checkArry.checked != true) {
-                flag = false;
-            }
-            if (surattribute == null) {
-
-                flag = false;
-            }
-            if (materialattribute == null) {
-                flag = false;
-            }
-            if (thickness == null) {
-                flag = false;
-            }
-            if (flag) {
-                //打开面板前清空面板信息
-                clearsmallartsfordealdivdata();
-                opensmallartsfordealdiv(500, 500);
-                $("#tipsforwhere").val("stainlesteel" + "art");
-            }
-
-        }
-      function clearsmallartsfordealdivdata() {
-            var tipmessage = "颜色值等信息补充";
-            if ($('#needrefersample').is(":checked")) {
-                $("#needrefersample").prop("checked", false);
-            }
-            if ($('#uvprint').is(":checked")) {
-                $("#uvprint").prop("checked", false);
-            }
-          if ($('#sandblasting').is(":checked")) {
-              $("#sandblasting").prop("checked", false);
-          }
-          if ($('#dorust').is(":checked")) {
-              $("#dorust").prop("checked", false);
-          }
-          if ($('#silkprint').is(":checked")) {
-              $("#silkprint").prop("checked", false);
-          }
-          if ($('#wiredrawing').is(":checked")) {
-              $("#wiredrawing").prop("checked", false);
-          }
-          $("#wiredrawlines").val(0);
-          $("#coverprotemethodplumes").val(0);
-          $("#uvprintplusmessage").val(tipmessage);
-          $("#silkprintplusmes").val(tipmessage);
-          if ($('#watertranprint').is(":checked")) {
-              $("#watertranprint").prop("checked", false);
-          }
-          $("#watertranprintplusmes").val(tipmessage);
-          $("#bakingpaintplusmes").val(tipmessage);
-          $("#hottransprintplusmes").val(tipmessage);
-          $("#dustplusmessage").val(tipmessage);
-          if ($('#bakingpaint').is(":checked")) {
-              $("#bakingpaint").prop("checked", false);
-          }
-          if ($('#hottransprint').is(":checked")) {
-              $("#hottransprint").prop("checked", false);
-          }
-          if ($('#dusting').is(":checked")) {
-              $("#dusting").prop("checked", false);
-          }
-
-          if ($('#patch').is(":checked")) {
-              $("#patch").prop("checked", false);
-          }
-          if ($('#elecplate').is(":checked")) {
-              $("#elecplate").prop("checked", false);
-          }
-          if ($('#corrosion').is(":checked")) {
-              $("#corrosion").prop("checked", false);
-          }
-          if ($('#waterplating').is(":checked")) {
-              $("#waterplating").prop("checked", false);
-          }
-          $("#patchplusmes").val(tipmessage);
-          $("#elecplateplusmes").val(tipmessage);
-          $("#corrosionplusmes").val(tipmessage);
-          $("#waterplatingplusmes").val(tipmessage);
-          $("#superglueplusmes").val(tipmessage);
-          $("#anodicoxidplusmes").val(tipmessage);
-          $("#resinplusmes").val(tipmessage);
-          $("#paintfillplusmes").val(tipmessage);
-
-          if ($('#superglue').is(":checked")) {
-              $("#superglue").prop("checked", false);
-          }
-          if ($('#anodicoxid').is(":checked")) {
-              $("#anodicoxid").prop("checked", false);
-          }
-          if ($('#resin').is(":checked")) {
-              $("#resin").prop("checked", false);
-          }
-          if ($('#paintfill').is(":checked")) {
-              $("#paintfill").prop("checked", false);
-          }
-          if ($('#coverprotemethod').is(":checked")) {
-              $("#coverprotemethod").prop("checked", false);
-          }
-
-              $("#otherarts").val("其它工艺");
-
-        }
-
-        function opensmallartsfordealdiv(w, h) {
-            var poptwo = document.getElementById("smallshowdivforartdeal");
-            document.getElementById("coverbehidepagetwo").style.display = "block";
-            document.getElementById("smallshowdivforartdeal").style.display = "block";
-            poptwo.style.top = "150px";
-            poptwo.style.left = "500px";
-            poptwo.style.width = w + "px";
-            poptwo.style.height = h + "px";
-            poptwo.style.overflowY = "visible";
-            poptwo.style.overflowX = "visible";
-            poptwo.style.visibility = "visible";
-        }
-
-        function shutdownpackingdiv() {
-            var popfive = document.getElementById("safttransandpacking");
-            document.getElementById("coverbehidepage").style.display = "none";
-            document.getElementById("safttransandpacking").style.display = "none";
-            popfive.style.visibility = "hidden";
-        }
-
-        function opensafttransandpackingdiv(w, h) {
-            var poptwo = document.getElementById("safttransandpacking");
-            document.getElementById("coverbehidepage").style.display = "block";
-            document.getElementById("safttransandpacking").style.display = "block";
-            poptwo.style.top = "60px";
-            poptwo.style.left = "250px";
-            poptwo.style.width = w + "px";
-            poptwo.style.height = h + "px";
-            poptwo.style.overflowY = "visible";
-            poptwo.style.overflowX = "visible";
-            poptwo.style.visibility = "visible";
-
-        }
-
-        function shudownelectmaterialneedsdiv() {
-            var popfive = document.getElementById("showelectmaterialneeds");
-            document.getElementById("coverbehidepage").style.display = "none";
-            document.getElementById("showelectmaterialneeds").style.display = "none";
-            popfive.style.visibility = "hidden";
-        }
-
-        function shutdownbigdiv() {
-            var popfive = document.getElementById("showmainmaterialandarts");
-            document.getElementById("coverbehidepage").style.display = "none";
-            document.getElementById("showmainmaterialandarts").style.display = "none";
-            popfive.style.visibility = "hidden";
-        }
-
-        function showelectmaterialneeds(w, h) {
-            var poptwo = document.getElementById("showelectmaterialneeds");
-            document.getElementById("coverbehidepage").style.display = "block";
-            document.getElementById("showelectmaterialneeds").style.display = "block";
-            poptwo.style.top = "250px";
-            poptwo.style.left = "250px";
-            poptwo.style.width = w + "px";
-            poptwo.style.height = h + "px";
-            poptwo.style.overflowY = "visible";
-            poptwo.style.overflowX = "visible";
-            poptwo.style.visibility = "visible";
-        }
-
-        function showmainmaterialandarts(w, h) {
-            var popUp = document.getElementById("showmainmaterialandarts");
-            document.getElementById("coverbehidepage").style.display = "block";
-            document.getElementById("showmainmaterialandarts").style.display = "block";
-            popUp.style.top = "10px";
-            popUp.style.left = "260px";
-            popUp.style.width = w + "px";
-            popUp.style.height = h + "px";
-            popUp.style.overflowY = "visible";
-            popUp.style.overflowX = "visible";
-//if (baseText == null) baseText = popUp.innerHTML;
-//popUp.innerHTML = baseText + "<div id=\"statusbar\"><button onclick=\"hidePopup();\">Close window</button></div>";
-//var sbar = document.getElementById("statusbar");
-//sbar.style.marginTop = (parseInt(h)-40) + "px";
-            popUp.style.visibility = "visible";
-        }
-
 
     </script>
 
@@ -1200,15 +400,15 @@
         <option value="纱面">纱面</option>
         <option value="其它材质">其它材质</option>
     </select>
-        &nbsp;&nbsp;<select id="materialattri2">
+        &nbsp;&nbsp;<select id="materialattri2" onchange="showstainlessdiv()">
         <option value="0" disabled selected hidden>材质属性</option>
         <option value="#201">#201</option>
         <option value="#304">#304</option>
         <option value="#316">#316</option>
         <option value="其它型号">其它型号</option>
     </select>
-        &nbsp;&nbsp;<select id="thickness2">
-        <option value="0" disabled selected hidden>厚度</option>
+        &nbsp;&nbsp;<select id="thickness2" onchange="showstainlessdiv()">
+        <option value="0" disabled selected hidden >厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
         <option value="0.9mm">0.9mm</option>
@@ -1233,15 +433,15 @@
         <input type="text" readonly="readonly" id="stainless2art"
                style="border: 0px;outline:none;cursor: pointer;" value="无">
         <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="aluminumalloyplate">铝合金板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="aluminumalloyplate" onchange="showaluminumalloyplatediv()">铝合金板
 
-        &nbsp;&nbsp;<select name="" id="marialattr3">
+        &nbsp;&nbsp;<select name="" id="marialattr3" onchange="showaluminumalloyplatediv()">
         <option value="0" disabled selected hidden>材质属性</option>
         <option value="#5052">#5052</option>
         <option value="#6061">#6061</option>
         <option value="其它型号">其它型号</option>
     </select>
-        &nbsp;&nbsp;<select name="" id="thickness3">
+        &nbsp;&nbsp;<select name="" id="thickness3" onchange="showaluminumalloyplatediv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1269,15 +469,15 @@
 
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="ironplate">铁板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="ironplate" onchange="showironplatediv()">铁板
 
-        &nbsp;&nbsp;<select name="" id="materialattr5">
+        &nbsp;&nbsp;<select name="" id="materialattr5" onchange="showironplatediv()">
         <option value="0" disabled selected hidden>材质属性</option>
         <option value="冷板">冷板</option>
         <option value="铁板">铁板</option>
         <option value="其它材质">其它材质</option>
     </select>
-        &nbsp;&nbsp;<select name="" id="thickness5">
+        &nbsp;&nbsp;<select name="" id="thickness5" onchange="showironplatediv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1305,15 +505,15 @@
 
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="copperplate">铜板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="copperplate" onchange="showcopperplatediv()">铜板
 
-        &nbsp;&nbsp;<select name="" id="materialattr">
+        &nbsp;&nbsp;<select name="" id="materialattr15"  onchange="showcopperplatediv()">
         <option value="0" disabled selected hidden>材质属性</option>
         <option value="黄铜">黄铜</option>
         <option value="红铜">红铜</option>
         <option value="其它材质">其它材质</option>
     </select>
-        &nbsp;&nbsp;<select name="" id="thickness6">
+        &nbsp;&nbsp;<select name="" id="thickness6"  onchange="showcopperplatediv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1341,9 +541,9 @@
 
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox"  id="galvanizedsheet">镀锌板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox"  id="galvanizedsheet" onchange="showgalvanizedsheetdiv()">镀锌板
 
-        &nbsp;&nbsp;<select name="" id="thickness7">
+        &nbsp;&nbsp;<select name="" id="thickness7" onchange="showgalvanizedsheetdiv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1370,10 +570,10 @@
                style="border: 0px;outline:none;cursor: pointer;" value="无">
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="electplate">电解板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="electplate" onchange="showelectplatediv()">电解板
 
 
-        &nbsp;&nbsp;<select name="" id="thickness8">
+        &nbsp;&nbsp;<select name="" id="thickness8" onchange="showelectplatediv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1401,10 +601,10 @@
 
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="aluminumplate">铝板
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="aluminumplate" onchange="showaluminumplatediv()">铝板
 
 
-        &nbsp;&nbsp;<select name="" id="thickness9">
+        &nbsp;&nbsp;<select name="" id="thickness9" onchange="showaluminumplatediv()">
         <option value="0" disabled selected hidden>厚度</option>
         <option value="0.5mm">0.5mm</option>
         <option value="0.7mm">0.7mm</option>
@@ -1432,9 +632,9 @@
 
         <br>
 
-        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="strake">边条
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="strake" onchange="showstrakediv()">边条
 
-        &nbsp;&nbsp;<select name="" id="materialattr6">
+        &nbsp;&nbsp;<select name="" id="materialattr6" onchange="showstrakediv()">
         <option value="0" disabled selected hidden>材质属性</option>
         <option value="尖头铝边条">尖头铝边条</option>
         <option value="铝塑边条">铝塑边条</option>
@@ -1482,186 +682,202 @@
                 <h10>面板材质</h10>
                 <br>
 
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">亚克力板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
-                <option>30mm</option>
-                <option>40mm</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="acrylic">亚克力板
+                &nbsp;&nbsp;<select name="" id="thick01">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
+                <option value="30mm">30mm</option>
+                <option value="40mm">40mm</option>
             </select>
 
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>颜色属性</option>
-                <option>瓷白</option>
-                <option>黑白</option>
-                <option>红色</option>
-                <option>黄色</option>
-                <option>蓝白</option>
-                <option>蓝色</option>
-                <option>绿色</option>
-                <option>乳白</option>
-                <option>透明</option>
-                <option>其它颜色</option>
+                &nbsp;&nbsp;<select name="" id="colorattr">
+                <option value="0" disabled selected hidden>颜色属性</option>
+                <option value="瓷白">瓷白</option>
+                <option value="黑白">黑白</option>
+                <option value="红色">红色</option>
+                <option value="黄色" >黄色</option>
+                <option value="蓝白">蓝白</option>
+                <option value="蓝色">蓝色</option>
+                <option value="绿色">绿色</option>
+                <option value="乳白">乳白</option>
+                <option value="透明">透明</option>
+                <option value="其它颜色">其它颜色</option>
             </select>
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="attrdescribtion">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="acrylicart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
 
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">PC板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
-                <option>30mm</option>
-                <option>40mm</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="pcplate">PC板
+                &nbsp;&nbsp;<select name="" id="thickness02">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
+                <option value="30mm">30mm</option>
+                <option value="40mm">40mm</option>
             </select>
 
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>颜色属性</option>
-                <option>乳白</option>
-                <option>透明</option>
-                <option>其它颜色</option>
+                &nbsp;&nbsp;<select name="" id="colorattr02">
+                <option value="0" disabled selected hidden>颜色属性</option>
+                <option value="乳白">乳白</option>
+                <option value="透明">透明</option>
+                <option value="其它颜色">其它颜色</option>
             </select>
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="attrdescribtion02">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="pcplateart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">仿大理石板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="marblesalb">仿大理石板
+                &nbsp;&nbsp;<select name="" id="thickness03">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
             </select>
 
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="attrdiscribtion03">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="marblesalbart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">铝塑板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="alucomppanel">铝塑板
+                &nbsp;&nbsp;<select name="" id="thickness05">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
 
             </select>
 
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>颜色属性</option>
-                <option>乳白</option>
-                <option>透明</option>
-                <option>其它颜色</option>
+                &nbsp;&nbsp;<select name="" id="colorattr05">
+                <option value="0" disabled selected hidden>颜色属性</option>
+                <option value="乳白">乳白</option>
+                <option value="透明">透明</option>
+                <option value="其它颜色">其它颜色</option>
             </select>
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="colordescribtion05">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="alucomppanelart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">PVC板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
+
+
+
+
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="pvcplate">PVC板
+                &nbsp;&nbsp;<select name="" id="thickness06">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
 
             </select>
 
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>颜色属性</option>
-                <option>乳白</option>
-                <option>透明</option>
-                <option>其它颜色</option>
+                &nbsp;&nbsp;<select name="" id="colorattr06">
+                <option value="0" disabled selected hidden>颜色属性</option>
+                <option value="乳白">乳白</option>
+                <option value="透明">透明</option>
+                <option value="其它颜色">其它颜色</option>
             </select>
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="attrdescribtion06">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="pvcplateart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">木板
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>厚度</option>
-                <option>2mm</option>
-                <option>3mm</option>
-                <option>4mm</option>
-                <option>5mm</option>
-                <option>6mm</option>
-                <option>8mm</option>
-                <option>10mm</option>
-                <option>12mm</option>
-                <option>15mm</option>
-                <option>20mm</option>
-                <option>25mm</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="moodplate">木板
+                &nbsp;&nbsp;<select name="" id="thickness07">
+                <option value="0" disabled selected hidden>厚度</option>
+                <option value="2mm">2mm</option>
+                <option value="3mm">3mm</option>
+                <option value="4mm">4mm</option>
+                <option value="5mm">5mm</option>
+                <option value="6mm">6mm</option>
+                <option value="8mm">8mm</option>
+                <option value="10mm">10mm</option>
+                <option value="12mm">12mm</option>
+                <option value="15mm">15mm</option>
+                <option value="20mm">20mm</option>
+                <option value="25mm">25mm</option>
 
             </select>
 
 
-                &nbsp;&nbsp;<input type="text" value="属性描述">
+                &nbsp;&nbsp;<input type="text" value="属性描述" id="attrdescribtion07">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="moodplateart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
             </div>
 
@@ -1671,25 +887,27 @@
             <div class="downdivone">
                 <h10>附加工艺材质</h10>
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">方通
-                &nbsp;&nbsp;<select name="">
-                <option value="" disabled selected hidden>材质属性</option>
-                <option>#201不锈钢</option>
-                <option>#304不锈钢</option>
-                <option>#316不锈钢</option>
-                <option>铁</option>
-                <option>镀锌</option>
-                <option>铝合金</option>
-                <option>其它材质</option>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="" id="fangtong">方通
+                &nbsp;&nbsp;<select name="" id="materiattr">
+                <option value="0" disabled selected hidden>材质属性</option>
+                <option value="#201不锈钢">#201不锈钢</option>
+                <option value="#304不锈钢">#304不锈钢</option>
+                <option value="#316不锈钢">#316不锈钢</option>
+                <option value="铁">铁</option>
+                <option value="镀锌">镀锌</option>
+                <option value="铝合金">铝合金</option>
+                <option value="其它材质">其它材质</option>
 
             </select>
 
 
-                &nbsp;&nbsp;<input type="text" value="补充说明">
+                &nbsp;&nbsp;<input type="text" value="补充说明" id="addiremark">
                 <br>
                 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;工艺处理
                 <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;无
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="text" readonly="readonly" id="fangtongart"
+                       style="border: 0px;outline:none;cursor: pointer;" value="无">
 
                 <br>
                 &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="">扁通
