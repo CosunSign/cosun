@@ -34,6 +34,7 @@ public class DownloadView implements Serializable {
     private String flag;
     private String remark;//备注
     private String filedescribtion;//文件说明
+    private String engineer;//上传者  工程 师
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -43,11 +44,17 @@ public class DownloadView implements Serializable {
     private int currentPageTotalNum;
     private int preCurrentPage;
     private int aftCurrentPage;
-
     private Date startNewestSaveDate; //最新上传开始时间
     private Date endNewestSaveDate;//最新上传结束时间
     private String startNewestSaveDateStr;
     private String endNewestSaveDateStr;
+    public String getEngineer() {
+        return engineer;
+    }
+
+    public void setEngineer(String engineer) {
+        this.engineer = engineer;
+    }
 
     public Date getStartNewestSaveDate() {
         return startNewestSaveDate;

@@ -272,26 +272,76 @@
                                 <td align="right">
                                     业务员:
                                 </td>
-                                <td><input type="text" id="salor" name="view.salor" style="width:80px" form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                <td>
+                                    <select id="salor" style="width: 120px" name="view.salor" form="form0">
+                                        <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
+                                        <option value="邹时雨">邹时雨</option>
+                                        <option value="胡锋">胡锋</option>
+                                        <option value="王世珺">王世珺</option>
+                                        <option value="赵彩霞">赵彩霞</option>
+                                        <option value="亚晓艾">亚晓艾</option>
+                                        <option value="钟源">钟源</option>
+                                        <option value="陈小迷">陈小迷</option>
+                                        <option value="熊新宇">熊新宇</option>
+                                        <option value="潘莉">潘莉</option>
+                                        <option value="连鸿业">连鸿业</option>
+                                        <option value="刘彩云">刘彩云</option>
+                                        <option value="明松">明松</option>
+                                        <option value="周涛">周涛</option>
+                                        <option value="梁浩">梁浩</option>
+                                        <option value="肖昌升">肖昌升</option>
+                                        <option value="高玉昕">高玉昕</option>
+                                        <option value="吴亚莹">吴亚莹</option>
+                                        <option value="何嘉琪">何嘉琪</option>
+                                        <option value="李彩苹">李彩苹</option>
+                                        <option value="龚菁">龚菁</option>
+                                        <option value="李晨">李晨</option>
+                                        <option value="梁国程">梁国程</option>
+                                        <option value="陈双全">陈双全</option>
+                                        <option value="彭亚明">彭亚明</option>
+                                        <option value="陈军">陈军</option>
+
+                                    </select>
                                 </td>
                                 <td align="right">订单编码:</td>
-                                <td><input type="text" id="orderno" name="view.orderNo" style="width:120px" form="form0"
+                                <td><input type="text" id="orderno" name="view.orderNo" style="width:150px" form="form0"
                                            onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
                                 </td>
-                                <td align="right"> 顶目名称:</td>
-                                <td><input type="text" id="projectname" name="view.projectName" style="width:120px"
+                                <td align="right"> 顶目编码:</td>
+                                <td><input type="text" id="projectname" name="view.projectName" style="width:150px"
                                            form="form0"
                                            onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
                                 </td>
-
-
-                                </td>
+                                <td></td>
+                                <td></td>
 
                             </tr>
                             <tr>
+                                <td align="right">设计师:</td>
+                                <td>
+                                    <select id="engineer" style="width: 120px" name="view.engineer" >
+                                        <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择设计师</option>
+                                        <option value="吴运翠">吴运翠</option>
+                                        <option value="刘穗梅">刘穗梅</option>
+                                        <option value="段金星">段金星</option>
+                                        <option value="黄炳杰">黄炳杰</option>
+                                        <option value="吴亚民">吴亚民</option>
+                                        <option value="罗元青">罗元青</option>
+                                        <option value="黄国胜">黄国胜</option>
+                                        <option value="刘穗梅">刘穗梅</option>
+                                        <option value="曾红红">曾红红</option>
+                                        <option value="梁家强">梁家强</option>
+                                        <option value="徐姜华">徐姜华</option>
+                                        <option value="朱海培">朱海培</option>
+                                        <option value="彭金伟">彭金伟</option>
+                                        <option value="黄杰生">黄杰生</option>
+                                        <option value="骆云飞">骆云飞</option>
+                                        <option value="李晓波">李晓波</option>
+                                    </select>
+
+                                </td>
                                 <td align="right">文件名称:</td>
-                                <td><input type="text" id="filename" name="view.fileName" style="width:80px"
+                                <td><input type="text" id="filename" name="view.fileName" style="width:150px"
                                            form="form0"
                                            onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
                                 </td>
@@ -326,33 +376,38 @@
                     <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
                     <table class="grid" style="width: 100%" id="tablecss">
                         <thead>
-                        <tr>
+                        <tr align="center">
                             <td>编号</td>
-                            <td>创建者</td>
+                            <td>设计师</td>
                             <td>最后修改者</td>
-                            <td>文件名</td>
-                            <td>业务员</td>
                             <td>订单编码</td>
-                            <td>顶目名称</td>
-                            <td>最后更新时间</td>
+                            <td>顶目编码</td>
+                            <td>文件名称</td>
+                            <td>业务员</td>
                             <td>更新次数</td>
+                            <td>最后更新时间</td>
                             <td>操作权限</td>
+                            <td>文件说明</td>
+                            <td>备注</td>
                             <td>路径</td>
                         </tr>
                         </thead>
                         <tbody id="showdatatable">
                         <div th:unless="${#lists.isEmpty(downloadViewList)}">
-                            <tr th:each="downloadView ,iterStat: ${downloadViewList}">
-                                <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
+                            <tr th:each="downloadView ,iterStat: ${downloadViewList}" align="center">
+                                <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}" ></td>
                                 <td th:text="${downloadView.creator}"></td>
                                 <td th:text="${downloadView.lastUpdator}"></td>
-                                <td th:text="${downloadView.fileName}"></td>
-                                <td th:text="${downloadView.salor}"></td>
                                 <td th:text="${downloadView.orderNo}"></td>
                                 <td th:text="${downloadView.projectName}"></td>
-                                <td th:text="${downloadView.lastUpdateTime}"></td>
+
+                                <td th:text="${downloadView.fileName}"></td>
+                                <td th:text="${downloadView.salor}"></td>
                                 <td th:text="${downloadView.totalUpdateNum}"></td>
+                                <td th:text="${downloadView.lastUpdateTime}"></td>
                                 <td th:text="${downloadView.opRight}"></td>
+                                <td th:text="${downloadView.filedescribtion}"></td>
+                                <td th:text="${downloadView.remark}"></td>
                                 <td>
                                     <a th:href="@{/fileupdown/downloadfile(filename=${downloadView.fileName},urlname=${downloadView.urlAddr})}"
                                        th:text="${downloadView.urlAddr}"></a></td>

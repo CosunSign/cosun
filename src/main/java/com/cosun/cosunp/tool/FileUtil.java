@@ -34,7 +34,7 @@ public class FileUtil {
         String userNamePinYin = PinYinUtil.toPinyin(Username);
         String filePath = "F:\\file\\"+userNamePinYin+"\\";
         File targetFile = new File(filePath);
-        String deskName = formateString(new Date())+firstCharUpCase+MathUtil.getRandom620(8)+"."+ext;
+        String deskName = formateString(new Date())+firstCharUpCase+MathUtil.getRandom620(5)+ext;
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){
             targetFile.mkdirs();
