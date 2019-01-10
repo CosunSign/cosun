@@ -10,17 +10,44 @@ public class FileManFileInfo implements Serializable {
     private Integer id;
     private Integer uId;
     private String userName;
-    private String fileName;
-    private String orderNum;
-    private String projectName;
-    private String createUser;
-    private String updateUser;
-    private Date createTime;
-    private Date updateTime;
-    private Integer updateCount;
+    private String fileName;//工程部文件命名
+    private String orderNum;//订单编号
+    private String projectName;//项目名
+    private String createUser;//存储文件的人
+    private String updateUser;//更新文件的人
+    private Date createTime;//创建文件时间
+    private Date updateTime;//更新文件时间
+    private Integer updateCount;//更新次数
+    private Integer totalFilesNum;//根据订单存储的图纸总张数
     private String extInfo1; //exfinfo_1是业务员名字
     private String extInfo2;
     private String extInfo3;
+    private String remark;//备注
+    private String filedescribtion;//文件说明
+
+    public Integer getTotalFilesNum() {
+        return totalFilesNum;
+    }
+
+    public void setTotalFilesNum(Integer totalFilesNum) {
+        this.totalFilesNum = totalFilesNum;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getFiledescribtion() {
+        return filedescribtion;
+    }
+
+    public void setFiledescribtion(String filedescribtion) {
+        this.filedescribtion = filedescribtion;
+    }
 
     public String getOrderNum() {
         return orderNum;

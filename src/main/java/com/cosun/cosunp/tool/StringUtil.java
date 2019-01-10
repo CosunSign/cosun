@@ -1,5 +1,8 @@
 package com.cosun.cosunp.tool;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * @author:homey Wong
  * @Description:
@@ -8,6 +11,11 @@ package com.cosun.cosunp.tool;
  * @Modified-date:2018/12/22 0022 上午 11:27
  */
 public class StringUtil {
+
+    public static String formateString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        return sdf.format(date);
+    }
 
 
     /**

@@ -1,6 +1,8 @@
 package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -13,12 +15,13 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
-    void addFileDataByUpload(FilemanRight filemanRight, FilemanUrl filemanUrl, FileManFileInfo fileManFileInfo);
-
     List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize);
     List<DownloadView> findAllUploadFileByUserId(Integer uid);
+    DownloadView addFilesData(DownloadView view,MultipartFile[] files,UserInfo userInfo);
 
     List<UserInfo> findAllUser();
+
+    DownloadView addFileFoldersData(DownloadView view,List<MultipartFile> files,UserInfo userInfo);
 
     void saveOrUpdateFilePrivilege(Integer selectuser,Integer filesId,String privileflag);
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -8,36 +8,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
-
-    <script src="/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
-
-
+    <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
+    <script src="/lib/WdatePicker.js" type="text/javascript"></script>
+
 
 </head>
 <body class=" theme-blue">
-
-<!-- Demo page code -->
-
 <script type="text/javascript">
     $(function () {
-
+        document.getElementById("coverbehidepage").style.display = "none";
+        document.getElementById("alertdiv").style.display = "none";
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
-        if(flag=="1"){
-            alert("文件上传成功！");
-        }else if(flag=="0"){
-            alert("文件不能为空，请选择文件再上传!")
-        }else if(flag == "-1"){
-            alert("文件上传失败！");
+        if (flag == "1") {
+            $("#showalerttext").text("文件上传成功！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
+        } else if (flag == "0") {
+            $("#showalerttext").text("上传文件为空文件，请重新选择上传！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
+        } else if (flag == "-1") {
+            $("#showalerttext").text("文件上传失败！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
+        }else if(flag == "-2"){
+            $("#showalerttext").text("上传失败，总文件大小超过20M！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
         }
-        var salorid = $("#salorid").val("");
-        var orderid = $("#orderid").val("");
-        var projectid = $("#projectid").val("");
+        $("#salorid").val("");
+        $("#orderno").val("");
+        $("#projectno").val("");
+        $('#file').val("");
+        $('#filefolder').val("");
+        $('#filedescribtion').val("");
+        $('#remark').val("");
+        $('#filename').val("");
+        $("#uploaddatetime").val(today());
+
+
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
         if (color) {
@@ -47,20 +63,104 @@
             $('body').addClass('theme-' + color);
         }
 
-        $('[data-popover="true"]').popover({html: true});
 
     });
 </script>
 <style type="text/css">
-    #line-chart {
-        height: 300px;
-        width: 800px;
-        margin: 0px auto;
-        margin-top: 1em;
+
+
+    #colrcss {
+        border-width: 1px;
+        padding: 8px;
+        align: center;
+        border-style: solid;
+        background-color: #c3dde0;
+    }
+
+    #colrcss td {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        text-align: center;
+    }
+
+    #bodycss tr td {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        text-align: center;
+    }
+
+    .trrcss tr td {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        text-align: center;
+    }
+
+    #alertdiv {
+        position: absolute;
+        left: 450px;
+        top: 250px;
+        width: 300px;
+        height: 150px;
+        align-content: center;
+        background-color: #9AC0CD;
+        border-left-color: #c3dde0;
+        border-right-color: #c3dde0;
+        border-top-color: #c3dde0;
+        border-bottom-color: #c3dde0;
+        z-index: 1009;
+        border-style: solid;
+
+    }
+
+    #div1 {
+        margin-top: 1px;
+        margin-left: 1px;
+        margin-right: 1px;
+        top: 0;
+        bottom: 0;
+        width: 291px;
+        height: 90px;
+        right: 0;
+        z-index: 1008;
+        background-color: #E0EEEE;
+        text-align: center;
+        line-height: 90px
+    }
+
+    #div2 {
+        top: 0;
+        bottom: 0;
+        margin-left: 1px;
+        margin-bottom: 1px;
+        margin-right: 1px;
+        width: 291px;
+        height: 50px;
+        text-align: right;
+        right: 0;
+        z-index: 1007;
+        background-color: #E0EEEE;
     }
 
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
+    }
+
+    #coverbehidepage {
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1006;
+        -moz-opacity: 0.3;
+        opacity: .30;
+        filter: alpha(opacity=30);
+
     }
 </style>
 
@@ -70,6 +170,140 @@
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
     });
+
+    function closealrtdiv() {
+        document.getElementById("coverbehidepage").style.display = "none";
+        document.getElementById("alertdiv").style.display = "none";
+    }
+
+    function altRows(id) {
+        if (document.getElementsByTagName) {
+
+            var table = document.getElementById(id);
+            var rows = table.getElementsByTagName("tr");
+            rows[0].className = "evenrowcolor";
+
+        }
+    }
+
+    function checkOrderNo(str) {
+
+        var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
+        if(!reg.test(str.value)){
+            $("#orderno").val("");
+            $("#showalerttext").text("订单编号只能有数字字母！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
+        }
+
+    }
+
+    function checkProjectNo(str) {
+        var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
+        if(!reg.test(str.value)){
+            $("#showalerttext").text("项目编号只能有数字字母！");
+            document.getElementById("coverbehidepage").style.display = "block";
+            document.getElementById("alertdiv").style.display = "block";
+            $("#projectno").val("");
+        }
+
+    }
+
+    function today() {
+        var today = new Date();
+        var h = today.getFullYear();
+        var m = today.getMonth() + 1;
+        var d = today.getDate();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var ss = today.getSeconds();
+        m = m < 10 ? "0" + m : m;
+        d = d < 10 ? "0" + d : d;
+        hh = hh < 10 ? "0" + hh : hh;
+        mm = mm < 10 ? "0" + mm : mm;
+        ss = ss < 10 ? "0" + ss : ss;
+        return h + "-" + m + "-" + d + " " + hh + ":" + mm + ":" + ss;
+    }
+
+    function setsalorvalue() {
+        $("#salorvalue").val($("#salorid").val());
+    }
+
+    function submitalldata() {
+        var salorid = $("#salorid").val();
+        var orderno = $("#orderno").val().trim();
+        var projecto = $("#projectno").val().trim();
+        var fileInput = $('#file').val();
+        var filefolder = $("#filefolder").val();
+        var filename = $("#filename").val().trim();
+        if (salorid == "" || salorid == null) {
+            alert("请选择业务人员！");
+            return false;
+        }
+        if (orderno == "") {
+            alert("请填写业务订单号！");
+            return false;
+        }
+        if (projecto == "") {
+            alert("请填写项目单号！");
+            return false;
+        }
+        if (filename == "") {
+            alert("请填写文件名！");
+            return false;
+        }
+        if (fileInput == "" && filefolder == "") {
+            alert("请选择上传文件！")
+            return false;
+        }
+        document.getElementById("form1").submit();
+        $("#some-element").busyLoad("show");//遮罩层开启
+    }
+
+
+    function removeallbutonetr() {
+        // $("#uploadtable tr").eq(1).nextAll().remove();
+        $("#salorid").val("");
+        $("#orderno").val("");
+        $("#projectno").val("");
+        $('#file').val("");
+        $('#filefolder').val("");
+        $('#filedescribtion').val("");
+        $('#remark').val("");
+        $('#filename').val("");
+        $("#uploaddatetime").val(today());
+
+    }
+
+    function changeformactionfolder() {
+        var newUrl = "/fileupdown/uploadfolder";    //设置新提交地址
+        $("#form1").attr('action', newUrl);    //通过jquery为action属性赋值
+    }
+
+    function changeformactionupload() {
+        var newUrl = "/fileupdown/upload";    //设置新提交地址
+        $("#form1").attr('action', newUrl);    //通过jquery为action属性赋值
+    }
+
+    // function addrow() {
+    //     trindex++;
+    //     trstr = "<tr class=\"trrcss\"><td>" + trindex + "</td>";
+    //     trstr += "<td><input type=\"file\" id=\"file" + trindex + "\" name=\"file\"></td>";
+    //     trstr += "<td><input type=\"text\" width=\"200px\" id='filfiledescribtion" + trindex + "' name=\"filfiledescribtion\"></td>";
+    //     trstr += "<td><input type=\"text\" width=\"200px\" id=\"remark" + trindex + "\" name=\"remark\"></td>";
+    //     trstr += "<td>";
+    //     trstr += "<img src=\"/images/icon/Delete.png\" align=\"middle\" style=\"width: 20px; height: 20px; vertical-align: middle\" onclick=\"delthisrow(this)\"/>";
+    //     trstr += "</td></tr>";
+    //
+    //
+    //     $("#uploadtable tbody").append(trstr);
+    // }
+
+    // function delthisrow(_this) {
+    //     var $trNode = $(_this).parent().parent();
+    //     $trNode.remove();
+    //
+    // }
 </script>
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -96,7 +330,6 @@
 <!--[if (gt IE 9)|!(IE)]><!-->
 
 <!--<![endif]-->
-
 <div class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -111,37 +344,32 @@
     <div class="navbar-collapse collapse" style="height: 1px;">
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
-                <div th:if="${view!=null and view.userName!=null}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
 
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>
-                    <p th:text="${view.userName}"></p>
-                    <!--<i class="fa fa-caret-down"></i>-->
+                    <i class="fa fa-caret-down"></i>
+                </a>
 
-                </div>
-                <div th:if="${view==null or view.userName==null}">
-                    <a th:href="@{/account/tologin}" class="dropdown-toggle">
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>请登录
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-                </div>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/account/logout}">退出登录</a></li>
 
+                </ul>
             </li>
         </ul>
 
     </div>
 </div>
-</div>
 
 
 <div class="sidebar-nav">
     <ul>
-        <li data-popover="true"
+        <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
-                class="fa fa-collapse"></i></a></li>
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>
+            新建订单<i
+                    class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforsalor nav nav-list collapse">
                 <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
@@ -150,9 +378,10 @@
         </li>
 
         <!--========================文件管理===============================-->
-        <li data-popover="true"
+        <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
+                                                    class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
                 class="fa fa-collapse"></i></a></li>
         <li>
@@ -165,14 +394,14 @@
             </ul>
         </li>
 
-        <li data-popover="true"
+        <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menu nav nav-list collapse">
-                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span>
+                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span></li>
                 <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>
                 <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>
                 <li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>
@@ -200,77 +429,251 @@
                 <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
             </ul>
         </li>
-   </ul>
+    </ul>
 </div>
 
-<div class="content">
 
-    <div id="tabs">
-        <ul>
-            <a class="btn btn-primary" th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password})}">上传</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"> 下载</a>
-            <a class="btn btn-default" th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
-        </ul>
+</div>
+<input type="hidden" th:value="${view.flag}" id="uploadflag">
 
-        <div id="uploadpage">
+<div id="some-element">
+    <div class="content">
+        <form action="/fileupdown/uploadfolder" method="post" id="form1" enctype="multipart/form-data"
+              th:object="${view}">
+            <input type="hidden" th:field="*{salor}" id="salorvalue">
+            <div id="tabs">
 
-            <form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">
-                    <input type="hidden" th:field="*{userName}" >
-                    <input type="hidden" th:field="*{password}" >
-                <input id="uploadflag" th:field="*{flag}" type="hidden" >
-                    <input type="file" id="file" name="file">
+                <a class="btn btn-primary"
+                   th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
+                <a class="btn btn-default"
+                   th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
+                    下载</a>
+                <a class="btn btn-default"
+                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
+
+                <p>
+                <p>
+
+                    <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
+                <div>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
+                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="setsalorvalue()">
+                        <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
+                        <option value="邹时雨">邹时雨</option>
+                        <option value="胡锋">胡锋</option>
+                        <option value="王世珺">王世珺</option>
+                        <option value="赵彩霞">赵彩霞</option>
+                        <option value="亚晓艾">亚晓艾</option>
+                        <option value="钟源">钟源</option>
+                        <option value="陈小迷">陈小迷</option>
+                        <option value="熊新宇">熊新宇</option>
+                        <option value="潘莉">潘莉</option>
+                        <option value="连鸿业">连鸿业</option>
+                        <option value="刘彩云">刘彩云</option>
+                        <option value="明松">明松</option>
+                        <option value="周涛">周涛</option>
+                        <option value="梁浩">梁浩</option>
+                        <option value="肖昌升">肖昌升</option>
+                        <option value="高玉昕">高玉昕</option>
+                        <option value="吴亚莹">吴亚莹</option>
+                        <option value="何嘉琪">何嘉琪</option>
+                        <option value="李彩苹">李彩苹</option>
+                        <option value="龚菁">龚菁</option>
+                        <option value="李晨">李晨</option>
+                        <option value="梁国程">梁国程</option>
+                        <option value="陈双全">陈双全</option>
+                        <option value="彭亚明">彭亚明</option>
+                        <option value="陈军">陈军</option>
+
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <font color="#FF0000" size="2">*</font>
+                    订单编号
+                    <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <font color="#FF0000" size="2">*</font>
+                    项目编号
+                    <input type="text" id="projectno" th:field="*{projectName}" onblur="checkProjectNo(this)">
+                    &nbsp;&nbsp;&nbsp;&nbsp;上传时间
+                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
+                </div>
+                <p>
+                <div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    文件上传者 <input type="text" id="fileuploader" style="width: 80px;" readonly="readonly"
+                                 th:value="${view.userName}">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input type="text" style="width: 400px;"
+                                                                               id="filedescribtion"
+                                                                               th:field="*{filedescribtion}">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 272px;"
+                                                                  th:field="*{remark}">
+                    <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新增行&nbsp;&nbsp;<img src="/images/icon/Add.png" align="middle"-->
+                    <!--style="width: 20px; height: 20px; vertical-align: middle"-->
+                    <!--onclick="addrow('bodycss')"/>-->
+
+                </div>
+                <p>
+                    <div>
+
+                        <table id="uploadtable" width="100%" align="">
+                            <thead>
+                            <tr id="colrcss">
+                                <td>序号</td>
+                                <td>选择文件夹</td>
+                                <td>选择单或多个文件</td>
+                                <td>文件命名</td>
+
+                            </tr>
+                            </thead>
+
+                            <tbody id="bodycss">
+                            <tr id="tr01">
+                                <td>1</td>
+                                <td><input type="file" id="filefolder" name="fileFolder"
+                                           onchange="changeformactionfolder()"
+                                           webkitdirectory></td>
+                                <td><input type="file" id="file" name="file" onchange="changeformactionupload()"
+                                           multiple>
+                                </td>
+
+                                <td><font color="#FF0000" size="2">*</font>
+                                    <input type="text" style="width: 300px" id="filename" th:field="*{fileName}">
+
+                                </td>
 
 
-                    业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>
-                    订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>
-                    项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>
-                    <input type="submit" onclick="return checksalormessage()" value="确认提交">
-                    <br/>
-                    <div id="showuploadstatusmessage" style="display:none;">
-                    </div>
-                    <div id="showtipmessage" style="display:none;" ></div>
+                            </tr>
+                            </tbody>
+
+                            <tfoot>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" align="right"><input type="button" onclick="submitalldata()" value="保存">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="button" value="全部清空" onclick="removeallbutonetr()">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                <p>
+                    <font color="#FF0000" size="2">注："*"代表必填选项.</font>
+                <p>
+                    <font color="#FF0000"
+                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;为方便后继文件管理,请将"*"号信息填写正确.</font>
+                <p>
+                    <font color="#FF0000"
+                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件上传可以为文件夹,也可为单或多个文件,只能二选一.</font>
+
+                <p>
+                    <font color="#FF0000"
+                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单次上传总文件大小不超过20M.否则服务器不接受请求。</font>
+
+                    </td>
+                    </tr>
+
+                    </tfoot>
+                    </table>
+            </div>
+
+            <div id="alertdiv">
+                <div id="div1">
+
+                    <font color="#000000" size="3" id="showalerttext"></font>
 
 
+                </div>
+                <div id="div2">
+                    <input type="button" style="width:50px;height:30px;" value="确定" onclick="closealrtdiv()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-            </form>
-        </div>
+                </div>
 
+            </div>
+
+
+        </form>
     </div>
-
 </div>
+
+<div id="coverbehidepage"></div>
+<!--<div id="uploadpage">-->
+
+
+<!--<form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">-->
+<!--<input type="hidden" th:field="*{userName}" >-->
+<!--<input type="hidden" th:field="*{password}" >-->
+<!--<input id="uploadflag" th:field="*{flag}" type="hidden" >-->
+<!--<input type="file" id="file" name="file">-->
+
+
+<!--业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>-->
+<!--订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>-->
+<!--项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>-->
+<!--<input type="submit" onclick="return checksalormessage()" value="确认提交">-->
+<!--<br/>-->
+<!--<div id="showuploadstatusmessage" style="display:none;">-->
+<!--</div>-->
+<!--<div id="showtipmessage" style="display:none;" ></div>-->
+
+
+<!--</form>-->
+<!--</div>-->
+
+
+</body>
+
+</html>
+</html>
 
 
 <script src="/lib/bootstrap/js/bootstrap.js"></script>
 <script type="text/javascript">
-
-    function checksalormessage() {
-        var salorid = $("#salorid").val().trim();
-        var orderid = $("#orderid").val().trim();
-        var projectid = $("#projectid").val().trim();
-        $("#showtipmessage").html("");
-        $("#showtipmessage").hide();
-        var fileInput = $('#file').val();
-        if(salorid==""|| orderid==""||projectid==""){
-            $("#showtipmessage").html("<h5><font color=\"#FF0000\">文件上传信息不能为空</font></h5>");
-            $("#showtipmessage").show();
-            return false;
-        }
-        if(fileInput=="" || fileInput==null || fileInput.trim().length<=0){
-            $("#showtipmessage").html("<h5><font color=\"#FF0000\">请选择上传文件</font></h5>");
-            $("#showtipmessage").show();
-            return false;
-        }
-        return true;
-    }
-
     $("[rel=tooltip]").tooltip();
     $(function () {
+        $('[data-popover="true"]').popover({html: true});
         $('.demo-cancel-click').click(function () {
             return false;
         });
     });
+
 </script>
 
 
-</body>
-</html>

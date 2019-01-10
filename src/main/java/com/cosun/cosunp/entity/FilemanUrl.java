@@ -9,9 +9,9 @@ public class FilemanUrl implements Serializable {
     private Integer id;
     private Integer fileInfoId; //关联 FileManFileInfo表
     private String userName;
-    private String fileName;
+    private String orginName;//单个文件原始文件名
     private Date upTime;
-    private Integer opRight; //op_right是对文件的操作权限的描述
+    private String opRight; //op_right是对文件的操作权限的描述
     private String logur1;//最后的保存地址
 
     public Integer getId() {
@@ -38,12 +38,13 @@ public class FilemanUrl implements Serializable {
         this.userName = userName;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getOrginName() {
+
+        return orginName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setOrginName(String orginName) {
+        this.orginName = orginName;
     }
 
     public Date getUpTime() {
@@ -54,11 +55,12 @@ public class FilemanUrl implements Serializable {
         this.upTime = upTime;
     }
 
-    public Integer getOpRight() {
+    public String getOpRight() {
+
         return opRight;
     }
 
-    public void setOpRight(Integer opRight) {
+    public void setOpRight(String opRight) {
         this.opRight = opRight;
     }
 

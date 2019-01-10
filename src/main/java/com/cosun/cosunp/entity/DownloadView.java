@@ -17,14 +17,14 @@ public class DownloadView implements Serializable {
     private Integer uId;
     private String userName;
     private String password;
-    private String creator;
+    private String creator;//上传者
     private String lastUpdator;
     private String fileName; //文件名称
     private String salor;//业务员
     private String orderNo;//订单编号
     private String projectName;//项目名称
     private String lastUpdateTime;
-    private String createTime;
+    private String createTime;//上传时间
     private Integer totalUpdateNum;
     private String opRight; //操作权限
     private String urlAddr;
@@ -32,6 +32,8 @@ public class DownloadView implements Serializable {
     private String updatePrivilege; //修改权限  2
     private String cancelPrivilege; //取消权限  3
     private String flag;
+    private String remark;//备注
+    private String filedescribtion;//文件说明
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -81,6 +83,22 @@ public class DownloadView implements Serializable {
 
     public void setEndNewestSaveDateStr(String endNewestSaveDateStr) {
         this.endNewestSaveDateStr = endNewestSaveDateStr;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getFiledescribtion() {
+        return filedescribtion;
+    }
+
+    public void setFiledescribtion(String filedescribtion) {
+        this.filedescribtion = filedescribtion;
     }
 
     public int getPreCurrentPage() {

@@ -3,23 +3,24 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
+import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -238,61 +239,55 @@ public class FileUploadAndDownController {
      * @author:homey Wong
      * @date:2018.12.20
      */
-    //上传
+    //多文件上传
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ModelAndView toFileUpAndDownPage(@ModelAttribute(value = "view") DownloadView view, @RequestParam("file") MultipartFile file, Model model) throws
-            Exception {
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(), view.getPassword());
-        if (file == null || file.getSize() <= 0) { // -1
-            view.setFlag("0");
+    public ModelAndView toFileUpAndDownPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
+                                            @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
+        List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
+        UserInfo userInfo =(UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        for(MultipartFile mfile : files) {
+            fileArray.add(mfile);
         }
-        String orgFileName = file.getOriginalFilename();
-        long fileSize = file.getSize();
-        String name = file.getName();//file input域的参数名  , file
-        String suffix = orgFileName.substring(orgFileName.lastIndexOf("."));//文件后缀
-        //文件新名字
-        String newFileName = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + suffix;
-        //文件最终路径
-        String destPath = "f:/file/" + newFileName;
-        FileManFileInfo fileManFileInfo;
-        FilemanUrl filemanUrl;
-        FilemanRight filemanRight;
-        try {
-            file.transferTo(new File(destPath));
-            //存文件的人与文件信息
-            fileManFileInfo = new FileManFileInfo();
-            fileManFileInfo.setCreateTime(new Date());
-            fileManFileInfo.setCreateUser(userInfo.getUserName());
-            fileManFileInfo.setUserName(userInfo.getUserName());
-            fileManFileInfo.setuId(userInfo.getuId());
-            fileManFileInfo.setFileName(orgFileName);
-            fileManFileInfo.setExtInfo1(view.getSalor());
-            fileManFileInfo.setOrderNum(view.getOrderNo());
-            fileManFileInfo.setProjectName(view.getProjectName());
-
-            //文件路径
-            filemanUrl = new FilemanUrl();
-            filemanUrl.setFileName(name);
-            filemanUrl.setUserName(userInfo.getUserName());
-            filemanUrl.setUpTime(new Date());
-            filemanUrl.setLogur1(destPath);
-
-            //文件权限
-            filemanRight = new FilemanRight();
-            filemanRight.setCreateTime(new Date());
-            filemanRight.setCreateUser(userInfo.getUserName());
-            filemanRight.setFileName(name);
-            filemanRight.setuId(userInfo.getuId());
-            filemanRight.setUserName(userInfo.getUserName());
-
-            fileUploadAndDownServ.addFileDataByUpload(filemanRight, filemanUrl, fileManFileInfo);
-            view.setFlag("1");
-        } catch (Exception e) {
-            view.setFlag("-1");
-            e.printStackTrace();
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");
+        if(isFileLarge) {
+            view = fileUploadAndDownServ.addFilesData(view, files, userInfo);
+        }else{
+            view.setFlag("-2");
+            return new ModelAndView("uploadpage");
         }
+
         return new ModelAndView("uploadpage");
 
     }
+
+    /**
+     * 功能描述:  文件夹上传
+     * @auther: homey Wong
+     * @date: 2019/1/9 0009 下午 12:08
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
+    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
+        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
+        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        if(isFileLarge) {
+            view = fileUploadAndDownServ.addFileFoldersData(view, files, userInfo);
+        }else{
+            view.setFlag("-2");
+            return new ModelAndView("uploadpage");
+        }
+        return new ModelAndView("uploadpage");
+    }
 }
+
+

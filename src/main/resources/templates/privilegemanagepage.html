@@ -160,22 +160,16 @@
     <div class="navbar-collapse collapse" style="height: 1px;">
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
-                <div th:if="${view!=null and view.userName!=null}">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
 
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>
-                    <p th:text="${view.userName}"></p>
-                    <!--<i class="fa fa-caret-down"></i>-->
+                    <i class="fa fa-caret-down"></i>
+                </a>
 
-                </div>
-                <div th:if="${view==null or view.userName==null}">
-                    <a th:href="@{/account/tologin}" class="dropdown-toggle">
-                        <span class="glyphicon glyphicon-user padding-right-small"
-                              style="position:relative;top: 3px;"></span>请登录
-                        <i class="fa fa-caret-down"></i>
-                    </a>
-                </div>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/account/logout}">退出登录</a></li>
 
+                </ul>
             </li>
         </ul>
 
@@ -186,7 +180,7 @@
 
 <div class="sidebar-nav">
     <ul>
-        <li data-popover="true"
+        <li data-popover="fasle"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
@@ -199,7 +193,7 @@
         </li>
 
         <!--========================文件管理===============================-->
-        <li data-popover="true"
+        <li data-popover="fasle"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
@@ -214,7 +208,7 @@
             </ul>
         </li>
 
-        <li data-popover="true"
+        <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
@@ -255,15 +249,15 @@
 <div class="content" id="some-element">
 
     <div id="tabs">
-        <ul>
+
             <a class="btn btn-default"
-               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password})}">上传</a>
+               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
             <a class="btn btn-default"
                th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                 下载</a>
             <a class="btn btn-primary"
                th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
-        </ul>
+        <p>
 
         <div id="some-element">
             <form>

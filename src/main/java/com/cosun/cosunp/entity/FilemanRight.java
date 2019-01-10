@@ -9,15 +9,23 @@ public class FilemanRight implements Serializable {
     private static final long serialVersionUID = 4824598905346901899L;
     private Integer id;
     private Integer fileInfoId;
+    private Integer fileUrlId;//关联URL表
     private Integer uId;
     private String userName;
     private String fileName;
     private String createUser;
     private String updateUser;
-    private Date createTime;
+    private String createTime;
     private Date updateTime;
-    private Integer opRight;//op_right是对文件的操作权限的描述
+    private String opRight;//op_right是对文件的操作权限的描述
 
+    public Integer getFileUrlId() {
+        return fileUrlId;
+    }
+
+    public void setFileUrlId(Integer fileUrlId) {
+        this.fileUrlId = fileUrlId;
+    }
 
     public Integer getFileInfoId() {
         return fileInfoId;
@@ -75,11 +83,11 @@ public class FilemanRight implements Serializable {
         this.updateUser = updateUser;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
@@ -91,11 +99,11 @@ public class FilemanRight implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public Integer getOpRight() {
+    public String getOpRight() {
         return opRight;
     }
 
-    public void setOpRight(Integer opRight) {
+    public void setOpRight(String opRight) {
         this.opRight = opRight;
     }
 }

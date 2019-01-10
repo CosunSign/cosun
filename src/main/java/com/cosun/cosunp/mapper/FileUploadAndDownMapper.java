@@ -19,16 +19,17 @@ import java.util.List;
 @Repository
 public interface FileUploadAndDownMapper {
 
-    @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId)" +
-            " values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId})")
+    @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId,fileUrlId,opRight)" +
+            " values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
     void addFilemanRightDataByUpload(FilemanRight filemanRight);
 
-    @Insert("insert into FilemanUrl(fileInfoId,userName,fileName,upTime,logur1) " +
-            "values(#{fileInfoId},#{userName},#{fileName},#{upTime},#{logur1})")
+    @Insert("insert into FilemanUrl(fileInfoId,userName,orginname,opRight,logur1) " +
+            "values(#{fileInfoId},#{userName},#{orginName},#{opRight},#{logur1})")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void addfilemanUrlByUpload(FilemanUrl filemanUrl);
 
-    @Insert("insert into FileManFileInfo(uid,username,filename,createuser,createtime,extinfo1,ordernum,projectname) " +
-            "values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{extInfo1},#{orderNum},#{projectName})")
+    @Insert("insert into FileManFileInfo(uid,username,filename,createuser,createtime,extinfo1,ordernum,projectname,totalFilesNum,filedescribtion,remark) " +
+            "values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{extInfo1},#{orderNum},#{projectName},#{totalFilesNum},#{filedescribtion},#{remark})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void addfileManFileDataByUpload(FileManFileInfo fileManFile);
 

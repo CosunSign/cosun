@@ -53,6 +53,7 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
             String url = "/account/tologin";
             response.sendRedirect(url);
             return false;
+           // return true;
         }
     }
 
