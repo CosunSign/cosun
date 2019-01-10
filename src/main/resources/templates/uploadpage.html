@@ -256,6 +256,10 @@
             alert("请选择上传文件！")
             return false;
         }
+        if (fileInput != "" && filefolder != "") {
+            alert("不能同时上传两种文件方式！")
+            return false;
+        }
         document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
     }
