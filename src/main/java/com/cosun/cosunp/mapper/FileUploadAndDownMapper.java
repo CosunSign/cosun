@@ -7,6 +7,7 @@ import com.cosun.cosunp.entity.FilemanUrl;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,10 +57,21 @@ public interface FileUploadAndDownMapper {
             "                and ffi.uid = #{uId}  ")
     int findAllUploadFileCountByUserId(Integer uId);
 
+    @Select("select * from  filemanurl where orginname = #{orginName}")
+    FilemanUrl findIsExistFile(String orginName);
+
+    @Select("select * from  filemanurl where fileInfoId = #{id}")
+    List<FilemanUrl> findFileUrlByFileInFoData(Integer id);
+
+    @Select("select * from  filemanfileinfo where createuser= #{createUser} and ordernum= #{orderNum} and extinfo1= #{extInfo1} ")
+    List<FileManFileInfo> isSameOrderNoandOtherMessage(@Param("createUser") String createUser,@Param("orderNum") String orderNum,@Param("extInfo1") String extInfo1);
+
 
     @Update("update filemanright set opright= #{privileflag} where fileInfoId = #{filesId}  and uid = #{selectuser} ")
     void saveOrUpdateFilePrivilege(Integer selectuser, Integer filesId, String privileflag);
 
+    @Update("update filemanfileinfo set totalFilesNum = #{totalFilesNum} , updatecount = #{updateCount} , updatetime = #{updateTime}  where id= #{id} ")
+    int updateFileManFileInfo(@Param("totalFilesNum") Integer totalFilesNum,@Param("updateCount") Integer updateCount,@Param("updateTime") Date updateTime,@Param("id") Integer id);
 
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);

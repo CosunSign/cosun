@@ -35,7 +35,9 @@ public class DownloadView implements Serializable {
     private String remark;//备注
     private String filedescribtion;//文件说明
     private String engineer;//上传者  工程 师
-
+    private String existFileMessage;
+    private Integer isExistNum;
+    private String modifyReason;
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
     private int maxPage;// 最大页数
@@ -48,8 +50,52 @@ public class DownloadView implements Serializable {
     private Date endNewestSaveDate;//最新上传结束时间
     private String startNewestSaveDateStr;
     private String endNewestSaveDateStr;
+    private Integer singleFileUpdateNum;//单个文件更新次数
+    private String orderNoMessage;
+
+
+    public Integer getSingleFileUpdateNum() {
+        return singleFileUpdateNum;
+    }
+
+    public void setSingleFileUpdateNum(Integer singleFileUpdateNum) {
+        this.singleFileUpdateNum = singleFileUpdateNum;
+    }
+
+    public String getModifyReason() {
+        return modifyReason;
+    }
+
+    public void setModifyReason(String modifyReason) {
+        this.modifyReason = modifyReason;
+    }
+
+    public String getExistFileMessage() {
+        return existFileMessage;
+    }
+
+    public void setExistFileMessage(String existFileMessage) {
+        this.existFileMessage = existFileMessage;
+    }
+
     public String getEngineer() {
         return engineer;
+    }
+
+    public String getOrderNoMessage() {
+        return orderNoMessage;
+    }
+
+    public Integer getIsExistNum() {
+        return isExistNum;
+    }
+
+    public void setIsExistNum(Integer isExistNum) {
+        this.isExistNum = isExistNum;
+    }
+
+    public void setOrderNoMessage(String orderNoMessage) {
+        this.orderNoMessage = orderNoMessage;
     }
 
     public void setEngineer(String engineer) {

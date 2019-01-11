@@ -13,6 +13,15 @@ public class FilemanUrl implements Serializable {
     private Date upTime;
     private String opRight; //op_right是对文件的操作权限的描述
     private String logur1;//最后的保存地址
+    private Integer singleFileUpdateNum;//单个文件更新次数
+    private String modifyReason;//单次文件更新原因
+    public Integer getSingleFileUpdateNum() {
+        return singleFileUpdateNum;
+    }
+
+    public void setSingleFileUpdateNum(Integer singleFileUpdateNum) {
+        this.singleFileUpdateNum = singleFileUpdateNum;
+    }
 
     public Integer getId() {
         return id;

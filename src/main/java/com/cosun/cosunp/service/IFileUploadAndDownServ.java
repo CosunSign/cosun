@@ -17,11 +17,11 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize);
     List<DownloadView> findAllUploadFileByUserId(Integer uid);
-    DownloadView addFilesData(DownloadView view,MultipartFile[] files,UserInfo userInfo);
+    DownloadView addFilesData(DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo);
 
     List<UserInfo> findAllUser();
 
-    DownloadView addFileFoldersData(DownloadView view,List<MultipartFile> files,UserInfo userInfo);
+//    DownloadView addFileFoldersData(DownloadView view,List<MultipartFile> files,UserInfo userInfo);
 
     void saveOrUpdateFilePrivilege(Integer selectuser,Integer filesId,String privileflag);
 
@@ -30,4 +30,5 @@ public interface IFileUploadAndDownServ {
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view);
 
     int findAllUploadFileCountByParaCondition(DownloadView view);
+    DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
 }

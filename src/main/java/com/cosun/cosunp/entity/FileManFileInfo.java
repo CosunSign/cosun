@@ -130,6 +130,9 @@ public class FileManFileInfo implements Serializable {
     }
 
     public Integer getUpdateCount() {
+        if(this.updateCount==null){
+            return 0;
+        }
         return updateCount;
     }
 

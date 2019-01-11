@@ -66,6 +66,7 @@
         $("#orderno").val("");
         $("#projectno").val("");
         $('#file').val("");
+        $("#modifyreason").val("");
       //  $('#filefolder').val("");
         $('#filedescribtion').val("");
         $('#remark').val("");
@@ -252,6 +253,7 @@
         var orderno = $("#orderno").val().trim();
         var projecto = $("#projectno").val().trim();
         var fileInput = $('#file').val();
+        var modifyreason = $("#modifyreason").val().trim();
        // var filefolder = $("#filefolder").val();
        // var filename = $("#filename").val().trim();
         if (salorid == "" || salorid == null) {
@@ -271,6 +273,10 @@
             alert("请选择上传文件！")
             return false;
         }
+        if(modifyreason==""){
+            alert("为方便后继管理，请填写更新原因!")
+            return false;
+        }
 
         document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
@@ -286,6 +292,7 @@
         //$('#filefolder').val("");
         $('#filedescribtion').val("");
         $('#remark').val("");
+       $("#modifyreason").val("");
        // $('#filename').val("");
         $("#uploaddatetime").val(today());
 
@@ -461,10 +468,10 @@
             <input type="hidden" th:field="*{salor}" id="salorvalue">
             <div id="tabs">
 
-                <a class="btn btn-primary"
+                <a class="btn btn-default"
                    th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
 
-                <a class="btn  btn-default"
+                <a class="btn  btn-primary"
                    th:href="@{/fileupdown/tomodifypage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">更新</a>
 
                 <a class="btn btn-default"
@@ -543,8 +550,8 @@
                             <tr id="colrcss">
                                 <td>序号</td>
                                 <!--<td>选择文件夹</td>-->
-                                <td>选择单或多个文件</td>
-                                <!--<td>文件命名</td>-->
+                                <td>选择更新的单或多个文件</td>
+                                <td>修改原因</td>
 
                             </tr>
                             </thead>
@@ -559,10 +566,10 @@
                                            multiple>
                                 </td>
 
-                                <!--<td><font color="#FF0000" size="2">*</font>-->
-                                    <!--<input type="text" style="width: 300px" id="filename" th:field="*{fileName}">-->
+                                <td><font color="#FF0000" size="2">*</font>
+                                    <input type="text" style="width: 300px" id="modifyreason" th:field="*{modifyReason}">
 
-                                <!--</td>-->
+                                </td>
 
 
                             </tr>
@@ -573,7 +580,7 @@
                                 <td colspan="2">&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="2" align="right"><input type="button" onclick="submitalldata()" value="上传">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <td colspan="2" align="right"><input type="button" onclick="submitalldata()" value="更新">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <input type="button" value="全部清空" onclick="removeallbutonetr()">
 
                                 </td>

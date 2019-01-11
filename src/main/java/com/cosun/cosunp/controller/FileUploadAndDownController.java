@@ -251,12 +251,45 @@ public class FileUploadAndDownController {
         for(MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");
-        if(isFileLarge) {
-            view = fileUploadAndDownServ.addFilesData(view, files, userInfo);
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");//判断文件是否超过限制大小
+        if(isFileLarge) {//没超过
+            view = fileUploadAndDownServ.findIsExistFiles(fileArray,view,userInfo);
+          //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
         }else{
-            view.setFlag("-2");
-            return new ModelAndView("uploadpage");
+            view.setFlag("-2");//超过
+        }
+
+        return new ModelAndView("uploadpage");
+
+    }
+
+
+    /**
+     * 功能描述:文件更新修改 即覆盖
+     * @auther: homey Wong
+     * @date: 2019/1/11 0011 上午 9:01
+     * @param:
+     * @return:
+     * @describtion
+     */
+    //文件更新
+    @ResponseBody
+    @RequestMapping(value = "/tomodifypage", method = RequestMethod.POST)
+    public ModelAndView toModifyPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
+                                            @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
+        List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
+        UserInfo userInfo =(UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        for(MultipartFile mfile : files) {
+            fileArray.add(mfile);
+        }
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");//判断文件是否超过限制大小
+        if(isFileLarge) {//没超过
+            view = fileUploadAndDownServ.findIsExistFiles(fileArray,view,userInfo);
+            //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
+        }else{
+            view.setFlag("-2");//超过
         }
 
         return new ModelAndView("uploadpage");
@@ -271,23 +304,23 @@ public class FileUploadAndDownController {
      * @return:
      * @describtion
      */
-    @ResponseBody
-    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
-    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
-        UserInfo userInfo = (UserInfo)session.getAttribute("account");
-        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
-        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
-        view.setUserName(userInfo.getUserName());
-        view.setPassword(userInfo.getUserPwd());
-        if(isFileLarge) {
-            view = fileUploadAndDownServ.addFileFoldersData(view, files, userInfo);
-        }else{
-            view.setFlag("-2");
-            return new ModelAndView("uploadpage");
-        }
-        return new ModelAndView("uploadpage");
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
+//    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
+//        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+//        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
+//        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
+//        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+//        view.setUserName(userInfo.getUserName());
+//        view.setPassword(userInfo.getUserPwd());
+//        if(isFileLarge) {
+//            view = fileUploadAndDownServ.addFileFoldersData(view, files, userInfo);
+//        }else{
+//            view.setFlag("-2");
+//            return new ModelAndView("uploadpage");
+//        }
+//        return new ModelAndView("uploadpage");
+//    }
 }
 
 

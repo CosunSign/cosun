@@ -1,5 +1,7 @@
 package com.cosun.cosunp.tool;
 
+import com.cosun.cosunp.entity.DownloadView;
+import com.cosun.cosunp.entity.UserInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedOutputStream;
@@ -20,21 +22,20 @@ import static com.cosun.cosunp.tool.StringUtil.formateString;
  */
 public class FileUtil {
 
+
     /**
-     * 第一步：判断文件是否为空   true：返回提示为空信息   false：执行第二步
-     * 第二步：判断目录是否存在   不存在：创建目录
-     * 第三部：通过输出流将文件写入硬盘文件夹并关闭流  fileName.substring(0,fileName.lastIndexOf("."))+"_CY"+
-     * @param file
-     * @return
+     * 功能描述:根据已存在的路径存文件
+     * @auther: homey Wong
+     * @date: 2019/1/10 0010 下午 8:39
+     * @param:
+     * @return:
+     * @describtion
      */
-    public static String uploadFile(MultipartFile file,String Username){
-        String firstCharUpCase = PinYinUtil.toFirstCharUpCase(Username);
+
+    public static void uploadFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
         String fileName = file.getOriginalFilename();
-        String ext = fileName.substring(fileName.lastIndexOf("."));
-        String userNamePinYin = PinYinUtil.toPinyin(Username);
-        String filePath = "F:\\file\\"+userNamePinYin+"\\";
-        File targetFile = new File(filePath);
-        String deskName = formateString(new Date())+firstCharUpCase+MathUtil.getRandom620(5)+ext;
+        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
+        File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){
             targetFile.mkdirs();
@@ -42,7 +43,7 @@ public class FileUtil {
         //：通过输出流将文件写入硬盘文件夹并关闭流
         BufferedOutputStream stream = null;
         try {
-            stream = new BufferedOutputStream(new FileOutputStream(filePath+deskName));
+            stream = new BufferedOutputStream(new FileOutputStream(oldPath+fileName));
             stream.write(file.getBytes());
             stream.flush();
         }catch (IOException e){
@@ -54,7 +55,41 @@ public class FileUtil {
                 e.printStackTrace();
             }
         }
-        return filePath+deskName;
+    }
+
+    /**
+     * 第一步：判断文件是否为空   true：返回提示为空信息   false：执行第二步
+     * 第二步：判断目录是否存在   不存在：创建目录
+     * 第三部：通过输出流将文件写入硬盘文件夹并关闭流  fileName.substring(0,fileName.lastIndexOf("."))+"_CY"+
+     * @param file
+     * @return
+     */
+    public static String uploadFile(MultipartFile file, UserInfo userInfo, DownloadView view,String randomnum){
+        String fileName = file.getOriginalFilename();
+        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
+        String filePath = "F:\\"+userInfo.getuId()+"\\"+formateString(new Date())+"\\"+salorpinyinPinYin+"\\"
+                +view.getOrderNo()+"\\"+randomnum+"\\";
+        File targetFile = new File(filePath);
+        //：判断目录是否存在   不存在：创建目录
+        if(!targetFile.exists()){
+            targetFile.mkdirs();
+        }
+        //：通过输出流将文件写入硬盘文件夹并关闭流
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(filePath+fileName));
+            stream.write(file.getBytes());
+            stream.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return filePath+fileName;
     }
 
     /**
