@@ -31,4 +31,5 @@ public interface IFileUploadAndDownServ {
 
     int findAllUploadFileCountByParaCondition(DownloadView view);
     DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
+    DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
 }

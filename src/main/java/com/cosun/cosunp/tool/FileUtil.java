@@ -4,10 +4,7 @@ import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.UserInfo;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +18,41 @@ import static com.cosun.cosunp.tool.StringUtil.formateString;
  * @Modified-date:
  */
 public class FileUtil {
+
+    /**
+     * 功能描述:文件覆盖操作
+     * @auther: homey Wong
+     * @date: 2019/1/11 0011 上午 10:32
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    public static void modifyUpdateFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
+        String fileName = file.getOriginalFilename();
+        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
+        File targetFile = new File(oldPath);
+        //：判断目录是否存在   不存在：创建目录
+        if(targetFile.exists()){
+        //：通过输出流将文件写入硬盘文件夹并关闭流
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(oldPath));
+            stream.write(file.getBytes());
+            stream.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        }
+
+    }
+
 
 
     /**

@@ -16,7 +16,18 @@ public class FilemanUrl implements Serializable {
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String modifyReason;//单次文件更新原因
     public Integer getSingleFileUpdateNum() {
+        if(singleFileUpdateNum==null){
+            return 0;
+        }
         return singleFileUpdateNum;
+    }
+
+    public String getModifyReason() {
+        return modifyReason;
+    }
+
+    public void setModifyReason(String modifyReason) {
+        this.modifyReason = modifyReason;
     }
 
     public void setSingleFileUpdateNum(Integer singleFileUpdateNum) {

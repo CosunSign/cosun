@@ -76,6 +76,11 @@ public interface FileUploadAndDownMapper {
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);
 
+    @Update("update filemanurl set upTime= #{upTime},singleFileUpdateNum= #{singleFileUpdateNum},modifyReason= #{modifyReason} where id = #{id}")
+    void updateFileUrlById(Date upTime, Integer singleFileUpdateNum, String modifyReason,Integer id);
+
+    @Update("update filemanfileinfo set  updatecount = #{updateCount} , updatetime = #{updateTime},updateUser = #{updateUser}  where id= #{id} ")
+    void updateFileManFileInfo2(@Param("updateCount") Integer updateCount,@Param("updateTime") Date updateTime,@Param("updateUser") String updateUser,@Param("id") Integer id);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllByParaCondition")
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view);

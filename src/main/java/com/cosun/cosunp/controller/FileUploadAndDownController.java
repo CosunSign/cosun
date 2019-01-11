@@ -263,6 +263,34 @@ public class FileUploadAndDownController {
 
     }
 
+    /**
+     * 功能描述:跳转到更新页面
+     * @auther: homey Wong
+     * @date: 2019/1/11 0011 上午 9:18
+     * @param:
+     * @return:
+     * @describtion
+     */
+    /**
+     * @author:homey Wong
+     * @Date: 2018.12.21 18:18
+     * 跳转到主页面
+     */
+    @ResponseBody
+    @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
+    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("modifypage");
+        DownloadView view = new DownloadView();
+        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        modelAndView.addObject("view", view);
+        modelAndView.addObject("userInfos", userInfos);
+        modelAndView.addObject("downloadViews", downloadViews);
+        return modelAndView;
+    }
 
     /**
      * 功能描述:文件更新修改 即覆盖
@@ -274,8 +302,8 @@ public class FileUploadAndDownController {
      */
     //文件更新
     @ResponseBody
-    @RequestMapping(value = "/tomodifypage", method = RequestMethod.POST)
-    public ModelAndView toModifyPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
+    @RequestMapping(value = "/modifypage", method = RequestMethod.POST)
+    public ModelAndView modifyPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
                                             @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
         List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
         UserInfo userInfo =(UserInfo) session.getAttribute("account");
@@ -286,13 +314,13 @@ public class FileUploadAndDownController {
         }
         boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");//判断文件是否超过限制大小
         if(isFileLarge) {//没超过
-            view = fileUploadAndDownServ.findIsExistFiles(fileArray,view,userInfo);
+            view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray,view,userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
         }else{
             view.setFlag("-2");//超过
         }
 
-        return new ModelAndView("uploadpage");
+        return new ModelAndView("modifypage");
 
     }
 
