@@ -89,7 +89,6 @@
         border-style: solid;
     }
 
-
     #colrcss td {
         border-width: 1px;
         padding: 1px;
@@ -156,10 +155,11 @@
     }
 
 
-    #showurldiv {
+    #showurldiv{
         margin-top: 1px;
         margin-left: 1px;
         margin-right: 1px;
+        overflow-y:scroll;
         top: 0;
         bottom: 0;
         width:1100px;
@@ -341,7 +341,7 @@
             return false;
         }
         if (projecto == "") {
-            alert("请填写项目单号！");
+            alert("请填写项目名称！");
             return false;
         }
 
@@ -616,15 +616,14 @@
                     <div>
 
                         <table id="uploadtable" width="100%" align="">
-                            <thead style="background-color: #E0EEEE">
-                            <tr id="colrcss">
-                                <td>序号</td>
+                            <tr id="colrcss" style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
+                                <th>序号</th>
                                 <!--<td>选择文件夹</td>-->
-                                <td>选择单或多个文件</td>
+                                <th>选择单或多个文件</th>
                                 <!--<td>文件命名</td>-->
 
                             </tr>
-                            </thead>
+
 
                             <tbody id="bodycss">
                             <tr id="tr01">
@@ -677,13 +676,13 @@
 
             <div id="showurldiv">
                 <table class="grid" style="width: 100%" id="tablecss">
-                    <thead style="background-color: #E0EEEE" align="center">
-                    <td>序号</td>
-                    <td>设计师</td>
-                    <td>业务员</td>
-                    <td>订单编号</td>
-                    <td>文件名称</td>
-                    <td>上传时间</td>
+                    <thead style="background-color: #E0EEEE" align="center" >
+                    <td >序号</td>
+                    <td >设计师</td>
+                    <td >订单编号</td>
+                    <td >业务员</td>
+                    <td >文件名称</td>
+                    <td >上传时间</td>
                     <td>更新次数</td>
                     </thead>
                     <tbody align="center" id="urltbody">
@@ -691,6 +690,7 @@
                     </tbody>
                 </table>
             </div>
+
 
 
             <div id="alertdiv">
