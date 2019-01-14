@@ -252,11 +252,14 @@
 
             <a class="btn btn-default"
                th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
-            <a class="btn btn-primary"
+        <a class="btn  btn-default"
+           th:href="@{/fileupdown/tomodifypage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">更新</a>
+
+        <a class="btn btn-primary"
                th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                 下载</a>
             <a class="btn btn-default"
-               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
+               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
         <p>
 
         <div id="some-element">

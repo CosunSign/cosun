@@ -23,8 +23,6 @@
 <body class=" theme-blue">
 <script type="text/javascript">
     $(function () {
-        document.getElementById("coverbehidepage").style.display = "none";
-        document.getElementById("alertdiv").style.display = "none";
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         var isMessage = $("#existFileMessage").val();
         var isExistNum = $("#isExistNum").val();
@@ -34,13 +32,13 @@
             alert("上传文件为空文件，请重新选择上传！");
         } else if (flag == "-1") {
             alert("文件上传失败！");
-        }else if(flag == "-2"){
+        } else if (flag == "-2") {
             alert("上传失败，总文件大小超过20M！");
-        }else if(flag == "-3"){
-            if(isMessage!=""){
+        } else if (flag == "-3") {
+            if (isMessage != "") {
                 alert("您本次上传的文件无法受理,因为上传的文件里在服务器里存过一次,请重新选择.提示信息为," +
-                    "您总共有"+isExistNum+"个文件已经存在过,分别为"+isMessage);
-            }else{
+                    "您总共有" + isExistNum + "个文件已经存在过,分别为" + isMessage);
+            } else {
                 alert("您本次上传的文件无法受理,因为根据提供的订单信息全部为已存在过的文件.");
             }
 
@@ -110,65 +108,49 @@
         text-align: center;
     }
 
-    #alertdiv {
-        position: absolute;
-        left: 400px;
-        top: 180px;
-        width: 300px;
-        height: 150px;
-        background-color: #9AC0CD;
-        border-left-color: #c3dde0;
-        border-right-color: #c3dde0;
-        border-top-color: #c3dde0;
-        border-bottom-color: #c3dde0;
-        z-index: 1009;
-        border-style: solid;
 
-    }
-
-    #div1 {
+    #showurldiv {
         margin-top: 1px;
         margin-left: 1px;
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 291px;
-        height: 90px;
-        right: 0;
-        z-index: 1008;
-        background-color: #E0EEEE;
-        line-height: 90px
-    }
-
-    #div2 {
-        top: 0;
-        bottom: 0;
-        margin-left: 1px;
-        margin-bottom: 1px;
-        margin-right: 1px;
-        width: 291px;
-        height: 50px;
-        text-align: right;
-        right: 0;
-        z-index: 1007;
-        background-color: #E0EEEE;
-    }
-
-
-    #showurldiv{
-        margin-top: 1px;
-        margin-left: 1px;
-        margin-right: 1px;
-        overflow-y:scroll;
-        top: 0;
-        bottom: 0;
-        width:1100px;
+        width: 1100px;
         height: 300px;
         right: 0;
+
     }
+
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
     }
+     #urltbody {
+         display:block;
+         height:195px;
+         overflow-y:scroll;
+     }
+
+    #urltbody tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+    #urltbody tr td{
+        text-align: center;
+    }
+    #urlthead tr td{
+        text-align: center;
+    }
+
+    #urlthead tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+    #urlthead {
+        width: calc( 100% - 1em )
+    }
+
 
     #coverbehidepage {
         display: none;
@@ -193,48 +175,21 @@
         $('#main-menu').append(uls.clone());
     });
 
-    function closealrtdiv() {
-        document.getElementById("coverbehidepage").style.display = "none";
-        document.getElementById("alertdiv").style.display = "none";
-    }
-
-    function altRows(id) {
-        if (document.getElementsByTagName) {
-
-            var table = document.getElementById(id);
-            var rows = table.getElementsByTagName("tr");
-            rows[0].className = "evenrowcolor";
-
-        }
-    }
 
     function checkOrderNo(str) {
 
         //var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
-        if(!reg.test(str.value)){
-
-           // $("#showalerttext").text("订单编号不符合规定格式，示范如：COSUN20190112WW01");
+        if (!reg.test(str.value)) {
             alert("订单编号不符合规定格式，示范如：COSUN20190112WW01");
             $("#orderno").val("");
-           // document.getElementById("coverbehidepage").style.display = "block";
-           // document.getElementById("alertdiv").style.display = "block";
             return false;
         }
         showFileUrl();
 
     }
 
-    // function checkProjectNo(str) {
-    //     var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
-    //     if(!reg.test(str.value)){
-    //         $("#showalerttext").text("项目编号只能有数字字母！");
-    //         document.getElementById("coverbehidepage").style.display = "block";
-    //         document.getElementById("alertdiv").style.display = "block";
-    //         $("#projectno").val("");
-    //     }
-    //
-    // }
+
 
     function today() {
         var today = new Date();
@@ -254,21 +209,21 @@
 
     function showFileUrl() {
         $("#salorvalue").val($("#salorid").val());
-        var salorid= $("#salorid").val();
+        var salorid = $("#salorid").val();
         var orderno = $("#orderno").val().trim();
-        if(salorid == "" || salorid == null){
+        if (salorid == "" || salorid == null) {
             return false;
         }
-        if(orderno=="" || orderno==null){
+        if (orderno == "" || orderno == null) {
             return false;
         }
 
-        showfileurldivbysaloridorderno(salorid,orderno);
+        showfileurldivbysaloridorderno(salorid, orderno);
 
     }
 
 
-    function showfileurldivbysaloridorderno(salorid,orderno){
+    function showfileurldivbysaloridorderno(salorid, orderno) {
         $("#some-element").busyLoad("show");//遮罩层开启
         var urltbody = $("#urltbody");
         urltbody.html("");
@@ -286,22 +241,21 @@
                 var data = eval(msg);//将msg化为数;
                 var td = "";
                 var tr = "";
-
                 if (data != null && data != "") {
                     $.each(data, function (num) {
-                        tr =  $("<tr></tr>");
-                        tr.append("<td>" + (num + 1) + "</td>");
-                        tr.append("<td>" + isNull(data[num].userName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
-                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
-                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].upTime) + "</td>");
-                        tr.append("<td>" + isNull(data[num].singleFileUpdateNum) + "</td>");
+                        tr = $("<tr></tr>");
+                        tr.append("<td width='30'>" + (num + 1) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].userName) + "</td>");
+                        tr.append("<td width='150'>" + isNull(data[num].orderNo) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td width='200'>" + isNull(data[num].fileName) + "</td>");
+                        tr.append("<td width='153'>" + isNull(data[num].lastUpdateTime) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].singleFileUpdateNum) + "</td>");
                         tr.append(td);
                         tr.appendTo(urltbody);
                     });
-                }else{
-                    tr =  $("<tr></tr>");
+                } else {
+                    tr = $("<tr></tr>");
                     tr.append("<td colspan='7'>查询为空</td>");
                     tr.append(td);
                     tr.appendTo(urltbody);
@@ -330,8 +284,6 @@
         var orderno = $("#orderno").val().trim();
         var projecto = $("#projectno").val().trim();
         var fileInput = $('#file').val();
-       // var filefolder = $("#filefolder").val();
-       // var filename = $("#filename").val().trim();
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
             return false;
@@ -364,7 +316,7 @@
         //$('#filefolder').val("");
         $('#filedescribtion').val("");
         $('#remark').val("");
-       // $('#filename').val("");
+        // $('#filename').val("");
         $("#uploaddatetime").val(today());
 
     }
@@ -439,7 +391,8 @@
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
+                          th:text="${view.userName}"></span>
 
                     <i class="fa fa-caret-down"></i>
                 </a>
@@ -548,7 +501,7 @@
                    th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                     下载</a>
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
+                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
 
                 <p>
                 <p>
@@ -556,7 +509,7 @@
                     <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
-                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="showFileUrl()" >
+                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="showFileUrl()">
                         <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
                         <option value="邹时雨">邹时雨</option>
                         <option value="胡锋">胡锋</option>
@@ -588,11 +541,11 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     订单编号
-                    <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)" >
+                    <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     项目名称
-                    <input type="text" id="projectno" th:field="*{projectName}" >
+                    <input type="text" id="projectno" th:field="*{projectName}">
                     &nbsp;&nbsp;&nbsp;&nbsp;上传时间
                     <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
                 </div>
@@ -617,9 +570,9 @@
 
                         <table id="uploadtable" width="100%" align="">
                             <tr id="colrcss" style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
-                                <th>序号</th>
+                                <td>序号</td>
                                 <!--<td>选择文件夹</td>-->
-                                <th>选择单或多个文件</th>
+                                <td>选择单或多个文件</td>
                                 <!--<td>文件命名</td>-->
 
                             </tr>
@@ -629,14 +582,14 @@
                             <tr id="tr01">
                                 <td>1</td>
                                 <!--<td><input type="file" id="filefolder" name="fileFolder"-->
-                                           <!--onchange="changeformactionfolder()"-->
-                                           <!--webkitdirectory></td>-->
+                                <!--onchange="changeformactionfolder()"-->
+                                <!--webkitdirectory></td>-->
                                 <td><input type="file" id="file" name="file" onchange="changeformactionupload()"
                                            multiple>
                                 </td>
 
                                 <!--<td><font color="#FF0000" size="2">*</font>-->
-                                    <!--<input type="text" style="width: 300px" id="filename" th:field="*{fileName}">-->
+                                <!--<input type="text" style="width: 300px" id="filename" th:field="*{fileName}">-->
 
                                 <!--</td>-->
 
@@ -665,7 +618,7 @@
                           size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单次上传总文件大小不超过20M.否则服务器不接受请求。</font>
                 <p><font color="#FF0000"
 
-                      size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本上传功能只接收全新未存过的文件，或以前存过但新增的一些文件。如存储的文件以前有存储过也有新文件，则服务器全不受理。</font>
+                         size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本上传功能只接收全新未存过的文件，或以前存过但新增的一些文件。如存储的文件以前有存储过也有新文件，则服务器全不受理。</font>
 
                     </td>
                     </tr>
@@ -675,67 +628,49 @@
             </div>
 
             <div id="showurldiv">
-                <table class="grid" style="width: 100%" id="tablecss">
-                    <thead style="background-color: #E0EEEE" align="center" >
-                    <td >序号</td>
-                    <td >设计师</td>
-                    <td >订单编号</td>
-                    <td >业务员</td>
-                    <td >文件名称</td>
-                    <td >上传时间</td>
-                    <td>更新次数</td>
+                <table class="grid" style="width: 100%;" id="tablecss">
+                    <thead style="background-color: #E0EEEE" align="center" id="urlthead">
+                    <tr>
+                        <td width="30">序号</td>
+                        <td width="50">设计师</td>
+                        <td width="150">订单编号</td>
+                        <td width="50">业务员</td>
+                        <td width="200">文件名称</td>
+                        <td width="153">上传时间</td>
+                        <td width="50">更新次数</td>
+                    </tr>
                     </thead>
-                    <tbody align="center" id="urltbody">
-
+                    <tbody align="center" id="urltbody" >
+                    <tr>
+                        <td colspan="7">暂无数据</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
 
 
-
-            <div id="alertdiv">
-                <div id="div1">
-                    <div  id="showalerttext"></div>
-
-                    <!--<font color="#000000" size="1" id="showalerttext"></font>-->
+            <!--<div id="uploadpage">-->
 
 
-                </div>
-                <div id="div2">
-                    <input type="button" style="width:50px;height:30px;" value="确定" onclick="closealrtdiv()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                </div>
-
-            </div>
+            <!--<form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">-->
+            <!--<input type="hidden" th:field="*{userName}" >-->
+            <!--<input type="hidden" th:field="*{password}" >-->
+            <!--<input id="uploadflag" th:field="*{flag}" type="hidden" >-->
+            <!--<input type="file" id="file" name="file">-->
 
 
-        </form>
-    </div>
-</div>
-
-<div id="coverbehidepage"></div>
-<!--<div id="uploadpage">-->
-
-
-<!--<form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">-->
-<!--<input type="hidden" th:field="*{userName}" >-->
-<!--<input type="hidden" th:field="*{password}" >-->
-<!--<input id="uploadflag" th:field="*{flag}" type="hidden" >-->
-<!--<input type="file" id="file" name="file">-->
+            <!--业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>-->
+            <!--订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>-->
+            <!--项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>-->
+            <!--<input type="submit" onclick="return checksalormessage()" value="确认提交">-->
+            <!--<br/>-->
+            <!--<div id="showuploadstatusmessage" style="display:none;">-->
+            <!--</div>-->
+            <!--<div id="showtipmessage" style="display:none;" ></div>-->
 
 
-<!--业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>-->
-<!--订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>-->
-<!--项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>-->
-<!--<input type="submit" onclick="return checksalormessage()" value="确认提交">-->
-<!--<br/>-->
-<!--<div id="showuploadstatusmessage" style="display:none;">-->
-<!--</div>-->
-<!--<div id="showtipmessage" style="display:none;" ></div>-->
-
-
-<!--</form>-->
-<!--</div>-->
+            <!--</form>-->
+            <!--</div>-->
 
 
 </body>

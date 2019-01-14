@@ -23,8 +23,6 @@
 <body class=" theme-blue">
 <script type="text/javascript">
     $(function () {
-        document.getElementById("coverbehidepage").style.display = "none";
-        document.getElementById("alertdiv").style.display = "none";
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         var isMessage = $("#existFileMessage").val();
         var isExistNum = $("#isExistNum").val();
@@ -48,10 +46,8 @@
         $("#projectno").val("");
         $('#file').val("");
         $("#modifyreason").val("");
-      //  $('#filefolder').val("");
         $('#filedescribtion').val("");
         $('#remark').val("");
-      //  $('#filename').val("");
         $("#uploaddatetime").val(today());
 
 
@@ -111,7 +107,6 @@
         margin-top: 1px;
         margin-left: 1px;
         margin-right: 1px;
-        overflow-y:scroll;
         top: 0;
         bottom: 0;
         width:1100px;
@@ -149,20 +144,32 @@
         line-height: 90px
     }
 
-    #div2 {
-        top: 0;
-        bottom: 0;
-        margin-left: 1px;
-        margin-bottom: 1px;
-        margin-right: 1px;
-        width: 291px;
-        height: 50px;
-        text-align: right;
-        right: 0;
-        z-index: 1007;
-        background-color: #E0EEEE;
+    #urltbody {
+        display:block;
+        height:195px;
+        overflow-y:scroll;
     }
 
+    #urltbody tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+    #urltbody tr td{
+        text-align: center;
+    }
+    #urlthead tr td{
+        text-align: center;
+    }
+
+    #urlthead tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+    #urlthead {
+        width: calc( 100% - 1em )
+    }
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
     }
@@ -190,20 +197,6 @@
         $('#main-menu').append(uls.clone());
     });
 
-    function closealrtdiv() {
-        document.getElementById("coverbehidepage").style.display = "none";
-        document.getElementById("alertdiv").style.display = "none";
-    }
-
-    function altRows(id) {
-        if (document.getElementsByTagName) {
-
-            var table = document.getElementById(id);
-            var rows = table.getElementsByTagName("tr");
-            rows[0].className = "evenrowcolor";
-
-        }
-    }
 
     function showFileUrl() {
         $("#salorvalue").val($("#salorid").val());
@@ -242,13 +235,13 @@
                 if (data != null && data != "") {
                     $.each(data, function (num) {
                         tr =  $("<tr></tr>");
-                        tr.append("<td>" + (num + 1) + "</td>");
-                        tr.append("<td>" + isNull(data[num].userName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
-                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
-                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].upTime) + "</td>");
-                        tr.append("<td>" + isNull(data[num].singleFileUpdateNum) + "</td>");
+                        tr.append("<td width='30'>" + (num + 1) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].userName) + "</td>");
+                        tr.append("<td width='150'>" + isNull(data[num].orderNo) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td width='200'>" + isNull(data[num].fileName) + "</td>");
+                        tr.append("<td width='153'>" + isNull(data[num].lastUpdateTime) + "</td>");
+                        tr.append("<td width='50'>" + isNull(data[num].singleFileUpdateNum) + "</td>");
                         tr.append(td);
                         tr.appendTo(urltbody);
                     });
@@ -522,7 +515,7 @@
                    th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                     下载</a>
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
+                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
 
                 <p>
                 <p>
@@ -653,64 +646,27 @@
 
             <div id="showurldiv">
                 <table class="grid" style="width: 100%" id="tablecss">
-                    <thead style="background-color: #E0EEEE" align="center">
-                    <td>序号</td>
-                    <td>设计师</td>
-                    <td>业务员</td>
-                    <td>订单编号</td>
-                    <td>文件名称</td>
-                    <td>上传时间</td>
-                    <td>更新次数</td>
+                    <thead style="background-color: #E0EEEE" align="center" id="urlthead">
+                    <td width="30">序号</td>
+                    <td width="50">设计师</td>
+                    <td width="150">订单编号</td>
+                    <td width="50">业务员</td>
+                    <td width="200">文件名称</td>
+                    <td width="153">上传时间</td>
+                    <td width="50">更新次数</td>
                     </thead>
                     <tbody align="center" id="urltbody">
-
+                    <tr><td colspan="7">暂无数据</td></tr>
                     </tbody>
                 </table>
             </div>
 
-            <div id="alertdiv">
-                <div id="div1">
-                    <div  id="showalerttext"></div>
-
-                    <!--<font color="#000000" size="1" id="showalerttext"></font>-->
-
-
-                </div>
-                <div id="div2">
-                    <input type="button" style="width:50px;height:30px;" value="确定" onclick="closealrtdiv()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                </div>
-
-            </div>
 
 
         </form>
     </div>
 </div>
 
-<div id="coverbehidepage"></div>
-<!--<div id="uploadpage">-->
-
-
-<!--<form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">-->
-<!--<input type="hidden" th:field="*{userName}" >-->
-<!--<input type="hidden" th:field="*{password}" >-->
-<!--<input id="uploadflag" th:field="*{flag}" type="hidden" >-->
-<!--<input type="file" id="file" name="file">-->
-
-
-<!--业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>-->
-<!--订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>-->
-<!--项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>-->
-<!--<input type="submit" onclick="return checksalormessage()" value="确认提交">-->
-<!--<br/>-->
-<!--<div id="showuploadstatusmessage" style="display:none;">-->
-<!--</div>-->
-<!--<div id="showtipmessage" style="display:none;" ></div>-->
-
-
-<!--</form>-->
-<!--</div>-->
 
 
 </body>

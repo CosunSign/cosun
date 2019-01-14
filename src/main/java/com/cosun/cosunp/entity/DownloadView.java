@@ -55,6 +55,17 @@ public class DownloadView implements Serializable {
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String orderNoMessage;
 
+
+    private Integer type;//用户权限  1代表有管理权限  0代表没有管理权限进不了管理页面
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
     public Date getUpTime() {
         return upTime;
     }

@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
@@ -17,15 +16,19 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
     <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
-
+    <script src="/lib/WdatePicker.js" type="text/javascript"></script>
 </head>
-<body class=" theme-blue">
+<div class=" theme-blue">
 
 <!-- Demo page code -->
 
 <script type="text/javascript">
     $(function () {
-        altRows("privilegetable");
+        var flag = $("#type").val();
+
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！")
+        }
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
         if (color) {
@@ -35,78 +38,39 @@
             $('body').addClass('theme-' + color);
         }
 
-        $('[data-popover="true"]').popover({html: true});
+
 
     });
 
-    function altRows(id) {
-        if (document.getElementsByTagName) {
 
-            var table = document.getElementById(id);
-            var rows = table.getElementsByTagName("tr");
-            rows[0].className = "evenrowcolor";
-
-        }
-    }
 </script>
 <style type="text/css">
 
     table.grid {
         font-family: verdana, arial, sans-serif;
-        font-size: 13px;
+        font-size: 12px;
         border-width: 1px;
         border-collapse: collapse;
     }
 
     table.grid th {
         border-width: 1px;
-        padding: 8px;
+        padding: 5px;
         border-style: solid;
+        text-align: center;
+        white-space: nowrap;
     }
 
     table.grid td {
         border-width: 1px;
-        padding: 8px;
+        padding: 5px;
         border-style: solid;
+        text-align: center;
+        white-space: nowrap;
     }
 
-    table.altrowstable {
-        font-family: verdana, arial, sans-serif;
-        font-size: 13px;
-        color: #333333;
-        border-width: 1px;
-        border-color: #D1EEEE;
-        border-collapse: collapse;
-    }
 
-    table.altrowstable th {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #D1EEEE;
-    }
 
-    table.altrowstable td {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #D1EEEE;
-    }
-
-    .oddrowcolor {
-        background-color: #D1EEEE;
-    }
-
-    .evenrowcolor {
-        background-color: #c3dde0;
-    }
-
-    #line-chart {
-        height: 300px;
-        width: 800px;
-        margin: 0px auto;
-        margin-top: 1em;
-    }
 
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
@@ -119,207 +83,11 @@
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
     });
-</script>
-
-<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-
-<!-- Le fav and touch icons -->
-<link rel="shortcut icon" href="../assets/ico/favicon.ico">
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 
 
-<!--[if lt IE 7 ]>
-<body class="ie ie6"> <![endif]-->
-<!--[if IE 7 ]>
-<body class="ie ie7 "> <![endif]-->
-<!--[if IE 8 ]>
-<body class="ie ie8 "> <![endif]-->
-<!--[if IE 9 ]>
-<body class="ie ie9 "> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!-->
-
-<!--<![endif]-->
-
-<div class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
-    </div>
-
-    <div class="navbar-collapse collapse" style="height: 1px;">
-        <ul id="main-menu" class="nav navbar-nav navbar-right">
-            <li class="dropdown hidden-xs">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
-
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a th:href="@{/account/logout}">退出登录</a></li>
-
-                </ul>
-            </li>
-        </ul>
-
-    </div>
-</div>
-</div>
-
-
-<div class="sidebar-nav">
-    <ul>
-        <li data-popover="fasle"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforsalor nav nav-list collapse">
-                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
-                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> 项目类</a></li>
-            </ul>
-        </li>
-
-        <!--========================文件管理===============================-->
-        <li data-popover="fasle"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforfile nav nav-list collapse">
-                <li>
-                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
-                            class="fa fa-caret-right"></span> 设计文件</a></li>
-                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
-                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
-            </ul>
-        </li>
-
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menu nav nav-list collapse">
-                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span>
-                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>
-                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>
-                <li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>
-                <li><a href="premium-pricing-tables.html"><span class="fa fa-caret-right"></span> Pricing Tables</a>
-                </li>
-                <li><a href="premium-upgrade-account.html"><span class="fa fa-caret-right"></span> Upgrade Account</a>
-                </li>
-                <li><a href="premium-widgets.html"><span class="fa fa-caret-right"></span> Widgets</a></li>
-                <li><a href="premium-timeline.html"><span class="fa fa-caret-right"></span> Activity Timeline</a></li>
-                <li><a href="premium-users.html"><span class="fa fa-caret-right"></span> Enhanced Users List</a></li>
-                <li><a href="premium-media.html"><span class="fa fa-caret-right"></span> Enhanced Media</a></li>
-                <li><a href="premium-invoice.html"><span class="fa fa-caret-right"></span> Invoice</a></li>
-                <li><a href="premium-build.html"><span class="fa fa-caret-right"></span> Advanced Tools</a></li>
-                <li><a href="premium-colors.html"><span class="fa fa-caret-right"></span> Additional Color Themes</a>
-                </li>
-            </ul>
-        </li>
-
-        <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
-                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
-        <li>
-            <ul class="accounts-menu nav nav-list collapse">
-                <li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
-                <li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>
-                <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
-            </ul>
-        </li>
-    </ul>
-</div>
-
-<div class="content" id="some-element">
-
-    <div id="tabs">
-
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
-                下载</a>
-            <a class="btn btn-primary"
-               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password})}">管理</a>
-        <p>
-
-        <div id="some-element">
-            <form>
-                用户 <select name="selectuser" id="selectuser" th:each="userinfo : ${userInfos}">
-                <option th:value="${userinfo.uId}" th:text="${userinfo.userName}"></option>
-            </select>
-                <input type="button" onclick="submitprivilegestatus()" value="确认">
-            </form>
-            <br/>
-            <br/>
-
-            <div id="privimanage">
-                <form>
-                    <table class="grid" style="width: 100%" id="privilegetable">
-                        <thead>
-                        <tr>
-                            <td>编号</td>
-                            <td>创建者</td>
-                            <td>最后修改者</td>
-                            <td>文件名</td>
-                            <td>业务员</td>
-                            <td>订单编码</td>
-                            <td>顶目名称</td>
-                            <td>创建时间</td>
-                            <td>更新时间</td>
-                            <td>权限设置</td>
-                        </tr>
-                        </thead>
-                        <tbody id="showlistbody">
-                        <tr th:each="downloadView ,iterStat: ${downloadViewList}" th:id="${downloadView.id}">
-                            <td th:text="${iterStat.index+1}"></td>
-                            <td th:text="${downloadView.creator}"></td>
-                            <td th:text="${downloadView.lastUpdator}"></td>
-                            <td th:text="${downloadView.fileName}"></td>
-                            <td th:text="${downloadView.salor}"></td>
-                            <td th:text="${downloadView.orderNo}"></td>
-                            <td th:text="${downloadView.projectName}"></td>
-                            <td th:text="${downloadView.createTime}"></td>
-                            <td th:text="${downloadView.lastUpdateTime}"></td>
-                            <td><input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                       th:checked="${downloadView.seePrivilege eq '1' }" th:value="1">查看
-                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                       th:checked="${downloadView.updatePrivilege eq '2' }" th:value="2">修改
-                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                       th:checked="${downloadView.cancelPrivilege eq '3' }" th:value="3">取消</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
-
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-
-<script src="/lib/bootstrap/js/bootstrap.js"></script>
-<script type="text/javascript">
 
     function submitprivilegestatus() {
+
         $("#some-element").busyLoad("show");
         // 显示loading
         var privilelist = new Array();
@@ -415,8 +183,643 @@
         //return !arg1 && arg1!==0 && typeof arg1!=="boolean"?true:false;
     }
 
+    function checkOrderNo(str) {
+
+        //var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
+        var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
+        if(!reg.test(str.value)){
+
+            // $("#showalerttext").text("订单编号不符合规定格式，示范如：COSUN20190112WW01");
+            alert("订单编号不符合规定格式，示范如：COSUN20190112WW01");
+            $("#orderno").val("");
+            // document.getElementById("coverbehidepage").style.display = "block";
+            // document.getElementById("alertdiv").style.display = "block";
+            return false;
+        }
+
+    }
+
+    function goPriPageone() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            return false;
+        }
+        $("#n_currentPage").val(1);
+        submitQueryByConditionParam();
+    }
+
+    function goPriPrePage() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            return false;
+        }
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 - 1 * 1);
+        submitQueryByConditionParam();
+    }
+
+    function goPriAftPage() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            return false;
+        }
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 + 1 * 1);
+        submitQueryByConditionParam();
+    }
+
+
+    function goPriMaxPage() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            return false;
+        }
+        $("#n_currentPage").val($("#maxPage").val());
+        submitQueryByConditionParam();
+    }
+
+
+    var currentPage; //当前页
+    var totalPage; //总多少页
+    var totaldata; //总共多少记录
+    var pageSize;//当前每页多少条
+    function submitQueryByConditionParam() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            return false;
+        }
+        $("#some-element").busyLoad("show");//遮罩层开启
+
+        var jsonarray = {
+            "salor": $("#salorid").val(), //业务员
+            "engineer": $("#selectuser").val(), //设计师
+            "orderNo": $("#orderno").val(), //订单编号
+            "projectName": $("#projectname").val(), //项目编号
+            "fileName": $("#filename").val(), //文件名
+            "startNewestSaveDateStr": $("#startnewestsavedate").val(), //查询开始时间
+            "endNewestSaveDateStr": $("#endnewestsavedate").val(), //查询结束时间
+            "currentPage": $("#n_currentPage").val()
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findfileurlbyconditionparam",
+            success: function (msg) {
+                var data = eval(msg);//将msg化为数;
+                var num = 0;
+                var tr = "";
+                var image01 = $("#image01");
+                var image02 = $("#image02");
+                var image03 = $("#image03");
+                var image04 = $("#image04");
+                var maxpageid = $("#maxPage");
+                var n_currentPage = $("#n_currentPage");
+                var inputpage = $("#_tp");
+                image01.html("");
+                image02.html("");
+                image03.html("");
+                image04.html("");
+                var td = "";
+                var tbody = $("#showlistbody");
+                var tfoot = $("#s_tfoot");
+                tbody.html("");
+
+
+                if (data != null && data != "") {
+                    $("#nodatadiv").hide();
+                    $("#showdiv").show();
+                    currentPage = data[0].currentPage; //当前页
+                    totalPage = data[0].maxPage; //总多少页
+                    totaldata = data[0].recordCount; //总共多少记录
+                    pageSize = data[0].pageSize;
+                    maxpageid.val(totalPage);
+                    n_currentPage.val(currentPage);
+                    inputpage.val(currentPage);
+
+                    $.each(data, function (num) {
+                        tr = $("<tr id='" + data[num].id + "'></tr>");
+                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].creator) + "</td>");
+                        tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
+                        tr.append("<td>" + isNull(data[num].projectName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].createtime) + "</td>");
+                        tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+                        tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
+                        tr.append("<td>" + isNull(data[num].singleFileUpdateNum) + "</td>");
+                        tr.append("<td>" + isNull(data[num].modifyReason) + "</td>");
+                        td = "<td>";
+
+                        var vililegeflags = data[num].opRight;
+                        if (isNull(vililegeflags) != "") {
+                            td = "<td>";
+                            if (vililegeflags.indexOf("1") > -1) {
+                                td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="1" />查看');
+                            } else {
+                                td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="1" />查看');
+                            }
+                            if (vililegeflags.indexOf("2") > -1) {
+                                td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="2" />修改');
+                            } else {
+                                td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="2" />修改');
+                            }
+                            if (vililegeflags.indexOf("3") > -1) {
+                                td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="3" />取消');
+                            } else {
+                                td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="3" />取消');
+                            }
+
+                            if (vililegeflags.indexOf("4") > -1) {
+                                td += ('<input name="privilegenum' + data[num].id + '" checked="checked" type="checkbox" value="4" />删除');
+                            } else {
+                                td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="4" />删除');
+                            }
+
+                            td += "</td>";
+                        } else {
+                            td = ('<td><input name="privilegenum' + data[num].id + '"  type="checkbox" value="1" />查看');
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="2" />修改');
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="3" />取消</td>');
+                            td += ('<input name="privilegenum' + data[num].id + '"  type="checkbox" value="4" />删除</td>');
+                        }
+                        tr.append(td);
+                        tr.appendTo(tbody);
+                    });
+
+
+                    $("#currentpagespan").html(currentPage);
+                    $("#maxpagespan").html(totalPage);
+                    $("#recordcountspan").html(totaldata);
+                    if (currentPage > 1) {
+                        var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPriPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPriPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image01.html(imange01str);
+                    } else {
+                        image01.html("");
+                    }
+                    if (currentPage <= 1) {
+                        var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image02.html(image02str);
+                    } else {
+                        image02.html("");
+                    }
+                    if (currentPage < totalPage) {
+                        var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goPriAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange03str += '<img src="/images/page/my-2.jpg" onClick="goPriMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image03.html(imange03str);
+                    } else {
+                        image03.html("");
+                    }
+                    if (currentPage >= totalPage) {
+                        var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image04.html(image04str);
+
+
+                    } else {
+                        image04.html("");
+                    }
+
+
+                } else {
+                    $("#nodatadiv").show();
+                    $("#showdiv").hide();
+                }
+
+
+                // 隐藏loading
+                $("#some-element").busyLoad("hide");
+            },
+            error: function (msg) {
+                // 隐藏loading
+                $("#some-element").busyLoad("hide");
+                alert("失败");
+            }
+
+        });
+    }
+
+    function goPagePri() {
+        var flag = $("#type").val();
+        if(flag =="0"){
+            alert("您没有管理权限，无法进行管理页面的任何操作,如需要请向上级申请！");
+            $("#type").val("1");
+            return false;
+        }
+        var tp = document.getElementById("_tp").value;//currentPage
+        var max = $("#maxPage").val(); //maxPage
+        tp = tp.trim();
+        var r = /^\+?[0-9][0-9]*$/;
+        if (!(r.test(tp))) {
+            alert("页数输入有误，请重新输入!");
+            $("#_tp").val(max);
+            return false;
+        } else if (parseInt(tp) == 0) {
+            alert("页数必须大于0!");
+            $("#_tp").val(max);
+            return false;
+        } else if (parseInt(tp) > parseInt(max)) {
+            alert("不能大于总页数!");
+            $("#_tp").val(max);
+            return false;
+        } else {
+            $("#n_currentPage").val(tp);
+            // document.forms["form0"].submit();
+            submitQueryByConditionParam();
+        }
+    }
+
+</script>
+
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Le fav and touch icons -->
+<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+
+
+<!--[if lt IE 7 ]>
+<body class="ie ie6"> <![endif]-->
+<!--[if IE 7 ]>
+<body class="ie ie7 "> <![endif]-->
+<!--[if IE 8 ]>
+<body class="ie ie8 "> <![endif]-->
+<!--[if IE 9 ]>
+<body class="ie ie9 "> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+
+<!--<![endif]-->
+    <div id="some-element">
+<div class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
+    </div>
+
+    <div class="navbar-collapse collapse" style="height: 1px;">
+        <ul id="main-menu" class="nav navbar-nav navbar-right">
+            <li class="dropdown hidden-xs">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
+
+                    <i class="fa fa-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/account/logout}">退出登录</a></li>
+
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+
+
+<div class="sidebar-nav">
+    <ul>
+        <li data-popover="fasle"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforsalor nav nav-list collapse">
+                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
+                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> 项目类</a></li>
+            </ul>
+        </li>
+
+        <!--========================文件管理===============================-->
+        <li data-popover="fasle"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforfile nav nav-list collapse">
+                <li>
+                    <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
+                            class="fa fa-caret-right"></span> 设计文件</a></li>
+                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
+                <li><a href="uploadpage.html"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
+            </ul>
+        </li>
+
+        <li data-popover="false"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menu nav nav-list collapse">
+                <li class="visible-xs visible-sm"><a href="#">- Premium features require a license -</a></span>
+                <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>
+                <li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>
+                <li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>
+                <li><a href="premium-pricing-tables.html"><span class="fa fa-caret-right"></span> Pricing Tables</a>
+                </li>
+                <li><a href="premium-upgrade-account.html"><span class="fa fa-caret-right"></span> Upgrade Account</a>
+                </li>
+                <li><a href="premium-widgets.html"><span class="fa fa-caret-right"></span> Widgets</a></li>
+                <li><a href="premium-timeline.html"><span class="fa fa-caret-right"></span> Activity Timeline</a></li>
+                <li><a href="premium-users.html"><span class="fa fa-caret-right"></span> Enhanced Users List</a></li>
+                <li><a href="premium-media.html"><span class="fa fa-caret-right"></span> Enhanced Media</a></li>
+                <li><a href="premium-invoice.html"><span class="fa fa-caret-right"></span> Invoice</a></li>
+                <li><a href="premium-build.html"><span class="fa fa-caret-right"></span> Advanced Tools</a></li>
+                <li><a href="premium-colors.html"><span class="fa fa-caret-right"></span> Additional Color Themes</a>
+                </li>
+            </ul>
+        </li>
+
+        <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
+                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
+        <li>
+            <ul class="accounts-menu nav nav-list collapse">
+                <li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>
+                <li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>
+                <li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="content" >
+
+    <div id="tabs">
+
+            <a class="btn btn-default"
+               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
+
+        <a class="btn  btn-default"
+           th:href="@{/fileupdown/tomodifypage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">更新</a>
+
+
+        <a class="btn btn-default"
+               th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
+                下载</a>
+            <a class="btn btn-primary"
+               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
+        <p>
+
+        <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
+              style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
+        <input type="hidden" id="maxPage" th:value="${view.maxPage}">
+        <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
+        <input type="hidden" id="flag" th:value="${view.flag}">
+        <input type="hidden" id="type" th:value="${view.type}">
+            <div>
+                <fieldset>
+                    <!--<legend>查询条件</legend>-->
+                    <table width="100%">
+                        <tr>
+                            <td align="right">
+                                设计师:
+                            </td>
+                            <td>
+                                <select name="selectuser" id="selectuser" style="width: 153px">
+                                    <option value="" selected="selected" >请选择设计师</option>
+                                    <option  th:each="c:${userInfos}"  th:value="${c.uId}" th:text="${c.userName}"></option>
+                                </select>
+                            </td>
+                            <td align="right">订单序号:</td>
+                            <td><input type="text" id="orderno" name="view.orderNo" style="width:150px"
+                                       onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"  onblur="checkOrderNo(this)"/>
+                            </td>
+                            <td align="right"> 顶目名称:</td>
+                            <td><input type="text" id="projectname" name="view.projectName" style="width:150px"
+                                       onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                            </td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+                        <tr>
+                            <td align="right">业务员:</td>
+                            <td>
+                                <select id="salorid" style="width: 153px" name="*{salor}"  >
+                                    <option value="" selected="selected" >请选择业务员</option>
+                                    <option value="邹时雨">邹时雨</option>
+                                    <option value="胡锋">胡锋</option>
+                                    <option value="王世珺">王世珺</option>
+                                    <option value="赵彩霞">赵彩霞</option>
+                                    <option value="亚晓艾">亚晓艾</option>
+                                    <option value="钟源">钟源</option>
+                                    <option value="陈小迷">陈小迷</option>
+                                    <option value="熊新宇">熊新宇</option>
+                                    <option value="潘莉">潘莉</option>
+                                    <option value="连鸿业">连鸿业</option>
+                                    <option value="刘彩云">刘彩云</option>
+                                    <option value="明松">明松</option>
+                                    <option value="周涛">周涛</option>
+                                    <option value="梁浩">梁浩</option>
+                                    <option value="肖昌升">肖昌升</option>
+                                    <option value="高玉昕">高玉昕</option>
+                                    <option value="吴亚莹">吴亚莹</option>
+                                    <option value="何嘉琪">何嘉琪</option>
+                                    <option value="李彩苹">李彩苹</option>
+                                    <option value="龚菁">龚菁</option>
+                                    <option value="李晨">李晨</option>
+                                    <option value="梁国程">梁国程</option>
+                                    <option value="陈双全">陈双全</option>
+                                    <option value="彭亚明">彭亚明</option>
+                                    <option value="陈军">陈军</option>
+
+                                </select>
+
+                            </td>
+                            <td align="right">文件名称:</td>
+                            <td><input type="text" id="filename" name="view.fileName" style="width:150px"
+                                       onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                            </td>
+                            <td align="right">最近上传时间:</td>
+                            <td colspan="2" th:align="left">
+                                <input type="text" style="width:120px" id="startnewestsavedate" readOnly="true"
+                                       name="view.startNewestSaveDate" class="Wdate"
+                                       onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
+                                至：
+                                <input type="text" id="endnewestsavedate" style="width:120px"
+                                       name="view.endnewestsavedate" class="Wdate"
+                                       onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
+                            </td>
+
+                            <td th:align="right">
+                                <input type="button" id="submitQueryByConditionbutton"
+                                       onclick="submitQueryByConditionParam()" value="查询"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" onclick="submitprivilegestatus()" value="确认">
+                                </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+        </form>
+
+        <div id="some-element">
+            <!--<form>-->
+                <!--用户 <select name="selectuser" id="selectuser" >-->
+
+                <!--<option  th:each="c:${userInfos}"  th:value="${c.uId}" th:text="${c.userName}"></option>-->
+            <!--</select>-->
+                <!--<input type="button" onclick="submitprivilegestatus()" value="确认">-->
+            <!--</form>-->
+            <!--<br/>-->
+            <!--<br/>-->
+
+            <div id="privimanage">
+                <form>
+                    <table class="grid" style="width: 100%" id="privilegetable">
+                        <thead>
+                        <tr style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
+                            <th>编号</th>
+                            <th>创建者</th>
+                            <th>最后修改者</th>
+                            <th>文件名</th>
+                            <th>业务员</th>
+                            <th>订单编号</th>
+                            <th>顶目名称</th>
+                            <th>创建时间</th>
+                            <th>最近上传/更新者</th>
+                            <th>更新时间</th>
+                            <th>更新次数</th>
+                            <th>更新原因</th>
+                            <th>权限设置</th>
+                        </tr>
+                        </thead>
+                        <tbody id="showlistbody">
+                        <tr th:each="downloadView ,iterStat: ${downloadViewList}" th:id="${downloadView.id}">
+                            <td th:text="${iterStat.index+1}"></td>
+                            <td th:text="${downloadView.creator}"></td>
+                            <td th:text="${downloadView.lastUpdator}"></td>
+                            <td th:text="${downloadView.fileName}"></td>
+                            <td th:text="${downloadView.salor}"></td>
+                            <td th:text="${downloadView.orderNo}"></td>
+                            <td th:text="${downloadView.projectName}"></td>
+                            <td th:text="${downloadView.createTime}"></td>
+                            <td th:text="${downloadView.lastUpdator}"></td>
+                            <td th:text="${downloadView.upTime}"></td>
+                            <td th:text="${downloadView.singleFileUpdateNum}"></td>
+                            <td th:text="${downloadView.modifyReason}"></td>
+                            <td><input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.seePrivilege eq '1' }" th:value="1">查看
+                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.updatePrivilege eq '2' }" th:value="2">修改
+                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.cancelPrivilege eq '3' }" th:value="3">取消
+
+                                <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
+                                       th:checked="${downloadView.seePrivilege eq '4' }" th:value="4">删除
+
+                                </td>
+                        </tr>
+                        </tbody>
+                        <tfoot  id="s_tfoot">
+                        <td colspan="13" align="center">
+                            <span>第</span>
+                            <span th:text="${view.currentPage}" id="currentpagespan"> </span>
+                            <span>页|共</span>
+                            <span th:text="${view.maxPage}" id="maxpagespan"> </span>
+                            <span>页|共</span>
+                            <span th:text="${view.recordCount}" id="recordcountspan"> </span>
+                            <span>条记录 </span>
+                            <span id="image01">
+                            <span th:if="${view.currentPage gt 1}">
+                                    <img src="/images/page/sy-2.jpg" align="middle" border="0"
+                                         style="width: 20px; height: 20px; vertical-align: middle"
+                                         onClick="goPriPageone()"/>
+                                    <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPriPrePage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
+                                </span>
+                                </span>
+                            <span id="image02">
+                            <span th:if="${view.currentPage le 1}">
+                                <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                                <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
+                            </span>
+                            </span>
+                            <span id="image03">
+                            <span th:if="${view.currentPage lt view.maxPage}">
+                                    <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goPriAftPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                                    <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goPriMaxPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                            </span>
+                                </span>
+                            <span id="image04">
+                            <span th:if="${view.currentPage ge view.maxPage}">
+                                <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                                <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                            </span>
+                            </span>
+
+                            |&nbsp;到第
+                            <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
+                                   style="width: 50px"
+                                   id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
+                            页&nbsp;
+                            <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPagePri()"
+                                 style="width:20px;height:20px;vertical-align:middle">
+                        </td>
+
+                        </tr>
+
+
+                        <tr style="display:none;" id="nodatadiv">
+                            <td colspan="13" align="center">
+                                查无数据
+                            </td>
+                        </tr>
+
+
+                        </tfoot>
+                    </table>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+
+<script src="/lib/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript">
+
     $("[rel=tooltip]").tooltip();
     $(function () {
+        $('[data-popover="true"]').popover({html: true});
         $('.demo-cancel-click').click(function () {
             return false;
         });

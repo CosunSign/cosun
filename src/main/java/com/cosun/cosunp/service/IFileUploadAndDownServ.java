@@ -33,4 +33,6 @@ public interface IFileUploadAndDownServ {
     DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
     DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view);
+    List<DownloadView> findAllFilesByCondParam(DownloadView view);
+    int findAllFilesByCondParamCount(DownloadView view);
 }

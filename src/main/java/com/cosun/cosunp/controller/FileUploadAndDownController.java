@@ -92,18 +92,71 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "toprivilmanagepage", method = RequestMethod.GET)
-    public ModelAndView toPrivilManagePage(String userName, String password) {
+    public ModelAndView toPrivilManagePage(HttpSession session,int currentPage) {
+        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
         ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
         DownloadView view = new DownloadView();
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+        view.setType(userInfo.getType());
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
-        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
-        modelAndView.addObject("view", view);
-        modelAndView.addObject("userInfos", userInfos);
-        modelAndView.addObject("downloadViewList", downloadViewList);
+        if(userInfo.getType()==1) {
+            List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+            int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+            int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+            view.setMaxPage(maxPage);
+            view.setRecordCount(recordCount);
+
+            modelAndView.addObject("view", view);
+            modelAndView.addObject("userInfos", userInfos);
+            modelAndView.addObject("downloadViewList", downloadViewList);
+        }else {
+            modelAndView.addObject("view", view);
+            modelAndView.addObject("userInfos", userInfos);
+            modelAndView.addObject("downloadViewList", null);
+        }
         return modelAndView;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/findfileurlbyconditionparam", method = RequestMethod.POST)
+    public void findFileUrlByConditionParam(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception{
+      UserInfo userInfo = (UserInfo) session.getAttribute("account");
+      if(userInfo.getType()==1) {
+          ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
+          List<DownloadView> dataList = fileUploadAndDownServ.findAllFilesByCondParam(view);
+          int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
+          int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+             if(dataList.size() > 0) {
+              dataList.get(0).setMaxPage(maxPage);
+              dataList.get(0).setRecordCount(recordCount);
+              dataList.get(0).setUserName(userInfo.getUserName());
+              dataList.get(0).setPassword(userInfo.getUserPwd());
+              dataList.get(0).setCurrentPage(view.getCurrentPage());
+          }
+          String str1 = null;
+          if (dataList != null) {
+              ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+              try {
+                  str1 = x.writeValueAsString(dataList);
+
+              } catch (JsonProcessingException e) {
+                  e.printStackTrace();
+              }
+          }
+          try {
+              response.setCharacterEncoding("UTF-8");
+              response.setContentType("text/html;charset=UTF-8");
+              response.getWriter().print(str1); //返回前端ajax
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+
+
+
+
+      }
     }
 
     /**
@@ -237,7 +290,6 @@ public class FileUploadAndDownController {
     @ResponseBody
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
     public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception {
-        view.setCurrentPage(view.getCurrentPage());
         UserInfo userInfo =  (UserInfo) session.getAttribute("account");
         view.setuId(userInfo.getuId());
         List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
