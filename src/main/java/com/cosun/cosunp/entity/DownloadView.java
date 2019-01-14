@@ -36,6 +36,7 @@ public class DownloadView implements Serializable {
     private String filedescribtion;//文件说明
     private String engineer;//上传者  工程 师
     private String existFileMessage;
+    private String noExsitFileMessage;
     private Integer isExistNum;
     private String modifyReason;
     // 分页属性
@@ -53,6 +54,13 @@ public class DownloadView implements Serializable {
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String orderNoMessage;
 
+    public String getNoExsitFileMessage() {
+        return noExsitFileMessage;
+    }
+
+    public void setNoExsitFileMessage(String noExsitFileMessage) {
+        this.noExsitFileMessage = noExsitFileMessage;
+    }
 
     public Integer getSingleFileUpdateNum() {
         return singleFileUpdateNum;

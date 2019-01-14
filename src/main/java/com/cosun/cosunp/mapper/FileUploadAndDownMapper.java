@@ -24,10 +24,10 @@ public interface FileUploadAndDownMapper {
             " values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
     void addFilemanRightDataByUpload(FilemanRight filemanRight);
 
-    @Insert("insert into FilemanUrl(fileInfoId,userName,orginname,opRight,logur1) " +
-            "values(#{fileInfoId},#{userName},#{orginName},#{opRight},#{logur1})")
+    @Insert("insert into FilemanUrl(fileInfoId,userName,orginname,opRight,logur1,uptime) " +
+            "values(#{fileInfoId},#{userName},#{orginName},#{opRight},#{logur1},#{upTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    void addfilemanUrlByUpload(FilemanUrl filemanUrl);
+    void  addfilemanUrlByUpload(FilemanUrl filemanUrl);
 
     @Insert("insert into FileManFileInfo(uid,username,filename,createuser,createtime,extinfo1,ordernum,projectname,totalFilesNum,filedescribtion,remark) " +
             "values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{extInfo1},#{orderNum},#{projectName},#{totalFilesNum},#{filedescribtion},#{remark})")
@@ -58,10 +58,14 @@ public interface FileUploadAndDownMapper {
     int findAllUploadFileCountByUserId(Integer uId);
 
     @Select("select * from  filemanurl where orginname = #{orginName}")
-    FilemanUrl findIsExistFile(String orginName);
+    List<FilemanUrl> findIsExistFile(String orginName);
+
+    @Select("select * from  filemanurl where orginname = #{orginName} and fileInfoId = #{fileInfoId} ")
+    FilemanUrl findFileUrlByFileInFoDataAndFileName(String orginName,Integer fileInfoId);
 
     @Select("select * from  filemanurl where fileInfoId = #{id}")
     List<FilemanUrl> findFileUrlByFileInFoData(Integer id);
+
 
     @Select("select * from  filemanfileinfo where createuser= #{createUser} and ordernum= #{orderNum} and extinfo1= #{extInfo1} ")
     List<FileManFileInfo> isSameOrderNoandOtherMessage(@Param("createUser") String createUser,@Param("orderNum") String orderNum,@Param("extInfo1") String extInfo1);
@@ -76,7 +80,7 @@ public interface FileUploadAndDownMapper {
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);
 
-    @Update("update filemanurl set upTime= #{upTime},singleFileUpdateNum= #{singleFileUpdateNum},modifyReason= #{modifyReason} where id = #{id}")
+    @Update("update filemanurl set singleFileUpdateNum= #{singleFileUpdateNum},uptime = #{upTime},modifyReason= #{modifyReason} where id = #{id}")
     void updateFileUrlById(Date upTime, Integer singleFileUpdateNum, String modifyReason,Integer id);
 
     @Update("update filemanfileinfo set  updatecount = #{updateCount} , updatetime = #{updateTime},updateUser = #{updateUser}  where id= #{id} ")

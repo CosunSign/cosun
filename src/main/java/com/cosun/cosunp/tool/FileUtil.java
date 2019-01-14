@@ -29,8 +29,6 @@ public class FileUtil {
      */
 
     public static void modifyUpdateFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
-        String fileName = file.getOriginalFilename();
-        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
         File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
         if(targetFile.exists()){
@@ -66,7 +64,6 @@ public class FileUtil {
 
     public static void uploadFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
         String fileName = file.getOriginalFilename();
-        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
         File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){
@@ -98,7 +95,7 @@ public class FileUtil {
      */
     public static String uploadFile(MultipartFile file, UserInfo userInfo, DownloadView view,String randomnum){
         String fileName = file.getOriginalFilename();
-        String salorpinyinPinYin = PinYinUtil.toPinyin(view.getSalor());
+        String salorpinyinPinYin =view.getSalor();
         String filePath = "F:\\"+userInfo.getuId()+"\\"+formateString(new Date())+"\\"+salorpinyinPinYin+"\\"
                 +view.getOrderNo()+"\\"+randomnum+"\\";
         File targetFile = new File(filePath);

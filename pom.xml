@@ -48,6 +48,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.23</version>
+        </dependency>
 <!--拼音依赖包-->
         <dependency>
             <groupId>com.belerweb</groupId>

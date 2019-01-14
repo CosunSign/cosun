@@ -128,57 +128,42 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional
     public DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) {
-        boolean flag = true;//true代表以前存过  //false代表以前没存过
-        FilemanUrl filemanUrl = null;
-        List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();//存放以前存过,本次可以覆盖的文件
-        String message = "";
-        String oldPath = "";//存放之前拿以前存过的路径
-        int isNoExistNum = 0;//此变量代表看有没有新文件,新文件不受理
-        List<FilemanUrl> urlolds = null;//存放以前的文件的相关老文件
-        int isexsitNum = 0;
-        //取出存在的文件的文件头信息
+        boolean isAllExistFile = true;//true代表文件以前全部存过
+        String noExistFileNames = "";
+        int isNoExsitFileNum = 0;
+        List<String> strnames = new ArrayList<String>();
         List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(), view.getOrderNo(), view.getSalor());
-        if (fileManFileInfo.size() > 0) {
-            urlolds = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
-        }
-        for (MultipartFile file : fileArray) {
-            //根据文件名看以前有没有存过
-            filemanUrl = fileUploadAndDownMapper.findIsExistFile(file.getOriginalFilename());
-            if (filemanUrl != null) {
-                //i不为空 可以存服务器 进行覆盖
-                oldPath = filemanUrl.getLogur1();
-                newFileArray.add(file);
-                isexsitNum++;
-            } else {
-                //为空
-                message += file.getOriginalFilename() + ",";
-                isNoExistNum++;
-                flag = false;//代表此次存的文件以前没存过,属新文件
-
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();
+        if(fileManFileInfo.size() > 0 ){ //代表文件夹存在
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            for(FilemanUrl fu : oldFileUrls) {
+                strnames.add(fu.getOrginName());
             }
+            for(MultipartFile file : fileArray) {
+                if(strnames.contains(file.getOriginalFilename())){//查看是不是每个文件服务器都有老文件
+                    newFileArray.add(file);
+                }else{
+                    isNoExsitFileNum++;
+                    isAllExistFile = false;
+                    noExistFileNames += file.getOriginalFilename()+"===";
+                }
+            }
+            if(isAllExistFile){
+                updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
+                view.setFlag("-18");//代表文件全部更新成功
+            }else {
+                view.setIsExistNum(isNoExsitFileNum);
+                view.setFlag("-12");//代表为新文件,
+                view.setNoExsitFileMessage(noExistFileNames);//返回信息,告知哪些是新文件
+                return view;
+            }
+
+        }else{//代表文件夹不存在,直接不受理
+            view.setFlag("-11");//代表文件夹不存在,去上传页面
+            return view;
         }
-        //以下开始进行判断
-        if (fileManFileInfo.size() > 0 && newFileArray.size() > 0 && flag) {//代表上传的全为已存在的文件
-            this.updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
-            view.setFlag("-17");//文件全部受理成功
-            //代表上传的文件头与文件存在于服务器中,但是有个别新文件
-        } else if (fileManFileInfo.size() > 0 && newFileArray.size() > 0 && !flag) {
-            view.setExistFileMessage(message);
-            view.setIsExistNum(isNoExistNum);
-            updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
-            view.setFlag("-12");//代表存储成功,但有个别新文件,返回界面告知未存的新文件个数与名
-            //以下逻辑为代表文件头信息存在,但更新的文件全为新文件,不受理
-        } else if (fileManFileInfo.size() > 0 && newFileArray.size() <= 0 && !flag) {//代表全为未上传过的文件
-            view.setFlag("-13");//代表全为未上传过的文件,但头信息有
-            //代表文件头为空,但文件名服务器有,指示用户文件头信息填写有误或其它
-        } else if (fileManFileInfo.size() <= 0 && newFileArray.size() > 0) {
-            view.setFlag("-15");
-            view.setIsExistNum(isexsitNum);
-            view.setOrderNoMessage( view.getOrderNo() + "," + view.getSalor() + "," + view.getUserName() + "," );
-            //没有头信息,也没有任何文件信息,提示用户来错了地方
-        } else if (fileManFileInfo.size() <= 0 && newFileArray.size() <= 0) {
-            view.setFlag("-16"); //全为全新文件,去上传页面处理
-        }
+
         return view;
     }
 
@@ -186,48 +171,41 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional
     public DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) {
-        boolean flag = false;//判断是否存的是旧项目新增新文件   true代表是以前存过一次的
-        FilemanUrl filemanUrl = null;
+        boolean isAllNewFile = true; //全为新文件即为真
+        String isExistFilesName = "";
+        int exsitNum = 0;
         List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();
-        String message = "";
-        String oldPath = "";
-        int isExistnum = 0;
-        List<FilemanUrl> urlolds;
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<String> strnames = new ArrayList<String>();
         List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(), view.getOrderNo(), view.getSalor());
-        //代表上传的是前一次上传的订单
-        for (MultipartFile file : fileArray) {
-            filemanUrl = fileUploadAndDownMapper.findIsExistFile(file.getOriginalFilename());
-            if (filemanUrl == null) {
-                //为空 可以存服务器
-                newFileArray.add(file);
-            } else {
-                //不为空
-                message += file.getOriginalFilename() + ",<br>";
-                oldPath = filemanUrl.getLogur1();
-                isExistnum++;
-                flag = true;//代表此次存的文件已前存过一次，没有的文件存在本文件夹里面
-
+        if(fileManFileInfo.size()>0){  //有文件夹
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            for(FilemanUrl fu : oldFileUrls) {
+                strnames.add(fu.getOrginName());
             }
-        }
-        if (fileManFileInfo.size() <= 0 && !flag && newFileArray.size() > 0) {//代表上传的为全新文件
-            view = this.addFilesData(view, fileArray, userInfo);
-        } else if (fileManFileInfo.size() > 0 && newFileArray.size() > 0) {//代表此次存的文件已前存过一次，此次fileARrray收集的是以前存过一次，现在新增的文件
-            view.setExistFileMessage(message);
-            view.setIsExistNum(isExistnum);
-            if (oldPath == "" || oldPath == null) {
-                urlolds = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
-                if (urlolds.size() > 0) {
-                    view = addOldOrderNoNewFiles(view, newFileArray, userInfo, urlolds.get(0).getLogur1(), fileManFileInfo);
-                    view.setFlag("1");
+            for(MultipartFile file : fileArray){
+                if(strnames.contains(file.getOriginalFilename())){ //数据库里的URL有现在要上传的名字 不受理
+                    isExistFilesName += file.getOriginalFilename()+"===";//取旧文件的名字
+                    isAllNewFile = false;
+                    exsitNum++;
+                }else{
+                    newFileArray.add(file);
                 }
-            } else {
-                view = addOldOrderNoNewFiles(view, newFileArray, userInfo, oldPath, fileManFileInfo);
             }
-        } else if (fileManFileInfo.size() > 0 && flag && newFileArray.size() <= 0) {//代表全为已上传文件
-            view.setFlag("-10");
-        } else if (flag && fileManFileInfo.size() <= 0 && newFileArray.size() == 0) {
-            view.setFlag("-6");
-            view.setOrderNoMessage("您本次存储的订单编号等信息" + view.getOrderNo() + "," + view.getSalor() + "," + view.getUserName() + "," + "与上次存储的信息不符，请您核对后再上传!");
+            if(isAllNewFile) { //全为新文件
+                view = addOldOrderNoNewFiles(view, newFileArray, userInfo, oldFileUrls.get(0).getLogur1(), fileManFileInfo);
+                view.setFlag("1");
+            }else{
+                view.setFlag("-3");//代表有部分已存在的文件
+                view.setIsExistNum(exsitNum);
+                view.setExistFileMessage(isExistFilesName);//向页面回显文件信息
+                return view;
+            }
+
+        }else{//如果没有文件夹,直接当成新文件全部存.
+            view = this.addFilesData(view, fileArray, userInfo);
+            view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
         }
 
         return view;
@@ -245,8 +223,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Transactional
     public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) {
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
-
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
@@ -257,8 +233,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (MultipartFile file : fileArray) {
-                filemanUrl = fileUploadAndDownMapper.findIsExistFile(file.getOriginalFilename());
-                if (filemanUrl != null) {
+                filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(file.getOriginalFilename(),fileManFileInfo.get(0).getId());
+                if (filemanUrl!=null) {
                     FileUtil.modifyUpdateFileByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
                     //取老文件信息
 
@@ -284,8 +260,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FilemanUrl filemanUrl;
         FilemanRight filemanRight;
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
-        //首先做文件订单信息核 对
-        //不为空，即可以向URL表和RIGHT表插入数据，并向服务器存入新增文件
         fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + fileArray.size());
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
@@ -294,13 +268,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             orginname = file.getOriginalFilename();
             deskName = oldsPath + orginname;
             FileUtil.uploadFileByUrl(file, userInfo, view, oldsPath);
-
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
             filemanUrl.setUserName(userInfo.getUserName());
-            filemanUrl.setOpRight("1,2,3,4");
+            filemanUrl.setOpRight("1");
             filemanUrl.setLogur1(deskName);
+            filemanUrl.setUpTime(new Date());
             filemanUrl.setFileInfoId(fileManFileInfo.getId());
             filemanUrls.add(filemanUrl);
             fileUploadAndDownMapper.addfilemanUrlByUpload(filemanUrl);
@@ -314,7 +288,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
-            filemanRight.setOpRight("1,2,3,4");
+            filemanRight.setOpRight("1");
             filemanRights.add(filemanRight);
             fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
         }
@@ -367,8 +341,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanUrl = new FilemanUrl();
                 filemanUrl.setOrginName(orginname);
                 filemanUrl.setUserName(userInfo.getUserName());
-                filemanUrl.setOpRight("1,2,3,4");
+                filemanUrl.setOpRight("1");
                 filemanUrl.setLogur1(deskName);
+                filemanUrl.setUpTime(new Date());
                 filemanUrl.setFileInfoId(fileManFileInfo.getId());
                 filemanUrls.add(filemanUrl);
                 fileUploadAndDownMapper.addfilemanUrlByUpload(filemanUrl);
@@ -382,7 +357,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setUserName(userInfo.getUserName());
                 filemanRight.setFileUrlId(filemanUrl.getId());
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
-                filemanRight.setOpRight("1,2,3,4");
+                filemanRight.setOpRight("1");
                 filemanRights.add(filemanRight);
                 fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
                 view.setFlag("1");
