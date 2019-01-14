@@ -47,6 +47,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return userInfoMapper.findAllUser();
     }
 
+    @Override
+    public List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view){
+        return fileUploadAndDownMapper.findFileUrlDatabyOrderNoandSalorandUserName(view.getUserName(), view.getSalor(), view.getOrderNo());
+    }
+
 
 //    @Transactional
 //    @Override

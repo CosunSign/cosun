@@ -68,19 +68,28 @@
     });
 </script>
 <style type="text/css">
+    table.grid {
+        font-family: verdana, arial, sans-serif;
+        font-size: 13px;
+        border-width: 1px;
+        border-collapse: collapse;
+    }
 
-
-    #colrcss {
+    table.grid th {
         border-width: 1px;
         padding: 8px;
-        align: center;
         border-style: solid;
-        background-color: #c3dde0;
+    }
+
+    table.grid td {
+        border-width: 1px;
+        padding: 1px;
+        border-style: solid;
     }
 
     #colrcss td {
         border-width: 1px;
-        padding: 8px;
+        padding: 1px;
         border-style: solid;
         text-align: center;
     }
@@ -89,12 +98,14 @@
         border-width: 1px;
         padding: 8px;
         border-style: solid;
+        text-align: center;
     }
 
     .trrcss tr td {
         border-width: 1px;
         padding: 8px;
         border-style: solid;
+        text-align: center;
     }
 
     #alertdiv {
@@ -183,12 +194,93 @@
         }
     }
 
+    function showFileUrl() {
+        $("#salorvalue").val($("#salorid").val());
+        var salorid= $("#salorid").val();
+        var orderno = $("#orderno").val().trim();
+        if(salorid == "" || salorid == null){
+            return false;
+        }
+        if(orderno=="" || orderno==null){
+            return false;
+        }
+
+        showfileurldivbysaloridorderno(salorid,orderno);
+
+    }
+
+    function showfileurldivbysaloridorderno(salorid,orderno){
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var urltbody = $("#urltbody");
+        urltbody.html("");
+        var jsonarray = {
+            "salor": salorid, //业务员
+            "orderNo": orderno //订单编号
+        }
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/showfileurldiv",
+            success: function (msg) {
+                var data = eval(msg);//将msg化为数;
+                var td = "";
+                var tr = "";
+
+                if (data != null && data != "") {
+                    $.each(data, function (num) {
+                        tr =  $("<tr></tr>");
+                        tr.append("<td>" + (num + 1) + "</td>");
+                        tr.append("<td>" + isNull(data[num].userName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
+                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].upTime) + "</td>");
+                        tr.append("<td>" + isNull(data[num].singleFileUpdateNum) + "</td>");
+                        tr.append(td);
+                        tr.appendTo(urltbody);
+                    });
+                }else{
+                    tr =  $("<tr></tr>");
+                    tr.append("<td colspan='7'>查询为空</td>");
+                    tr.append(td);
+                    tr.appendTo(urltbody);
+                }
+
+            },
+            error: function (msg) {
+                // 隐藏loading
+                $("#some-element").busyLoad("hide");
+                alert("失败");
+            }
+
+        });
+        $("#some-element").busyLoad("hide");//遮罩层开启
+    }
+
+    function isNull(arg1) {
+        if (arg1 == "null" || arg1 == null) {
+            return "";
+        }
+        return arg1;
+    }
+
     function checkOrderNo(str) {
+
+
+        //var reg = new RegExp(/^[0-9a-zA-Z]*$/g);
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
         if(!reg.test(str.value)){
+
+            // $("#showalerttext").text("订单编号不符合规定格式，示范如：COSUN20190112WW01");
             alert("订单编号不符合规定格式，示范如：COSUN20190112WW01");
             $("#orderno").val("");
+            // document.getElementById("coverbehidepage").style.display = "block";
+            // document.getElementById("alertdiv").style.display = "block";
+            return false;
         }
+        showFileUrl();
 
     }
 
@@ -427,7 +519,7 @@
                     <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
-                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="setsalorvalue()">
+                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="showFileUrl()">
                         <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
                         <option value="邹时雨">邹时雨</option>
                         <option value="胡锋">胡锋</option>
@@ -486,9 +578,9 @@
                 <p>
                     <div>
 
-                        <table id="uploadtable"  align="" width="100%">
-                            <thead>
-                            <tr id="colrcss">
+                        <table id="uploadtable"   width="100%" >
+                            <thead style="background-color: #E0EEEE">
+                            <tr id="colrcss" >
                                 <td>序号</td>
                                 <!--<td>选择文件夹</td>-->
                                 <td>选择更新的单或多个文件</td>
@@ -526,42 +618,7 @@
 
                                 </td>
                             </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">&nbsp;</td>
-                            </tr>
+
                             <tr>
                                 <td colspan="2">
                 <p>
@@ -580,6 +637,24 @@
 
                     </tfoot>
                     </table>
+            </div>
+
+
+            <div id="showurldiv">
+                <table class="grid" style="width: 100%" id="tablecss">
+                    <thead style="background-color: #E0EEEE" align="center">
+                    <td>序号</td>
+                    <td>设计师</td>
+                    <td>业务员</td>
+                    <td>订单编号</td>
+                    <td>文件名称</td>
+                    <td>上传时间</td>
+                    <td>更新次数</td>
+                    </thead>
+                    <tbody align="center" id="urltbody">
+
+                    </tbody>
+                </table>
             </div>
 
             <div id="alertdiv">

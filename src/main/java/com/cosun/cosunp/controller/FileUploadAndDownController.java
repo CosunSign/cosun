@@ -191,6 +191,41 @@ public class FileUploadAndDownController {
 
 
     /**
+     * 功能描述:根据订单编号业务员名和设计师查询出URL信息
+     * @auther: homey Wong
+     * @date: 2019/1/14 0014 上午 9:19
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/showfileurldiv", method = RequestMethod.POST)
+    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception{
+        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        List<DownloadView> fileUrlList = fileUploadAndDownServ.findFileUrlDatabyOrderNoandSalorandUserName(view);
+        String str1 = null;
+        if( fileUrlList.size()>0) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str1 = x.writeValueAsString(fileUrlList);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
      * 功能描述:按条件查询需下载的文件
      *
      * @auther: homey Wong

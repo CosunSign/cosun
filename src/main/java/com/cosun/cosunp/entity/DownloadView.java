@@ -39,6 +39,7 @@ public class DownloadView implements Serializable {
     private String noExsitFileMessage;
     private Integer isExistNum;
     private String modifyReason;
+    private Date upTime;
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
     private int maxPage;// 最大页数
@@ -53,6 +54,14 @@ public class DownloadView implements Serializable {
     private String endNewestSaveDateStr;
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String orderNoMessage;
+
+    public Date getUpTime() {
+        return upTime;
+    }
+
+    public void setUpTime(Date upTime) {
+        this.upTime = upTime;
+    }
 
     public String getNoExsitFileMessage() {
         return noExsitFileMessage;

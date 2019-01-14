@@ -20,6 +20,14 @@ import java.util.List;
 @Repository
 public interface FileUploadAndDownMapper {
 
+    @Select("select fio.username,fio.ordernum as orderNo,fio.extinfo1 as salor,fu.orginname as fileName,fu.uptime,fu.singlefileupdatenum as singleFileUpdateNum from filemanurl fu " +
+            "left join filemanfileinfo fio on fu.fileInfoId = fio.id " +
+            "where " +
+            " fu.username= #{userName}  " +
+            "and fio.extinfo1 = #{salor} " +
+            "and fio.ordernum = #{orderNo} ")
+    List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(String userName,String salor,String orderNo);
+
     @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId,fileUrlId,opRight)" +
             " values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
     void addFilemanRightDataByUpload(FilemanRight filemanRight);
