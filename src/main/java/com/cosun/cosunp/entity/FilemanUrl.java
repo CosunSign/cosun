@@ -15,11 +15,39 @@ public class FilemanUrl implements Serializable {
     private String logur1;//最后的保存地址
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String modifyReason;//单次文件更新原因
+    private Date updateTime;//更新者
+    private String updateuser;//最新更改者
+    private Integer uId;
+
+    public Integer getuId() {
+        return uId;
+    }
+
+    public void setuId(Integer uId) {
+        this.uId = uId;
+    }
+
     public Integer getSingleFileUpdateNum() {
         if(singleFileUpdateNum==null){
             return 0;
         }
         return singleFileUpdateNum;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUpdateuser() {
+        return updateuser;
+    }
+
+    public void setUpdateuser(String updateuser) {
+        this.updateuser = updateuser;
     }
 
     public String getModifyReason() {

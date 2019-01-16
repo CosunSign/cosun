@@ -21,9 +21,8 @@ public interface IFileUploadAndDownServ {
 
     List<UserInfo> findAllUser();
 
-//    DownloadView addFileFoldersData(DownloadView view,List<MultipartFile> files,UserInfo userInfo);
 
-    void saveOrUpdateFilePrivilege(Integer selectuser,Integer filesId,String privileflag);
+    void saveOrUpdateFilePrivilege(List<String> userList,Integer filesId,String privileflag,UserInfo info,String oprighter);
 
     int findAllUploadFileCountByUserId(Integer uId);
 
@@ -31,6 +30,9 @@ public interface IFileUploadAndDownServ {
 
     int findAllUploadFileCountByParaCondition(DownloadView view);
     DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
+    DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo);
+    DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo);
+
     DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view);
     List<DownloadView> findAllFilesByCondParam(DownloadView view);

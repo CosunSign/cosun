@@ -2,6 +2,7 @@ package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -39,6 +40,7 @@ public class DownloadView implements Serializable {
     private String noExsitFileMessage;
     private Integer isExistNum;
     private String modifyReason;
+    private Integer fileRightId;
     private Date upTime;
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -54,9 +56,34 @@ public class DownloadView implements Serializable {
     private String endNewestSaveDateStr;
     private Integer singleFileUpdateNum;//单个文件更新次数
     private String orderNoMessage;
+    private String privilegeusers;
+    private String oprighter;//权限人
 
+    public Integer getFileRightId() {
+        return fileRightId;
+    }
+
+    public void setFileRightId(Integer fileRightId) {
+        this.fileRightId = fileRightId;
+    }
+
+    public String getOprighter() {
+        return oprighter;
+    }
+
+    public void setOprighter(String oprighter) {
+        this.oprighter = oprighter;
+    }
 
     private Integer type;//用户权限  1代表有管理权限  0代表没有管理权限进不了管理页面
+
+    public String getPrivilegeusers() {
+        return privilegeusers;
+    }
+
+    public void setPrivilegeusers(String privilegeusers) {
+        this.privilegeusers = privilegeusers;
+    }
 
     public Integer getType() {
         return type;

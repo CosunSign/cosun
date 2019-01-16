@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.cosun.cosunp.tool.StringUtil.formateString;
+import static com.cosun.cosunp.tool.StringUtil.subAfterString;
 
 /**
  * @author:homey Wong
@@ -51,6 +52,63 @@ public class FileUtil {
 
     }
 
+
+    /**
+     * 功能描述:文件夹覆盖操作
+     * @auther: homey Wong
+     * @date: 2019/1/16 0011 上午 10:32
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    public static void modifyUpdateFileFolderByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
+        File targetFile = new File(oldPath);
+        //：判断目录是否存在   不存在：创建目录
+        if(targetFile.exists()){
+            //：通过输出流将文件写入硬盘文件夹并关闭流
+            BufferedOutputStream stream = null;
+            try {
+                stream = new BufferedOutputStream(new FileOutputStream(oldPath));
+                stream.write(file.getBytes());
+                stream.flush();
+            }catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                try {
+                    if (stream != null) stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    //根据文件夹上传 找到数据库老路径存文件
+    public static void uploadFileFolderByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
+        String fileName = subAfterString(file.getOriginalFilename(),"/");
+        File targetFile = new File(oldPath);
+        //：判断目录是否存在   不存在：创建目录
+        if(!targetFile.exists()){
+            targetFile.mkdirs();
+        }
+        //：通过输出流将文件写入硬盘文件夹并关闭流
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(oldPath+fileName));
+            stream.write(file.getBytes());
+            stream.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     /**
@@ -98,6 +156,34 @@ public class FileUtil {
         String salorpinyinPinYin =view.getSalor();
         String filePath = "F:\\"+userInfo.getuId()+"\\"+formateString(new Date())+"\\"+salorpinyinPinYin+"\\"
                 +view.getOrderNo()+"\\"+randomnum+"\\";
+        File targetFile = new File(filePath);
+        //：判断目录是否存在   不存在：创建目录
+        if(!targetFile.exists()){
+            targetFile.mkdirs();
+        }
+        //：通过输出流将文件写入硬盘文件夹并关闭流
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(filePath+fileName));
+            stream.write(file.getBytes());
+            stream.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return filePath+fileName;
+    }
+
+
+    public static String uploadFileFolder(MultipartFile file,String engineer,String yearmoth,String salor,String orderNo,String randomnum){
+        String fileName = subAfterString(file.getOriginalFilename(),"/");
+        String filePath = "F:\\"+engineer+"\\"+yearmoth+"\\"+salor+"\\"
+                +orderNo+"\\"+randomnum+"\\";
         File targetFile = new File(filePath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){

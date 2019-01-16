@@ -1,9 +1,6 @@
 package com.cosun.cosunp.mapper;
 
-import com.cosun.cosunp.entity.DownloadView;
-import com.cosun.cosunp.entity.FileManFileInfo;
-import com.cosun.cosunp.entity.FilemanRight;
-import com.cosun.cosunp.entity.FilemanUrl;
+import com.cosun.cosunp.entity.*;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -29,26 +26,39 @@ public interface FileUploadAndDownMapper {
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(String userName, String salor, String orderNo);
 
     @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId,fileUrlId,opRight)" +
-            " values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
+            " values (#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
     void addFilemanRightDataByUpload(FilemanRight filemanRight);
 
-    @Insert("insert into FilemanUrl(fileInfoId,userName,orginname,opRight,logur1,uptime) " +
-            "values(#{fileInfoId},#{userName},#{orginName},#{opRight},#{logur1},#{upTime})")
+    @Insert("insert into FilemanUrl(uid,fileInfoId,userName,orginname,opRight,logur1,uptime) " +
+            "values (#{uId},#{fileInfoId},#{userName},#{orginName},#{opRight},#{logur1},#{upTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void addfilemanUrlByUpload(FilemanUrl filemanUrl);
 
     @Insert("insert into FileManFileInfo(uid,username,filename,createuser,createtime,extinfo1,ordernum,projectname,totalFilesNum,filedescribtion,remark) " +
-            "values(#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{extInfo1},#{orderNum},#{projectName},#{totalFilesNum},#{filedescribtion},#{remark})")
+            "values (#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{extInfo1},#{orderNum},#{projectName},#{totalFilesNum},#{filedescribtion},#{remark})")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void addfileManFileDataByUpload(FileManFileInfo fileManFile);
 
 
-    @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
-            "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime" +
-            ",ffi.updatecount as totalUpdateNum,fmu.opright as opRight,fmu.logur1 as urlAddr,ffi.createtime as createTime,fmu.opRight  " +
-            "    from filemanfileinfo ffi" +
-            "    LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId" +
-            "    and ffi.uid = #{uId}   order by ffi.createtime desc limit #{currentPageTotalNum},#{PageSize} ")
+    @Select("SELECT\n" +
+            "\t fr.id,\n" +
+            "\t fu.username AS creator,\n" +
+            "\t fu.updateuser AS lastUpdator,\n" +
+            "\t fr.filename AS fileName,\n" +
+            "\t ffi.extinfo1 AS salor,\n" +
+            "\t ffi.ordernum AS orderNo,\n" +
+            "\t ffi.projectname AS projectName,\n" +
+            "  fr.createtime as createTime,\n" +
+            "\t fu.updateTime AS lastUpdateTime,\n" +
+            "\t fu.singlefileupdatenum AS singleFileUpdateNum,\n" +
+            "\t fu.modifyReason as modifyReason,\n" +
+            "\t fr.opRight as opRight\n" +
+            " FROM\n" +
+            "\t filemanfileinfo ffi\n" +
+            " LEFT JOIN filemanright fr ON ffi.id = fr.fileInfoId\n" +
+            " left join filemanurl fu on fu.id = fr.fileurlid\n" +
+            " ORDER BY\n" +
+            "\t ffi.createtime DESC limit #{currentPageTotalNum},#{PageSize} ")
     List<DownloadView> findAllUploadFileByCondition(Integer uId, int currentPageTotalNum, int PageSize);
 
     @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
@@ -60,9 +70,10 @@ public interface FileUploadAndDownMapper {
     List<DownloadView> findAllUploadFileByUserId(Integer uId);
 
     @Select("select count(ffi.id) as recordCount " +
-            "                from filemanfileinfo ffi " +
-            "               LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId " +
-            "                and ffi.uid = #{uId}  ")
+            " FROM\n" +
+            "\t filemanfileinfo ffi\n" +
+            " LEFT JOIN filemanright fr ON ffi.id = fr.fileInfoId\n" +
+            " left join filemanurl fu on fu.id = fr.fileurlid\n")
     int findAllUploadFileCountByUserId(Integer uId);
 
     @Select("select * from  filemanurl where orginname = #{orginName}")
@@ -78,9 +89,35 @@ public interface FileUploadAndDownMapper {
     @Select("select * from  filemanfileinfo where createuser= #{createUser} and ordernum= #{orderNum} and extinfo1= #{extInfo1} ")
     List<FileManFileInfo> isSameOrderNoandOtherMessage(@Param("createUser") String createUser, @Param("orderNum") String orderNum, @Param("extInfo1") String extInfo1);
 
+    @Select("select * from userinfo ")
+    List<UserInfo> findAllUserInfo();
 
-    @Update("update filemanright set opright= #{privileflag} where fileInfoId = #{filesId}  and uid = #{selectuser} ")
-    void saveOrUpdateFilePrivilege(Integer selectuser, Integer filesId, String privileflag);
+    @Select("select * from filemanright where id = #{fileurlid}  and uid = #{uid} ")
+    FilemanRight findFileRightByUserIdandFileUrlId( Integer uid,Integer fileurlid);
+
+    @Select("SELECT\n" +
+            "\tfr.uid,fr.id as fileRightId,fr.filename,fi.extinfo1,fi.ordernum\n" +
+            "FROM\n" +
+            "\tfilemanright fr\n" +
+            "LEFT JOIN filemanfileinfo fi ON fr.fileInfoId = fi.id  where fr.filename = #{fileName} " +
+            " and fi.extinfo1 = #{salor} and fi.ordernum = #{orderNum} and fr.uid = #{uId} order by fr.filename desc   ")
+    DownloadView findFielRightFileByUidOrderNoSalorFileName(String fileName,String salor,String orderNum,Integer uId);
+
+    @Delete("delete from filemanright where id = #{id} ")
+    void deleteFileRightPrivileg(Integer id);
+
+    @Select("select * from userinfo where uid = #{uId}")
+    UserInfo getUserInfoByUid(Integer uId);
+
+    @Select("select * from  filemanfileinfo where id= #{id} ")
+    FileManFileInfo getFileManFileInfoByInfoId(Integer id);
+
+    @Update("update filemanright set opright= #{privileflag},updateuser = #{userName},updatetime = #{date} where id = #{fileurlid}  and uid = #{uid} ")
+    void updateFileRightPrivileg( Integer uid,Integer fileurlid, String privileflag, String userName, Date date);
+
+
+    @Insert("INSERT INTO filemanright (uid,fileurlid,createuser,createtime,opright,fileInfoId,filename) VALUES (#{uid},#{fileurlid},#{userName},#{date},#{privileflag},#{fileInfoId},#{fileName}) ")
+    void saveFileRightPrivileg(Integer uid, Integer fileurlid, String privileflag, String userName, Date date,Integer fileInfoId,String fileName);
 
     @Update("update filemanfileinfo set totalFilesNum = #{totalFilesNum} , updatecount = #{updateCount} , updatetime = #{updateTime}  where id= #{id} ")
     int updateFileManFileInfo(@Param("totalFilesNum") Integer totalFilesNum, @Param("updateCount") Integer updateCount, @Param("updateTime") Date updateTime, @Param("id") Integer id);
@@ -88,14 +125,17 @@ public interface FileUploadAndDownMapper {
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);
 
-    @Update("update filemanurl set singleFileUpdateNum= #{singleFileUpdateNum},uptime = #{upTime},modifyReason= #{modifyReason} where id = #{id}")
-    void updateFileUrlById(Date upTime, Integer singleFileUpdateNum, String modifyReason, Integer id);
+    @Update("update filemanurl set singleFileUpdateNum= #{singleFileUpdateNum},updateTime = #{updateTime},modifyReason= #{modifyReason},updateUser= #{updateUser} where id = #{id}")
+    void updateFileUrlById(Date updateTime, Integer singleFileUpdateNum, String modifyReason, Integer id,String updateUser);
 
     @Update("update filemanfileinfo set  updatecount = #{updateCount} , updatetime = #{updateTime},updateUser = #{updateUser}  where id= #{id} ")
     void updateFileManFileInfo2(@Param("updateCount") Integer updateCount, @Param("updateTime") Date updateTime, @Param("updateUser") String updateUser, @Param("id") Integer id);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllByParaCondition")
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view);
+
+    @Select("select * from filemanright where id = #{id}")
+    FilemanRight findFileRightById(Integer id);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllCountByParaCondition")
     int findAllUploadFileCountByParaCondition(DownloadView view);
@@ -120,22 +160,23 @@ public interface FileUploadAndDownMapper {
 
         public String findAllFilesByParam(DownloadView view) {
 
-            StringBuilder sql = new StringBuilder(" SELECT ");
-            sql.append(" ffi.id,");
-            sql.append("  ffi.username AS creator, " );
-            sql.append("  fmu.orginname AS fileName, ");
-            sql.append("  ffi.extinfo1 AS salor, ");
-            sql.append("  ffi.ordernum AS orderNo, ");
-            sql.append("  ffi.projectname AS projectName ,");
-            sql.append("  ffi.createtime AS createTime, ");
-            sql.append("  fmu.username AS lastUpdator, ");
-            sql.append("  fmu.uptime as lastUpdateTime, ");
-            sql.append("  fmu.singlefileupdatenum as singleFileUpdateNum, ");
-            sql.append("  fmu.opRight, ");
-            sql.append("  fmu.modifyReason ");
-            sql.append("  FROM ");
-            sql.append("  filemanfileinfo ffi ");
-            sql.append("   LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId ");
+            StringBuilder sql = new StringBuilder(" SELECT\n");
+            sql.append("\t fr.id,\n");
+            sql.append("\t fu.username AS creator,\n");
+            sql.append("\t fu.updateuser AS lastUpdator,\n");
+            sql.append("\t fr.filename AS fileName,\n");
+            sql.append("\t ffi.extinfo1 AS salor,\n");
+            sql.append("\t ffi.ordernum AS orderNo,\n");
+            sql.append("\t ffi.projectname AS projectName,\n");
+            sql.append("  fr.createtime as createTime,\n");
+            sql.append("\t fr.updatetime AS lastUpdateTime,\n");
+            sql.append("\t fu.singlefileupdatenum AS singleFileUpdateNum,\n");
+            sql.append("\t fu.modifyReason as modifyReason,\n");
+            sql.append("\t fr.opRight as opRight\n");
+            sql.append(" FROM\n");
+            sql.append("\t filemanfileinfo ffi\n");
+            sql.append(" LEFT JOIN filemanright fr ON ffi.id = fr.fileInfoId\n");
+            sql.append(" left join filemanurl fu on fu.id = fr.fileurlid\n");
             sql.append("   WHERE  ");
             sql.append("    1 = 1  ");
 
@@ -143,6 +184,10 @@ public interface FileUploadAndDownMapper {
                 sql.append(" and ffi.extinfo1 like CONCAT('%',#{salor},'%')");
             }
 
+            if (view.getOprighter() != null && view.getOprighter().length() > 0) {
+                sql.append(" and fr.uid =  #{oprighter}    ");
+            }
+
             if (view.getOrderNo() != null && view.getOrderNo().trim().length() > 0) {
                 sql.append(" and ffi.ordernum like CONCAT('%',#{orderNo},'%')");
             }
@@ -152,35 +197,41 @@ public interface FileUploadAndDownMapper {
             }
 
             if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
-                sql.append(" and fmu.orginname like  CONCAT('%',#{fileName},'%')");
+                sql.append(" and fu.orginname like  CONCAT('%',#{fileName},'%')");
             }
 
-            if(view.getEngineer()!=null && view.getEngineer().trim().length() > 0) {
-                sql.append(" and ffi.uid = #{engineer} ");
+            if (view.getEngineer() != null && view.getEngineer().trim().length() > 0) {
+                sql.append(" and fu.uid = #{engineer} ");
             }
 
             if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime  >= #{startNewestSaveDateStr} and fmu.uptime  <= #{endNewestSaveDateStr}");
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fmu.uptime  <= #{endNewestSaveDateStr}");
             } else if (view.getStartNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime >= #{startNewestSaveDateStr}");
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
             } else if (view.getEndNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime <= #{endNewestSaveDateStr}");
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
             }
 
-            sql.append("  order by fmu.uptime desc limit #{currentPageTotalNum},#{pageSize}");
+            sql.append("  order by fu.uptime desc limit #{currentPageTotalNum},#{pageSize}");
             return sql.toString();
         }
 
         public String findAllFilesCountByParam(DownloadView view) {
 
-            StringBuilder sql = new StringBuilder(" SELECT count(ffi.id) ");
-            sql.append("  FROM ");
-            sql.append("  filemanfileinfo ffi ");
-            sql.append("   LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId ");
-            sql.append("    where 1=1 ");
+            StringBuilder sql = new StringBuilder(" SELECT count(ffi.id)  ");
+            sql.append(" FROM\n");
+            sql.append("\t filemanfileinfo ffi\n");
+            sql.append(" LEFT JOIN filemanright fr ON ffi.id = fr.fileInfoId\n");
+            sql.append(" left join filemanurl fu on fu.id = fr.fileurlid\n");
+            sql.append("   WHERE  ");
+            sql.append("    1 = 1  ");
 
             if (view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 like CONCAT('%',#{salor},'%')");
+            }
+
+            if (view.getOprighter() != null && view.getOprighter().length() > 0) {
+                sql.append(" and fr.uid =  #{oprighter}    ");
             }
 
             if (view.getOrderNo() != null && view.getOrderNo().trim().length() > 0) {
@@ -192,19 +243,19 @@ public interface FileUploadAndDownMapper {
             }
 
             if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
-                sql.append(" and fmu.orginname like  CONCAT('%',#{fileName},'%')");
+                sql.append(" and fu.orginname like  CONCAT('%',#{fileName},'%')");
             }
 
-            if(view.getEngineer()!=null && view.getEngineer().trim().length() > 0) {
-                sql.append(" and ffi.uid = #{engineer} ");
+            if (view.getEngineer() != null && view.getEngineer().trim().length() > 0) {
+                sql.append(" and fu.uid = #{engineer} ");
             }
 
             if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime  >= #{startNewestSaveDateStr} and fmu.uptime  <= #{endNewestSaveDateStr}");
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fmu.uptime  <= #{endNewestSaveDateStr}");
             } else if (view.getStartNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime >= #{startNewestSaveDateStr}");
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
             } else if (view.getEndNewestSaveDateStr() != null) {
-                sql.append(" and fmu.uptime <= #{endNewestSaveDateStr}");
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
             }
             return sql.toString();
         }

@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -44,24 +46,39 @@ public class FileUploadAndDownController {
      * @author:homey Wong
      * @Date: 2018.12.22
      */
+
     @ResponseBody
-    @RequestMapping("/updateandsaveprivilegestatus")
-    public void updateAndSavePrivilegeStatus(@RequestBody String[] privilelist, HttpServletResponse response) throws Exception {
-        //权限  1代表查看  2代表修改  3代表取消
-        String[] filesId;
+    @RequestMapping(value = "/updateandsaveprivilegestatus")
+    public void updateAndSavePrivilegeStatus(@RequestBody(required = true) AjaxBean bean, HttpServletResponse response,HttpSession session) throws Exception {
+        UserInfo info = (UserInfo) session.getAttribute("account");
+        DownloadView view = bean.getView();
+        List<String> privilelist = bean.getPrivilegestrs();//权限
+        List<String> privilegeusers =  bean.getPrivilegeusers();//用户
+        String oprighter = view.getOprighter();//权限被修改者 空为所有人 否则只能单个人选
+        //权限  1代表查看  2代表修改  3代表删除
         //转换成List类型
-        String selectuser = privilelist[0];
-        for (int i = 1; i < privilelist.length; i++) {
-            filesId = privilelist[i].split(",");
-            if (filesId.length > 1) {
-                String privileflag = StringUtil.afterString(privilelist[i], ",");
-                fileUploadAndDownServ.saveOrUpdateFilePrivilege(Integer.parseInt(selectuser), Integer.parseInt(filesId[0]), privileflag);
-            } else {
-                fileUploadAndDownServ.saveOrUpdateFilePrivilege(Integer.parseInt(selectuser), Integer.parseInt(filesId[0]), "");
-            }
+          String[] filesId  = null;
+        for (int i = 0; i < privilelist.size(); i++) {
+            filesId = privilelist.get(i).split(",");
+                if (filesId.length > 1) {
+                    String privileflag = StringUtil.afterString(privilelist.get(i), ",");
+                    fileUploadAndDownServ.saveOrUpdateFilePrivilege(privilegeusers, Integer.parseInt(filesId[0]), privileflag, info,oprighter);
+                } else {
+                    fileUploadAndDownServ.saveOrUpdateFilePrivilege(privilegeusers, Integer.parseInt(filesId[0]), "", info,oprighter);
+                }
+
         }
-        //AJAX页面返回数据
-        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByUserId(Integer.parseInt(selectuser));
+
+        List<DownloadView> dataList = fileUploadAndDownServ.findAllFilesByCondParam(view);
+        int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        if (dataList.size() > 0) {
+            dataList.get(0).setMaxPage(maxPage);
+            dataList.get(0).setRecordCount(recordCount);
+            dataList.get(0).setUserName(info.getUserName());
+            dataList.get(0).setPassword(info.getUserPwd());
+            dataList.get(0).setCurrentPage(view.getCurrentPage());
+        }
         String str1 = null;
         if (dataList != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -79,6 +96,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -92,71 +110,64 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "toprivilmanagepage", method = RequestMethod.GET)
-    public ModelAndView toPrivilManagePage(HttpSession session,int currentPage) {
-        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+    public ModelAndView toPrivilManagePage(HttpSession session, int currentPage) {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
         DownloadView view = new DownloadView();
         view.setType(userInfo.getType());
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
-        if(userInfo.getType()==1) {
-            List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
-            int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
-            int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-            view.setMaxPage(maxPage);
-            view.setRecordCount(recordCount);
 
-            modelAndView.addObject("view", view);
-            modelAndView.addObject("userInfos", userInfos);
-            modelAndView.addObject("downloadViewList", downloadViewList);
-        }else {
-            modelAndView.addObject("view", view);
-            modelAndView.addObject("userInfos", userInfos);
-            modelAndView.addObject("downloadViewList", null);
-        }
+        //查看所有人的权限
+        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+        //查看所有人权限总数
+        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
+        modelAndView.addObject("view", view);
+        modelAndView.addObject("userInfos", userInfos);
+        modelAndView.addObject("downloadViewList", downloadViewList);
+
         return modelAndView;
     }
 
 
     @ResponseBody
     @RequestMapping(value = "/findfileurlbyconditionparam", method = RequestMethod.POST)
-    public void findFileUrlByConditionParam(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception{
-      UserInfo userInfo = (UserInfo) session.getAttribute("account");
-      if(userInfo.getType()==1) {
-          ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
-          List<DownloadView> dataList = fileUploadAndDownServ.findAllFilesByCondParam(view);
-          int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
-          int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-             if(dataList.size() > 0) {
-              dataList.get(0).setMaxPage(maxPage);
-              dataList.get(0).setRecordCount(recordCount);
-              dataList.get(0).setUserName(userInfo.getUserName());
-              dataList.get(0).setPassword(userInfo.getUserPwd());
-              dataList.get(0).setCurrentPage(view.getCurrentPage());
-          }
-          String str1 = null;
-          if (dataList != null) {
-              ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-              try {
-                  str1 = x.writeValueAsString(dataList);
+    public void findFileUrlByConditionParam(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<DownloadView> dataList = fileUploadAndDownServ.findAllFilesByCondParam(view);
+            int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
+            int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+            if (dataList.size() > 0) {
+                dataList.get(0).setMaxPage(maxPage);
+                dataList.get(0).setRecordCount(recordCount);
+                dataList.get(0).setUserName(userInfo.getUserName());
+                dataList.get(0).setPassword(userInfo.getUserPwd());
+                dataList.get(0).setCurrentPage(view.getCurrentPage());
+            }
+            String str1 = null;
+            if (dataList != null) {
+                ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+                try {
+                    str1 = x.writeValueAsString(dataList);
 
-              } catch (JsonProcessingException e) {
-                  e.printStackTrace();
-              }
-          }
-          try {
-              response.setCharacterEncoding("UTF-8");
-              response.setContentType("text/html;charset=UTF-8");
-              response.getWriter().print(str1); //返回前端ajax
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str1); //返回前端ajax
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
 
 
-
-      }
     }
 
     /**
@@ -245,6 +256,7 @@ public class FileUploadAndDownController {
 
     /**
      * 功能描述:根据订单编号业务员名和设计师查询出URL信息
+     *
      * @auther: homey Wong
      * @date: 2019/1/14 0014 上午 9:19
      * @param:
@@ -253,12 +265,13 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/showfileurldiv", method = RequestMethod.POST)
-    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception{
-        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
+        view.setuId(userInfo.getuId());
         List<DownloadView> fileUrlList = fileUploadAndDownServ.findFileUrlDatabyOrderNoandSalorandUserName(view);
         String str1 = null;
-        if( fileUrlList.size()>0) {
+        if (fileUrlList.size() > 0) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str1 = x.writeValueAsString(fileUrlList);
@@ -289,19 +302,19 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
-    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session,HttpServletResponse response) throws Exception {
-        UserInfo userInfo =  (UserInfo) session.getAttribute("account");
+    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setuId(userInfo.getuId());
         List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
         int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-       if(dataList!=null && dataList.size()>0) {
-           dataList.get(0).setMaxPage(maxPage);
-           dataList.get(0).setRecordCount(recordCount);
-           dataList.get(0).setUserName(userInfo.getUserName());
-           dataList.get(0).setPassword(userInfo.getUserPwd());
-           dataList.get(0).setCurrentPage(view.getCurrentPage());
-       }
+        if (dataList != null && dataList.size() > 0) {
+            dataList.get(0).setMaxPage(maxPage);
+            dataList.get(0).setRecordCount(recordCount);
+            dataList.get(0).setUserName(userInfo.getUserName());
+            dataList.get(0).setPassword(userInfo.getUserPwd());
+            dataList.get(0).setCurrentPage(view.getCurrentPage());
+        }
         String str1 = null;
         if (dataList != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -329,20 +342,21 @@ public class FileUploadAndDownController {
     //多文件上传
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ModelAndView toFileUpAndDownPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
+    public ModelAndView toFileUpAndDownPage(HttpSession session, @ModelAttribute(value = "view") DownloadView view,
                                             @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
         List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
-        UserInfo userInfo =(UserInfo) session.getAttribute("account");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
-        for(MultipartFile mfile : files) {
+        view.setuId(userInfo.getuId());
+        for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");//判断文件是否超过限制大小
-        if(isFileLarge) {//没超过
-            view = fileUploadAndDownServ.findIsExistFiles(fileArray,view,userInfo);
-          //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-        }else{
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 20, "M");//判断文件是否超过限制大小
+        if (isFileLarge) {//没超过
+            view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
+            //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
+        } else {
             view.setFlag("-2");//超过
         }
 
@@ -381,6 +395,7 @@ public class FileUploadAndDownController {
 
     /**
      * 功能描述:文件更新修改 即覆盖
+     *
      * @auther: homey Wong
      * @date: 2019/1/11 0011 上午 9:01
      * @param:
@@ -390,24 +405,115 @@ public class FileUploadAndDownController {
     //文件更新
     @ResponseBody
     @RequestMapping(value = "/modifypage", method = RequestMethod.POST)
-    public ModelAndView modifyPage(HttpSession session,@ModelAttribute(value = "view") DownloadView view,
-                                            @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
+    public ModelAndView modifyPage(HttpSession session, @ModelAttribute(value = "view") DownloadView view,
+                                   @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
         List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
-        UserInfo userInfo =(UserInfo) session.getAttribute("account");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
-        for(MultipartFile mfile : files) {
+        view.setuId(userInfo.getuId());
+        for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray,20,"M");//判断文件是否超过限制大小
-        if(isFileLarge) {//没超过
-            view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray,view,userInfo);
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 20, "M");//判断文件是否超过限制大小
+        if (isFileLarge) {//没超过
+            view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-        }else{
+        } else {
             view.setFlag("-2");//超过
         }
 
         return new ModelAndView("modifypage");
+
+    }
+
+
+    /**
+     * 功能描述:文件夹更新修改 即覆盖
+     *
+     * @auther: homey Wong
+     * @date: 2019/1-16 12:10
+     * @param:
+     * @return:
+     * @describtion
+     */
+    //文件更新
+    @ResponseBody
+    @RequestMapping(value = "/modifypagefolder", method = RequestMethod.POST)
+    public ModelAndView modifyPageFolder(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
+        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
+        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
+        List<Integer> enginers = new ArrayList<Integer>();
+        for(UserInfo fo : uis) {
+            enginers.add(fo.getuId());
+        }
+        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
+        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setuId(userInfo.getuId());
+
+        String yearMonth = "^2019[0|1][0-9]$";//年月正则
+        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
+        Pattern yearMonthpattern = Pattern.compile(yearMonth);
+        Pattern orderNopattern = Pattern.compile(orderNo);
+        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
+        String[] urls = null;
+        String orginurl = null;
+        for(MultipartFile file : files) {
+            orginurl = file.getOriginalFilename();
+            urls = orginurl.split("/");
+            System.out.println(urls.length);
+            if(urls.length>=5){//表示是由标准的四层文件夹组成
+                System.out.println(urls.length);
+                if(!enginers.contains(Integer.valueOf(urls[0]))){
+                    isRightUrl = false;
+                    view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
+                    return new ModelAndView("uploadpage");
+                }
+                Matcher matcher = yearMonthpattern.matcher(urls[1]);
+                boolean isRight = matcher.find();
+                if(!isRight){
+                    isRightUrl = false;
+                    view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
+                    return new ModelAndView("uploadpage");
+                }
+                if(!salors.contains(urls[2])){
+                    isRightUrl = false;
+                    view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
+                    return new ModelAndView("uploadpage");
+                }
+                Matcher matcher1 = orderNopattern.matcher(urls[3]);
+                boolean isRight1 = matcher1.find();
+                if(!isRight1){
+                    isRightUrl = false;
+                    view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
+                    return new ModelAndView("uploadpage");
+                }
+                if(!urls[4].contains(".")){
+                    isRightUrl = false;
+                    view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
+                    return new ModelAndView("uploadpage");
+                }
+
+            }else{
+                isRightUrl = false;
+                view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
+                return new ModelAndView("uploadpage");
+            }
+        }
+        if(isFileLarge && isRightUrl) {
+            view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(files,view,userInfo,urls[0],urls[1],urls[2],urls[3]);
+        }else{
+            view.setFlag("-2");
+            return new ModelAndView("modifypage");
+        }
+
+
+        return new ModelAndView("modifypage");
+
 
     }
 
@@ -419,23 +525,82 @@ public class FileUploadAndDownController {
      * @return:
      * @describtion
      */
-//    @ResponseBody
-//    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
-//    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
-//        UserInfo userInfo = (UserInfo)session.getAttribute("account");
-//        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
-//        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-//        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
-//        view.setUserName(userInfo.getUserName());
-//        view.setPassword(userInfo.getUserPwd());
-//        if(isFileLarge) {
-//            view = fileUploadAndDownServ.addFileFoldersData(view, files, userInfo);
-//        }else{
-//            view.setFlag("-2");
-//            return new ModelAndView("uploadpage");
-//        }
-//        return new ModelAndView("uploadpage");
-//    }
+    @ResponseBody
+    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
+    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
+        List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
+        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
+        List<Integer> enginers = new ArrayList<Integer>();
+        for(UserInfo fo : uis) {
+            enginers.add(fo.getuId());
+        }
+        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
+        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setuId(userInfo.getuId());
+
+        String yearMonth = "^2019[0|1][0-9]$";//年月正则
+        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
+        Pattern yearMonthpattern = Pattern.compile(yearMonth);
+        Pattern orderNopattern = Pattern.compile(orderNo);
+        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
+        String[] urls = null;
+        String orginurl = null;
+        for(MultipartFile file : files) {
+        orginurl = file.getOriginalFilename();
+        urls = orginurl.split("/");
+            System.out.println(urls.length);
+        if(urls.length>=5){//表示是由标准的四层文件夹组成
+            System.out.println(urls.length);
+            if(!enginers.contains(Integer.valueOf(urls[0]))){
+                isRightUrl = false;
+                view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
+                return new ModelAndView("uploadpage");
+            }
+            Matcher matcher = yearMonthpattern.matcher(urls[1]);
+            boolean isRight = matcher.find();
+            if(!isRight){
+                isRightUrl = false;
+                view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
+                return new ModelAndView("uploadpage");
+            }
+            if(!salors.contains(urls[2])){
+                isRightUrl = false;
+                view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
+                return new ModelAndView("uploadpage");
+            }
+            Matcher matcher1 = orderNopattern.matcher(urls[3]);
+            boolean isRight1 = matcher1.find();
+            if(!isRight1){
+                isRightUrl = false;
+                view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
+                return new ModelAndView("uploadpage");
+            }
+            if(!urls[4].contains(".")){
+                isRightUrl = false;
+                view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
+                return new ModelAndView("uploadpage");
+            }
+
+        }else{
+            isRightUrl = false;
+            view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
+            return new ModelAndView("uploadpage");
+        }
+        }
+        if(isFileLarge && isRightUrl) {
+            view = fileUploadAndDownServ.findIsExistFilesFolder(files,view,userInfo,urls[0],urls[1],urls[2],urls[3]);
+        }else{
+            view.setFlag("-2");
+            return new ModelAndView("uploadpage");
+        }
+
+
+        return new ModelAndView("uploadpage");
+    }
 }
 
 
