@@ -21,6 +21,8 @@ public interface IFileUploadAndDownServ {
 
     List<UserInfo> findAllUser();
 
+    List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize);
+
 
     void saveOrUpdateFilePrivilege(List<String> userList,Integer filesId,String privileflag,UserInfo info,String oprighter);
 
@@ -37,4 +39,5 @@ public interface IFileUploadAndDownServ {
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view);
     List<DownloadView> findAllFilesByCondParam(DownloadView view);
     int findAllFilesByCondParamCount(DownloadView view);
+    List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno);
 }

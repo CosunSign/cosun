@@ -747,6 +747,17 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
+    public List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize){
+        return fileUploadAndDownMapper.findAllFileUrlByCondition(uid,currentPageTotalNum,PageSize);
+    }
+
+    @Override
+    public List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno) {
+        return fileUploadAndDownMapper.findAllUrlByParamThree(salor,engineer,orderno);
+    }
+
+
+    @Override
     public int findAllUploadFileCountByParaCondition(DownloadView view) {
         return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
     }

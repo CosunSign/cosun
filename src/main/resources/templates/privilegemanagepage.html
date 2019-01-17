@@ -32,7 +32,7 @@
             $('.SlectBox').SumoSelect({
                 placeholder: 'This is a placeholder',
                 csvDispCount: 2,
-                csvSepChar:","
+                csvSepChar: ","
             });
             // var flag = $("#type").val();
             //
@@ -60,6 +60,23 @@
             width: 1125px;
             height: 65px;
             Margin: 2px;
+            padding: 3px;
+        }
+
+
+        #folderdiv {
+            border: 1px solid #9AC0CD;
+            width: 1125px;
+            height: 500px;
+            Margin: 2px;
+            padding: 3px;
+        }
+
+        #innerfolderdiv {
+            border: 1px solid #9AC0CD;
+            width: 1095px;
+            height: 450px;
+            Margin: 10px;
             padding: 3px;
         }
 
@@ -95,7 +112,6 @@
         }
 
 
-
         .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
             color: #fff;
         }
@@ -109,7 +125,7 @@
         });
 
         function submitprivilegestatus() {
-              var privilegeusers = "";
+            var privilegeusers = "";
             var flag = $("#type").val();
             if (flag == "0") {
                 alert("您没有管理权限，无法进行管理权限分配操作,如需要请向上级申请！");
@@ -117,9 +133,9 @@
             }
 
             var privilegeusers = $("#SlectBox").val();
-           // var gettype=Object.prototype.toString;
+            // var gettype=Object.prototype.toString;
             //alert(gettype.call(privilegeusers))
-            if(privilegeusers=="" || privilegeusers==null) {
+            if (privilegeusers == "" || privilegeusers == null) {
                 alert("请先选择要更改权限的人员！");
                 return false;
             }
@@ -133,30 +149,30 @@
                     privilelist[Number(i)] += "," + $(this).val();
                 });
             }
-            var salor =  $("#salorid").val();
+            var salor = $("#salorid").val();
             var engineer = $("#selectuser").val();
             var orderNo = $("#orderno").val();
-            var projectName =  $("#projectname").val();
-            var fileName =  $("#filename").val();
-            var startNewestSaveDateStr =  $("#startnewestsavedate").val()
-            var endNewestSaveDateStr =  $("#endnewestsavedate").val()
+            var projectName = $("#projectname").val();
+            var fileName = $("#filename").val();
+            var startNewestSaveDateStr = $("#startnewestsavedate").val()
+            var endNewestSaveDateStr = $("#endnewestsavedate").val()
             var currentPage = $("#n_currentPage").val();
             var oprighter = $("#oprighter").val();
             var view = {
-                salor:salor, //业务员
-                engineer:engineer , //设计师
+                salor: salor, //业务员
+                engineer: engineer, //设计师
                 orderNo: orderNo, //订单编号
                 projectName: projectName, //项目编号
                 fileName: fileName, //文件名
                 startNewestSaveDateStr: startNewestSaveDateStr, //查询开始时间
-                endNewestSaveDateStr:endNewestSaveDateStr, //查询结束时间
+                endNewestSaveDateStr: endNewestSaveDateStr, //查询结束时间
                 currentPage: currentPage,
-                oprighter:oprighter
+                oprighter: oprighter
             };
 
 
             $.ajax({
-                data:JSON.stringify({"privilegestrs":privilelist,"view":view,"privilegeusers":privilegeusers}),
+                data: JSON.stringify({"privilegestrs": privilelist, "view": view, "privilegeusers": privilegeusers}),
                 type: "POST",
                 dataType: 'json',
                 contentType: 'application/json;charset=UTF-8', //内容类型
@@ -316,6 +332,174 @@
         var totalPage; //总多少页
         var totaldata; //总共多少记录
         var pageSize;//当前每页多少条
+
+        function findFoldersByQueryParam() {
+            var salor = $("#salorid").val();
+            var engineer = $("#selectuser").val();
+            var orderNo = $("#orderno").val().trim();
+            //做好文件夹切割容器 文件夹层数不能超过9层
+           var folderhtml = "";
+           var fileshtml = "";
+
+            if (salor == "") {
+                alert("请选择业务人员!");
+                return false;
+            }
+            if (engineer == "") {
+                alert("请选择设计师!");
+                return false;
+            }
+            if (orderNo == "") {
+                alert("请填写订单编号!");
+                return false;
+            }
+            $("#some-element").busyLoad("show");//遮罩层开启
+            var jsonarray = {
+                "salor": salor, //业务员
+                "engineer": engineer, //设计师
+                "orderNo": orderNo //订单编号
+            };
+            var data = JSON.stringify(jsonarray);
+            $.ajax({
+                data: data,
+                type: "POST",
+                contentType: "application/json",//上传内容格式为json结构
+                url: "/fileupdown/findFoldersByQueryParam",
+                success: function (msg) {
+                    var data = eval(msg); //data为URLS
+                    $.each(data, function (num) {
+                        if(data[num].indexOf(".") <= 0){//代表为文件夹
+                            $("#foldername").val(data[num]);
+                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                        }else{//代表为文件
+                            fileshtml += "<li>"+data[num]+"</li>";
+                        }
+                    });
+                    $("#innerfolderdiv").html(folderhtml+fileshtml)
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+
+            $("#some-element").busyLoad("hide");//遮罩层开启
+        }
+
+
+        function backFolder() {
+           var foldername = $("#foldername").val();
+            var salor = $("#salorid").val();
+            var engineer = $("#selectuser").val();
+            var orderNo = $("#orderno").val().trim();
+            var folderhtml = "";
+            var fileshtml = "";
+            if (salor == "") {
+                alert("请选择业务人员!");
+                return false;
+            }
+            if (engineer == "") {
+                alert("请选择设计师!");
+                return false;
+            }
+            if (orderNo == "") {
+                alert("请填写订单编号!");
+                return false;
+            }
+            $("#some-element").busyLoad("show");//遮罩层开启
+            var jsonarray = {
+                "salor": salor, //业务员
+                "engineer": engineer, //设计师
+                "orderNo": orderNo, //订单编号
+                "folderName":foldername//当前文件夹名
+            };
+            var data = JSON.stringify(jsonarray);
+            $.ajax({
+                data: data,
+                type: "POST",
+                contentType: "application/json",//上传内容格式为json结构
+                url: "/fileupdown/findBackFoldersByQueryParam",
+                success: function (msg) {
+                    var data = eval(msg); //data为URLS
+                    $.each(data, function (num) {
+                        if(data[num].indexOf(".") <= 0){//代表为文件夹
+                            $("#foldername").val(data[num]);
+                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                        }else{//代表为文件
+                            fileshtml += "<li>"+data[num]+"</li>";
+                        }
+                    });
+                    $("#innerfolderdiv").html(folderhtml+fileshtml)
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+
+            $("#some-element").busyLoad("hide");//遮罩层开启
+        }
+
+        function shownextfolderorfiles(foldername) {
+            var salor = $("#salorid").val();
+            var engineer = $("#selectuser").val();
+            var orderNo = $("#orderno").val().trim();
+            //做好文件夹切割容器 文件夹层数不能超过9层
+            var folderhtml = "";
+            var fileshtml = "";
+            if (salor == "") {
+                alert("请选择业务人员!");
+                return false;
+            }
+            if (engineer == "") {
+                alert("请选择设计师!");
+                return false;
+            }
+            if (orderNo == "") {
+                alert("请填写订单编号!");
+                return false;
+            }
+            $("#some-element").busyLoad("show");//遮罩层开启
+            var jsonarray = {
+                "salor": salor, //业务员
+                "engineer": engineer, //设计师
+                "orderNo": orderNo, //订单编号
+                "folderName":foldername//当前文件夹名
+            };
+            var data = JSON.stringify(jsonarray);
+            $.ajax({
+                data: data,
+                type: "POST",
+                contentType: "application/json",//上传内容格式为json结构
+                url: "/fileupdown/findNextFoldersByQueryParam",
+                success: function (msg) {
+                    var data = eval(msg); //data为URLS
+                    $.each(data, function (num) {
+                        if(data[num].indexOf(".") <= 0){//代表为文件夹
+                            $("#foldername").val(data[num]);
+                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                        }else{//代表为文件
+                            fileshtml += "<li>"+data[num]+"</li>";
+                        }
+                    });
+                    $("#innerfolderdiv").html(folderhtml+fileshtml)
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+
+            $("#some-element").busyLoad("hide");//遮罩层开启
+
+        }
+
         function submitQueryByConditionParam() {
             // var flag = $("#type").val();
             // if(flag =="0"){
@@ -333,7 +517,7 @@
                 "startNewestSaveDateStr": $("#startnewestsavedate").val(), //查询开始时间
                 "endNewestSaveDateStr": $("#endnewestsavedate").val(), //查询结束时间
                 "currentPage": $("#n_currentPage").val(),
-                "oprighter":$("#oprighter").val()
+                "oprighter": $("#oprighter").val()
             };
             var data = JSON.stringify(jsonarray);
             $.ajax({
@@ -670,6 +854,9 @@
                 <a class="btn btn-default"
                    th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                     下载</a>
+                <a class="btn btn-default"
+                   th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
+
                 <a class="btn btn-primary"
                    th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
                 <p>
@@ -707,7 +894,7 @@
                                     <td align="right"> 权限者:</td>
                                     <td>
                                         <select id="oprighter" style="width: 153px" name="view.oprighter">
-                                        <option value="" selected="selected">选择权限者</option>
+                                            <option value="" selected="selected">选择权限者</option>
                                             <option value="1000012">段金星</option>
                                             <option value="1000008">吴运翠</option>
                                             <option value="1000011">刘穗梅</option>
@@ -783,7 +970,7 @@
 
                                     <td th:align="right">
                                         <input type="button" id="submitQueryByConditionbutton"
-                                               onclick="submitQueryByConditionParam()" value="查询"/>&nbsp;
+                                               onclick="findFoldersByQueryParam()" value="查询"/>&nbsp;
                                     </td>
                                 </tr>
                             </table>
@@ -820,149 +1007,23 @@
                                     </select>
 
                                 </td>
-                                <td align="right"><input type="button" onclick="submitprivilegestatus()" value="保存"></td>
+                                <td align="right"><input type="button" onclick="submitprivilegestatus()" value="保存">
+                                </td>
 
                             </tr>
                         </table>
-&nbsp;&nbsp;
+                        &nbsp;&nbsp;
                     </div>
                 </form>
-
+<input type="hidden" id="foldername">
                 <div id="some-element">
-                    <!--<form>-->
-                    <!--用户 <select name="selectuser" id="selectuser" >-->
+                    <div id="folderdiv">
+                        <p>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返回上一级" onclick="backFolder();">
 
-                    <!--<option  th:each="c:${userInfos}"  th:value="${c.uId}" th:text="${c.userName}"></option>-->
-                    <!--</select>-->
-                    <!--<input type="button" onclick="submitprivilegestatus()" value="确认">-->
-                    <!--</form>-->
-                    <!--<br/>-->
-                    <!--<br/>-->
+                        <div id="innerfolderdiv">
 
-                    <div id="privimanage">
-                        <form>
-                            <table class="grid" style="width: 100%" id="privilegetable">
-                                <thead>
-                                <tr style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
-                                    <th>编号</th>
-                                    <th>创建者</th>
-                                    <th>最后修改者</th>
-                                    <th>文件名</th>
-                                    <th>业务员</th>
-                                    <th>订单编号</th>
-                                    <th>顶目名称</th>
-                                    <th>创建时间</th>
-                                    <th>更新时间</th>
-                                    <th>更新次数</th>
-                                    <th>更新原因</th>
-                                    <th>权限设置</th>
-                                </tr>
-                                </thead>
-                                <tbody id="showlistbody">
-                                <div th:unless="${#lists.isEmpty(downloadViewList)}">
-                                <tr   th th:each="downloadView ,iterStat: ${downloadViewList}" th:id="${downloadView.id}">
-                                    <td th:text="${iterStat.index+1}"></td>
-                                    <td th:text="${downloadView.creator}"></td>
-                                    <td th:text="${downloadView.lastUpdator}"></td>
-                                    <td th:text="${downloadView.fileName}"></td>
-                                    <td th:text="${downloadView.salor}"></td>
-                                    <td th:text="${downloadView.orderNo}"></td>
-                                    <td th:text="${downloadView.projectName}"></td>
-                                    <td th:text="${downloadView.createTime}"></td>
-                                    <td th:text="${downloadView.lastUpdateTime}"></td>
-                                    <td th:text="${downloadView.singleFileUpdateNum}"></td>
-                                    <td th:text="${downloadView.modifyReason}"></td>
-                                    <td><input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                               th:checked="${downloadView.seePrivilege eq '1' }" th:value="1">下载
-                                        <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                               th:checked="${downloadView.updatePrivilege eq '2' }" th:value="2">修改
-
-                                        <input th:name="'privilegenum'+${downloadView.id}" type="checkbox"
-                                               th:checked="${downloadView.seePrivilege eq '3' }" th:value="3">删除
-
-                                        <!--<input th:name="'privilegenum'+${downloadView.id}" type="checkbox"-->
-                                               <!--th:checked="${downloadView.cancelPrivilege eq '4' }" th:value="4">取消-->
-
-
-                                    </td>
-                                </tr>
-                                </div>
-
-                                </tbody>
-                                <tfoot id="s_tfoot">
-                                <div th:if="${#lists.isEmpty(downloadViewList)}">
-                                    <tr>
-                                        <td colspan="12" align="center">暂无文件清单信息</td>
-                                    </tr>
-                                </div>
-                                <tr>
-
-                                <tr style="display:none " id="nodatadiv" >
-                                    <td colspan="12" align="center">
-                                        查无数据
-                                    </td>
-                                </tr>
-                                <td colspan="12" align="center">
-                                    <span>第</span>
-                                    <span th:text="${view.currentPage}" id="currentpagespan"> </span>
-                                    <span>页|共</span>
-                                    <span th:text="${view.maxPage}" id="maxpagespan"> </span>
-                                    <span>页|共</span>
-                                    <span th:text="${view.recordCount}" id="recordcountspan"> </span>
-                                    <span>条记录 </span>
-                                    <span id="image01">
-                            <span th:if="${view.currentPage gt 1}">
-                                    <img src="/images/page/sy-2.jpg" align="middle" border="0"
-                                         style="width: 20px; height: 20px; vertical-align: middle"
-                                         onClick="goPriPageone()"/>
-                                    <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPriPrePage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-                                </span>
-                                </span>
-                                    <span id="image02">
-                            <span th:if="${view.currentPage le 1}">
-                                <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                                <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-                            </span>
-                            </span>
-                                    <span id="image03">
-                            <span th:if="${view.currentPage lt view.maxPage}">
-                                    <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goPriAftPage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>
-                                    <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goPriMaxPage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>
-                            </span>
-                                </span>
-                                    <span id="image04">
-                            <span th:if="${view.currentPage ge view.maxPage}">
-                                <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                                <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                            </span>
-                            </span>
-
-                                    |&nbsp;到第
-                                    <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
-                                           style="width: 50px"
-                                           id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
-                                    页&nbsp;
-                                    <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPagePri()"
-                                         style="width:20px;height:20px;vertical-align:middle">
-                                </td>
-
-                                </tr>
-
-
-
-
-
-                                </tfoot>
-                            </table>
-                        </form>
-
+                        </div>
                     </div>
 
                 </div>

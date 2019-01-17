@@ -39,6 +39,23 @@ public interface FileUploadAndDownMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     void addfileManFileDataByUpload(FileManFileInfo fileManFile);
 
+    @Select("SELECT ffi.id, " +
+            "                      IFNULL(fmu.username,fmu.updateuser) as lastUpdator, " +
+            "                     IFNULL(fmu.uptime,fmu.updateTime) as lastUpdateTime, " +
+            "                      fmu.orginname AS fileName, " +
+            "                      ffi.extinfo1 AS salor, " +
+            "                     ffi.ordernum AS orderNo, " +
+            "                    ffi.projectname AS projectName, " +
+            "                      fmu.singlefileupdatenum AS singleFileUpdateNum, " +
+            "                    fmu.logur1 AS urlAddr, " +
+            "                      ffi.filedescribtion as filedescribtion, " +
+            "                      ffi.remark as remark " +
+            "                     FROM  " +
+            "                     filemanfileinfo ffi " +
+            "                     LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId " +
+                               " ORDER BY " +
+            "   ffi.createtime DESC limit #{currentPageTotalNum},#{PageSize} ")
+    List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize);
 
     @Select("SELECT\n" +
             "\t fr.id,\n" +
@@ -146,6 +163,12 @@ public interface FileUploadAndDownMapper {
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllFilesCountByParam")
     int findAllFilesByCondParamCount(DownloadView view);
 
+    @Select("select fu.logur1 as addr from filemanurl fu left join \n" +
+            "filemanfileinfo ffi on fu.fileInfoId = ffi.id\n" +
+            "where ffi.extinfo1 = #{salor} \n" +
+            "and ffi.uid = #{engineer} \n" +
+            "and ffi.ordernum = #{orderno} ")
+    List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno);
 
     /**
      * 功能描述: 多条件查询 建内部类拼SQL
@@ -264,7 +287,11 @@ public interface FileUploadAndDownMapper {
             StringBuilder sql = new StringBuilder(" select count(ffi.id) ");
             sql.append("                from filemanfileinfo ffi ");
             sql.append("                LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId");
-            sql.append("                where ffi.uid = #{uId}   ");
+            sql.append("                where 1=1   ");
+
+            if(view.getuId()!=null && view.getuId()!=0) {
+                sql.append(" and fmu.uid = #{uId}");
+            }
 
             if (view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 like CONCAT('%',#{salor},'%')");
@@ -296,12 +323,25 @@ public interface FileUploadAndDownMapper {
 
 
         public String findAllByParaCondition(DownloadView view) {
-            StringBuilder sql = new StringBuilder(" select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor,");
-            sql.append("  ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime");
-            sql.append("            ,ffi.updatecount as totalUpdateNum,fmu.opright as opRight,fmu.logur1 as urlAddr,ffi.createtime as createTime,fmu.opRight  ");
-            sql.append("                from filemanfileinfo ffi ");
-            sql.append("                LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId");
-            sql.append("                where ffi.uid = #{uId}   ");
+            StringBuilder sql = new StringBuilder(" SELECT \tffi.id,\n" +
+                    "  IFNULL(fmu.username,fmu.updateuser) as lastUpdator,\n" +
+                    "  IFNULL(fmu.uptime,fmu.updateTime) as lastUpdateTime,\n" +
+                    "\tfmu.orginname AS fileName,\n" +
+                    "\tffi.extinfo1 AS salor,\n" +
+                    "\tffi.ordernum AS orderNo,\n" +
+                    "\tffi.projectname AS projectName,\n" +
+                    "  fmu.singlefileupdatenum AS singleFileUpdateNum,\n" +
+                    "\tfmu.logur1 AS urlAddr,\n" +
+                    "  ffi.filedescribtion as filedescribtion,\n" +
+                    "  ffi.remark as remark " +
+                    " FROM "+
+                    " filemanfileinfo ffi"+
+                    " LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId"+
+                    " WHERE "+
+                    " 1=1 ");
+            if(view.getuId()!=null&&view.getuId()!=0){
+                sql.append(" and fmu.uid =#{uId} ");
+            }
 
             if (view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 like CONCAT('%',#{salor},'%')");

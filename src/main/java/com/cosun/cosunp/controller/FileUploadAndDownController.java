@@ -43,6 +43,230 @@ public class FileUploadAndDownController {
     }
 
     /**
+     * 功能描述:文件查看按条件查询
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 上午 9:53
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/browserbyquerycondition", method = RequestMethod.POST)
+    public void browserbyQuerycondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setuId(Integer.valueOf(view.getEngineer()));
+        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
+        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        if (dataList != null && dataList.size() > 0) {
+            dataList.get(0).setMaxPage(maxPage);
+            dataList.get(0).setRecordCount(recordCount);
+            dataList.get(0).setUserName(userInfo.getUserName());
+            dataList.get(0).setPassword(userInfo.getUserPwd());
+            dataList.get(0).setCurrentPage(view.getCurrentPage());
+        }
+        String str1 = null;
+        if (dataList != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str1 = x.writeValueAsString(dataList);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * 功能描述:文件查找
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 上午 9:23
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping("/tobroserfilepage")
+    public ModelAndView tobroserfilepage(HttpSession session, int currentPage) throws  Exception{
+        ModelAndView mav = new ModelAndView("broserfilepage");
+        DownloadView view = new DownloadView();
+        view.setCurrentPage(currentPage);
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        mav.addObject("view", view);
+        mav.addObject("downloadViewList", downloadViewList);
+        mav.addObject("userInfos",userInfos);
+        return mav;
+    }
+
+
+    /**
+     * 功能描述:文件夹退回
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 下午 5:21
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value="/findBackFoldersByQueryParam")
+    public void findBackFoldersByQueryParam(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> folderOrFiles = new ArrayList<String>();
+        Integer lastIndex = null;
+        Integer preindex = null;
+        String preStr = null;
+        for(String s : urls) {
+            lastIndex = s.indexOf(view.getFolderName());
+            preStr = s.substring(0,lastIndex-1);
+            preindex =preStr.lastIndexOf("\\");
+            folderOrFiles.add(s.substring(preindex+1,lastIndex-1));
+        }
+
+        for(String s : folderOrFiles) {
+            if(!norepeatFoldorFile.contains(s)){
+                norepeatFoldorFile.add(s);
+            }
+        }
+
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper  x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(norepeatFoldorFile);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 功能描述:按当前文件级查找下一级文件夹
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 下午 4:33
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    @ResponseBody
+    @RequestMapping(value="/findNextFoldersByQueryParam")
+    public void findNextFoldersByQueryParam(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> folderOrFiles = new ArrayList<String>();
+        Integer index = null;
+        Integer lastIndex = null;
+        for(String s : urls) {
+            index = s.indexOf(view.getFolderName());//字符串第一次出现的位置
+            lastIndex = s.indexOf("\\",index+1+view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            if(lastIndex==-1){
+                lastIndex = s.length();
+            }
+           folderOrFiles.add(s.substring(index+1+view.getFolderName().length(),lastIndex));
+        }
+
+        for(String s : folderOrFiles) {
+            if(!norepeatFoldorFile.contains(s)){
+                norepeatFoldorFile.add(s);
+            }
+        }
+
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(norepeatFoldorFile);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 功能描述:按条件查询初始化文件夹
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 下午 4:33
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value="/findFoldersByQueryParam")
+    public void showFolderByParamThree(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
+        UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
+        List<String> folderOrFiles = new ArrayList<String>();
+        List<String[]> strarray = new ArrayList<String[]>();
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        for(String str : urls){
+            strarray.add(str.replaceAll("\\\\","/").split("/"));
+        }
+        for(String[] stra : strarray) {
+            folderOrFiles.add(stra[1]);
+        }
+        for(String s : folderOrFiles) {
+            if(!norepeatFoldorFile.contains(s)){
+                norepeatFoldorFile.add(s);
+            }
+        }
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(norepeatFoldorFile);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * @author:homey Wong
      * @Date: 2018.12.22
      */
