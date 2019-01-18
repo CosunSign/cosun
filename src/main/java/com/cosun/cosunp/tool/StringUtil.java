@@ -106,8 +106,11 @@ public class StringUtil {
 
     public static String subAfterString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名
-        int index = str.lastIndexOf(a);
-        return str.substring(index+1,str.length());
+        if(str.contains("a")) {
+            int index = str.lastIndexOf(a);
+            return str.substring(index + 1, str.length());
+        }
+        return str;
 
     }
 

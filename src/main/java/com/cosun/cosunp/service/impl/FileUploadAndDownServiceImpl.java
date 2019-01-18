@@ -8,6 +8,7 @@ import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.MathUtil;
 import com.cosun.cosunp.tool.PinYinUtil;
 import com.cosun.cosunp.tool.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     @Override
-    public void saveOrUpdateFilePrivilege(List<String> userList, Integer fileurlid, String privileflag, UserInfo info, String oprighter) {
+    public void saveOrUpdateFilePrivilege(List<String> userList, Integer fileurlid, String privileflag, UserInfo info, String oprighter) throws Exception {
         FilemanRight fr = null;
         DownloadView view = null;
         List<UserInfo> uis = null;
@@ -118,12 +119,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
-    public List<UserInfo> findAllUser() {
+    public List<UserInfo> findAllUser()throws  Exception {
         return userInfoMapper.findAllUser();
     }
 
     @Override
-    public List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) {
+    public List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws  Exception{
         return fileUploadAndDownMapper.findFileUrlDatabyOrderNoandSalorandUserName(view.getUserName(), view.getSalor(), view.getOrderNo());
     }
 
@@ -215,7 +216,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Override
     @Transactional
-    public DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) {
+    public DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception{
         boolean isAllExistFile = true;//true代表文件以前全部存过
         String noExistFileNames = "";
         int isNoExsitFileNum = 0;
@@ -223,13 +224,21 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(), view.getOrderNo(), view.getSalor());
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
         List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();
+        List<String> centerUrls = new ArrayList<String>();
         if (fileManFileInfo.size() > 0) { //代表文件夹存在
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             for (FilemanUrl fu : oldFileUrls) {
                 strnames.add(fu.getOrginName());
             }
-            for (MultipartFile file : fileArray) {
-                if (strnames.contains(file.getOriginalFilename())) {//查看是不是每个文件服务器都有老文件
+
+            for(FilemanUrl url : oldFileUrls) {
+                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(),"\\",6);
+                String afterFourLevel = url.getLogur1().substring(pointindex+1,url.getLogur1().length());
+                centerUrls.add(afterFourLevel);
+            }
+
+            for(MultipartFile file : fileArray) {
+                if (strnames.contains(subAfterString(file.getOriginalFilename(),"/"))&&centerUrls.contains(file.getOriginalFilename())) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
                 } else {
                     isNoExsitFileNum++;
@@ -265,24 +274,23 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
-    public DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo, String engineer, String yearmoth, String salor, String orderNo) {
+    public DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray, DownloadView view,UserInfo userInfo) throws Exception{
         boolean isAllNewFile = true; //全为新文件即为真
         String isExistFilesName = "";
         int exsitNum = 0;
         List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
-        UserInfo ui = fileUploadAndDownMapper.getUserInfoByUid(Integer.valueOf(engineer));
         //根据业务员订单号设计师看有没有文件夹
-        List<String> strnames = new ArrayList<String>();
-        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(ui.getUserName(),orderNo,salor );
-        if (fileManFileInfo.size() > 0) {  //有文件夹
+        List<String> strurl = new ArrayList<String>();
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(),view.getOrderNo(),view.getSalor() );
+        if (fileManFileInfo.size() > 0) {  //看四层基本层次结构存不存在
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             for (FilemanUrl fu : oldFileUrls) {
-                strnames.add(fu.getOrginName());
+                strurl.add(fu.getOrginName());
             }
             for (MultipartFile file : fileArray) {
-                if (strnames.contains(subAfterString(file.getOriginalFilename(),"/"))) { //数据库里的URL有现在要上传的名字 不受理
-                    isExistFilesName += file.getOriginalFilename() + "===";//取旧文件的名字
+                if (strurl.contains(subAfterString(file.getOriginalFilename(),"/"))) { //数据库里的URL有现在要上传的名字与路径 不受理
+                    isExistFilesName += file.getOriginalFilename() + "===";//取旧文件上传过来含带文件夹包的的名字
                     isAllNewFile = false;
                     exsitNum++;
                 } else {
@@ -290,7 +298,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
             if (isAllNewFile) { //全为新文件
-                view = addOldOrderNoNewFilesByFolder(view, newFileArray, ui, oldFileUrls.get(0).getLogur1(), fileManFileInfo, engineer, yearmoth, salor, orderNo);
+                view = addOldOrderNoNewFilesByFolder(view, newFileArray,userInfo,oldFileUrls.get(0).getLogur1(), fileManFileInfo);
                 view.setFlag("1");
             } else {
                 view.setFlag("-3");//代表有部分已存在的文件
@@ -300,7 +308,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
         } else {//如果没有文件夹,直接当成新文件全部存.
-            view = this.addFilesDatabyFolder(view, fileArray, ui, engineer, yearmoth, salor, orderNo);
+            view = this.addFilesDatabyFolder(view, fileArray,userInfo);
             view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
         }
 
@@ -309,22 +317,31 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     @Override
-   public DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo){
+   public DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo) throws  Exception{
         boolean isAllExistFile = true;//true代表文件以前全部存过
         String noExistFileNames = "";
         int isNoExsitFileNum = 0;
-        UserInfo ui = fileUploadAndDownMapper.getUserInfoByUid(Integer.valueOf(engineer));
         List<String> strnames = new ArrayList<String>();
-        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(ui.getUserName(),orderNo,salor );;
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(),view.getOrderNo(),view.getSalor());;
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        List<String> centerUrls = new ArrayList<String>();
         List<MultipartFile> newFileArray = new ArrayList<MultipartFile>();
-        if (fileManFileInfo.size() > 0) { //代表文件夹存在
+        if (fileManFileInfo.size() > 0) { //代表前四级文件夹存在
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             for (FilemanUrl fu : oldFileUrls) {
                 strnames.add(fu.getOrginName());
             }
+
+            for(FilemanUrl url : oldFileUrls) {
+                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(),"\\",6);
+                String afterFourLevel = url.getLogur1().substring(pointindex+1,url.getLogur1().length());
+                centerUrls.add(afterFourLevel);
+            }
+
+
+
             for (MultipartFile file : fileArray) {
-                if (strnames.contains(subAfterString(file.getOriginalFilename(),"/"))) {//查看是不是每个文件服务器都有老文件
+                if (strnames.contains(subAfterString(file.getOriginalFilename(),"/"))&&centerUrls.contains(file.getOriginalFilename().replaceAll("/","\\\\"))) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
                 } else {
                     isNoExsitFileNum++;
@@ -332,9 +349,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     noExistFileNames += file.getOriginalFilename() + "===";
                 }
             }
-            if (isAllExistFile) {
-                updateFilesDataFolder(fileManFileInfo, view, newFileArray, ui,engineer,yearmoth,salor,orderNo);
-                view.setFlag("-18");//代表文件全部更新成功
+
+            if (isAllExistFile) {//代表文件夹与文件全是以前存在过的
+                    updateFilesDataFolder(fileManFileInfo, view, newFileArray,userInfo);
+                    view.setFlag("-18");//代表文件全部更新成功
             } else {
                 view.setIsExistNum(isNoExsitFileNum);
                 view.setFlag("-12");//代表为新文件,
@@ -342,7 +360,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 return view;
             }
 
-        } else {//代表文件夹不存在,直接不受理
+        } else {//代表前四级文件夹不存在,直接不受理
             view.setFlag("-11");//代表文件夹不存在,去上传页面
             return view;
         }
@@ -352,7 +370,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     @Transactional
-    public  void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo,DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo){
+    public  void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo,DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo) throws Exception{
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
@@ -367,8 +385,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 if (filemanUrl != null) {
                     FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
                     //取老文件信息
-
-
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
                     filemanUrl.setModifyReason(view.getModifyReason());
@@ -380,7 +396,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional
-    public DownloadView addFilesDatabyFolder(DownloadView view, List<MultipartFile> files, UserInfo userInfo, String engineer, String yearmoth, String salor, String orderNo) {
+    public DownloadView addFilesDatabyFolder(DownloadView view, List<MultipartFile> files,UserInfo userInfo) throws Exception {
         if (files == null || files.size() <= 0) { // //空文件返回 0
             view.setFlag("0");
         }
@@ -399,8 +415,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setCreateUser(userInfo.getUserName());
         fileManFileInfo.setUserName(userInfo.getUserName());
         fileManFileInfo.setuId(userInfo.getuId());
-        fileManFileInfo.setExtInfo1(salor);
-        fileManFileInfo.setOrderNum(orderNo);
+        fileManFileInfo.setExtInfo1(view.getSalor());
+        fileManFileInfo.setOrderNum(view.getOrderNo());
         fileManFileInfo.setProjectName(view.getProjectName());
         fileManFileInfo.setTotalFilesNum(files.size());
         fileManFileInfo.setRemark(view.getRemark());
@@ -410,7 +426,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
         for (int i = 0; i < files.size(); i++) {
             try {
-                deskName = FileUtil.uploadFileFolder(files.get(i), engineer, yearmoth, salor, orderNo, randomNum);
+                deskName = FileUtil.uploadFileFolder(files.get(i),view,randomNum);
                 orginname = subAfterString(files.get(i).getOriginalFilename(), "/");
 
                 //存储文件路径
@@ -450,9 +466,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     //上传的是文件夹,根据以前的路径存文件
     @Transactional
-    public DownloadView addOldOrderNoNewFilesByFolder(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos, String engineer, String yearmoth, String salor, String orderNo) {
+    public DownloadView addOldOrderNoNewFilesByFolder(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception{
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
-        String oldsPath = StringUtil.subMyString(oldPath, "\\");
+        Integer pointindex = StringUtils.ordinalIndexOf(oldPath,"\\",6);
+        String oldsPath = oldPath.substring(0,pointindex+1);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
@@ -467,7 +484,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
         for (MultipartFile file : fileArray) {
             orginname = subAfterString(file.getOriginalFilename(), "/");
-            deskName = oldsPath + orginname;
+            deskName = oldsPath + file.getOriginalFilename();
             FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
             //存储文件路径
             filemanUrl = new FilemanUrl();
@@ -503,7 +520,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     //以下功能为文件上传功能,只对新的文件进行存储
     @Override
     @Transactional
-    public DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) {
+    public DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception{
         boolean isAllNewFile = true; //全为新文件即为真
         String isExistFilesName = "";
         int exsitNum = 0;
@@ -555,7 +572,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Transactional
-    public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) {
+    public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
@@ -583,9 +600,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional
-    public DownloadView addOldOrderNoNewFiles(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) {
+    public DownloadView addOldOrderNoNewFiles(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception{
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
-        String oldsPath = StringUtil.subMyString(oldPath, "\\");
+        Integer pointindex = StringUtils.ordinalIndexOf(oldPath,"\\",6);
+        String oldsPath = oldPath.substring(0,pointindex+1);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
@@ -636,7 +654,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     @Override
-    public DownloadView addFilesData(DownloadView view, List<MultipartFile> files, UserInfo userInfo) {
+    public DownloadView addFilesData(DownloadView view, List<MultipartFile> files, UserInfo userInfo) throws Exception{
         if (files == null || files.size() <= 0) { // //空文件返回 0
             view.setFlag("0");
         }
@@ -711,7 +729,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @Date: 2018.12.21
      */
     @Override
-    public List<DownloadView> findAllUploadFileByUserId(Integer uid) {
+    public List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception{
         List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByUserId(uid);
         return list;
     }
@@ -721,7 +739,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @Date: 2018.12.21
      */
     @Override
-    public List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) {
+    public List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception {
         List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
         return list;
     }
@@ -736,39 +754,39 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
-    public int findAllUploadFileCountByUserId(Integer uId) {
+    public int findAllUploadFileCountByUserId(Integer uId) throws Exception{
         return fileUploadAndDownMapper.findAllUploadFileCountByUserId(uId);
 
     }
 
     @Override
-    public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) {
+    public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception{
         return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
     }
 
     @Override
-    public List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize){
+    public List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize) throws Exception{
         return fileUploadAndDownMapper.findAllFileUrlByCondition(uid,currentPageTotalNum,PageSize);
     }
 
     @Override
-    public List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno) {
+    public List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamThree(salor,engineer,orderno);
     }
 
 
     @Override
-    public int findAllUploadFileCountByParaCondition(DownloadView view) {
+    public int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception{
         return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
     }
 
     @Override
-    public List<DownloadView> findAllFilesByCondParam(DownloadView view) {
+    public List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception{
         return fileUploadAndDownMapper.findAllFilesByCondParam(view);
     }
 
     @Override
-    public int findAllFilesByCondParamCount(DownloadView view) {
+    public int findAllFilesByCondParamCount(DownloadView view) throws  Exception{
         return fileUploadAndDownMapper.findAllFilesByCondParamCount(view);
     }
 }

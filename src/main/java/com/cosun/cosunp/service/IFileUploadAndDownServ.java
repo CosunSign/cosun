@@ -15,29 +15,29 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
-    List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize);
-    List<DownloadView> findAllUploadFileByUserId(Integer uid);
-    DownloadView addFilesData(DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo);
+    List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize) throws Exception;
+    List<DownloadView> findAllUploadFileByUserId(Integer uid) throws  Exception;
+    DownloadView addFilesData(DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo) throws  Exception;
 
-    List<UserInfo> findAllUser();
+    List<UserInfo> findAllUser() throws  Exception;
 
-    List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize);
+    List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize) throws Exception;
 
 
-    void saveOrUpdateFilePrivilege(List<String> userList,Integer filesId,String privileflag,UserInfo info,String oprighter);
+    void saveOrUpdateFilePrivilege(List<String> userList,Integer filesId,String privileflag,UserInfo info,String oprighter) throws Exception;
 
-    int findAllUploadFileCountByUserId(Integer uId);
+    int findAllUploadFileCountByUserId(Integer uId) throws Exception;
 
-    List<DownloadView> findAllUploadFileByParaCondition(DownloadView view);
+    List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception;
 
-    int findAllUploadFileCountByParaCondition(DownloadView view);
-    DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
-    DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo);
-    DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo,String engineer,String yearmoth,String salor,String orderNo);
+    int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception;
+    DownloadView findIsExistFiles(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo) throws Exception;
+    DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo) throws Exception;
+    DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo) throws Exception;
 
-    DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo);
-    List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view);
-    List<DownloadView> findAllFilesByCondParam(DownloadView view);
-    int findAllFilesByCondParamCount(DownloadView view);
-    List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno);
+    DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray,DownloadView view,UserInfo userInfo) throws Exception;
+    List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
+    List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception;
+    int findAllFilesByCondParamCount(DownloadView view) throws Exception;
+    List<String> findAllUrlByParamThree(String salor,Integer engineer,String orderno) throws  Exception;
 }

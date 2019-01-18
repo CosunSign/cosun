@@ -87,7 +87,7 @@ public class FileUtil {
 
     //根据文件夹上传 找到数据库老路径存文件
     public static void uploadFileFolderByUrl(MultipartFile file, UserInfo userInfo, DownloadView view,String oldPath){
-        String fileName = subAfterString(file.getOriginalFilename(),"/");
+        String fileName = file.getOriginalFilename().replaceAll("/","\\\\");
         File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){
@@ -180,10 +180,10 @@ public class FileUtil {
     }
 
 
-    public static String uploadFileFolder(MultipartFile file,String engineer,String yearmoth,String salor,String orderNo,String randomnum){
-        String fileName = subAfterString(file.getOriginalFilename(),"/");
-        String filePath = "F:\\"+engineer+"\\"+yearmoth+"\\"+salor+"\\"
-                +orderNo+"\\"+randomnum+"\\";
+    public static String uploadFileFolder(MultipartFile file,DownloadView view,String randomnum){
+        String fileName = file.getOriginalFilename().replaceAll("/","\\\\");
+        String filePath = "F:\\"+view.getUserName()+"\\"+formateString(new Date())+"\\"+view.getSalor()+"\\"
+                +view.getOrderNo()+"\\"+randomnum+"\\";
         File targetFile = new File(filePath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){

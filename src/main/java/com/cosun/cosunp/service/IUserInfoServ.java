@@ -4,5 +4,5 @@ import com.cosun.cosunp.entity.UserInfo;
 
 public interface IUserInfoServ {
 
-    UserInfo findUserByUserNameandPassword(String userName, String userPwd);
+    UserInfo findUserByUserNameandPassword(String userName, String userPwd) throws Exception;
 }

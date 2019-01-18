@@ -66,7 +66,7 @@ public class AccountController {
 
 
     @GetMapping("/logout")
-    public ModelAndView logout(HttpSession session) {
+    public ModelAndView logout(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView(INDEX);
         // 移除session
         session.removeAttribute("account");

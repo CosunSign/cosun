@@ -330,8 +330,8 @@
     }
 
     function submitalldata() {
-        var filefolder = $("#filefolder").val();
-        var modifyreason = $("#modifyreason").val().trim();
+            var filefolder = $("#filefolder").val();
+            var modifyreason = $("#modifyreason").val().trim();
             var salorid = $("#salorid").val();
             var orderno = $("#orderno").val().trim();
             var projecto = $("#projectno").val().trim();
@@ -659,32 +659,34 @@
 
                             <tr>
                                 <td colspan="4">
+                <p>
 
-
-                    <font color="#FF0000" size="2">注：当决定以文件形式更新时,"*"代表必填选项.</font>
+                    <font color="#FF0000" size="2">注:"*"代表必填选项.</font>
                 <p>
 
 
                     <font color="#FF0000"
                           size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        单次更新总文件大小不超过20M.否则服务器不接受请求。</font>
+                        单次更新总文件大小不超过50M.否则服务器不接受请求。</font>
                 <p>
+
+
 
                     <font color="#FF0000"
                           size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        文件夹更新必须要有正确的文件夹结构，如:1000005/201901/钟源/COSUN20190108WW03/设计文件.后缀名。否则服务器不受理更新要求！</font>
-                <p>
-
-                    <font color="#FF0000"
-                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        更新的两种方式为文件夹与文件，二选一。如选择了文件夹，则可以直接更新文件夹，订单信息等可以不写。</font>
+                        更新的两种方式为文件夹与文件，二选一。</font>
                 <p>
                 <font color="#FF0000"
 
                       size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本更新功能只更新您已上传过的文件。如您选择的更新文件或文件夹里有部分新文件，则服务器全不受理。</font>
+                <p>
+                    <font color="#FF0000"
+
+                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        本更新功能必须满足两点服务器才受理，1.文件名必须相同。2.如先前是以文件夹上传此次更新必须也要以文件夹形式更新并路径完全相同。
 
 
-                </td>
+                    </td>
                     </tr>
 
                     </tfoot>

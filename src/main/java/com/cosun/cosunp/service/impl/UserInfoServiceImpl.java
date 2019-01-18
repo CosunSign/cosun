@@ -14,7 +14,7 @@ public class UserInfoServiceImpl implements IUserInfoServ {
     private UserInfoMapper userInfoMapper;
 
     //@Transactional //添加事物管理
-    public UserInfo findUserByUserNameandPassword(String userName, String userPwd) {
+    public UserInfo findUserByUserNameandPassword(String userName, String userPwd) throws Exception {
         return userInfoMapper.findUserByUserNameandPassword(userName,userPwd);
     }
 }

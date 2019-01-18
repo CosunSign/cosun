@@ -334,7 +334,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "toprivilmanagepage", method = RequestMethod.GET)
-    public ModelAndView toPrivilManagePage(HttpSession session, int currentPage) {
+    public ModelAndView toPrivilManagePage(HttpSession session, int currentPage) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
         DownloadView view = new DownloadView();
@@ -401,7 +401,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest request) {
+    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest request) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -576,7 +576,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 20, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 50, "M");//判断文件是否超过限制大小
         if (isFileLarge) {//没超过
             view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
@@ -603,7 +603,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) {
+    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) throws Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -639,7 +639,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 20, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 50, "M");//判断文件是否超过限制大小
         if (isFileLarge) {//没超过
             view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
@@ -661,78 +661,81 @@ public class FileUploadAndDownController {
      * @return:
      * @describtion
      */
-    //文件更新
+    //文件夹更新
     @ResponseBody
     @RequestMapping(value = "/modifypagefolder", method = RequestMethod.POST)
     public ModelAndView modifyPageFolder(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo)session.getAttribute("account");
         MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
-        List<Integer> enginers = new ArrayList<Integer>();
-        for(UserInfo fo : uis) {
-            enginers.add(fo.getuId());
-        }
-        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
-        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+        boolean isFileLarge = FileUtil.checkFileSize(files,50,"M");
+
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
 
-        String yearMonth = "^2019[0|1][0-9]$";//年月正则
-        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
-        Pattern yearMonthpattern = Pattern.compile(yearMonth);
-        Pattern orderNopattern = Pattern.compile(orderNo);
-        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
-        String[] urls = null;
-        String orginurl = null;
-        for(MultipartFile file : files) {
-            orginurl = file.getOriginalFilename();
-            urls = orginurl.split("/");
-            System.out.println(urls.length);
-            if(urls.length>=5){//表示是由标准的四层文件夹组成
-                System.out.println(urls.length);
-                if(!enginers.contains(Integer.valueOf(urls[0]))){
-                    isRightUrl = false;
-                    view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
-                    return new ModelAndView("uploadpage");
-                }
-                Matcher matcher = yearMonthpattern.matcher(urls[1]);
-                boolean isRight = matcher.find();
-                if(!isRight){
-                    isRightUrl = false;
-                    view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
-                    return new ModelAndView("uploadpage");
-                }
-                if(!salors.contains(urls[2])){
-                    isRightUrl = false;
-                    view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
-                    return new ModelAndView("uploadpage");
-                }
-                Matcher matcher1 = orderNopattern.matcher(urls[3]);
-                boolean isRight1 = matcher1.find();
-                if(!isRight1){
-                    isRightUrl = false;
-                    view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
-                    return new ModelAndView("uploadpage");
-                }
-                if(!urls[4].contains(".")){
-                    isRightUrl = false;
-                    view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
-                    return new ModelAndView("uploadpage");
-                }
+//        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
+//        List<Integer> enginers = new ArrayList<Integer>();
+//        for(UserInfo fo : uis) {
+//            enginers.add(fo.getuId());
+//        }
+//        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
+//
 
-            }else{
-                isRightUrl = false;
-                view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
-                return new ModelAndView("uploadpage");
-            }
-        }
-        if(isFileLarge && isRightUrl) {
-            view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(files,view,userInfo,urls[0],urls[1],urls[2],urls[3]);
+//
+//        String yearMonth = "^2019[0|1][0-9]$";//年月正则
+//        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
+//        Pattern yearMonthpattern = Pattern.compile(yearMonth);
+//        Pattern orderNopattern = Pattern.compile(orderNo);
+//        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
+//        String[] urls = null;
+//        String orginurl = null;
+//        for(MultipartFile file : files) {
+//            orginurl = file.getOriginalFilename();
+//            urls = orginurl.split("/");
+//            System.out.println(urls.length);
+//            if(urls.length>=5){//表示是由标准的四层文件夹组成
+//                System.out.println(urls.length);
+//                if(!enginers.contains(Integer.valueOf(urls[0]))){
+//                    isRightUrl = false;
+//                    view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
+//                    return new ModelAndView("uploadpage");
+//                }
+//                Matcher matcher = yearMonthpattern.matcher(urls[1]);
+//                boolean isRight = matcher.find();
+//                if(!isRight){
+//                    isRightUrl = false;
+//                    view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
+//                    return new ModelAndView("uploadpage");
+//                }
+//                if(!salors.contains(urls[2])){
+//                    isRightUrl = false;
+//                    view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
+//                    return new ModelAndView("uploadpage");
+//                }
+//                Matcher matcher1 = orderNopattern.matcher(urls[3]);
+//                boolean isRight1 = matcher1.find();
+//                if(!isRight1){
+//                    isRightUrl = false;
+//                    view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
+//                    return new ModelAndView("uploadpage");
+//                }
+//                if(!urls[4].contains(".")){
+//                    isRightUrl = false;
+//                    view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
+//                    return new ModelAndView("uploadpage");
+//                }
+//
+//            }else{
+//                isRightUrl = false;
+//                view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
+//                return new ModelAndView("uploadpage");
+//            }
+//        }
+        if(isFileLarge) {
+            view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(files,view,userInfo);
         }else{
             view.setFlag("-2");
-            return new ModelAndView("modifypage");
         }
 
 
@@ -751,79 +754,77 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
-    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session){
+    public ModelAndView saveFolderFiles(HttpServletRequest request,@ModelAttribute(value = "view") DownloadView view,HttpSession session) throws Exception{
         UserInfo userInfo = (UserInfo)session.getAttribute("account");
         MultipartHttpServletRequest params=((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
-        List<Integer> enginers = new ArrayList<Integer>();
-        for(UserInfo fo : uis) {
-            enginers.add(fo.getuId());
-        }
-        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
-        boolean isFileLarge = FileUtil.checkFileSize(files,20,"M");
+        boolean isFileLarge = FileUtil.checkFileSize(files,50,"M");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-
-        String yearMonth = "^2019[0|1][0-9]$";//年月正则
-        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
-        Pattern yearMonthpattern = Pattern.compile(yearMonth);
-        Pattern orderNopattern = Pattern.compile(orderNo);
-        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
-        String[] urls = null;
-        String orginurl = null;
-        for(MultipartFile file : files) {
-        orginurl = file.getOriginalFilename();
-        urls = orginurl.split("/");
-            System.out.println(urls.length);
-        if(urls.length>=5){//表示是由标准的四层文件夹组成
-            System.out.println(urls.length);
-            if(!enginers.contains(Integer.valueOf(urls[0]))){
-                isRightUrl = false;
-                view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
-                return new ModelAndView("uploadpage");
-            }
-            Matcher matcher = yearMonthpattern.matcher(urls[1]);
-            boolean isRight = matcher.find();
-            if(!isRight){
-                isRightUrl = false;
-                view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
-                return new ModelAndView("uploadpage");
-            }
-            if(!salors.contains(urls[2])){
-                isRightUrl = false;
-                view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
-                return new ModelAndView("uploadpage");
-            }
-            Matcher matcher1 = orderNopattern.matcher(urls[3]);
-            boolean isRight1 = matcher1.find();
-            if(!isRight1){
-                isRightUrl = false;
-                view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
-                return new ModelAndView("uploadpage");
-            }
-            if(!urls[4].contains(".")){
-                isRightUrl = false;
-                view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
-                return new ModelAndView("uploadpage");
-            }
-
-        }else{
-            isRightUrl = false;
-            view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
-            return new ModelAndView("uploadpage");
-        }
-        }
-        if(isFileLarge && isRightUrl) {
-            view = fileUploadAndDownServ.findIsExistFilesFolder(files,view,userInfo,urls[0],urls[1],urls[2],urls[3]);
+        if(isFileLarge) {
+            view = fileUploadAndDownServ.findIsExistFilesFolder(files,view,userInfo);
         }else{
             view.setFlag("-2");
-            return new ModelAndView("uploadpage");
         }
-
-
         return new ModelAndView("uploadpage");
+
+
+//        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
+//        List<Integer> enginers = new ArrayList<Integer>();
+//        for(UserInfo fo : uis) {
+//            enginers.add(fo.getuId());
+//        }
+//        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
+//        String yearMonth = "^2019[0|1][0-9]$";//年月正则
+//        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
+//        Pattern yearMonthpattern = Pattern.compile(yearMonth);
+//        Pattern orderNopattern = Pattern.compile(orderNo);
+//        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
+//        String[] urls = null;
+//        String orginurl = null;
+//        for(MultipartFile file : files) {
+//        orginurl = file.getOriginalFilename();
+//        urls = orginurl.split("/");
+//            System.out.println(urls.length);
+//        if(urls.length>=5){//表示是由标准的四层文件夹组成
+//            System.out.println(urls.length);
+//            if(!enginers.contains(Integer.valueOf(urls[0]))){
+//                isRightUrl = false;
+//                view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
+//                return new ModelAndView("uploadpage");
+//            }
+//            Matcher matcher = yearMonthpattern.matcher(urls[1]);
+//            boolean isRight = matcher.find();
+//            if(!isRight){
+//                isRightUrl = false;
+//                view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
+//                return new ModelAndView("uploadpage");
+//            }
+//            if(!salors.contains(urls[2])){
+//                isRightUrl = false;
+//                view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
+//                return new ModelAndView("uploadpage");
+//            }
+//            Matcher matcher1 = orderNopattern.matcher(urls[3]);
+//            boolean isRight1 = matcher1.find();
+//            if(!isRight1){
+//                isRightUrl = false;
+//                view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
+//                return new ModelAndView("uploadpage");
+//            }
+//            if(!urls[4].contains(".")){
+//                isRightUrl = false;
+//                view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
+//                return new ModelAndView("uploadpage");
+//            }
+//
+//        }else{
+//            isRightUrl = false;
+//            view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
+//            return new ModelAndView("uploadpage");
+//        }
+//        }
     }
 }
 
