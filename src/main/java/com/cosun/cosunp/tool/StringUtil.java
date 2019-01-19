@@ -99,8 +99,10 @@ public class StringUtil {
     public static String subMyString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         int index = str.lastIndexOf(a);
-        return str.substring(0, index + 1);
-
+        if(index>=1) {
+            return str.substring(0, index + 1);
+        }
+        return null;
     }
 
 
@@ -108,7 +110,9 @@ public class StringUtil {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名
         if(str.contains("a")) {
             int index = str.lastIndexOf(a);
-            return str.substring(index + 1, str.length());
+            if(index>=1) {
+                return str.substring(index + 1, str.length());
+            }
         }
         return str;
 

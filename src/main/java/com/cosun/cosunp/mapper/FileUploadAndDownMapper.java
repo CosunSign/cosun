@@ -3,6 +3,7 @@ package com.cosun.cosunp.mapper;
 import com.cosun.cosunp.entity.*;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -153,6 +154,28 @@ public interface FileUploadAndDownMapper {
 
     @Select("select * from filemanright where id = #{id}")
     FilemanRight findFileRightById(Integer id);
+
+    @Select("SELECT\n" +
+            "\tfm.orginname\n" +
+            "FROM\n" +
+            "\tfilemanurl fm\n" +
+            "LEFT JOIN filemanfileinfo ffi ON fm.fileInfoId = ffi.id\n" +
+            "WHERE\n" +
+            "\tfm.uId = #{uId} \n" +
+            "AND ffi.extinfo1 = #{salor} \n" +
+            "AND ffi.ordernum = #{orderNo}  ")
+    List<String> findAllFileUrlNameByCondition(Integer uId,String salor,String orderNo);
+
+    @Select(" SELECT\n" +
+            "\t fm.logur1 \n" +
+            "FROM\n" +
+            "\tfilemanurl fm\n" +
+            "LEFT JOIN filemanfileinfo ffi ON fm.fileInfoId = ffi.id\n" +
+            "WHERE\n" +
+            "\tfm.uId = #{uId} \n" +
+            "AND ffi.extinfo1 = #{salor} \n" +
+            "AND ffi.ordernum = #{orderNo}  ")
+    List<String> findAllFileUrlLogursByOrderNoandSalorUserName(Integer uId,String salor,String orderNo);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllCountByParaCondition")
     int findAllUploadFileCountByParaCondition(DownloadView view);
@@ -372,4 +395,6 @@ public interface FileUploadAndDownMapper {
 
         }
     }
+
+
 }

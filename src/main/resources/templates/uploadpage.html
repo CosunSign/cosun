@@ -28,6 +28,20 @@
         var isExistNum = $("#isExistNum").val();
         if (flag == "1") {
             alert("文件全部上传成功！");
+        } else if(flag == "-222") {
+            alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
+        }else if(flag=="-789"){
+            alert("您上传的单个文件的路径发生重名!")
+        } else if(flag =="-9999"){
+            alert("您上传的文件夹内文件有重复!")
+        }else if(flag=="-123"){
+            alert("您上传的文件夹名发生重命名!")
+        } else if(flag == "-666"){
+            alert("您上传的文件内文件名与数据库相应订单的文件名重复!")
+        }else if(flag == "-777") {
+            alert("您上传的文件夹内文件文名有重复的文件夹名!")
+        }else if(flag=="-888"){
+            alert("您上传的文件夹名和数据库的文件夹名发生重复!");
         } else if (flag == "0") {
             alert("上传文件为空文件，请重新选择上传！");
         } else if (flag == "-1") {
@@ -80,6 +94,42 @@
 </script>
 <style type="text/css">
 
+ #listdiv{
+     border: 1px solid #9AC0CD;
+     width: 1160px;
+     Margin: 2px;
+     padding: 3px;
+ }
+
+    #folderdiv {
+        border: 1px solid #9AC0CD;
+        width: 1148px;
+        height: 410px;
+        Margin: 2px;
+        padding: 3px;
+    }
+
+    #innerfolderdiv {
+        border: 1px solid #9AC0CD;
+        width: 1120px;
+        height: 355px;
+        Margin: 10px;
+        padding: 3px;
+    }
+    #buttondiv{
+        width: 1148px;
+        Margin: 2px;
+        padding: 3px;
+    }
+
+    #innerbuttondiv{
+        width: 1120px;
+        Margin: 10px;
+        padding: 3px;
+    }
+
+
+
     table.grid {
         font-family: verdana, arial, sans-serif;
         font-size: 13px;
@@ -122,16 +172,30 @@
 
 
     #showurldiv {
+        margin-left: 1px;
+        margin-right: 1px;
+        top: 0;
+        bottom: 0;
+        width: 1165px;
+        height: 380px;
+        right: 0;
+
+    }
+
+    #showtabledivhead {
         margin-top: 1px;
         margin-left: 1px;
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 1100px;
-        height: 300px;
+        width: 1148px;
         right: 0;
-
     }
+
+    #selecradio{
+        padding: 8px;
+    }
+
 
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
@@ -191,8 +255,185 @@
         $('#main-menu').append(uls.clone());
     });
 
+    function backFolder() {
+        var foldername = $("#foldername").val();
+        var salor = $("#salorid").val();
+        var engineer = $("#selectuser").val();
+        var orderNo = $("#orderno").val().trim();
+        var folderhtml = "";
+        var fileshtml = "";
+        if (salor == "") {
+            alert("请选择业务人员!");
+            return false;
+        }
+        if (engineer == "") {
+            alert("请选择设计师!");
+            return false;
+        }
+        if (orderNo == "") {
+            alert("请填写订单编号!");
+            return false;
+        }
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var jsonarray = {
+            "salor": salor, //业务员
+            "engineer": engineer, //设计师
+            "orderNo": orderNo, //订单编号
+            "folderName":foldername//当前文件夹名
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findBackFoldersByQueryParam",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                $.each(data, function (num) {
+                    if(data[num].indexOf(".") <= 0){//代表为文件夹
+                        $("#foldername").val(data[num]);
+                        folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                    }else{//代表为文件
+                        fileshtml += "<li>"+data[num]+"</li>";
+                    }
+                });
+                $("#innerfolderdiv").html(folderhtml+fileshtml)
+            },
+            error: function (msg) {
+                $("#some-element").busyLoad("hide");
+                alert("查询失败");
+            }
+        });
+
+        $("#some-element").busyLoad("hide");//遮罩层开启
+    }
+
+    function shownextfolderorfiles(foldername) {
+        var salor = $("#salorid").val();
+        var engineer = $("#selectuser").val();
+        var orderNo = $("#orderno").val().trim();
+        //做好文件夹切割容器 文件夹层数不能超过9层
+        var folderhtml = "";
+        var fileshtml = "";
+        if (salor == "") {
+            alert("请选择业务人员!");
+            return false;
+        }
+        if (engineer == "") {
+            alert("请选择设计师!");
+            return false;
+        }
+        if (orderNo == "") {
+            alert("请填写订单编号!");
+            return false;
+        }
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var jsonarray = {
+            "salor": salor, //业务员
+            "engineer": engineer, //设计师
+            "orderNo": orderNo, //订单编号
+            "folderName":foldername//当前文件夹名
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findNextFoldersByQueryParam",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                $.each(data, function (num) {
+                    if(data[num].indexOf(".") <= 0){//代表为文件夹
+                        $("#foldername").val(data[num]);
+                        folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                    }else{//代表为文件
+                        fileshtml += "<li>"+data[num]+"</li>";
+                    }
+                });
+                $("#innerfolderdiv").html(folderhtml+fileshtml)
+            },
+            error: function (msg) {
+                $("#some-element").busyLoad("hide");
+                alert("查询失败");
+            }
+        });
+
+        $("#some-element").busyLoad("hide");//遮罩层开启
+
+    }
+
+
     function Trim(str) {
         return str.replace(/(^\s*)|(\s*$)/g, "");
+    }
+    
+    function showlistdiv() {
+
+
+        $("#listdiv").attr("style","display:block;")
+        $("#folderdiv").attr("style","display:none;")
+
+    }
+    
+    function showfolderdiv() {
+        $("#listdiv").attr("style","display:none;")
+        $("#folderdiv").attr("style","display:block;")
+        var salor = $("#salorid").val();
+        var engineer = $("#selectuser").val();
+        var orderNo = $("#orderno").val().trim();
+        //做好文件夹切割容器 文件夹层数不能超过9层
+        var folderhtml = "";
+        var fileshtml = "";
+
+        if (salor == "") {
+            alert("请选择业务人员!");
+            return false;
+        }
+        if (engineer == "") {
+            alert("请选择设计师!");
+            return false;
+        }
+        if (orderNo == "") {
+            alert("请填写订单编号!");
+            return false;
+        }
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var jsonarray = {
+            "salor": salor, //业务员
+            "engineer": engineer, //设计师
+            "orderNo": orderNo //订单编号
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findFoldersByQueryParam",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                $.each(data, function (num) {
+                    if(data[num].indexOf(".") <= 0){//代表为文件夹
+                        $("#foldername").val(data[num]);
+                        folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('"+data[num]+"')\"\n" +
+                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>"+data[num]+"</li>";
+                    }else{//代表为文件
+                        fileshtml += "<li>"+data[num]+"</li>";
+                    }
+                });
+                $("#innerfolderdiv").html(folderhtml+fileshtml)
+            },
+            error: function (msg) {
+                $("#some-element").busyLoad("hide");
+                alert("查询失败");
+            }
+        });
+
+        $("#some-element").busyLoad("hide");//遮罩层开启
     }
 
     function checkOrderNo(str) {
@@ -515,6 +756,7 @@
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
+<input type="hidden" id="foldername">
 <div id="some-element">
     <div class="content">
         <form action="/fileupdown/uploadfolder" method="post" id="form1" enctype="multipart/form-data"
@@ -576,25 +818,28 @@
                     </select>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
-                    订单编号
+                订单编号
                     <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     项目名称
                     <input type="text" id="projectno" th:field="*{projectName}">
-                    &nbsp;&nbsp;&nbsp;&nbsp;上传时间
-                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                 上传时间
+                    <input type="text"  readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
                 </div>
                 <p>
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    文件设计师 <input type="text" id="fileuploader" style="width: 80px;" readonly="readonly"
+                    文件设计师 <input type="text" id="fileuploader" style="width: 89px;" readonly="readonly"
                                  th:value="${view.userName}">
 
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input type="text" style="width: 400px;"
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input type="text" style="width: 400px;"
                                                                                id="filedescribtion"
                                                                                th:field="*{filedescribtion}">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 272px;"
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 399px;"
                                                                   th:field="*{remark}">
                     <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新增行&nbsp;&nbsp;<img src="/images/icon/Add.png" align="middle"-->
                     <!--style="width: 20px; height: 20px; vertical-align: middle"-->
@@ -602,7 +847,7 @@
 
                 </div>
                 <p>
-                    <div>
+                    <div >
 
                         <table id="uploadtable" width="100%" align="">
                             <tr id="colrcss" style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
@@ -618,7 +863,7 @@
                                 <td>1</td>
                                 <td><input type="file" id="filefolder" name="fileFolder"
                                            onchange="changeformactionfolder()"
-                                           webkitdirectory></td>
+                                           webkitdirectory ></td>
                                 <td><input type="file" id="file" name="file" onchange="changeformactionupload()"
                                            multiple>
                                 </td>
@@ -633,65 +878,70 @@
                             </tbody>
 
                             <tfoot>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" align="right"><input type="button" onclick="submitalldata()" value="上传">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="全部清空" onclick="removeallbutonetr()">
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">
-                <p>
-                    <font color="#FF0000" size="2">注："*"代表必填选项.</font>
-                <p>
+                            <!--<tr>-->
+                                <!--<td colspan="3">-->
+                <!--<p>-->
+                    <!--<font color="#FF0000" size="2">注："*"代表必填选项.</font>-->
+                <!--<p>-->
 
 
-                    <font color="#FF0000"
-                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        单次上传总文件大小不超过50M.否则服务器不接受请求。</font>
-                <p>
+                    <!--<font color="#FF0000"-->
+                          <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                        <!--单次上传总文件大小不超过50M.否则服务器不接受请求。</font>-->
+                <!--<p>-->
 
 
 
-                    <font color="#FF0000"
-                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        上传的两种方式为文件夹与文件，二选一。</font>
-                <p>
-                    <font color="#FF0000"
+                    <!--<font color="#FF0000"-->
+                          <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                        <!--上传的两种方式为文件夹与文件，二选一。</font>-->
+                <!--<p>-->
+                    <!--<font color="#FF0000"-->
 
-                          size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        本上传功能只接收全新未存过的文件，或以前存过但新增的一些文件。如存储的文件以前有存储过也有新文件，则服务器全不受理。</font>
-                <p>
-                <font color="#FF0000"
-                      size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    本上传功能是根据订单号设计师业务中文件名来判断是否是新文件。如同一订单下不同的文件夹目录下有某个相同的文件名，则服务器视为同一文件不受理上传。</font>
-                <p>
+                          <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                        <!--本上传功能只接收全新未存过的文件，或以前存过但新增的一些文件。如存储的文件以前有存储过也有新文件，则服务器全不受理。</font>-->
+                <!--<p>-->
+                <!--<font color="#FF0000"-->
+                      <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                    <!--本上传功能是根据订单号设计师业务中文件名来判断是否是新文件。如同一订单下不同的文件夹目录下有某个相同的文件名，则服务器视为同一文件不受理上传。</font>-->
+                <!--<p>-->
 
 
-                    </td>
-                    </tr>
+                    <!--</td>-->
+                    <!--</tr>-->
 
                     </tfoot>
                     </table>
             </div>
+                <p>
+                <div id="selecradio" >
+
+                <input type="radio" name="showmethod" checked value="0" onclick="showlistdiv()">列表展示
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="showmethod" value="1" onclick="showfolderdiv()">文件夹展示
+            </div>
+
+                <div id="listdiv" >
+                <div id="showtabledivhead">
+                    <table class="grid" style="width: 100%;" id="tablecsshead">
+                        <thead style="background-color: #E0EEEE" align="center" id="urlthead">
+                        <tr>
+                            <td width="30">序号</td>
+                            <td width="50">设计师</td>
+                            <td width="150">订单编号</td>
+                            <td width="50">业务员</td>
+                            <td width="200">文件名称</td>
+                            <td width="153">上传时间</td>
+                            <td width="50">更新次数</td>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
 
             <div id="showurldiv">
-                <table class="grid" style="width: 100%;" id="tablecss">
-                    <thead style="background-color: #E0EEEE" align="center" id="urlthead">
-                    <tr>
-                        <td width="30">序号</td>
-                        <td width="50">设计师</td>
-                        <td width="150">订单编号</td>
-                        <td width="50">业务员</td>
-                        <td width="200">文件名称</td>
-                        <td width="153">上传时间</td>
-                        <td width="50">更新次数</td>
-                    </tr>
-                    </thead>
-                    <tbody align="center" id="urltbody">
+                <table class="grid" style="width: 100%;height: 360px" id="tablecss">
+                    <tbody align="center" id="urltbody" style="height: 360px;">
                     <tr>
                         <td colspan="7">暂无数据</td>
                     </tr>
@@ -699,7 +949,25 @@
                 </table>
             </div>
 
+                </div>
 
+
+                <!--FOLDER形式展示DIV-->
+                <div id="folderdiv" style="display: none">
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="返回上一级" onclick="backFolder();">
+
+                    <div id="innerfolderdiv">
+                    </div>
+                </div>
+                <div id="buttondiv">
+                    <div id="innerbuttondiv" style="text-align: right">
+                       <input type="button" onclick="submitalldata()" value="上传">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="button" value="全部清空" onclick="removeallbutonetr()">
+
+
+                    </div>
+                </div>
             <!--<div id="uploadpage">-->
 
 

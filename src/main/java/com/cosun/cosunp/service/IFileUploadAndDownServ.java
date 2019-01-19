@@ -15,10 +15,11 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
+   boolean checkFileisSame(DownloadView view,UserInfo userInfo, List<MultipartFile> fileArray);
     List<DownloadView> findAllUploadFileByCondition(Integer uid,int currentPageTotalNum,int PageSize) throws Exception;
     List<DownloadView> findAllUploadFileByUserId(Integer uid) throws  Exception;
     DownloadView addFilesData(DownloadView view,List<MultipartFile> fileArray,UserInfo userInfo) throws  Exception;
-
+    int isSameFolderNameorFileNameMethod(UserInfo userInfo,DownloadView view,List<MultipartFile> fileArray);
     List<UserInfo> findAllUser() throws  Exception;
 
     List<DownloadView> findAllFileUrlByCondition(Integer uid,int currentPageTotalNum,int PageSize) throws Exception;

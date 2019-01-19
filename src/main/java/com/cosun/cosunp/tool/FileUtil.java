@@ -1,10 +1,14 @@
 package com.cosun.cosunp.tool;
 
 import com.cosun.cosunp.entity.DownloadView;
+import com.cosun.cosunp.entity.FilemanUrl;
 import com.cosun.cosunp.entity.UserInfo;
+import com.cosun.cosunp.service.IFileUploadAndDownServ;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +23,11 @@ import static com.cosun.cosunp.tool.StringUtil.subAfterString;
  * @Modified-date:
  */
 public class FileUtil {
+
+
+    @Autowired
+    private IFileUploadAndDownServ fileUploadAndDownServ;
+
 
     /**
      * 功能描述:文件覆盖操作
@@ -155,7 +164,7 @@ public class FileUtil {
         String fileName = file.getOriginalFilename();
         String salorpinyinPinYin =view.getSalor();
         String filePath = "F:\\"+userInfo.getuId()+"\\"+formateString(new Date())+"\\"+salorpinyinPinYin+"\\"
-                +view.getOrderNo()+"\\"+randomnum+"\\";
+                +randomnum+"\\"+view.getOrderNo()+"\\";
         File targetFile = new File(filePath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){
@@ -183,7 +192,7 @@ public class FileUtil {
     public static String uploadFileFolder(MultipartFile file,DownloadView view,String randomnum){
         String fileName = file.getOriginalFilename().replaceAll("/","\\\\");
         String filePath = "F:\\"+view.getUserName()+"\\"+formateString(new Date())+"\\"+view.getSalor()+"\\"
-                +view.getOrderNo()+"\\"+randomnum+"\\";
+                +randomnum+"\\"+view.getOrderNo()+"\\";
         File targetFile = new File(filePath);
         //：判断目录是否存在   不存在：创建目录
         if(!targetFile.exists()){

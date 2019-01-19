@@ -126,6 +126,9 @@ public class FileUploadAndDownController {
     @RequestMapping(value="/findBackFoldersByQueryParam")
     public void findBackFoldersByQueryParam(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
         UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        if(view.getEngineer()==null) {
+            view.setEngineer(userInfo.getuId().toString());
+        }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
@@ -179,6 +182,9 @@ public class FileUploadAndDownController {
     @RequestMapping(value="/findNextFoldersByQueryParam")
     public void findNextFoldersByQueryParam(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
         UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        if(view.getEngineer()==null) {
+            view.setEngineer(userInfo.getuId().toString());
+        }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
@@ -231,6 +237,9 @@ public class FileUploadAndDownController {
     @RequestMapping(value="/findFoldersByQueryParam")
     public void showFolderByParamThree(@RequestBody(required = true) DownloadView view,HttpSession session,HttpServletResponse response) throws Exception{
         UserInfo userInfo = (UserInfo)session.getAttribute("account");
+        if(view.getEngineer()==null) {
+            view.setEngineer(userInfo.getuId().toString());
+        }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(),Integer.valueOf(view.getEngineer()),view.getOrderNo());
         List<String> folderOrFiles = new ArrayList<String>();
         List<String[]> strarray = new ArrayList<String[]>();
@@ -577,11 +586,17 @@ public class FileUploadAndDownController {
             fileArray.add(mfile);
         }
         boolean isFileLarge = FileUtil.checkFileSize(fileArray, 50, "M");//判断文件是否超过限制大小
-        if (isFileLarge) {//没超过
+        boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view,userInfo,fileArray);//判断是否有重名的文件名
+        if (isFileLarge && !isExsitFileName) {//没超过并没有重复的名字
             view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
         } else {
-            view.setFlag("-2");//超过
+            if(!isFileLarge) {
+                view.setFlag("-2");//超过
+            }
+            if(isExsitFileName) {
+                view.setFlag("-222");//有重复的名字
+            }
         }
 
         return new ModelAndView("uploadpage");
@@ -762,10 +777,28 @@ public class FileUploadAndDownController {
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        if(isFileLarge) {
+        int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo,view,files);
+
+        if(isFileLarge && isSameFolderNameorFileName==0) {
             view = fileUploadAndDownServ.findIsExistFilesFolder(files,view,userInfo);
         }else{
-            view.setFlag("-2");
+            if(!isFileLarge) {
+                view.setFlag("-2");
+            }else if(isSameFolderNameorFileName==-1){
+                view.setFlag("-9999");//代表上传的文件中有同名
+            } if(isSameFolderNameorFileName==-2){
+                view.setFlag("-666");//代表上传的文件与数据库对应的订单有重名
+            }if(isSameFolderNameorFileName==-3){
+                view.setFlag("-777");//代表上传过来的文件夹有重名
+            }if(isSameFolderNameorFileName==-4) {
+                view.setFlag("-888");//代表上传过来的文件夹与数据库的文件夹发生重名
+            }if(isSameFolderNameorFileName==-5) {
+                view.setFlag("-123");
+            }if(isSameFolderNameorFileName==-6) {
+                view.setFlag("-789");
+            }if(isSameFolderNameorFileName==-7) {
+                view.setFlag("-678");
+            }
         }
         return new ModelAndView("uploadpage");
 
