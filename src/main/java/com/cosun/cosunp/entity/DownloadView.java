@@ -59,6 +59,15 @@ public class DownloadView implements Serializable {
     private String privilegeusers;
     private String oprighter;//权限人
     private String folderName;
+    private  String saveFolderName;
+
+    public String getSaveFolderName() {
+        return saveFolderName;
+    }
+
+    public void setSaveFolderName(String saveFolderName) {
+        this.saveFolderName = saveFolderName;
+    }
 
     public String getFolderName() {
         return folderName;

@@ -108,7 +108,7 @@ public class StringUtil {
 
     public static String subAfterString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名
-        if(str.contains("a")) {
+        if(str.contains(a)) {
             int index = str.lastIndexOf(a);
             if(index>=1) {
                 return str.substring(index + 1, str.length());
@@ -116,6 +116,19 @@ public class StringUtil {
         }
         return str;
 
+    }
+
+    //查找字符串出现某字符的个数
+    public static int searchStrNum(String str,String strRes) {
+        int n = 0;//计数器
+        int index = 0;//指定字符的长度
+        index = str.indexOf(strRes);
+        while(index!=-1) {
+            n++;
+            index = str.indexOf(strRes,index+1);
+        }
+
+        return n;
     }
 
 
