@@ -552,7 +552,10 @@
         if (orderno == "" || orderno == null) {
             return false;
         }
-        showfolderdiv();
+        $("#foldershow").removeAttr("checked");
+        $("#listshow").prop("checked", 'checked');
+        $("#listdiv").attr("style", "display:block;")
+        $("#folderdiv").attr("style", "display:none;")
         showfileurldivbysaloridorderno(salorid, orderno);
 
     }
@@ -1102,14 +1105,14 @@
                     </div>
 
                     <div id="showurldiv">
-                        <table class="grid" style="width: 100%;height: 360px" id="tablecss">
-                            <tbody align="center" id="urltbody" style="height: 360px;">
-                            <tr>
-                                <td colspan="7">暂无数据</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <table class="grid" style="width: 100%;height: 360px" id="tablecss">
+                        <tbody align="center" id="urltbody" style="height: 360px;">
+                        <tr>
+                            <td colspan="7">暂无数据</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 </div>
 

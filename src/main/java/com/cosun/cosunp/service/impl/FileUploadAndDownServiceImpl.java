@@ -237,7 +237,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             for (MultipartFile file : fileArray) {
-                if (strnames.contains(subAfterString(file.getOriginalFilename(), "/")) && centerUrls.contains(file.getOriginalFilename())) {//查看文件夹下的文件是否完全一样
+                if (strnames.contains(subAfterString(file.getOriginalFilename(), "/"))) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
                 } else {
                     isNoExsitFileNum++;

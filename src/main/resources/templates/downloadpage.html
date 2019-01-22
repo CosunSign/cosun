@@ -260,7 +260,10 @@
         <a class="btn btn-primary"
                th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
                 下载</a>
-            <a class="btn btn-default"
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
+
+        <a class="btn btn-default"
                th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
         <p>
 
