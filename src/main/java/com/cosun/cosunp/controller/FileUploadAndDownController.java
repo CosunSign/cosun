@@ -55,6 +55,51 @@ public class FileUploadAndDownController {
     @ResponseBody
     @RequestMapping(value = "/browserbyquerycondition", method = RequestMethod.POST)
     public void browserbyQuerycondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+//        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+//        if (view.getEngineer() == null) {
+//            view.setEngineer(userInfo.getuId().toString());
+//        }
+//        List<String> urls = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//        List<String> newurls = new ArrayList<String>();
+//        int pointindex = 0;
+//        for (String str : urls) {
+//            pointindex = StringUtils.ordinalIndexOf(str, "\\", 5);
+//            newurls.add(str.substring(pointindex + 1, str.length()));
+//        }
+//        List<String> folderOrFiles = new ArrayList<String>();
+//        List<String[]> strarray = new ArrayList<String[]>();
+//        List<String> norepeatFoldorFile = new ArrayList<String>();
+//
+//
+//        for (String str : newurls) {
+//            strarray.add(str.replaceAll("\\\\", "/").split("/"));
+//        }
+//        for (String[] stra : strarray) {
+//            folderOrFiles.add(stra[0]);
+//        }
+//        for (String s : folderOrFiles) {
+//            if (!norepeatFoldorFile.contains(s)) {
+//                norepeatFoldorFile.add(s);
+//            }
+//        }
+//        String str = null;
+//        if (norepeatFoldorFile != null) {
+//            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+//            try {
+//                str = x.writeValueAsString(norepeatFoldorFile);
+//
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        try {
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html;charset=UTF-8");
+//            response.getWriter().print(str); //返回前端ajax
+//        } catch (IOExcdownloadbyqueryconditioneption e) {
+//            e.printStackTrace();
+//        }
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setuId(Integer.valueOf(view.getEngineer()));
         List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
@@ -119,17 +164,17 @@ public class FileUploadAndDownController {
 
 
     /**
-     * 功能描述:文件夹退回上一级
+     * 功能描述:
      *
      * @auther: homey Wong
-     * @date: 2019/1/17 0017 下午 5:21
+     * @date: 2019/1/22 0022 下午 6:37
      * @param:
      * @return:
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "/findBackFoldersByQueryParam")
-    public void findBackFoldersByQueryParam(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/findBackFoldersByQueryParam3")
+    public void findBackFoldersByQueryParam3(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
@@ -138,42 +183,27 @@ public class FileUploadAndDownController {
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
         Integer lastIndex = null;
-        Integer preindex = null;
-        String preStr = null;
-        String preStr1 = null;
-        boolean iscomin = true;
-        String backbackstr = null;
-        String fileName = null;
-        Integer preindex1 = null;
-        String prepreStr1 = null;
-        String prepreStr2 = null;
-        boolean str1boolean = true;
-        boolean str2boolean = true;
-        Integer prepreindex1 = null;
-        Integer prepreindex2 = null;
-        String foldName1 = null;
-        String foldName2 = null;
         String foldername = view.getFolderName();
         Integer index = null;
 
         //取上二级文件夹名 由下找下一层文件夹或文件
         if (!foldername.contains(".")) {
             for (String s : urls) {
-                lastIndex = s.indexOf(view.getFolderName());
-                String linshi1 = s.substring(0, lastIndex - 1);
+                lastIndex = s.indexOf("\\" + view.getFolderName() + "\\");
+                String linshi1 = s.substring(0, lastIndex);
                 int linshilastIndex = linshi1.lastIndexOf("\\");
                 String linshi2 = linshi1.substring(0, linshilastIndex);
                 foldername = StringUtil.subAfterString(linshi2, "\\");
                 break;
             }
             for (String str : urls) {
-                index = str.indexOf(foldername);//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 1 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
+                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
                 if (index != -1) {
-                    folderOrFiles.add(str.substring(index + 1 + foldername.length(), lastIndex));
+                    folderOrFiles.add(str.substring(index + 2 + foldername.length(), lastIndex));
                 }
             }
 
@@ -189,34 +219,24 @@ public class FileUploadAndDownController {
             }
 
             if (filefoldername != null) {
-                lastIndex = filefoldername.indexOf(view.getFolderName());
-                String linshi1 = filefoldername.substring(0, lastIndex - 1);
+                lastIndex = filefoldername.indexOf("\\" + view.getFolderName());
+                String linshi1 = filefoldername.substring(0, lastIndex);
                 int linshilastIndex = linshi1.lastIndexOf("\\");
                 String linshi2 = linshi1.substring(0, linshilastIndex);
                 foldername = StringUtil.subAfterString(linshi2, "\\");
             }
 
             for (String str : urls) {
-                index = str.indexOf(foldername);//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 1 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
+                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
                 if (index != -1) {
-                    folderOrFiles.add(str.substring(index + 1 + foldername.length(), lastIndex));
+                    folderOrFiles.add(str.substring(index + 2 + foldername.length(), lastIndex));
                 }
             }
         }
-
-
-//            if(filefoldername!=null) {
-//                int indexa = filefoldername.indexOf(foldername);
-//                String preStra = filefoldername.substring(0,indexa-1);
-//                backFolderName = StringUtil.subAfterString(preStra,"\\");
-//            }
-//            folderOrFiles.add(backFolderName);
-//        }
-
 
         for (String s : folderOrFiles) {
             if (!norepeatFoldorFile.contains(s)) {
@@ -224,52 +244,7 @@ public class FileUploadAndDownController {
             }
         }
 
-//                if (lastIndex > 0) {
-//                    preStr = s.substring(0, lastIndex - 1);
-//                    preindex = preStr.lastIndexOf("\\");
-//                    folderOrFiles.add(preStr.substring(preindex + 1, lastIndex - 1));
-//
-//                    if (str1boolean) {
-//                        String one = folderOrFiles.get(0);
-//                        prepreStr1 = s.substring(0, lastIndex - 1 );
-//                        if (StringUtil.searchStrNum(prepreStr1, "\\") >= 5) {
-//                            prepreindex1 = prepreStr1.lastIndexOf("\\");
-//                            foldName1 = s.substring(prepreindex1 + 1, lastIndex - 1);
-//                            str1boolean = false;
-//
-//                            if (iscomin) {
-//                                preStr1 = s.substring(0, lastIndex - 1);
-//                                preindex1 = preStr1.lastIndexOf("\\");
-//                                iscomin = false;
-//                            }
-//                        }
-//                    }
-//
-//                } else {
-//                    if (lastIndex < 0) {
-//                        int len = s.lastIndexOf("\\");
-//                        prepreStr2 = s.substring(0, len);
-//                        int len2 = prepreStr2.lastIndexOf("\\");
-//                        foldName2 = prepreStr2.substring(len2 + 1, prepreStr2.length());
-//                    }
-//
-//                    if (foldName1.equals(foldName2)) {
-//                        folderOrFiles.add(s.substring(preindex1 + 1, s.length()));
-//                    }
-//                }
-//            }
-//
-//        }
-//        else{//代表没有文件夹
-//
-//        }
-
-//        for(String s : folderOrFiles) {
-//            if(!norepeatFoldorFile.contains(s)){
-//                norepeatFoldorFile.add(s);
-//            }
-//        }
-
+        norepeatFoldorFile.add(view.getOrderNo());
         String str = null;
         if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -290,6 +265,168 @@ public class FileUploadAndDownController {
         }
     }
 
+
+    /**
+     * 功能描述:文件夹退回上一级
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/17 0017 下午 5:21
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/findBackFoldersByQueryParam")
+    public void findBackFoldersByQueryParam(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        if (view.getEngineer() == null) {
+            view.setEngineer(userInfo.getuId().toString());
+        }
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> folderOrFiles = new ArrayList<String>();
+        Integer lastIndex = null;
+        String foldername = view.getFolderName();
+        Integer index = null;
+
+        //取上二级文件夹名 由下找下一层文件夹或文件
+        if (!foldername.contains(".")) {
+            for (String s : urls) {
+                lastIndex = s.indexOf("\\" + view.getFolderName() + "\\");
+                String linshi1 = s.substring(0, lastIndex);
+                int linshilastIndex = linshi1.lastIndexOf("\\");
+                String linshi2 = linshi1.substring(0, linshilastIndex);
+                foldername = StringUtil.subAfterString(linshi2, "\\");
+                break;
+            }
+            for (String str : urls) {
+                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
+                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                if (lastIndex == -1) {
+                    lastIndex = str.length();
+                }
+                if (index != -1) {
+                    folderOrFiles.add(str.substring(index + 2 + foldername.length(), lastIndex));
+                }
+            }
+
+
+        } else {
+
+            String filefoldername = null;
+            String backFolderName = null;
+            for (String str : urls) {
+                if (str.contains(foldername)) {
+                    filefoldername = str;
+                }
+            }
+
+            if (filefoldername != null) {
+                lastIndex = filefoldername.indexOf("\\" + view.getFolderName());
+                String linshi1 = filefoldername.substring(0, lastIndex);
+                int linshilastIndex = linshi1.lastIndexOf("\\");
+                String linshi2 = linshi1.substring(0, linshilastIndex);
+                foldername = StringUtil.subAfterString(linshi2, "\\");
+            }
+
+            for (String str : urls) {
+                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
+                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                if (lastIndex == -1) {
+                    lastIndex = str.length();
+                }
+                if (index != -1) {
+                    folderOrFiles.add(str.substring(index + 2 + foldername.length(), lastIndex));
+                }
+            }
+        }
+
+        for (String s : folderOrFiles) {
+            if (!norepeatFoldorFile.contains(s)) {
+                norepeatFoldorFile.add(s);
+            }
+        }
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(norepeatFoldorFile);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 功能描述:文件下载的双击文件夹任务
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/22 0022 下午 4:25
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    @ResponseBody
+    @RequestMapping(value = "/findNextFoldersByQueryParam2")
+    public void findNextFoldersByQueryParam2(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        if (view.getEngineer() == null) {
+            view.setEngineer(userInfo.getuId().toString());
+        }
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> folderOrFiles = new ArrayList<String>();
+        Integer index = null;
+        Integer lastIndex = null;
+        for (String s : urls) {
+            index = s.indexOf("\\" + view.getFolderName() + "\\");//字符串第一次出现的位置
+            lastIndex = s.indexOf("\\", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            if (lastIndex == -1) {
+                lastIndex = s.length();
+            }
+            if (index != -1) {
+                folderOrFiles.add(s.substring(index + 2 + view.getFolderName().length(), lastIndex));
+            }
+        }
+
+        for (String s : folderOrFiles) {
+            if (!norepeatFoldorFile.contains(s)) {
+                norepeatFoldorFile.add(s);
+            }
+        }
+
+
+        norepeatFoldorFile.add(view.getOrderNo());
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(norepeatFoldorFile);
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 功能描述:按当前文件级查找下一级文件夹
@@ -314,13 +451,13 @@ public class FileUploadAndDownController {
         Integer index = null;
         Integer lastIndex = null;
         for (String s : urls) {
-            index = s.indexOf(view.getFolderName());//字符串第一次出现的位置
-            lastIndex = s.indexOf("\\", index + 1 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            index = s.indexOf("\\" + view.getFolderName() + "\\");//字符串第一次出现的位置
+            lastIndex = s.indexOf("\\", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
             if (lastIndex == -1) {
                 lastIndex = s.length();
             }
             if (index != -1) {
-                folderOrFiles.add(s.substring(index + 1 + view.getFolderName().length(), lastIndex));
+                folderOrFiles.add(s.substring(index + 2 + view.getFolderName().length(), lastIndex));
             }
         }
 
@@ -599,25 +736,38 @@ public class FileUploadAndDownController {
      * @author:homey Wong
      * @date:2018.12.21 12/29 做分页
      */
-    //下载清单
+    //默认下载清单(所有文件夹)
     @ResponseBody
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ModelAndView toFileDownPage(String userName, String password, int currentPage, HttpServletResponse response) throws Exception {
+    public ModelAndView toFileDownPage(HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("downloadpage");
         DownloadView view = new DownloadView();
-        view.setCurrentPage(currentPage);
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
-        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
-        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
-        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-        view.setMaxPage(maxPage);
-        view.setRecordCount(recordCount);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
+        List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum();
+        mav.addObject("orderNumFolders", orderNumFolders);
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         mav.addObject("view", view);
-        mav.addObject("downloadViewList", downloadViewList);
         return mav;
     }
+//    @ResponseBody
+//    @RequestMapping(value = "/download", method = RequestMethod.GET)
+//    public ModelAndView toFileDownPage(String userName, String password, int currentPage, HttpServletResponse response) throws Exception {
+//        ModelAndView mav = new ModelAndView("downloadpage");
+//        DownloadView view = new DownloadView();
+//        view.setCurrentPage(currentPage);
+//        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+//        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+//        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+//        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+//        view.setMaxPage(maxPage);
+//        view.setRecordCount(recordCount);
+//        view.setUserName(userInfo.getUserName());
+//        view.setPassword(userInfo.getUserPwd());
+//        mav.addObject("view", view);
+//        mav.addObject("downloadViewList", downloadViewList);
+//        return mav;
+//    }
 
 
     /**
@@ -670,34 +820,79 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
     public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        view.setuId(userInfo.getuId());
-        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
-        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
-        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-        if (dataList != null && dataList.size() > 0) {
-            dataList.get(0).setMaxPage(maxPage);
-            dataList.get(0).setRecordCount(recordCount);
-            dataList.get(0).setUserName(userInfo.getUserName());
-            dataList.get(0).setPassword(userInfo.getUserPwd());
-            dataList.get(0).setCurrentPage(view.getCurrentPage());
+        if (view.getEngineer() == null) {
+            view.setEngineer(userInfo.getuId().toString());
         }
-        String str1 = null;
-        if (dataList != null) {
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+        List<String> newurls = new ArrayList<String>();
+        int pointindex = 0;
+        for (String str : urls) {
+            pointindex = StringUtils.ordinalIndexOf(str, "\\", 5);
+            newurls.add(str.substring(pointindex + 1, str.length()));
+        }
+        List<String> folderOrFiles = new ArrayList<String>();
+        List<String[]> strarray = new ArrayList<String[]>();
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+
+
+        for (String str : newurls) {
+            strarray.add(str.replaceAll("\\\\", "/").split("/"));
+        }
+        for (String[] stra : strarray) {
+            folderOrFiles.add(stra[0]);
+        }
+        for (String s : folderOrFiles) {
+            if (!norepeatFoldorFile.contains(s)) {
+                norepeatFoldorFile.add(s);
+            }
+        }
+        String str = null;
+        if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str1 = x.writeValueAsString(dataList);
+                str = x.writeValueAsString(norepeatFoldorFile);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
+
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+//        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
+//        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
+//        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+//        if (dataList != null && dataList.size() > 0) {
+//            dataList.get(0).setMaxPage(maxPage);
+//            dataList.get(0).setRecordCount(recordCount);
+//            dataList.get(0).setUserName(userInfo.getUserName());
+//            dataList.get(0).setPassword(userInfo.getUserPwd());
+//            dataList.get(0).setCurrentPage(view.getCurrentPage());
+//        }
+//        String str1 = null;
+//        if (dataList != null) {
+//            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+//            try {
+//                str1 = x.writeValueAsString(dataList);
+//
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try {
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html;charset=UTF-8");
+//            response.getWriter().print(str1); //返回前端ajax
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
 
     }
 

@@ -28,7 +28,6 @@
 
 <script type="text/javascript">
     $(function () {
-        altRows("tablecss");
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
         if (color) {
@@ -41,75 +40,83 @@
 
     });
 
-    function altRows(id) {
-        if (document.getElementsByTagName) {
 
-            var table = document.getElementById(id);
-            var rows = table.getElementsByTagName("tr");
-            rows[0].className = "evenrowcolor";
-        }
-    }
 </script>
 <style type="text/css">
-
-    table.grid {
-        font-family: verdana, arial, sans-serif;
-        font-size: 12px;
-        border-width: 1px;
-        border-collapse: collapse;
-    }
-
-    table.grid th {
-        border-width: 1px;
-        padding:3px;
-        border-style: solid;
-        white-space: nowrap;
-    }
-
-    table.grid td {
-        border-width: 1px;
+    #folderdiv {
+        border: 1px solid #9AC0CD;
+        width: 1148px;
+        height: 550px;
+        Margin: 2px;
         padding: 3px;
-        border-style: solid;
-        white-space: nowrap;
     }
 
-    table.altrowstable {
-        font-family: verdana, arial, sans-serif;
-        font-size: 13px;
-        color: #333333;
-        border-width: 1px;
-        border-color: #D1EEEE;
-        border-collapse: collapse;
+    #innerfolderdiv {
+        border: 1px solid #9AC0CD;
+        width: 1120px;
+        height: 495px;
+        Margin: 10px;
+        padding: 3px;
     }
 
-    table.altrowstable th {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #D1EEEE;
-    }
+    /*table.grid {*/
+    /*font-family: verdana, arial, sans-serif;*/
+    /*font-size: 12px;*/
+    /*border-width: 1px;*/
+    /*border-collapse: collapse;*/
+    /*}*/
 
-    table.altrowstable td {
-        border-width: 1px;
-        padding: 8px;
-        border-style: solid;
-        border-color: #D1EEEE;
-    }
+    /*table.grid th {*/
+    /*border-width: 1px;*/
+    /*padding: 3px;*/
+    /*border-style: solid;*/
+    /*white-space: nowrap;*/
+    /*}*/
 
-    .oddrowcolor {
-        background-color: #D1EEEE;
-    }
+    /*table.grid td {*/
+    /*border-width: 1px;*/
+    /*padding: 3px;*/
+    /*border-style: solid;*/
+    /*white-space: nowrap;*/
+    /*}*/
 
-    .evenrowcolor {
-        background-color: #c3dde0;
-    }
+    /*table.altrowstable {*/
+    /*font-family: verdana, arial, sans-serif;*/
+    /*font-size: 13px;*/
+    /*color: #333333;*/
+    /*border-width: 1px;*/
+    /*border-color: #D1EEEE;*/
+    /*border-collapse: collapse;*/
+    /*}*/
 
-    #line-chart {
-        height: 300px;
-        width: 800px;
-        margin: 0px auto;
-        margin-top: 1em;
-    }
+    /*table.altrowstable th {*/
+    /*border-width: 1px;*/
+    /*padding: 8px;*/
+    /*border-style: solid;*/
+    /*border-color: #D1EEEE;*/
+    /*}*/
+
+    /*table.altrowstable td {*/
+    /*border-width: 1px;*/
+    /*padding: 8px;*/
+    /*border-style: solid;*/
+    /*border-color: #D1EEEE;*/
+    /*}*/
+
+    /*.oddrowcolor {*/
+    /*background-color: #D1EEEE;*/
+    /*}*/
+
+    /*.evenrowcolor {*/
+    /*background-color: #c3dde0;*/
+    /*}*/
+
+    /*#line-chart {*/
+    /*height: 300px;*/
+    /*width: 800px;*/
+    /*margin: 0px auto;*/
+    /*margin-top: 1em;*/
+    /*}*/
 
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
@@ -164,7 +171,8 @@
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.userName}"></span>
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
+                          th:text="${view.userName}"></span>
 
                     <i class="fa fa-caret-down"></i>
                 </a>
@@ -184,9 +192,11 @@
     <ul>
         <li data-popover="fasle"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
-                class="fa fa-collapse"></i></a></li>
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>
+            新建订单<i
+                    class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforsalor nav nav-list collapse">
                 <li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> 单件商品</a></li>
@@ -197,7 +207,8 @@
         <!--========================文件管理===============================-->
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
+                                                    class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
                 class="fa fa-collapse"></i></a></li>
         <li>
@@ -252,255 +263,294 @@
 
     <div id="tabs">
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
         <a class="btn  btn-default"
            th:href="@{/fileupdown/tomodifypage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">更新</a>
 
         <a class="btn btn-primary"
-               th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
-                下载</a>
+           th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
+            下载</a>
         <a class="btn btn-default"
            th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
 
         <a class="btn btn-default"
-               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
+           th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
         <p>
 
-        <div id="some-element">
-            <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
-                  style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
+            <div id="some-element">
+                <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
+                      style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
 
 
-                <div>
-                    <fieldset>
-                        <!--<legend>查询条件</legend>-->
-                        <table width="100%">
-                            <tr>
-                                <td align="right">
-                                    业务员:
-                                </td>
-                                <td>
-                                    <select id="salor" style="width: 120px" name="view.salor" form="form0">
-                                        <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
-                                        <option value="邹时雨">邹时雨</option>
-                                        <option value="胡锋">胡锋</option>
-                                        <option value="王世珺">王世珺</option>
-                                        <option value="赵彩霞">赵彩霞</option>
-                                        <option value="亚晓艾">亚晓艾</option>
-                                        <option value="钟源">钟源</option>
-                                        <option value="陈小迷">陈小迷</option>
-                                        <option value="熊新宇">熊新宇</option>
-                                        <option value="潘莉">潘莉</option>
-                                        <option value="连鸿业">连鸿业</option>
-                                        <option value="刘彩云">刘彩云</option>
-                                        <option value="明松">明松</option>
-                                        <option value="周涛">周涛</option>
-                                        <option value="梁浩">梁浩</option>
-                                        <option value="肖昌升">肖昌升</option>
-                                        <option value="高玉昕">高玉昕</option>
-                                        <option value="吴亚莹">吴亚莹</option>
-                                        <option value="何嘉琪">何嘉琪</option>
-                                        <option value="李彩苹">李彩苹</option>
-                                        <option value="龚菁">龚菁</option>
-                                        <option value="李晨">李晨</option>
-                                        <option value="梁国程">梁国程</option>
-                                        <option value="陈双全">陈双全</option>
-                                        <option value="彭亚明">彭亚明</option>
-                                        <option value="陈军">陈军</option>
+                    <div>
+                        <fieldset>
+                            <!--<legend>查询条件</legend>-->
+                            <table width="100%">
+                                <tr>
+                                    <td align="right">
+                                        业务员:
+                                    </td>
+                                    <td>
+                                        <select id="salor" style="width: 120px" name="view.salor" form="form0">
+                                            <option value="" selected="selected" disabled="disabled" hidden="hidden">
+                                                请选择业务员
+                                            </option>
+                                            <option value="邹时雨">邹时雨</option>
+                                            <option value="胡锋">胡锋</option>
+                                            <option value="王世珺">王世珺</option>
+                                            <option value="赵彩霞">赵彩霞</option>
+                                            <option value="亚晓艾">亚晓艾</option>
+                                            <option value="钟源">钟源</option>
+                                            <option value="陈小迷">陈小迷</option>
+                                            <option value="熊新宇">熊新宇</option>
+                                            <option value="潘莉">潘莉</option>
+                                            <option value="连鸿业">连鸿业</option>
+                                            <option value="刘彩云">刘彩云</option>
+                                            <option value="明松">明松</option>
+                                            <option value="周涛">周涛</option>
+                                            <option value="梁浩">梁浩</option>
+                                            <option value="肖昌升">肖昌升</option>
+                                            <option value="高玉昕">高玉昕</option>
+                                            <option value="吴亚莹">吴亚莹</option>
+                                            <option value="何嘉琪">何嘉琪</option>
+                                            <option value="李彩苹">李彩苹</option>
+                                            <option value="龚菁">龚菁</option>
+                                            <option value="李晨">李晨</option>
+                                            <option value="梁国程">梁国程</option>
+                                            <option value="陈双全">陈双全</option>
+                                            <option value="彭亚明">彭亚明</option>
+                                            <option value="陈军">陈军</option>
 
-                                    </select>
-                                </td>
-                                <td align="right">订单编码:</td>
-                                <td><input type="text" id="orderno" name="view.orderNo" style="width:150px" form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                </td>
-                                <td align="right"> 顶目编码:</td>
-                                <td><input type="text" id="projectname" name="view.projectName" style="width:150px"
-                                           form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                </td>
-                                <td></td>
-                                <td></td>
+                                        </select>
+                                    </td>
+                                    <td align="right">订单编号:</td>
+                                    <td><input type="text" id="orderno" name="view.orderNo" style="width:180px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td align="right"> 顶目编码:</td>
+                                    <td><input type="text" id="projectname" name="view.projectName" style="width:150px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
 
-                            </tr>
-                            <tr>
-                                <td align="right">设计师:</td>
-                                <td>
-                                    <select id="engineer" style="width: 120px" name="view.engineer" >
-                                        <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择设计师</option>
-                                        <option value="吴运翠">吴运翠</option>
-                                        <option value="刘穗梅">刘穗梅</option>
-                                        <option value="段金星">段金星</option>
-                                        <option value="黄炳杰">黄炳杰</option>
-                                        <option value="吴亚民">吴亚民</option>
-                                        <option value="罗元青">罗元青</option>
-                                        <option value="黄国胜">黄国胜</option>
-                                        <option value="刘穗梅">刘穗梅</option>
-                                        <option value="曾红红">曾红红</option>
-                                        <option value="梁家强">梁家强</option>
-                                        <option value="徐姜华">徐姜华</option>
-                                        <option value="朱海培">朱海培</option>
-                                        <option value="彭金伟">彭金伟</option>
-                                        <option value="黄杰生">黄杰生</option>
-                                        <option value="骆云飞">骆云飞</option>
-                                        <option value="李晓波">李晓波</option>
-                                    </select>
+                                </tr>
+                                <tr>
+                                    <td align="right">设计师:</td>
+                                    <td>
+                                        <select id="engineer" style="width: 120px" name="view.engineer">
+                                            <option value="" selected="selected" disabled="disabled" hidden="hidden">
+                                                请选择设计师
+                                            </option>
+                                            <option value="1000012">段金星</option>
+                                            <option value="1000008">吴运翠</option>
+                                            <option value="1000011">刘穗梅</option>
+                                            <option value="1000013">黄炳杰</option>
+                                            <option value="1000018">吴亚民</option>
+                                            <option value="1000007">罗元青</option>
+                                            <option value="1000019">黄国胜</option>
+                                            <option value="1000014">曾红红</option>
+                                            <option value="1000021">梁家强</option>
+                                            <option value="1000015">徐姜华</option>
+                                            <option value="1000017">朱海培</option>
+                                            <option value="1000023">彭金伟</option>
+                                            <option value="1000006">黄杰生</option>
+                                            <option value="1000009">骆云飞</option>
+                                            <option value="1000010">李晓波</option>
+                                            <option value="1000005">admin</option>
+                                            <option value="1000020">luoxh</option>
+                                            <option value="1000019">huanggs</option>
+                                            <option value="1000016">lin</option>
+                                        </select>
 
-                                </td>
-                                <td align="right">文件名称:</td>
-                                <td><input type="text" id="filename" name="view.fileName" style="width:150px"
-                                           form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                </td>
-                                <td align="right">最新上传时间:</td>
-                                <td colspan="2" th:align="left">
-                                    <input type="text" style="width:120px" id="startnewestsavedate" readOnly="true"
-                                           name="view.startNewestSaveDate" class="Wdate" form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
-                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
-                                    至：
-                                    <input type="text" id="endnewestsavedate" style="width:120px"
-                                           name="view.endnewestsavedate" class="Wdate" form="form0"
-                                           onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
-                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
-                                </td>
+                                    </td>
+                                    <td align="right">文件名称:</td>
+                                    <td><input type="text" id="filename" name="view.fileName" style="width:180px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td align="right">最新上传时间:</td>
+                                    <td colspan="2" th:align="left">
+                                        <input type="text" style="width:120px" id="startnewestsavedate" readOnly="true"
+                                               name="view.startNewestSaveDate" class="Wdate" form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                               onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
+                                        至：
+                                        <input type="text" id="endnewestsavedate" style="width:120px"
+                                               name="view.endnewestsavedate" class="Wdate" form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                               onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
+                                    </td>
 
-                                <td th:align="right">
-                                    <input type="button" id="submitQueryByConditionbutton"
-                                           onclick="submitQueryByCondition()" value="查询"/>
-                                    <!--<input type="button" onclick="exportDataByCondition()" value="导出"/></td>-->
-                            </tr>
-                        </table>
-                    </fieldset>
-                </div>
-            </form>
-
-            <div id="downloadpage">
-                <form th:action="@{/fileupdown/downloadbyquerycondition}" method="post" id="form0">
-                    <input type="hidden" id="maxPage" th:value="${view.maxPage}">
-                    <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
-                    <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
-                    <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
-                    <table class="grid" style="width: 100%" id="tablecss">
-                        <thead>
-                        <tr align="center">
-                            <td>编号</td>
-                            <td>设计师</td>
-                            <td>最后修改者</td>
-                            <td>订单编码</td>
-                            <td>顶目编码</td>
-                            <td>文件名称</td>
-                            <td>业务员</td>
-                            <td>更新次数</td>
-                            <td>最后更新时间</td>
-                            <td>操作权限</td>
-                            <td>文件说明</td>
-                            <td>备注</td>
-                            <td>路径</td>
-                        </tr>
-                        </thead>
-                        <tbody id="showdatatable">
-                        <div th:unless="${#lists.isEmpty(downloadViewList)}">
-                            <tr th:each="downloadView ,iterStat: ${downloadViewList}" align="center">
-                                <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}" ></td>
-                                <td th:text="${downloadView.creator}"></td>
-                                <td th:text="${downloadView.lastUpdator}"></td>
-                                <td th:text="${downloadView.orderNo}"></td>
-                                <td th:text="${downloadView.projectName}"></td>
-
-                                <td th:text="${downloadView.fileName}"></td>
-                                <td th:text="${downloadView.salor}"></td>
-                                <td th:text="${downloadView.totalUpdateNum}"></td>
-                                <td th:text="${downloadView.lastUpdateTime}"></td>
-                                <td th:text="${downloadView.opRight}"></td>
-                                <td th:text="${downloadView.filedescribtion}"></td>
-                                <td th:text="${downloadView.remark}"></td>
-                                <td>
-                                    <a th:href="@{/fileupdown/downloadfile(filename=${downloadView.fileName},urlname=${downloadView.urlAddr})}"
-                                       th:text="${downloadView.urlAddr}"></a></td>
-                            </tr>
-                        </div>
-                        <div th:if="${#lists.isEmpty(downloadViewList)}">
-                            <tr>
-                                <td colspan="11" align="center">暂无文件清单信息</td>
-                            </tr>
-                        </div>
-                        </tbody>
-
-                        <tfoot id="s_tfoot">  <!-- 分页-->
-
-                        <tr id="showdiv">
-
-                            <td colspan="11" align="center">
-                                <span>第</span>
-                                <span th:text="${view.currentPage}" id="currentpagespan"> </span>
-                                <span>页|共</span>
-                                <span th:text="${view.maxPage}" id="maxpagespan"> </span>
-                                <span>页|共</span>
-                                <span th:text="${view.recordCount}" id="recordcountspan"> </span>
-                                <span>条记录 </span>
-                                <span id="image01">
-                            <span th:if="${view.currentPage gt 1}">
-                                    <img src="/images/page/sy-2.jpg" align="middle" border="0"
-                                         style="width: 20px; height: 20px; vertical-align: middle"
-                                         onClick="goPageone()"/>
-                                    <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPrePage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-                                </span>
-                                </span>
-                                <span id="image02">
-                            <span th:if="${view.currentPage le 1}">
-                                <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                                <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-                            </span>
-                            </span>
-                                <span id="image03">
-                            <span th:if="${view.currentPage lt view.maxPage}">
-                                    <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>
-                                    <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
-                                         style="width: 20px; height: 20px; vertical-align: middle"/>
-                            </span>
-                                </span>
-                                <span id="image04">
-                            <span th:if="${view.currentPage ge view.maxPage}">
-                                <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                                <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
-                                     style="width: 20px; height: 20px; vertical-align: middle"/>
-                            </span>
-                            </span>
-
-                                |&nbsp;到第
-                                <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
-                                       style="width: 50px"
-                                       id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
-                                页&nbsp;
-                                <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
-                                     style="width:20px;height:20px;vertical-align:middle">
-                            </td>
-
-                        </tr>
-
-
-                        <tr style="display:none;" id="nodatadiv">
-                            <td colspan="11" align="center">
-                                查无数据
-                            </td>
-                        </tr>
-
-
-                        </tfoot>
-                    </table>
+                                    <td th:align="right">
+                                        <input type="button" id="submitQueryByConditionbutton"
+                                               onclick="submitQueryByCondition()" value="查询"/>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="button" onclick="downloadBySelect()" value="下载"/>
+                                        <!--<input type="button" onclick="exportDataByCondition()" value="导出"/></td>-->
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
                 </form>
 
-            </div>
-        </div>
+        <p>
+        <div id="downloadpage">
+            <form th:action="@{/fileupdown/downloadbyquerycondition}" method="post" id="form0">
+                <input type="hidden" id="maxPage" th:value="${view.maxPage}">
+                <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
+                <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
+                <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
+                <input type="hidden" id="foldername">
 
+                <!--FOLDER形式展示DIV-->
+                <div id="folderdiv" style="display: block">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
+                                                   onclick="backFolder3();">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div id="innerfolderdiv">
+                        <table>
+                            <div th:unless="${#lists.isEmpty(orderNumFolders)}">
+                                <tr th:each="folderName ,iterStat: ${orderNumFolders}" align="center">
+                                    <td>
+                                        <input type="checkbox" th:value="${folderName}" name="downloadlist">
+                                        <img src="/images/icon/Folder.png" align="middle" border="0"
+                                             th:value="${folderName}" ondblclick="shownextfolderorfiles(this)"
+                                             style="width: 30px; height: 30px; vertical-align: middle"
+                                             th:text="${folderName}">
+
+                                    </td>
+                                </tr>
+                            </div>
+                        </table>
+                    </div>
+                </div>
+
+
+                <!--<table class="grid" style="width: 100%" id="tablecss">-->
+                <!--<thead>-->
+                <!--<tr align="center">-->
+                <!--<td>编号</td>-->
+                <!--<td>设计师</td>-->
+                <!--<td>最后修改者</td>-->
+                <!--<td>订单编码</td>-->
+                <!--<td>顶目编码</td>-->
+                <!--<td>文件名称</td>-->
+                <!--<td>业务员</td>-->
+                <!--<td>更新次数</td>-->
+                <!--<td>最后更新时间</td>-->
+                <!--<td>操作权限</td>-->
+                <!--<td>文件说明</td>-->
+                <!--<td>备注</td>-->
+                <!--<td>路径</td>-->
+                <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody id="showdatatable">-->
+                <!--<div th:unless="${#lists.isEmpty(downloadViewList)}">-->
+                <!--<tr th:each="downloadView ,iterStat: ${downloadViewList}" align="center">-->
+                <!--<td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>-->
+                <!--<td th:text="${downloadView.creator}"></td>-->
+                <!--<td th:text="${downloadView.lastUpdator}"></td>-->
+                <!--<td th:text="${downloadView.orderNo}"></td>-->
+                <!--<td th:text="${downloadView.projectName}"></td>-->
+
+                <!--<td th:text="${downloadView.fileName}"></td>-->
+                <!--<td th:text="${downloadView.salor}"></td>-->
+                <!--<td th:text="${downloadView.totalUpdateNum}"></td>-->
+                <!--<td th:text="${downloadView.lastUpdateTime}"></td>-->
+                <!--<td th:text="${downloadView.opRight}"></td>-->
+                <!--<td th:text="${downloadView.filedescribtion}"></td>-->
+                <!--<td th:text="${downloadView.remark}"></td>-->
+                <!--<td>-->
+                <!--<a th:href="@{/fileupdown/downloadfile(filename=${downloadView.fileName},urlname=${downloadView.urlAddr})}"-->
+                <!--th:text="${downloadView.urlAddr}"></a></td>-->
+                <!--</tr>-->
+                <!--</div>-->
+                <!--<div th:if="${#lists.isEmpty(downloadViewList)}">-->
+                <!--<tr>-->
+                <!--<td colspan="11" align="center">暂无文件清单信息</td>-->
+                <!--</tr>-->
+                <!--</div>-->
+                <!--</tbody>-->
+
+                <!--<tfoot id="s_tfoot">  &lt;!&ndash; 分页&ndash;&gt;-->
+
+                <!--<tr id="showdiv">-->
+
+                <!--<td colspan="11" align="center">-->
+                <!--<span>第</span>-->
+                <!--<span th:text="${view.currentPage}" id="currentpagespan"> </span>-->
+                <!--<span>页|共</span>-->
+                <!--<span th:text="${view.maxPage}" id="maxpagespan"> </span>-->
+                <!--<span>页|共</span>-->
+                <!--<span th:text="${view.recordCount}" id="recordcountspan"> </span>-->
+                <!--<span>条记录 </span>-->
+                <!--<span id="image01">-->
+                <!--<span th:if="${view.currentPage gt 1}">-->
+                <!--<img src="/images/page/sy-2.jpg" align="middle" border="0"-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"-->
+                <!--onClick="goPageone()"/>-->
+                <!--<img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPrePage()"-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;-->
+                <!--</span>-->
+                <!--</span>-->
+                <!--<span id="image02">-->
+                <!--<span th:if="${view.currentPage le 1}">-->
+                <!--<img src='/images/page/l-sy-2.jpg' align='middle' border='0px'-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>-->
+                <!--<img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;-->
+                <!--</span>-->
+                <!--</span>-->
+                <!--<span id="image03">-->
+                <!--<span th:if="${view.currentPage lt view.maxPage}">-->
+                <!--<img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>-->
+                <!--<img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>-->
+                <!--</span>-->
+                <!--</span>-->
+                <!--<span id="image04">-->
+                <!--<span th:if="${view.currentPage ge view.maxPage}">-->
+                <!--<img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>-->
+                <!--<img src='/images/page/l-my-1.jpg' align='middle' border='0px'-->
+                <!--style="width: 20px; height: 20px; vertical-align: middle"/>-->
+                <!--</span>-->
+                <!--</span>-->
+
+                <!--|&nbsp;到第-->
+                <!--<input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"-->
+                <!--style="width: 50px"-->
+                <!--id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>-->
+                <!--页&nbsp;-->
+                <!--<img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"-->
+                <!--style="width:20px;height:20px;vertical-align:middle">-->
+                <!--</td>-->
+
+                <!--</tr>-->
+
+
+                <!--<tr style="display:none;" id="nodatadiv">-->
+                <!--<td colspan="11" align="center">-->
+                <!--查无数据-->
+                <!--</td>-->
+                <!--</tr>-->
+
+
+                <!--</tfoot>-->
+                <!--</table>-->
+            </form>
+
+        </div>
     </div>
+
+</div>
 
 </div>
 
@@ -515,10 +565,148 @@
     var password;
 
 
+    function downloadBySelect() {
+
+    }
+
+    var topfolder;
+
+    function backFolder3() {
+        var foldername = $("#foldername").val();
+        var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
+        var salor = $("#salor").val();
+        var engineer = $("#engineer").val();
+        var orderNo = $("#orderno").val().trim();
+        var fileInput = $('#file').val();
+        var folderhtml = "";
+        var fileshtml = "";
+        var cominone2 = 0;
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var jsonarray = {
+            "salor": salor, //业务员
+            "engineer": engineer, //设计师
+            "orderNo": orderNo, //订单编号
+            "folderName": foldername//当前文件夹名
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findBackFoldersByQueryParam3",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                var totalnum = data.length;
+                $.each(data, function (num) {
+                    if (num < totalnum - 1 && totalnum > 1) {
+                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            $("#foldername").val(data[num]);
+                            if (reg.test(data[num])) {
+                                $("#backfolder").attr("disabled", "disabled");
+                            }
+                                folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                                    " <img src=\"/images/icon/Folder.png\" " +
+                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                cominone2 = 1;
+                        } else {//代表为文件
+                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                            if (cominone2 == 0) {//代表没有文件夹
+                                $("#foldername").val(data[num]);
+                            }
+                        }
+                    }
+                });
+                $("#innerfolderdiv").html(folderhtml + fileshtml)
+                if (reg.test(data[totalnum])) {
+                    $("#orderno").val(data[totalnum]);
+                }
+            },
+            error: function (msg) {
+                $("#some-element").busyLoad("hide");
+                alert("查询失败");
+            }
+        });
+
+        $("#some-element").busyLoad("hide");//遮罩层开启
+    }
+
+    function shownextfolderorfiles(foldernam) {
+        var foldername = foldernam.getAttribute("value");
+        var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
+        $("#backfolder").removeAttr("disabled");
+        var salor = $("#salor").val();
+        var engineer = $("#engineer").val();
+        var orderNo = $("#orderno").val().trim();
+        if (orderNo == "") {
+            if (reg.test(foldername)) {
+                orderNo = foldername;
+            }
+        }
+
+        var folderhtml = "";
+        var fileshtml = "";
+        var cominone = 0;
+        $("#some-element").busyLoad("show");//遮罩层开启
+        var jsonarray = {
+            "salor": salor, //业务员
+            "engineer": engineer, //设计师
+            "orderNo": orderNo, //订单编号
+            "folderName": foldername//当前文件夹名
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/findNextFoldersByQueryParam2",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                var totalnum = data.length;
+                $.each(data, function (num) {
+                    if (num < totalnum - 1 && totalnum > 1) {
+                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            $("#foldername").val(data[num]);
+
+                                folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                                    " <img src=\"/images/icon/Folder.png\" " +
+                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                cominone = 1;
+
+                        } else {//代表为文件
+                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                            if (cominone == 0) {
+                                $("#foldername").val(data[num]);
+                            }
+                        }
+                    }else if(num==totalnum-1){
+                            $("#orderno").val(data[num]);
+                    }
+                });
+                $("#innerfolderdiv").html(folderhtml + fileshtml)
+
+            },
+            error: function (msg) {
+                $("#some-element").busyLoad("hide");
+                alert("查询失败");
+            }
+        });
+
+        $("#some-element").busyLoad("hide");//遮罩层开启
+
+    }
+
+
     function submitQueryByCondition() {
+        var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
+        var folderhtml = "";
+        var fileshtml = "";
+        var cominone2 = 0;
         $("#some-element").busyLoad("show");//遮罩层开启
         var jsonarray = {
             "salor": $("#salor").val(), //业务员
+            "engineer": $("#engineer").val(),//设计师
             "orderNo": $("#orderno").val(), //订单编号
             "projectName": $("#projectname").val(), //项目编号
             "fileName": $("#filename").val(), //文件名
@@ -533,105 +721,25 @@
             contentType: "application/json",//上传内容格式为json结构
             url: "/fileupdown/downloadbyquerycondition",
             success: function (msg) {
-                var data = eval(msg);//将msg化为数;
-                var num = 0;
-                var tr = "";
-                var image01 = $("#image01");
-                var image02 = $("#image02");
-                var image03 = $("#image03");
-                var image04 = $("#image04");
-                var maxpageid = $("#maxPage");
-                var n_currentPage = $("#n_currentPage");
-                var inputpage = $("#_tp");
-                image01.html("");
-                image02.html("");
-                image03.html("");
-                image04.html("");
-                var td = "";
-                var tbody = $("#showdatatable");
-                var tfoot = $("#s_tfoot");
-                tbody.html("");
-
-
-                if (data != null && data != "") {
-                    $("#nodatadiv").hide();
-                    $("#showdiv").show();
-                    currentPage = data[0].currentPage; //当前页
-                    totalPage = data[0].maxPage; //总多少页
-                    totaldata = data[0].recordCount; //总共多少记录
-                    username = data[0].userName;
-                    password = data[0].userPwd;
-                    pageSize = data[0].pageSize;
-                    maxpageid.val(totalPage);
-                    n_currentPage.val(currentPage);
-                    inputpage.val(currentPage);
-
-                    $.each(data, function (num) {
-
-                        tr = $("<tr id='" + data[num].id + "'></tr>");
-                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
-                        tr.append("<td>" + isNull(data[num].creator) + "</td>");
-                        tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
-                        tr.append("<td>" + isNull(data[num].fileName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
-                        tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
-                        tr.append("<td>" + isNull(data[num].projectName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
-                        tr.append("<td>" + isNull(data[num].totalUpdateNum) + "</td>");
-                        tr.append("<td>" + isNull(data[num].opRight) + "</td>");
-                        tr.append('<td><a href="/fileupdown/downloadfile?filename=' + data[num].fileName + '&urlname=' + data[num].urlAddr + '">' + data[num].urlAddr + '</a></td>');
-                        tr.append(td);
-                        tr.appendTo(tbody);
-                    });
-
-
-                    $("#currentpagespan").html(currentPage);
-                    $("#maxpagespan").html(totalPage);
-                    $("#recordcountspan").html(totaldata);
-                    if (currentPage > 1) {
-                        var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-                        imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-                        image01.html(imange01str);
-                    } else {
-                        image01.html("");
+                var data = eval(msg); //data为URLS
+                $.each(data, function (num) {
+                    if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                        $("#foldername").val(data[num]);
+                        if (reg.test(data[num])) {
+                            $("#backfolder").attr("disabled", "disabled");
+                        }
+                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num] + " name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
+                            " align=\"middle\" border=\"0\"  value=" + data[num] + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                        cominone2 = 1;
+                    } else {//代表为文件
+                        fileshtml += "<li><input type=\"checkbox\" value=" + data[num] + " name=\"downloadlist\">" + data[num] + "</li>";
+                        if (cominone2 == 0) {//代表没有文件夹
+                            $("#foldername").val(data[num]);
+                        }
                     }
-                    if (currentPage <= 1) {
-                        var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
-                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-                        image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
-                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-                        image02.html(image02str);
-                    } else {
-                        image02.html("");
-                    }
-                    if (currentPage < totalPage) {
-                        var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-                        imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-                        image03.html(imange03str);
-                    } else {
-                        image03.html("");
-                    }
-                    if (currentPage >= totalPage) {
-                        var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
-                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-                        image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
-                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-                        image04.html(image04str);
-
-
-                    } else {
-                        image04.html("");
-                    }
-
-
-                } else {
-                    $("#nodatadiv").show();
-                    $("#showdiv").hide();
-                }
-
-
-                // 隐藏loading
-                $("#some-element").busyLoad("hide");
+                });
+                $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
                 // 隐藏loading
@@ -640,11 +748,137 @@
             }
 
         });
+        $("#some-element").busyLoad("hide");//遮罩层开启
+        // $("#some-element").busyLoad("show");//遮罩层开启
+        // var jsonarray = {
+        //     "salor": $("#salor").val(), //业务员
+        //     "orderNo": $("#orderno").val(), //订单编号
+        //     "projectName": $("#projectname").val(), //项目编号
+        //     "fileName": $("#filename").val(), //文件名
+        //     "startNewestSaveDateStr": $("#startnewestsavedate").val(), //查询开始时间
+        //     "endNewestSaveDateStr": $("#endnewestsavedate").val(), //查询结束时间
+        //     "currentPage": $("#n_currentPage").val()
+        // };
+        // var data = JSON.stringify(jsonarray);
+        // $.ajax({
+        //     data: data,
+        //     type: "POST",
+        //     contentType: "application/json",//上传内容格式为json结构
+        //     url: "/fileupdown/downloadbyquerycondition",
+        //     success: function (msg) {
+        //         var data = eval(msg);//将msg化为数;
+        //         var num = 0;
+        //         var tr = "";
+        //         var image01 = $("#image01");
+        //         var image02 = $("#image02");
+        //         var image03 = $("#image03");
+        //         var image04 = $("#image04");
+        //         var maxpageid = $("#maxPage");
+        //         var n_currentPage = $("#n_currentPage");
+        //         var inputpage = $("#_tp");
+        //         image01.html("");
+        //         image02.html("");
+        //         image03.html("");
+        //         image04.html("");
+        //         var td = "";
+        //         var tbody = $("#showdatatable");
+        //         var tfoot = $("#s_tfoot");
+        //         tbody.html("");
+        //
+        //
+        //         if (data != null && data != "") {
+        //             $("#nodatadiv").hide();
+        //             $("#showdiv").show();
+        //             currentPage = data[0].currentPage; //当前页
+        //             totalPage = data[0].maxPage; //总多少页
+        //             totaldata = data[0].recordCount; //总共多少记录
+        //             username = data[0].userName;
+        //             password = data[0].userPwd;
+        //             pageSize = data[0].pageSize;
+        //             maxpageid.val(totalPage);
+        //             n_currentPage.val(currentPage);
+        //             inputpage.val(currentPage);
+        //
+        //             $.each(data, function (num) {
+        //
+        //                 tr = $("<tr id='" + data[num].id + "'></tr>");
+        //                 tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].creator) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].fileName) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].salor) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].projectName) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].totalUpdateNum) + "</td>");
+        //                 tr.append("<td>" + isNull(data[num].opRight) + "</td>");
+        //                 tr.append('<td><a href="/fileupdown/downloadfile?filename=' + data[num].fileName + '&urlname=' + data[num].urlAddr + '">' + data[num].urlAddr + '</a></td>');
+        //                 tr.append(td);
+        //                 tr.appendTo(tbody);
+        //             });
+        //
+        //
+        //             $("#currentpagespan").html(currentPage);
+        //             $("#maxpagespan").html(totalPage);
+        //             $("#recordcountspan").html(totaldata);
+        //             if (currentPage > 1) {
+        //                 var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+        //                 imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+        //                 image01.html(imange01str);
+        //             } else {
+        //                 image01.html("");
+        //             }
+        //             if (currentPage <= 1) {
+        //                 var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+        //                 image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+        //                 image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+        //                 image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+        //                 image02.html(image02str);
+        //             } else {
+        //                 image02.html("");
+        //             }
+        //             if (currentPage < totalPage) {
+        //                 var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+        //                 imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+        //                 image03.html(imange03str);
+        //             } else {
+        //                 image03.html("");
+        //             }
+        //             if (currentPage >= totalPage) {
+        //                 var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+        //                 image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+        //                 image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+        //                 image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+        //                 image04.html(image04str);
+        //
+        //
+        //             } else {
+        //                 image04.html("");
+        //             }
+        //
+        //
+        //         } else {
+        //             $("#nodatadiv").show();
+        //             $("#showdiv").hide();
+        //         }
+        //
+        //
+        //         // 隐藏loading
+        //         $("#some-element").busyLoad("hide");
+        //     },
+        //     error: function (msg) {
+        //         // 隐藏loading
+        //         $("#some-element").busyLoad("hide");
+        //         alert("失败");
+        //     }
+        //
+        // });
     }
 
     function exportDataByCondition() {
         alert("此功能暂未做")
     }
+
 
     function goPageone() {
         $("#n_currentPage").val(1);

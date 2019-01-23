@@ -1122,4 +1122,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     }
 
+
+    public List<String> findAllOrderNum() throws Exception{
+        return fileUploadAndDownMapper.findAllOrderNum();
+    }
+
+    public List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception{
+        return  fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
+    }
+
 }

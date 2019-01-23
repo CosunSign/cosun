@@ -36,10 +36,7 @@
             })
             $('body').addClass('theme-' + color);
         }
-
-
     });
-
 </script>
 <style type="text/css">
     #folderdiv {
@@ -49,7 +46,6 @@
         Margin: 2px;
         padding: 3px;
     }
-
     #innerfolderdiv {
         border: 1px solid #9AC0CD;
         width: 1120px;
@@ -57,34 +53,27 @@
         Margin: 10px;
         padding: 3px;
     }
-
     table.grid {
         font-family: verdana, arial, sans-serif;
         font-size: 12px;
         border-width: 1px;
         border-collapse: collapse;
     }
-
     table.grid th {
         border-width: 1px;
         padding: 3px;
         border-style: solid;
         white-space: nowrap;
     }
-
     table.grid td {
         border-width: 1px;
         padding: 3px;
         border-style: solid;
         white-space: nowrap;
     }
-
-
     #selecradio {
         padding: 8px;
     }
-
-
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
     }
@@ -96,14 +85,11 @@
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
     });
-
     function showlistdiv3() {
         $("#listdiv").show();
         $("#folderdiv").hide();
     }
-
     var topfolder;
-
     function backFolder3() {
         var foldername = $("#foldername").val();
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
@@ -126,7 +112,6 @@
             alert("请填写订单编号!");
             return false;
         }
-
         $("#some-element").busyLoad("show");//遮罩层开启
         var jsonarray = {
             "salor": salor, //业务员
@@ -166,12 +151,9 @@
                 alert("查询失败");
             }
         });
-
         $("#some-element").busyLoad("hide");//遮罩层开启
     }
-
     function showfolderdiv3() {
-
         var salor = $("#salor").val();
         var engineer = $("#engineer").val();
         var orderNo = $("#orderno").val().trim();
@@ -180,7 +162,6 @@
         //做好文件夹切割容器 文件夹层数不能超过9层
         var folderhtml = "";
         var fileshtml = "";
-
         if (salor == "") {
             alert("请选择业务人员!");
             $("#foldershow").removeAttr("checked");
@@ -230,7 +211,6 @@
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                     } else {//代表为文件
                         fileshtml += "<li>" + data[num] + "</li>";
-
                     }
                 });
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
@@ -240,11 +220,8 @@
                 alert("查询失败");
             }
         });
-
         $("#some-element").busyLoad("hide");//遮罩层开启
     }
-
-
     function shownextfolderorfiles(foldername) {
         $("#backfolder").removeAttr("disabled");
         var salor = $("#salor").val();
@@ -303,10 +280,8 @@
                 alert("查询失败");
             }
         });
-
         $("#some-element").busyLoad("hide");//遮罩层开启
     }
-
 </script>
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -712,8 +687,6 @@
     var pageSize;//当前每页多少条
     var username;
     var password;
-
-
     function submitQueryByCondition() {
         $("#some-element").busyLoad("show");//遮罩层开启
         var jsonarray = {
@@ -751,8 +724,6 @@
                 var tbody = $("#showdatatable");
                 var tfoot = $("#s_tfoot");
                 tbody.html("");
-
-
                 if (data != null && data != "") {
                     $("#nodatadiv").hide();
                     $("#showdiv").show();
@@ -765,9 +736,7 @@
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
-
                     $.each(data, function (num) {
-
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
@@ -782,8 +751,6 @@
                         tr.append("<td>" + isNull(data[num].urlAddr) + "</td>");
                         tr.appendTo(tbody);
                     });
-
-
                     $("#currentpagespan").html(currentPage);
                     $("#maxpagespan").html(totalPage);
                     $("#recordcountspan").html(totaldata);
@@ -816,19 +783,13 @@
                         image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
                         image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
                         image04.html(image04str);
-
-
                     } else {
                         image04.html("");
                     }
-
-
                 } else {
                     $("#nodatadiv").show();
                     $("#showdiv").hide();
                 }
-
-
                 // 隐藏loading
                 $("#some-element").busyLoad("hide");
             },
@@ -837,39 +798,29 @@
                 $("#some-element").busyLoad("hide");
                 alert("失败");
             }
-
         });
     }
-
     function exportDataByCondition() {
         alert("此功能暂未做")
     }
-
     function goPageone() {
         $("#n_currentPage").val(1);
         submitQueryByCondition();
     }
-
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
         submitQueryByCondition();
     }
-
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
         submitQueryByCondition();
     }
-
-
     function goMaxPage() {
-
-
         $("#n_currentPage").val($("#maxPage").val());
         submitQueryByCondition();
     }
-
     function goPage2() {
         var tp = document.getElementById("_tp").value;//currentPage
         var max = $("#maxPage").val(); //maxPage
@@ -893,7 +844,6 @@
             submitQueryByCondition();
         }
     }
-
     function goAjaxPage(strCount) {
         switch (strCount) {
             case "0":
@@ -936,7 +886,6 @@
                 }
                 currentPage = $("#_tp2").val();
                 break;
-
             default:
                 break;
         }
@@ -945,27 +894,23 @@
             querySupplierPage();
         }
     }
-
     function clickButton(event) {
         if (event.keyCode == 13) {
             goAjaxPage("_go");
             return false;
         }
     }
-
     function isNull(arg1) {
         if (arg1 == "null" || arg1 == null) {
             return "";
         }
         return arg1;
     }
-
     //验证正整数
     function isInt(str) {
         var re = /^[0-9]*[1-9][0-9]*$/;
         return re.test(str);
     }
-
     $("[rel=tooltip]").tooltip();
     $(function () {
         $('[data-popover="true"]').popover({html: true});
