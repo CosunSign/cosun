@@ -219,6 +219,20 @@ public interface FileUploadAndDownMapper {
             }
             if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
                 sql.append(" and ffi.ordernum = #{orderNo} ");
+            }else{
+                if(view.getOrderNoMessage()!=null){
+                    if(view.getOrderNoMessage().contains(",")) {
+                        String[] orderNums = view.getOrderNoMessage().split(",");
+                            sql.append(" and ffi.ordernum  in( '" + orderNums[0] + "'");
+                            for(int a = 1;a < orderNums.length;a++) {
+                                sql.append( ",'" + orderNums[a] + "'");
+                            }
+                        sql.append(") ");
+                    }else{
+                        sql.append(" and ffi.ordernum = '" + view.getOrderNoMessage() + "' ");
+                    }
+
+                }
             }
 
             if (view.getProjectName() != null && view.getProjectName() != "" && view.getProjectName().trim().length() > 0) {

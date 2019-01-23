@@ -4,12 +4,15 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.FileUtil;
+import com.cosun.cosunp.tool.IOUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.catalina.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -604,6 +608,145 @@ public class FileUploadAndDownController {
     }
 
     /**
+     * 功能描述:文件下载批量ZIP
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/23 0023 下午 3:33
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/downloadfileorfolderforzip")
+    public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+        UserInfo info = (UserInfo) session.getAttribute("account");
+        ModelAndView mav = new ModelAndView("downloadpage");
+        String[] fileFoldersName = null;
+        String singfileName = null;
+        if (check_val.contains(",")) {
+            fileFoldersName = check_val.split(",");//文件或文件夹名
+        } else {
+            singfileName = check_val;
+        }
+        //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
+        DownloadView view = new DownloadView();
+        view.setOrderNo(orderno);
+        if(orderno=="" || orderno.trim().length()==0){
+            view.setOrderNoMessage(check_val);
+        }
+        List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+        List<File> fileList = new ArrayList<File>();
+        File file = null;
+        int index = 0;
+        if (fileFoldersName != null) {
+            for (int i = 0; i < fileFoldersName.length; i++) {
+                for (int j = 0; j < urlsAll.size(); j++) {
+                    if (fileFoldersName[i].contains(".")) {//代表是文件
+                        index = urlsAll.get(j).indexOf(fileFoldersName[i]);
+                        if (index > 0) {
+                            file = new File(urlsAll.get(j));
+                            fileList.add(file);
+                        }
+                    } else {//以下为文件夹
+                        index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+                        if (index > 0) {
+                            file = new File(urlsAll.get(j));
+                            fileList.add(file);
+                        }
+                    }
+                }
+            }
+        } else {
+            if (singfileName != null) {
+                if (!singfileName.contains(",")) {
+                    for (int a = 0; a < urlsAll.size(); a++) {
+                        index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+                        if (index > 0) {
+                            file = new File(urlsAll.get(a));
+                            fileList.add(file);
+                        }
+                    }
+                }
+            }
+        }
+        boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
+        if (!isLarge) {
+            view.setFlag("-1");//文件太大
+            mav.addObject("view", view);
+            return mav;
+        }
+        if (fileList.size() > 200) {//代表文件超过200个
+            view.setFlag("-2");
+            mav.addObject("view", view);
+            return mav;
+        }
+        if (fileList.size()==0) {//单个文件下载,不压缩
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
+            byte[] buff = new byte[1024];
+            BufferedInputStream bufferedInputStream = null;
+            OutputStream outputStream = null;
+            try {
+                outputStream = response.getOutputStream();
+
+                file = new File(urlsAll.get(0));
+                FileInputStream fis = new FileInputStream(file);
+                bufferedInputStream = new BufferedInputStream(fis);
+                int num = bufferedInputStream.read(buff);
+                while (num != -1) {
+                    outputStream.write(buff, 0, num);
+                    outputStream.flush();
+                    num = bufferedInputStream.read(buff);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            } finally {
+                if (bufferedInputStream != null) {
+                    bufferedInputStream.close();
+                }
+            }
+        } else {
+            //step2 压缩
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+            if(orderno=="" || orderno.trim().length()==0) {
+                orderno = check_val.replaceAll(",","");
+            }
+            String zipName = orderno + ".zip";
+            String outFilePath = request.getSession().getServletContext().getRealPath("/");
+            File fileZip = new File(outFilePath + zipName);
+            try {
+                FileOutputStream outStream = new FileOutputStream(fileZip);
+                ZipOutputStream toClient = new ZipOutputStream(outStream);
+                IOUtil.zipFile(fileList, toClient);
+                toClient.close();
+                outStream.close();
+                //step3 返回消息 完成
+                IOUtil.downloadFile(fileZip, response, true);
+                //单个文件下载
+                /**
+                 for (int i = 0; i < fileList.size(); i++) {
+                 String curpath = fileList.get(i).getPath();//获取文件路径
+                 iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
+
+                 String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
+                 headers.setContentDispositionFormData("attachment", fileName);
+                 return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
+                 headers, HttpStatus.OK);
+                 }
+                 **/
+
+            } catch (Exception e) {
+                System.out.println("系统异常,请从新录入!");
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
      * 功能描述:跳转管理页面
      *
      * @auther: homey Wong
@@ -640,7 +783,8 @@ public class FileUploadAndDownController {
 
     @ResponseBody
     @RequestMapping(value = "/findfileurlbyconditionparam", method = RequestMethod.POST)
-    public void findFileUrlByConditionParam(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void findFileUrlByConditionParam(@RequestBody DownloadView view, HttpSession
+            session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<DownloadView> dataList = fileUploadAndDownServ.findAllFilesByCondParam(view);
         int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
@@ -680,7 +824,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest request) throws Exception {
+    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest
+            request) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -781,7 +926,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/showfileurldiv", method = RequestMethod.POST)
-    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws
+            Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setuId(userInfo.getuId());
@@ -818,7 +964,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
-    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse
+            response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
@@ -913,7 +1060,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 50, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 800, "M");//判断文件是否超过限制大小
         boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
         if (isFileLarge && !isExsitFileName) {//没超过并没有重复的名字
             view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
@@ -946,7 +1093,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) throws Exception {
+    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) throws
+            Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -982,7 +1130,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 50, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 800, "M");//判断文件是否超过限制大小
         if (isFileLarge) {//没超过
             view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
@@ -1007,11 +1155,12 @@ public class FileUploadAndDownController {
     //文件夹更新
     @ResponseBody
     @RequestMapping(value = "/modifypagefolder", method = RequestMethod.POST)
-    public ModelAndView modifyPageFolder(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
+    public ModelAndView modifyPageFolder(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView
+            view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        boolean isFileLarge = FileUtil.checkFileSize(files, 50, "M");
+        boolean isFileLarge = FileUtil.checkFileSize(files, 800, "M");
 
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -1098,11 +1247,12 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
-    public ModelAndView saveFolderFiles(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
+    public ModelAndView saveFolderFiles(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView
+            view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        boolean isFileLarge = FileUtil.checkFileSize(files, 50, "M");
+        boolean isFileLarge = FileUtil.checkFileSize(files, 800, "M");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());

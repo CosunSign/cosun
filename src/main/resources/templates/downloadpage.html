@@ -28,6 +28,13 @@
 
 <script type="text/javascript">
     $(function () {
+        $("#some-element").busyLoad("hide");//遮罩层开启
+        var flag = $("#flag").val();
+        if(flag=="-1"){
+            alert("您单次要下载的文件已超过2G!不能超过2G");
+        } else if(flag =="-2") {
+            alert("您单次要下单的文件个数已超过200个,不能超过200个.");
+        }
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
         if (color) {
@@ -258,7 +265,7 @@
         </li>
     </ul>
 </div>
-
+<div id="some-element">
 <div class="content">
 
     <div id="tabs">
@@ -278,7 +285,7 @@
            th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
         <p>
 
-            <div id="some-element">
+            <div id="">
                 <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
                       style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
 
@@ -404,6 +411,7 @@
                 <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
                 <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
                 <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
+                <input type="hidden" id="flag" name="view.flag" th:value="${view.flag}">
                 <input type="hidden" id="foldername">
 
                 <!--FOLDER形式展示DIV-->
@@ -551,6 +559,7 @@
     </div>
 
 </div>
+</div>
 
 </div>
 
@@ -566,9 +575,43 @@
 
 
     function downloadBySelect() {
+        //以下为勾选后,进行下载功能实现
+        //第一步,获取勾取的所属订单号值和当前的flderName或fileName
+        var obj = document.getElementsByName("downloadlist");
+        var check_val = [];
+        var isChecked = 0;
+        for (k in obj) {
+            if (obj[k].checked) {
+                check_val.push(obj[k].value);
+                isChecked = 1;
+            }
+        }
+        if (isChecked == 0) {
+            alert("请先勾选您要下载的文件或文件夹!");
+            return false;
+        }
+        var orderno = $("#orderno").val();
+
+        //第二步,向后台发送消息
+        $("#some-element").busyLoad("show");//遮罩层开启
+         window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
+        $("#some-element").busyLoad("hide");//遮罩层开启
+        //第三步,下载完成
 
     }
-
+    // $.ajax({
+    //     data: JSON.stringify({"folderOrFilesName": check_val, "view": view}),
+    //     type: "POST",
+    //     dataType: 'json',
+    //     contentType: 'application/json;charset=UTF-8', //内容类型
+    //     url: "/fileupdown/downloadfileorfolderforzip",
+    //     success: function (msg) {
+    //         alert("success")
+    //     },
+    //     error: function (data) {
+    //         alert(data.message)
+    //     }
+    // });
     var topfolder;
 
     function backFolder3() {
@@ -604,11 +647,11 @@
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
                             }
-                                folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
-                                    " <img src=\"/images/icon/Folder.png\" " +
-                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                                cominone2 = 1;
+                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                                " <img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            cominone2 = 1;
                         } else {//代表为文件
                             fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
                             if (cominone2 == 0) {//代表没有文件夹
@@ -668,11 +711,11 @@
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             $("#foldername").val(data[num]);
 
-                                folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
-                                    " <img src=\"/images/icon/Folder.png\" " +
-                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                                cominone = 1;
+                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                                " <img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            cominone = 1;
 
                         } else {//代表为文件
                             fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
@@ -680,8 +723,8 @@
                                 $("#foldername").val(data[num]);
                             }
                         }
-                    }else if(num==totalnum-1){
-                            $("#orderno").val(data[num]);
+                    } else if (num == totalnum - 1) {
+                        $("#orderno").val(data[num]);
                     }
                 });
                 $("#innerfolderdiv").html(folderhtml + fileshtml)

@@ -30,9 +30,9 @@ public class CosunpApplication {
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //单个文件最大
-        factory.setMaxFileSize("500MB");
+        factory.setMaxFileSize("3000MB");
         /// 设置总上传数据总大小
-        factory.setMaxRequestSize("500MB");
+        factory.setMaxRequestSize("3000MB");
         return factory.createMultipartConfig();
     }
 

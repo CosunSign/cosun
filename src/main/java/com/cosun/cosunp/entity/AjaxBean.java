@@ -16,6 +16,15 @@ public class AjaxBean {
     private DownloadView view;
     private List<String> privilegestrs;
     private List<String> privilegeusers;
+    private List<String> folderOrFilesName;
+
+    public List<String> getFolderOrFilesName() {
+        return folderOrFilesName;
+    }
+
+    public void setFolderOrFilesName(List<String> folderOrFilesName) {
+        this.folderOrFilesName = folderOrFilesName;
+    }
 
     public List<String> getPrivilegeusers() {
         return privilegeusers;
