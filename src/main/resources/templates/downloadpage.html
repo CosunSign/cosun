@@ -28,12 +28,13 @@
 
 <script type="text/javascript">
     $(function () {
-        $("#some-element").busyLoad("hide");//遮罩层开启
         var flag = $("#flag").val();
         if(flag=="-1"){
             alert("您单次要下载的文件已超过2G!不能超过2G");
         } else if(flag =="-2") {
             alert("您单次要下单的文件个数已超过200个,不能超过200个.");
+        }else if(flag=="-369"){
+            $("#some-element").busyLoad("hide");//遮罩层关闭
         }
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
@@ -43,8 +44,6 @@
             })
             $('body').addClass('theme-' + color);
         }
-
-
     });
 
 
@@ -397,6 +396,7 @@
                                                onclick="submitQueryByCondition()" value="查询"/>
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         <input type="button" onclick="downloadBySelect()" value="下载"/>
+                                        <!--<input type="button" onclick="showcookie()" value="cookie"/>-->
                                         <!--<input type="button" onclick="exportDataByCondition()" value="导出"/></td>-->
                                 </tr>
                             </table>
@@ -560,7 +560,6 @@
 
 </div>
 </div>
-
 </div>
 
 
@@ -572,7 +571,6 @@
     var pageSize;//当前每页多少条
     var username;
     var password;
-
 
     function downloadBySelect() {
         //以下为勾选后,进行下载功能实现
@@ -594,11 +592,61 @@
 
         //第二步,向后台发送消息
         $("#some-element").busyLoad("show");//遮罩层开启
-         window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
         //第三步,下载完成
-
+        blockUIForDownload();
     }
+
+    var fileDownloadCheckTimer;
+    function blockUIForDownload() {
+        var token = "123"; //use the current timestamp as the token value
+        $('#download_token_value_id').val(token);
+        fileDownloadCheckTimer = window.setInterval(function () {
+            var cookieValue = getCookie('abc');
+            if (cookieValue == token)
+                $("#some-element").busyLoad("hide");
+                finishDownload();
+        }, 1000);
+    }
+
+    // 定义一个函数，用来读取特定的cookie值。
+    function getCookie(cookie_name) {
+        var allcookies = document.cookie;
+        //索引长度，开始索引的位置
+        var cookie_pos = allcookies.indexOf(cookie_name);
+
+        // 如果找到了索引，就代表cookie存在,否则不存在
+        if (cookie_pos != -1) {
+            // 把cookie_pos放在值的开始，只要给值加1即可
+            //计算取cookie值得开始索引，加的1为“=”
+            cookie_pos = cookie_pos + cookie_name.length + 1;
+            //计算取cookie值得结束索引
+            var cookie_end = allcookies.indexOf(";", cookie_pos);
+
+            if (cookie_end == -1) {
+                cookie_end = allcookies.length;
+
+            }
+            //得到想要的cookie的值
+            var value = unescape(allcookies.substring(cookie_pos, cookie_end));
+        }
+        return value;
+    }
+
+    function finishDownload() {
+        window.clearInterval(fileDownloadCheckTimer);
+        delCookie('abc'); //clears this cookie value
+    }
+
+    function delCookie(name)
+    {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null)
+            document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+
     // $.ajax({
     //     data: JSON.stringify({"folderOrFilesName": check_val, "view": view}),
     //     type: "POST",
@@ -940,6 +988,9 @@
         submitQueryByCondition();
     }
 
+    function showcookie(){
+        window.location.href = "/fileupdown/showcookies";
+    }
 
     function goMaxPage() {
 

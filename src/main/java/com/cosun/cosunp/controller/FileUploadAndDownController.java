@@ -8,25 +8,26 @@ import com.cosun.cosunp.tool.IOUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.catalina.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
 @Controller
@@ -98,7 +99,7 @@ public class FileUploadAndDownController {
 //        }
 //
 //        try {
-//            response.setCharacterEncoding("UTF-8");
+//            findIsExistFilesFolderresponse.setCharacterEncoding("UTF-8");
 //            response.setContentType("text/html;charset=UTF-8");
 //            response.getWriter().print(str); //返回前端ajax
 //        } catch (IOExcdownloadbyqueryconditioneption e) {
@@ -607,6 +608,21 @@ public class FileUploadAndDownController {
 
     }
 
+//    @RequestMapping(value = "/showcookies")
+//    public ModelAndView showcookies(HttpServletRequest request) {
+//        Cookie[] cookies = request.getCookies();
+//        String cookievalue = null;
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if (cookie.getName().equals("abc")) {
+//                    cookievalue = cookie.getValue();
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
+
     /**
      * 功能描述:文件下载批量ZIP
      *
@@ -617,7 +633,7 @@ public class FileUploadAndDownController {
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "/downloadfileorfolderforzip")
+    @RequestMapping(value = "/downloadfileorfolderforzip",method = RequestMethod.GET)
     public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
         UserInfo info = (UserInfo) session.getAttribute("account");
         ModelAndView mav = new ModelAndView("downloadpage");
@@ -631,7 +647,7 @@ public class FileUploadAndDownController {
         //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
         DownloadView view = new DownloadView();
         view.setOrderNo(orderno);
-        if(orderno=="" || orderno.trim().length()==0){
+        if (orderno == "" || orderno.trim().length() == 0) {
             view.setOrderNoMessage(check_val);
         }
         List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
@@ -678,9 +694,11 @@ public class FileUploadAndDownController {
         if (fileList.size() > 200) {//代表文件超过200个
             view.setFlag("-2");
             mav.addObject("view", view);
+            view.setFlag("-369");
+            mav.addObject("view", view);
             return mav;
         }
-        if (fileList.size()==0) {//单个文件下载,不压缩
+        if (fileList.size() == 0) {//单个文件下载,不压缩
             response.setHeader("content-type", "application/octet-stream");
             response.setContentType("application/octet-stream");
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
@@ -699,27 +717,28 @@ public class FileUploadAndDownController {
                     outputStream.flush();
                     num = bufferedInputStream.read(buff);
                 }
+                outputStream.close();
+                bufferedInputStream.close();
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             } finally {
-                if (bufferedInputStream != null) {
-                    bufferedInputStream.close();
-                }
+                outputStream.close();
+                bufferedInputStream.close();
             }
         } else {
             //step2 压缩
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
-            if(orderno=="" || orderno.trim().length()==0) {
-                orderno = check_val.replaceAll(",","");
+            if (orderno == "" || orderno.trim().length() == 0) {
+                orderno = check_val.replaceAll(",", "");
             }
             String zipName = orderno + ".zip";
             String outFilePath = request.getSession().getServletContext().getRealPath("/");
             File fileZip = new File(outFilePath + zipName);
+            FileOutputStream outStream = new FileOutputStream(fileZip);
+            ZipOutputStream toClient = new ZipOutputStream(outStream);
             try {
-                FileOutputStream outStream = new FileOutputStream(fileZip);
-                ZipOutputStream toClient = new ZipOutputStream(outStream);
                 IOUtil.zipFile(fileList, toClient);
                 toClient.close();
                 outStream.close();
@@ -740,10 +759,18 @@ public class FileUploadAndDownController {
 
             } catch (Exception e) {
                 System.out.println("系统异常,请从新录入!");
+                toClient.close();
+                outStream.close();
                 e.printStackTrace();
             }
         }
-        return null;
+        Cookie cookie = new Cookie("abc", "123");
+        cookie.setPath("/");
+        cookie.setMaxAge(3600*24);
+        response.addCookie(cookie);
+        view.setFlag("-369");
+        mav.addObject("view", view);
+        return mav;
     }
 
     /**
@@ -1249,6 +1276,9 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
     public ModelAndView saveFolderFiles(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView
             view, HttpSession session) throws Exception {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setBufferRequestBody(false);
+        RestTemplate rest = new RestTemplate(requestFactory);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值

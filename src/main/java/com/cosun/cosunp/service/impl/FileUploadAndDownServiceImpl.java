@@ -10,8 +10,10 @@ import com.cosun.cosunp.tool.PinYinUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.DateUtils;
 
@@ -555,7 +557,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
             if (isAllNewFile) { //全为新文件
-                if (pointFolder != null && pointFolder.length() > 0&&!view.getSaveFolderName().equals("")) {//代表为用户指定目录
+                if (pointFolder != null && pointFolder.length() > 0 && !view.getSaveFolderName().equals("")) {//代表为用户指定目录
                     int lia = pointFolder.indexOf(view.getSaveFolderName());
                     pointFolder = pointFolder.substring(0, lia + view.getSaveFolderName().length() + 1);
                     view = addOFilesByPointFile(view, newFileArray, userInfo, pointFolder, fileManFileInfo);
@@ -1123,12 +1125,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
 
-    public List<String> findAllOrderNum() throws Exception{
+    public List<String> findAllOrderNum() throws Exception {
         return fileUploadAndDownMapper.findAllOrderNum();
     }
 
-    public List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception{
-        return  fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
+    public List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
     }
 
 }
