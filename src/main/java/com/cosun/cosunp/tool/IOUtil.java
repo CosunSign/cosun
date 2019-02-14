@@ -1,8 +1,10 @@
 package com.cosun.cosunp.tool;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -86,6 +88,10 @@ public class IOUtil {
             response.reset();
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");
+            Cookie cookie = new Cookie("ccc", "111");
+            cookie.setPath("/");
+            cookie.setMaxAge(3600 * 24);
+            response.addCookie(cookie);
             response.setHeader("Content-Disposition", "attachment;filename=" + new String(file.getName().getBytes("UTF-8"), "ISO-8859-1"));
             toClient.write(buffer);
             toClient.flush();

@@ -608,20 +608,22 @@ public class FileUploadAndDownController {
 
     }
 
-//    @RequestMapping(value = "/showcookies")
-//    public ModelAndView showcookies(HttpServletRequest request) {
-//        Cookie[] cookies = request.getCookies();
-//        String cookievalue = null;
-//        if (cookies != null) {
-//            for (Cookie cookie : cookies) {
-//                if (cookie.getName().equals("abc")) {
-//                    cookievalue = cookie.getValue();
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
+    @RequestMapping(value = "/showcookies")
+    public ModelAndView showcookies(HttpServletRequest request,HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String cookievalue = null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("abc")) {
+                    cookievalue = cookie.getValue();
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * 功能描述:文件下载批量ZIP
@@ -633,144 +635,173 @@ public class FileUploadAndDownController {
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "/downloadfileorfolderforzip",method = RequestMethod.GET)
+    @RequestMapping(value = "/downloadfileorfolderforzip")
     public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
-        UserInfo info = (UserInfo) session.getAttribute("account");
-        ModelAndView mav = new ModelAndView("downloadpage");
-        String[] fileFoldersName = null;
-        String singfileName = null;
-        if (check_val.contains(",")) {
-            fileFoldersName = check_val.split(",");//文件或文件夹名
-        } else {
-            singfileName = check_val;
-        }
-        //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
-        DownloadView view = new DownloadView();
-        view.setOrderNo(orderno);
-        if (orderno == "" || orderno.trim().length() == 0) {
-            view.setOrderNoMessage(check_val);
-        }
-        List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
-        List<File> fileList = new ArrayList<File>();
-        File file = null;
-        int index = 0;
-        if (fileFoldersName != null) {
-            for (int i = 0; i < fileFoldersName.length; i++) {
-                for (int j = 0; j < urlsAll.size(); j++) {
-                    if (fileFoldersName[i].contains(".")) {//代表是文件
-                        index = urlsAll.get(j).indexOf(fileFoldersName[i]);
-                        if (index > 0) {
-                            file = new File(urlsAll.get(j));
-                            fileList.add(file);
-                        }
-                    } else {//以下为文件夹
-                        index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
-                        if (index > 0) {
-                            file = new File(urlsAll.get(j));
-                            fileList.add(file);
-                        }
-                    }
-                }
-            }
-        } else {
-            if (singfileName != null) {
-                if (!singfileName.contains(",")) {
-                    for (int a = 0; a < urlsAll.size(); a++) {
-                        index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
-                        if (index > 0) {
-                            file = new File(urlsAll.get(a));
-                            fileList.add(file);
-                        }
-                    }
-                }
+        ModelAndView mav = new ModelAndView("mainindex");
+        Cookie[] cookies = request.getCookies();
+        // 迭代查找并清除Cookie
+        for (Cookie cookie: cookies) {
+            if ("ccc".equals(cookie.getName())) {
+                cookie.setValue(null);
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
             }
         }
-        boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
-        if (!isLarge) {
-            view.setFlag("-1");//文件太大
-            mav.addObject("view", view);
-            return mav;
-        }
-        if (fileList.size() > 200) {//代表文件超过200个
-            view.setFlag("-2");
-            mav.addObject("view", view);
-            view.setFlag("-369");
-            mav.addObject("view", view);
-            return mav;
-        }
-        if (fileList.size() == 0) {//单个文件下载,不压缩
-            response.setHeader("content-type", "application/octet-stream");
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
-            byte[] buff = new byte[1024];
-            BufferedInputStream bufferedInputStream = null;
-            OutputStream outputStream = null;
-            try {
-                outputStream = response.getOutputStream();
-
-                file = new File(urlsAll.get(0));
-                FileInputStream fis = new FileInputStream(file);
-                bufferedInputStream = new BufferedInputStream(fis);
-                int num = bufferedInputStream.read(buff);
-                while (num != -1) {
-                    outputStream.write(buff, 0, num);
-                    outputStream.flush();
-                    num = bufferedInputStream.read(buff);
-                }
-                outputStream.close();
-                bufferedInputStream.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
-            } finally {
-                outputStream.close();
-                bufferedInputStream.close();
+        try {
+            UserInfo info = (UserInfo) session.getAttribute("account");
+            String[] fileFoldersName = null;
+            String singfileName = null;
+            if (check_val.contains(",")) {
+                fileFoldersName = check_val.split(",");//文件或文件夹名
+            } else {
+                singfileName = check_val;
             }
-        } else {
-            //step2 压缩
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+            //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
+            DownloadView view = new DownloadView();
+            view.setOrderNo(orderno);
             if (orderno == "" || orderno.trim().length() == 0) {
-                orderno = check_val.replaceAll(",", "");
+                view.setOrderNoMessage(check_val);
             }
-            String zipName = orderno + ".zip";
-            String outFilePath = request.getSession().getServletContext().getRealPath("/");
-            File fileZip = new File(outFilePath + zipName);
-            FileOutputStream outStream = new FileOutputStream(fileZip);
-            ZipOutputStream toClient = new ZipOutputStream(outStream);
-            try {
-                IOUtil.zipFile(fileList, toClient);
-                toClient.close();
-                outStream.close();
-                //step3 返回消息 完成
-                IOUtil.downloadFile(fileZip, response, true);
-                //单个文件下载
-                /**
-                 for (int i = 0; i < fileList.size(); i++) {
-                 String curpath = fileList.get(i).getPath();//获取文件路径
-                 iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
-
-                 String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
-                 headers.setContentDispositionFormData("attachment", fileName);
-                 return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
-                 headers, HttpStatus.OK);
-                 }
-                 **/
-
-            } catch (Exception e) {
-                System.out.println("系统异常,请从新录入!");
-                toClient.close();
-                outStream.close();
-                e.printStackTrace();
+            List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+            List<File> fileList = new ArrayList<File>();
+            File file = null;
+            int index = 0;
+            if (fileFoldersName != null) {
+                for (int i = 0; i < fileFoldersName.length; i++) {
+                    for (int j = 0; j < urlsAll.size(); j++) {
+                        if (fileFoldersName[i].contains(".")) {//代表是文件
+                            index = urlsAll.get(j).indexOf(fileFoldersName[i]);
+                            if (index > 0) {
+                                file = new File(urlsAll.get(j));
+                                fileList.add(file);
+                            }
+                        } else {//以下为文件夹
+                            index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+                            if (index > 0) {
+                                file = new File(urlsAll.get(j));
+                                fileList.add(file);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (singfileName != null) {
+                    if (!singfileName.contains(",")) {
+                        for (int a = 0; a < urlsAll.size(); a++) {
+                            index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+                            if (index > 0) {
+                                file = new File(urlsAll.get(a));
+                                fileList.add(file);
+                            }
+                        }
+                    }
+                }
             }
+            boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
+            if (!isLarge) {
+                view.setFlag("-1");//文件太大
+                mav.addObject("view", view);
+                return mav;
+            }
+            if (fileList.size() > 200) {//代表文件超过200个
+                view.setFlag("-2");
+                mav.addObject("view", view);
+                view.setFlag("-369");
+                mav.addObject("view", view);
+                return mav;
+            }
+            if (fileList.size() == 0) {//单个文件下载,不压缩
+                response.setHeader("content-type", "application/octet-stream");
+                Cookie cookie = new Cookie("ccc", "111");
+                cookie.setPath("/");
+                cookie.setMaxAge(3600 * 24);
+                response.addCookie(cookie);
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
+                view.setFlag("-369");
+                byte[] buff = new byte[1024];
+                BufferedInputStream bufferedInputStream = null;
+                OutputStream outputStream = null;
+                try {
+                    outputStream = response.getOutputStream();
+
+                    file = new File(urlsAll.get(0));
+                    FileInputStream fis = new FileInputStream(file);
+                    bufferedInputStream = new BufferedInputStream(fis);
+                    int num = bufferedInputStream.read(buff);
+                    while (num != -1) {
+                        outputStream.write(buff, 0, num);
+                        outputStream.flush();
+                        num = bufferedInputStream.read(buff);
+                    }
+                    outputStream.close();
+                    bufferedInputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage());
+                } finally {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                    if (bufferedInputStream != null) {
+                        bufferedInputStream.close();
+                    }
+                }
+            } else {
+                //step2 压缩
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+                if (orderno == "" || orderno.trim().length() == 0) {
+                    orderno = check_val.replaceAll(",", "");
+                }
+                String zipName = orderno + ".zip";
+                String outFilePath = request.getSession().getServletContext().getRealPath("/");
+                File fileZip = new File(outFilePath + zipName);
+                FileOutputStream outStream = new FileOutputStream(fileZip);
+                ZipOutputStream toClient = new ZipOutputStream(outStream);
+                view.setFlag("-369");
+                try {
+                    IOUtil.zipFile(fileList, toClient);
+                    if(toClient!=null) {
+                        toClient.close();
+                    }
+                    if(outStream!=null) {
+                        outStream.close();
+                    }
+                    //step3 返回消息 完成
+                    IOUtil.downloadFile(fileZip, response, true);
+                    //单个文件下载
+                    /**
+                     for (int i = 0; i < fileList.size(); i++) {
+                     String curpath = fileList.get(i).getPath();//获取文件路径
+                     iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
+
+                     String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
+                     headers.setContentDispositionFormData("attachment", fileName);
+                     return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
+                     headers, HttpStatus.OK);
+                     }
+                     **/
+
+                } catch (Exception e) {
+                    System.out.println("系统异常,请从新录入!");
+                    e.printStackTrace();
+                } finally {
+                    if (toClient != null) {
+                        toClient.close();
+                    }
+                    if (outStream != null) {
+                        outStream.close();
+                    }
+                }
+            }
+            mav.addObject("view", view);
+            return mav;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return mav;
         }
-        Cookie cookie = new Cookie("abc", "123");
-        cookie.setPath("/");
-        cookie.setMaxAge(3600*24);
-        response.addCookie(cookie);
-        view.setFlag("-369");
-        mav.addObject("view", view);
-        return mav;
     }
 
     /**
@@ -1087,7 +1118,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 800, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
         boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
         if (isFileLarge && !isExsitFileName) {//没超过并没有重复的名字
             view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
@@ -1157,7 +1188,7 @@ public class FileUploadAndDownController {
         for (MultipartFile mfile : files) {
             fileArray.add(mfile);
         }
-        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 800, "M");//判断文件是否超过限制大小
+        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
         if (isFileLarge) {//没超过
             view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
             //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
@@ -1187,7 +1218,7 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        boolean isFileLarge = FileUtil.checkFileSize(files, 800, "M");
+        boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
 
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -1282,7 +1313,7 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-        boolean isFileLarge = FileUtil.checkFileSize(files, 800, "M");
+        boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
