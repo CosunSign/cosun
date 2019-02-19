@@ -177,6 +177,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+      <!--FTP工具包-->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
 
         <!--LEGACYHTML5需要搭配一个额外的库NekoHTML才可用。-->
         <dependency>

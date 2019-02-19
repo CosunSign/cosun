@@ -111,7 +111,8 @@ public class StringUtil {
         if(str.contains(a)) {
             int index = str.lastIndexOf(a);
             if(index>=1) {
-                return str.substring(index + 1, str.length());
+                str = str.substring(index + 1, str.length());
+                return str;
             }
         }
         return str;

@@ -4,10 +4,7 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
-import com.cosun.cosunp.tool.FileUtil;
-import com.cosun.cosunp.tool.MathUtil;
-import com.cosun.cosunp.tool.PinYinUtil;
-import com.cosun.cosunp.tool.StringUtil;
+import com.cosun.cosunp.tool.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -335,14 +332,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             for (FilemanUrl url : oldFileUrls) {
-                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(), "\\", 6);
+                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(), "/", 5);
                 String afterFourLevel = url.getLogur1().substring(pointindex + 1, url.getLogur1().length());
                 centerUrls.add(afterFourLevel);
             }
 
 
             for (MultipartFile file : fileArray) {
-                if (strnames.contains(subAfterString(file.getOriginalFilename(), "/")) && centerUrls.contains(file.getOriginalFilename().replaceAll("/", "\\\\"))) {//查看文件夹下的文件是否完全一样
+                if (strnames.contains(subAfterString(file.getOriginalFilename(), "/")) && centerUrls.contains(file.getOriginalFilename())) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
                 } else {
                     isNoExsitFileNum++;
@@ -374,6 +371,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
+        String fileName = null;
+        int index;
+        String centerPath = null;
+        String filePath = null;
+        Integer pointindex = 0;
+        String oldsPath = null;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
             ffi = fileManFileInfo.get(0);
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
@@ -383,8 +386,19 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (MultipartFile file : fileArray) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(subAfterString(file.getOriginalFilename(), "/"), fileManFileInfo.get(0).getId());
+                pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
+                oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
                 if (filemanUrl != null) {
-                    FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
+                   // FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
+
+                    fileName = file.getOriginalFilename();
+                    index = fileName.lastIndexOf("/");
+                    centerPath = fileName.substring(0,index);
+                    fileName = fileName.substring(index+1,fileName.length());
+                    filePath = oldsPath+centerPath;
+                    FtpUtils.uploadFile(filePath,fileName,file.getInputStream());
+
+
                     //取老文件信息
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
@@ -424,12 +438,25 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
         fileUploadAndDownMapper.addfileManFileDataByUpload(fileManFileInfo);
 
-
+        String ftpUrl = null;
+        String fileName = null;
+        int index;
+        String centerPath = null;
+        String filePath = null;
         for (int i = 0; i < files.size(); i++) {
             try {
-                deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
+                //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
+                // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
+                 fileName = files.get(i).getOriginalFilename();
+                 index = fileName.lastIndexOf("/");
+                 centerPath = fileName.substring(0,index);
+                 fileName = fileName.substring(index+1,fileName.length());
+                 filePath = view.getUserName() + "/" + formateString(new Date()) + "/" +view.getSalor() + "/"
+                        + randomNum + "/" + view.getOrderNo() + "/"+centerPath;
+                FtpUtils.uploadFile(filePath,fileName,files.get(i).getInputStream());
                 //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
-                orginname = subAfterString(deskName, "\\");
+                deskName = filePath+"/"+fileName;
+                orginname = subAfterString(deskName, "/");
                 //存储文件路径
                 filemanUrl = new FilemanUrl();
                 filemanUrl.setOrginName(orginname);
@@ -469,7 +496,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional
     public DownloadView addOldOrderNoNewFilesByFolder(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
-        Integer pointindex = StringUtils.ordinalIndexOf(oldPath, "\\", 6);
+        Integer pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
         String oldsPath = oldPath.substring(0, pointindex + 1);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
@@ -482,13 +509,27 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + fileArray.size());
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
+        String fileName = null;
+        int index;
+        String centerPath = null;;
+        String filePath = null;
 
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
         for (MultipartFile file : fileArray) {
             //  name1 = file.getOriginalFilename().replaceAll("/", "\\\\");
-            deskName = oldsPath + file.getOriginalFilename();
-            orginname = subAfterString(deskName, "\\");
-            FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
+           // deskName = oldsPath + file.getOriginalFilename();
+            //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
+            // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
+            fileName = file.getOriginalFilename();
+            index = fileName.lastIndexOf("/");
+            centerPath = fileName.substring(0,index);
+            fileName = fileName.substring(index+1,fileName.length());
+            filePath = oldsPath +centerPath;
+            FtpUtils.uploadFile(filePath,fileName,file.getInputStream());
+            //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
+            deskName = filePath+"/"+fileName;
+            orginname = subAfterString(deskName, "/");
+           // FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
@@ -645,12 +686,17 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
             ffi.setUpdateTime(new Date());
             ffi.setUpdateUser(view.getUserName());
+            int pointindex ;
+            String oldsPath = null;
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (MultipartFile file : fileArray) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(file.getOriginalFilename(), fileManFileInfo.get(0).getId());
                 if (filemanUrl != null) {
-                    FileUtil.modifyUpdateFileByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
+                    //FileUtil.modifyUpdateFileByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
+                    pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
+                    oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+                    FtpUtils.uploadFile(oldsPath,file.getOriginalFilename(),file.getInputStream());
                     //取老文件信息
 
 
@@ -684,7 +730,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (MultipartFile file : fileArray) {
             orginname = file.getOriginalFilename();
             deskName = pointpath + orginname;
-            FileUtil.uploadFileByUrl(file, userInfo, view, pointpath);
+           // FileUtil.uploadFileByUrl(file, userInfo, view, pointpath);
+            try {
+                FtpUtils.uploadFile(pointpath,orginname,file.getInputStream());
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
@@ -722,7 +774,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         Integer pointindex = null;
         String oldsPath = null;
         oldPath = oldPaths.get(0);
-        pointindex = StringUtils.ordinalIndexOf(oldPath, "\\", 6);
+        pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
         oldsPath = oldPath.substring(0, pointindex + 1);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
@@ -738,7 +790,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (MultipartFile file : fileArray) {
             orginname = file.getOriginalFilename();
             deskName = oldsPath + orginname;
-            FileUtil.uploadFileByUrl(file, userInfo, view, oldsPath);
+            //FileUtil.uploadFileByUrl(file, userInfo, view, oldsPath);
+            FtpUtils.uploadFile( oldsPath,file.getOriginalFilename(),file.getInputStream());
+            deskName = oldsPath+file.getOriginalFilename();
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
@@ -805,7 +859,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
         for (int i = 0; i < files.size(); i++) {
             try {
-                deskName = FileUtil.uploadFile(files.get(i), userInfo, view, randomNum);
+                //deskName = FileUtil.uploadFile(files.get(i), userInfo, view, randomNum);
+                FtpUtils.uploadFile( userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
+                        + randomNum + "/" + view.getOrderNo() + "/",files.get(i).getOriginalFilename(),files.get(i).getInputStream());
+                deskName = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
+                        + randomNum + "/" + view.getOrderNo() + "/"+files.get(i).getOriginalFilename();
                 orginname = files.get(i).getOriginalFilename();
 
 
@@ -1079,11 +1137,16 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String olderCenterstr = null;
         String centerstr = null;
         for (String urladdr : urls) {
-            pointindex = StringUtils.ordinalIndexOf(urladdr, "\\", 6);
-            olderCenterstr = urladdr.substring(0, pointindex + 1);
-            centerstr = StringUtil.subMyString(urladdr, "\\");
-            if (centerstr.contains("\\")) {
-                mysqlcenterurls.add(centerstr.split("\\\\"));
+            pointindex = StringUtils.ordinalIndexOf(urladdr, "/", 5);
+            if(pointindex>0) {
+                olderCenterstr = urladdr.substring(0, pointindex + 1);
+                centerstr = urladdr.substring(pointindex+1,urladdr.length());
+                centerstr = subMyString(centerstr,"/");
+               // centerstr = StringUtil.subMyString(urladdr, "/");
+               // centerstr = subMyString(urladdr,olderCenterstr);
+                if (centerstr.contains("/")) {
+                    mysqlcenterurls.add(centerstr.split("/"));
+                }
             }
         }
 

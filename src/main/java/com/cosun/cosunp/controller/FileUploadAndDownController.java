@@ -10,18 +10,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -194,16 +197,18 @@ public class FileUploadAndDownController {
         //取上二级文件夹名 由下找下一层文件夹或文件
         if (!foldername.contains(".")) {
             for (String s : urls) {
-                lastIndex = s.indexOf("\\" + view.getFolderName() + "\\");
-                String linshi1 = s.substring(0, lastIndex);
-                int linshilastIndex = linshi1.lastIndexOf("\\");
-                String linshi2 = linshi1.substring(0, linshilastIndex);
-                foldername = StringUtil.subAfterString(linshi2, "\\");
-                break;
+                lastIndex = s.indexOf("/" + view.getFolderName() + "/");
+                if (lastIndex != -1) {
+                    String linshi1 = s.substring(0, lastIndex);
+                    int linshilastIndex = linshi1.lastIndexOf("/");
+                    String linshi2 = linshi1.substring(0, linshilastIndex);
+                    foldername = StringUtil.subAfterString(linshi2, "/");
+                    break;
+                }
             }
             for (String str : urls) {
-                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = str.indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
@@ -224,16 +229,18 @@ public class FileUploadAndDownController {
             }
 
             if (filefoldername != null) {
-                lastIndex = filefoldername.indexOf("\\" + view.getFolderName());
-                String linshi1 = filefoldername.substring(0, lastIndex);
-                int linshilastIndex = linshi1.lastIndexOf("\\");
-                String linshi2 = linshi1.substring(0, linshilastIndex);
-                foldername = StringUtil.subAfterString(linshi2, "\\");
+                lastIndex = filefoldername.indexOf("/" + view.getFolderName());
+                if(lastIndex>0) {
+                    String linshi1 = filefoldername.substring(0, lastIndex);
+                    int linshilastIndex = linshi1.lastIndexOf("/");
+                    String linshi2 = linshi1.substring(0, linshilastIndex);
+                    foldername = StringUtil.subAfterString(linshi2, "/");
+                }
             }
 
             for (String str : urls) {
-                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = str.indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
@@ -297,16 +304,16 @@ public class FileUploadAndDownController {
         //取上二级文件夹名 由下找下一层文件夹或文件
         if (!foldername.contains(".")) {
             for (String s : urls) {
-                lastIndex = s.indexOf("\\" + view.getFolderName() + "\\");
+                lastIndex = s.indexOf("/" + view.getFolderName() + "/");
                 String linshi1 = s.substring(0, lastIndex);
-                int linshilastIndex = linshi1.lastIndexOf("\\");
+                int linshilastIndex = linshi1.lastIndexOf("/");
                 String linshi2 = linshi1.substring(0, linshilastIndex);
-                foldername = StringUtil.subAfterString(linshi2, "\\");
+                foldername = StringUtil.subAfterString(linshi2, "/");
                 break;
             }
             for (String str : urls) {
-                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = str.indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
@@ -327,16 +334,16 @@ public class FileUploadAndDownController {
             }
 
             if (filefoldername != null) {
-                lastIndex = filefoldername.indexOf("\\" + view.getFolderName());
+                lastIndex = filefoldername.indexOf("/" + view.getFolderName());
                 String linshi1 = filefoldername.substring(0, lastIndex);
-                int linshilastIndex = linshi1.lastIndexOf("\\");
+                int linshilastIndex = linshi1.lastIndexOf("/");
                 String linshi2 = linshi1.substring(0, linshilastIndex);
-                foldername = StringUtil.subAfterString(linshi2, "\\");
+                foldername = StringUtil.subAfterString(linshi2, "/");
             }
 
             for (String str : urls) {
-                index = str.indexOf("\\" + foldername + "\\");//字符串第一次出现的位置
-                lastIndex = str.indexOf("\\", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                index = str.indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = str.indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
                     lastIndex = str.length();
                 }
@@ -395,8 +402,8 @@ public class FileUploadAndDownController {
         Integer index = null;
         Integer lastIndex = null;
         for (String s : urls) {
-            index = s.indexOf("\\" + view.getFolderName() + "\\");//字符串第一次出现的位置
-            lastIndex = s.indexOf("\\", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            index = s.indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
+            lastIndex = s.indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
             if (lastIndex == -1) {
                 lastIndex = s.length();
             }
@@ -456,8 +463,8 @@ public class FileUploadAndDownController {
         Integer index = null;
         Integer lastIndex = null;
         for (String s : urls) {
-            index = s.indexOf("\\" + view.getFolderName() + "\\");//字符串第一次出现的位置
-            lastIndex = s.indexOf("\\", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            index = s.indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
+            lastIndex = s.indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
             if (lastIndex == -1) {
                 lastIndex = s.length();
             }
@@ -512,7 +519,7 @@ public class FileUploadAndDownController {
         List<String> newurls = new ArrayList<String>();
         int pointindex = 0;
         for (String str : urls) {
-            pointindex = StringUtils.ordinalIndexOf(str, "\\", 5);
+            pointindex = StringUtils.ordinalIndexOf(str, "/", 4);
             newurls.add(str.substring(pointindex + 1, str.length()));
         }
         List<String> folderOrFiles = new ArrayList<String>();
@@ -521,7 +528,8 @@ public class FileUploadAndDownController {
 
 
         for (String str : newurls) {
-            strarray.add(str.replaceAll("\\\\", "/").split("/"));
+            //strarray.add(str.replaceAll("\\\\", "/").split("/"));
+            strarray.add(str.split("/"));
         }
         for (String[] stra : strarray) {
             folderOrFiles.add(stra[0]);
@@ -609,7 +617,7 @@ public class FileUploadAndDownController {
     }
 
     @RequestMapping(value = "/showcookies")
-    public ModelAndView showcookies(HttpServletRequest request,HttpServletResponse response) {
+    public ModelAndView showcookies(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         String cookievalue = null;
         if (cookies != null) {
@@ -634,19 +642,13 @@ public class FileUploadAndDownController {
      * @return:
      * @describtion
      */
-    @ResponseBody
+
+    @ResponseBody  //调用迅雷接口方法代码  02-15 12：00
     @RequestMapping(value = "/downloadfileorfolderforzip")
-    public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
-        ModelAndView mav = new ModelAndView("mainindex");
-        Cookie[] cookies = request.getCookies();
-        // 迭代查找并清除Cookie
-        for (Cookie cookie: cookies) {
-            if ("ccc".equals(cookie.getName())) {
-                cookie.setValue(null);
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-            }
-        }
+    public void downloadFileOrFolderForZip( @RequestBody(required = true) DownloadView view,HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+        String orderno = view.getOrderNo();
+        String check_val = view.getCheck_val()[0];
+        List<String> urlsDown = new ArrayList<String>();
         try {
             UserInfo info = (UserInfo) session.getAttribute("account");
             String[] fileFoldersName = null;
@@ -657,8 +659,6 @@ public class FileUploadAndDownController {
                 singfileName = check_val;
             }
             //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
-            DownloadView view = new DownloadView();
-            view.setOrderNo(orderno);
             if (orderno == "" || orderno.trim().length() == 0) {
                 view.setOrderNoMessage(check_val);
             }
@@ -672,12 +672,14 @@ public class FileUploadAndDownController {
                         if (fileFoldersName[i].contains(".")) {//代表是文件
                             index = urlsAll.get(j).indexOf(fileFoldersName[i]);
                             if (index > 0) {
+                                urlsDown.add(urlsAll.get(j));
                                 file = new File(urlsAll.get(j));
                                 fileList.add(file);
                             }
                         } else {//以下为文件夹
-                            index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+                            index = urlsAll.get(j).indexOf("/" + fileFoldersName[i] + "/");
                             if (index > 0) {
+                                urlsDown.add(urlsAll.get(j));
                                 file = new File(urlsAll.get(j));
                                 fileList.add(file);
                             }
@@ -688,8 +690,9 @@ public class FileUploadAndDownController {
                 if (singfileName != null) {
                     if (!singfileName.contains(",")) {
                         for (int a = 0; a < urlsAll.size(); a++) {
-                            index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+                            index = urlsAll.get(a).indexOf("/" + singfileName + "/");
                             if (index > 0) {
+                                urlsDown.add(urlsAll.get(a));
                                 file = new File(urlsAll.get(a));
                                 fileList.add(file);
                             }
@@ -700,109 +703,565 @@ public class FileUploadAndDownController {
             boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
             if (!isLarge) {
                 view.setFlag("-1");//文件太大
-                mav.addObject("view", view);
-                return mav;
             }
             if (fileList.size() > 200) {//代表文件超过200个
-                view.setFlag("-2");
-                mav.addObject("view", view);
                 view.setFlag("-369");
-                mav.addObject("view", view);
-                return mav;
             }
-            if (fileList.size() == 0) {//单个文件下载,不压缩
-                response.setHeader("content-type", "application/octet-stream");
-                Cookie cookie = new Cookie("ccc", "111");
-                cookie.setPath("/");
-                cookie.setMaxAge(3600 * 24);
-                response.addCookie(cookie);
-                response.setContentType("application/octet-stream");
-                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
-                view.setFlag("-369");
-                byte[] buff = new byte[1024];
-                BufferedInputStream bufferedInputStream = null;
-                OutputStream outputStream = null;
-                try {
-                    outputStream = response.getOutputStream();
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+        String str = null;
+        urlsDown.add(view.getFlag());
+        if (urlsDown != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(urlsDown);
 
-                    file = new File(urlsAll.get(0));
-                    FileInputStream fis = new FileInputStream(file);
-                    bufferedInputStream = new BufferedInputStream(fis);
-                    int num = bufferedInputStream.read(buff);
-                    while (num != -1) {
-                        outputStream.write(buff, 0, num);
-                        outputStream.flush();
-                        num = bufferedInputStream.read(buff);
-                    }
-                    outputStream.close();
-                    bufferedInputStream.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
-                } finally {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                    if (bufferedInputStream != null) {
-                        bufferedInputStream.close();
-                    }
-                }
-            } else {
-                //step2 压缩
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-                ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
-                if (orderno == "" || orderno.trim().length() == 0) {
-                    orderno = check_val.replaceAll(",", "");
-                }
-                String zipName = orderno + ".zip";
-                String outFilePath = request.getSession().getServletContext().getRealPath("/");
-                File fileZip = new File(outFilePath + zipName);
-                FileOutputStream outStream = new FileOutputStream(fileZip);
-                ZipOutputStream toClient = new ZipOutputStream(outStream);
-                view.setFlag("-369");
-                try {
-                    IOUtil.zipFile(fileList, toClient);
-                    if(toClient!=null) {
-                        toClient.close();
-                    }
-                    if(outStream!=null) {
-                        outStream.close();
-                    }
-                    //step3 返回消息 完成
-                    IOUtil.downloadFile(fileZip, response, true);
-                    //单个文件下载
-                    /**
-                     for (int i = 0; i < fileList.size(); i++) {
-                     String curpath = fileList.get(i).getPath();//获取文件路径
-                     iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
-
-                     String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
-                     headers.setContentDispositionFormData("attachment", fileName);
-                     return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
-                     headers, HttpStatus.OK);
-                     }
-                     **/
-
-                } catch (Exception e) {
-                    System.out.println("系统异常,请从新录入!");
-                    e.printStackTrace();
-                } finally {
-                    if (toClient != null) {
-                        toClient.close();
-                    }
-                    if (outStream != null) {
-                        outStream.close();
-                    }
-                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
             }
-            mav.addObject("view", view);
-            return mav;
-        } catch (Exception e) {
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            return mav;
         }
     }
+
+
+//    @ResponseBody
+//    @RequestMapping(value = "/downloadfileorfolderforzip")
+//    public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+//        ModelAndView mav = new ModelAndView("mainindex");
+//        Cookie[] cookies = request.getCookies();
+//        // 迭代查找并清除Cookie
+//        for (Cookie cookie : cookies) {
+//            if ("ccc".equals(cookie.getName())) {
+//                cookie.setValue(null);
+//                cookie.setMaxAge(0);
+//                response.addCookie(cookie);
+//            }
+//        }
+//        try {
+//            UserInfo info = (UserInfo) session.getAttribute("account");
+//            String[] fileFoldersName = null;
+//            String singfileName = null;
+//            if (check_val.contains(",")) {
+//                fileFoldersName = check_val.split(",");//文件或文件夹名
+//            } else {
+//                singfileName = check_val;
+//            }
+//            //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
+//            DownloadView view = new DownloadView();
+//            view.setOrderNo(orderno);
+//            if (orderno == "" || orderno.trim().length() == 0) {
+//                view.setOrderNoMessage(check_val);
+//            }
+//            List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//            List<File> fileList = new ArrayList<File>();
+//            File file = null;
+//            int index = 0;
+//            if (fileFoldersName != null) {
+//                for (int i = 0; i < fileFoldersName.length; i++) {
+//                    for (int j = 0; j < urlsAll.size(); j++) {
+//                        if (fileFoldersName[i].contains(".")) {//代表是文件
+//                            index = urlsAll.get(j).indexOf(fileFoldersName[i]);
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        } else {//以下为文件夹
+//                            index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (singfileName != null) {
+//                    if (!singfileName.contains(",")) {
+//                        for (int a = 0; a < urlsAll.size(); a++) {
+//                            index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(a));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
+//            if (!isLarge) {
+//                view.setFlag("-1");//文件太大
+//                mav.addObject("view", view);
+//                return mav;
+//            }
+//            if (fileList.size() > 200) {//代表文件超过200个
+//                view.setFlag("-2");
+//                mav.addObject("view", view);
+//                view.setFlag("-369");
+//                mav.addObject("view", view);
+//                return mav;
+//            }
+//            if (fileList.size() == 0) {//单个文件下载,不压缩
+//                response.setHeader("content-type", "application/octet-stream");
+//                Cookie cookie = new Cookie("ccc", "111");
+//                cookie.setPath("/");
+//                cookie.setMaxAge(3600 * 24);
+//                response.addCookie(cookie);
+//                response.setContentType("application/octet-stream");
+//                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
+//                view.setFlag("-369");
+//                byte[] buff = new byte[1024];
+//                BufferedInputStream bufferedInputStream = null;
+//                OutputStream outputStream = null;
+//                try {
+//                    outputStream = response.getOutputStream();
+//
+//                    file = new File(urlsAll.get(0));
+//                    FileInputStream fis = new FileInputStream(file);
+//                    bufferedInputStream = new BufferedInputStream(fis);
+//                    int num = bufferedInputStream.read(buff);
+//                    while (num != -1) {
+//                        outputStream.write(buff, 0, num);
+//                        outputStream.flush();
+//                        num = bufferedInputStream.read(buff);
+//                    }
+//                    outputStream.close();
+//                    bufferedInputStream.close();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e.getMessage());
+//                } finally {
+//                    if (outputStream != null) {
+//                        outputStream.close();
+//                    }
+//                    if (bufferedInputStream != null) {
+//                        bufferedInputStream.close();
+//                    }
+//                }
+//            } else {
+//                //step2 压缩
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//                ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+//                if (orderno == "" || orderno.trim().length() == 0) {
+//                    orderno = check_val.replaceAll(",", "");
+//                }
+//                String zipName = orderno + ".zip";
+//                String outFilePath = request.getSession().getServletContext().getRealPath("/");
+//                File fileZip = new File(outFilePath + zipName);
+//                FileOutputStream outStream = new FileOutputStream(fileZip);
+//                ZipOutputStream toClient = new ZipOutputStream(outStream);
+//                view.setFlag("-369");
+//                try {
+//                    IOUtil.zipFile(fileList, toClient);
+//                    if (toClient != null) {
+//                        toClient.close();
+//                    }
+//                    if (outStream != null) {
+//                        outStream.close();
+//                    }
+//                    //step3 返回消息 完成
+//                    IOUtil.downloadFile(fileZip, response, true);
+//                    //单个文件下载
+//                    /**
+//                     for (int i = 0; i < fileList.size(); i++) {
+//                     String curpath = fileList.get(i).getPath();//获取文件路径
+//                     iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
+//
+//                     String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
+//                     headers.setContentDispositionFormData("attachment", fileName);
+//                     return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
+//                     headers, HttpStatus.OK);
+//                     }
+//                     **/
+//
+//                } catch (Exception e) {
+//                    System.out.println("系统异常,请从新录入!");
+//                    e.printStackTrace();
+//                } finally {
+//                    if (toClient != null) {
+//                        toClient.close();
+//                    }
+//                    if (outStream != null) {
+//                        outStream.close();
+//                    }
+//                }
+//            }
+//            mav.addObject("view", view);
+//            return mav;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            return mav;
+//        }
+//    }
+
+
+//    //多线程分段下载
+//    @ResponseBody
+//    @RequestMapping(value = "/downloadfileorfolderforzip", method = RequestMethod.GET)
+//    public ResponseEntity<String> downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request, ModelMap model) throws Exception {
+//        Cookie[] cookies = request.getCookies();
+//        // 迭代查找并清除Cookie
+//        for (Cookie cookie : cookies) {
+//            if ("ccc".equals(cookie.getName())) {
+//                cookie.setValue(null);
+//                cookie.setMaxAge(0);
+//                response.addCookie(cookie);
+//            }
+//        }
+//        try {
+//            UserInfo info = (UserInfo) session.getAttribute("account");
+//            String[] fileFoldersName = null;
+//            String singfileName = null;
+//            if (check_val.contains(",")) {
+//                fileFoldersName = check_val.split(",");//文件或文件夹名
+//            } else {
+//                singfileName = check_val;
+//            }
+//            //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
+//            DownloadView view = new DownloadView();
+//            view.setOrderNo(orderno);
+//            if (orderno == "" || orderno.trim().length() == 0) {
+//                view.setOrderNoMessage(check_val);
+//            }
+//            List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//            List<File> fileList = new ArrayList<File>();
+//            File file = null;
+//            int index = 0;
+//            if (fileFoldersName != null) {
+//                for (int i = 0; i < fileFoldersName.length; i++) {
+//                    for (int j = 0; j < urlsAll.size(); j++) {
+//                        if (fileFoldersName[i].contains(".")) {//代表是文件
+//                            index = urlsAll.get(j).indexOf(fileFoldersName[i]);
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        } else {//以下为文件夹
+//                            index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (singfileName != null) {
+//                    if (!singfileName.contains(",")) {
+//                        for (int a = 0; a < urlsAll.size(); a++) {
+//                            index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(a));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
+//            if (!isLarge) {
+//                view.setFlag("-1");//文件太大
+//            }
+//            if (fileList.size() > 200) {//代表文件超过200个
+//                view.setFlag("-369");
+//            }
+//            if (fileList.size() == 0) {//单个文件下载,不压缩
+//                response.setHeader("content-type", "application/octet-stream");
+//                Cookie cookie = new Cookie("ccc", "111");
+//                cookie.setPath("/");
+//                cookie.setMaxAge(3600 * 24);
+//                response.addCookie(cookie);
+//                response.setContentType("application/octet-stream");
+//                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
+//                view.setFlag("-369");
+//                byte[] buff = new byte[1024];
+//                BufferedInputStream bufferedInputStream = null;
+//                OutputStream outputStream = null;
+//                try {
+//                    outputStream = response.getOutputStream();
+//
+//                    file = new File(urlsAll.get(0));
+//                    FileInputStream fis = new FileInputStream(file);
+//                    bufferedInputStream = new BufferedInputStream(fis);
+//                    int num = bufferedInputStream.read(buff);
+//                    while (num != -1) {
+//                        outputStream.write(buff, 0, num);
+//                        outputStream.flush();
+//                        num = bufferedInputStream.read(buff);
+//                    }
+//                    outputStream.close();
+//                    bufferedInputStream.close();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e.getMessage());
+//                } finally {
+//                    if (outputStream != null) {
+//                        outputStream.close();
+//                    }
+//                    if (bufferedInputStream != null) {
+//                        bufferedInputStream.close();
+//                    }
+//                }
+//            } else {
+//                //step2 压缩
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//                ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+//                if (orderno == "" || orderno.trim().length() == 0) {
+//                    orderno = check_val.replaceAll(",", "");
+//                }
+//                String zipName = orderno + ".zip";
+//                String outFilePath = request.getSession().getServletContext().getRealPath("/");
+//                File fileZip = new File(outFilePath + zipName);
+//                FileOutputStream outStream = new FileOutputStream(fileZip);
+//                ZipOutputStream toClient = new ZipOutputStream(outStream);
+//                view.setFlag("-369");
+//                try {
+//                    IOUtil.zipFile(fileList, toClient);
+//                    if (toClient != null) {
+//                        toClient.close();
+//                    }
+//                    if (outStream != null) {
+//                        outStream.close();
+//                    }
+//                    //step3 返回消息 完成
+//                    InputStream inputStream = null;
+//                    ServletOutputStream out = null;
+//                    String odexName = "file.apk";
+//                    try {
+//                        int fSize = Integer.parseInt(String.valueOf(file.length()));
+//                        response.setCharacterEncoding("utf-8");
+//                        response.setContentType("application/x-download");
+//                        response.setHeader("Accept-Ranges", "bytes");
+//                        response.setHeader("Content-Length", String.valueOf(fSize));
+//                        response.setHeader("Content-Disposition", "attachment;fileName=" + zipName);
+//                        inputStream = new FileInputStream(outFilePath+zipName);
+//                        long pos = 0;
+//                        if (null != request.getHeader("Range")) { // 断点续传
+//                            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+//                            try {
+//                                pos = Long.parseLong(request.getHeader("Range").replaceAll("bytes=", "").replaceAll("-", ""));
+//                            } catch (NumberFormatException e) {
+//                                pos = 0;
+//                            }
+//                        }
+//                        out = response.getOutputStream();
+//                        response.setHeader("Content-Range", new StringBuffer("bytes ").append(pos + "").append("-").append((fSize - 1) + "").append("/").append(fSize + "").toString());
+//                        inputStream.skip(pos);
+//                        byte[] buffer = new byte[1024 * 10];
+//                        int length = 0;
+//                        while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {
+//                            out.write(buffer, 0, length);
+//                            Thread.sleep(100);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    } finally {
+//                        try {
+//                            if (null != out) out.flush();
+//                            if (null != out) out.close();
+//                            if (null != inputStream) inputStream.close();
+//                        } catch (IOException e) {
+//                        }
+//                    }
+//
+//                    IOUtil.downloadFileByCut(fileZip, true);
+//                } catch (Exception e) {
+//                    System.out.println("系统异常,请从新录入!");
+//                    e.printStackTrace();
+//                } finally {
+//                    if (toClient != null) {
+//                        toClient.close();
+//                    }
+//                    if (outStream != null) {
+//                        outStream.close();
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity(null, HttpStatus.OK);
+//    }
+
+
+
+//    @ResponseBody   原始下载方法  压缩--下载
+//    @RequestMapping(value = "/downloadfileorfolderforzip")
+//    public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+//        ModelAndView mav = new ModelAndView("mainindex");
+//        Cookie[] cookies = request.getCookies();
+//        // 迭代查找并清除Cookie
+//        for (Cookie cookie: cookies) {
+//            if ("ccc".equals(cookie.getName())) {
+//                cookie.setValue(null);
+//                cookie.setMaxAge(0);
+//                response.addCookie(cookie);
+//            }
+//        }
+//        try {
+//            UserInfo info = (UserInfo) session.getAttribute("account");
+//            String[] fileFoldersName = null;
+//            String singfileName = null;
+//            if (check_val.contains(",")) {
+//                fileFoldersName = check_val.split(",");//文件或文件夹名
+//            } else {
+//                singfileName = check_val;
+//            }
+//            //step1 根据订单号和所勾选要下载的文件或文件夹名，找到URL
+//            DownloadView view = new DownloadView();
+//            view.setOrderNo(orderno);
+//            if (orderno == "" || orderno.trim().length() == 0) {
+//                view.setOrderNoMessage(check_val);
+//            }
+//            List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//            List<File> fileList = new ArrayList<File>();
+//            File file = null;
+//            int index = 0;
+//            if (fileFoldersName != null) {
+//                for (int i = 0; i < fileFoldersName.length; i++) {
+//                    for (int j = 0; j < urlsAll.size(); j++) {
+//                        if (fileFoldersName[i].contains(".")) {//代表是文件
+//                            index = urlsAll.get(j).indexOf(fileFoldersName[i]);
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        } else {//以下为文件夹
+//                            index = urlsAll.get(j).indexOf("\\" + fileFoldersName[i] + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(j));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (singfileName != null) {
+//                    if (!singfileName.contains(",")) {
+//                        for (int a = 0; a < urlsAll.size(); a++) {
+//                            index = urlsAll.get(a).indexOf("\\" + singfileName + "\\");
+//                            if (index > 0) {
+//                                file = new File(urlsAll.get(a));
+//                                fileList.add(file);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            boolean isLarge = FileUtil.checkDownloadFileSize(fileList, 2, "G");
+//            if (!isLarge) {
+//                view.setFlag("-1");//文件太大
+//                mav.addObject("view", view);
+//                return mav;
+//            }
+//            if (fileList.size() > 200) {//代表文件超过200个
+//                view.setFlag("-2");
+//                mav.addObject("view", view);
+//                view.setFlag("-369");
+//                mav.addObject("view", view);
+//                return mav;
+//            }
+//            if (fileList.size() == 0) {//单个文件下载,不压缩
+//                response.setHeader("content-type", "application/octet-stream");
+//                Cookie cookie = new Cookie("ccc", "111");
+//                cookie.setPath("/");
+//                cookie.setMaxAge(3600 * 24);
+//                response.addCookie(cookie);
+//                response.setContentType("application/octet-stream");
+//                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
+//                view.setFlag("-369");
+//                byte[] buff = new byte[1024];
+//                BufferedInputStream bufferedInputStream = null;
+//                OutputStream outputStream = null;
+//                try {
+//                    outputStream = response.getOutputStream();
+//
+//                    file = new File(urlsAll.get(0));
+//                    FileInputStream fis = new FileInputStream(file);
+//                    bufferedInputStream = new BufferedInputStream(fis);
+//                    int num = bufferedInputStream.read(buff);
+//                    while (num != -1) {
+//                        outputStream.write(buff, 0, num);
+//                        outputStream.flush();
+//                        num = bufferedInputStream.read(buff);
+//                    }
+//                    outputStream.close();
+//                    bufferedInputStream.close();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e.getMessage());
+//                } finally {
+//                    if (outputStream != null) {
+//                        outputStream.close();
+//                    }
+//                    if (bufferedInputStream != null) {
+//                        bufferedInputStream.close();
+//                    }
+//                }
+//            } else {
+//                //step2 压缩
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//                ArrayList<String> iconNameList = new ArrayList<String>();//返回文件名数组
+//                if (orderno == "" || orderno.trim().length() == 0) {
+//                    orderno = check_val.replaceAll(",", "");
+//                }
+//                String zipName = orderno + ".zip";
+//                String outFilePath = request.getSession().getServletContext().getRealPath("/");
+//                File fileZip = new File(outFilePath + zipName);
+//                FileOutputStream outStream = new FileOutputStream(fileZip);
+//                ZipOutputStream toClient = new ZipOutputStream(outStream);
+//                view.setFlag("-369");
+//                try {
+//                    IOUtil.zipFile(fileList, toClient);
+//                    if(toClient!=null) {
+//                        toClient.close();
+//                    }
+//                    if(outStream!=null) {
+//                        outStream.close();
+//                    }
+//                    //step3 返回消息 完成
+//                    IOUtil.downloadFile(fileZip, response, true);
+//                    //单个文件下载
+//                    /**
+//                     for (int i = 0; i < fileList.size(); i++) {
+//                     String curpath = fileList.get(i).getPath();//获取文件路径
+//                     iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
+//
+//                     String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
+//                     headers.setContentDispositionFormData("attachment", fileName);
+//                     return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
+//                     headers, HttpStatus.OK);
+//                     }
+//                     **/
+//
+//                } catch (Exception e) {
+//                    System.out.println("系统异常,请从新录入!");
+//                    e.printStackTrace();
+//                } finally {
+//                    if (toClient != null) {
+//                        toClient.close();
+//                    }
+//                    if (outStream != null) {
+//                        outStream.close();
+//                    }
+//                }
+//            }
+//            mav.addObject("view", view);
+//            return mav;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            return mav;
+//        }
+//    }
 
     /**
      * 功能描述:跳转管理页面
@@ -882,8 +1341,9 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password, int currentPage, HttpServletRequest
-            request) throws Exception {
+    public ModelAndView goPrivilegeManagePage(String userName, String password,
+                                              int currentPage, HttpServletRequest
+                                                      request) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
@@ -984,7 +1444,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/showfileurldiv", method = RequestMethod.POST)
-    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws
+    public void showFileUrlDiv(@RequestBody DownloadView view, HttpSession session, HttpServletResponse
+            response) throws
             Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
@@ -1022,8 +1483,9 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
-    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse
-            response) throws Exception {
+    public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession
+            session, HttpServletResponse
+                                                 response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
@@ -1032,7 +1494,7 @@ public class FileUploadAndDownController {
         List<String> newurls = new ArrayList<String>();
         int pointindex = 0;
         for (String str : urls) {
-            pointindex = StringUtils.ordinalIndexOf(str, "\\", 5);
+            pointindex = StringUtils.ordinalIndexOf(str, "/", 4);
             newurls.add(str.substring(pointindex + 1, str.length()));
         }
         List<String> folderOrFiles = new ArrayList<String>();
@@ -1041,7 +1503,8 @@ public class FileUploadAndDownController {
 
 
         for (String str : newurls) {
-            strarray.add(str.replaceAll("\\\\", "/").split("/"));
+            //strarray.add(str.replaceAll("\\\\", "/").split("/"));
+            strarray.add(str.split("/"));
         }
         for (String[] stra : strarray) {
             folderOrFiles.add(stra[0]);
@@ -1108,7 +1571,8 @@ public class FileUploadAndDownController {
     //多文件上传
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ModelAndView toFileUpAndDownPage(HttpSession session, @ModelAttribute(value = "view") DownloadView view,
+    public ModelAndView toFileUpAndDownPage(HttpSession session, @ModelAttribute(value = "view") DownloadView
+            view,
                                             @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
         List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -1151,7 +1615,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest request) throws
+    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest
+            request) throws
             Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
         DownloadView view = new DownloadView();
@@ -1213,8 +1678,9 @@ public class FileUploadAndDownController {
     //文件夹更新
     @ResponseBody
     @RequestMapping(value = "/modifypagefolder", method = RequestMethod.POST)
-    public ModelAndView modifyPageFolder(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView
-            view, HttpSession session) throws Exception {
+    public ModelAndView modifyPageFolder(HttpServletRequest
+                                                 request, @ModelAttribute(value = "view") DownloadView
+                                                 view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
         List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
@@ -1305,8 +1771,9 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
-    public ModelAndView saveFolderFiles(HttpServletRequest request, @ModelAttribute(value = "view") DownloadView
-            view, HttpSession session) throws Exception {
+    public ModelAndView saveFolderFiles(HttpServletRequest
+                                                request, @ModelAttribute(value = "view") DownloadView
+                                                view, HttpSession session) throws Exception {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setBufferRequestBody(false);
         RestTemplate rest = new RestTemplate(requestFactory);

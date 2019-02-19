@@ -23,6 +23,7 @@ public class DownloadView implements Serializable {
     private String fileName; //文件名称
     private String salor;//业务员
     private String orderNo;//订单编号
+    private String[] check_val;
     private String projectName;//项目名称
     private String lastUpdateTime;
     private String createTime;//上传时间
@@ -60,6 +61,14 @@ public class DownloadView implements Serializable {
     private String oprighter;//权限人
     private String folderName;
     private  String saveFolderName;
+
+    public String[] getCheck_val() {
+        return check_val;
+    }
+
+    public void setCheck_val(String[] check_val) {
+        this.check_val = check_val;
+    }
 
     public String getSaveFolderName() {
         return saveFolderName;
