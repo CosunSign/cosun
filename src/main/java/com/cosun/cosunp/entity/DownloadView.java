@@ -30,9 +30,10 @@ public class DownloadView implements Serializable {
     private Integer totalUpdateNum;
     private String opRight; //操作权限
     private String urlAddr;
-    private String seePrivilege; //查看权限  1
-    private String updatePrivilege; //修改权限  2
-    private String cancelPrivilege; //取消权限  3
+    private String uploadPrivilege; //上传权限  1
+    private String updatePrivilege; //更新权限  2
+    private String downloadPrivilege;//下载权限
+    private String deletePrivilege; //删除权限  3
     private String flag;
     private String remark;//备注
     private String filedescribtion;//文件说明
@@ -42,6 +43,7 @@ public class DownloadView implements Serializable {
     private Integer isExistNum;
     private String modifyReason;
     private Integer fileRightId;
+    private String folderOrFileName;
     private Date upTime;
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -60,10 +62,36 @@ public class DownloadView implements Serializable {
     private String privilegeusers;
     private String oprighter;//权限人
     private String folderName;
+    private List<String> orderNoS;
     private  String saveFolderName;
+    private String linshiId;
+
+    public String getLinshiId() {
+        return linshiId;
+    }
+
+    public void setLinshiId(String linshiId) {
+        this.linshiId = linshiId;
+    }
 
     public String[] getCheck_val() {
         return check_val;
+    }
+
+    public String getFolderOrFileName() {
+        return folderOrFileName;
+    }
+
+    public void setFolderOrFileName(String folderOrFileName) {
+        this.folderOrFileName = folderOrFileName;
+    }
+
+    public List<String> getOrderNoS() {
+        return orderNoS;
+    }
+
+    public void setOrderNoS(List<String> orderNoS) {
+        this.orderNoS = orderNoS;
     }
 
     public void setCheck_val(String[] check_val) {
@@ -325,15 +353,37 @@ public class DownloadView implements Serializable {
         this.password = password;
     }
 
-    public String getSeePrivilege() {
-        if(opRight!=null && opRight.trim().length()>0 && opRight.contains("1")) {
+    public String getUploadPrivilege() {
+        if (opRight != null && opRight.trim().length() > 0 && opRight.contains("1")) {
             return "1";
         }
-        return seePrivilege;
+        return uploadPrivilege;
     }
 
-    public void setSeePrivilege(String seePrivilege) {
-        this.seePrivilege = seePrivilege;
+    public void setUploadPrivilege(String uploadPrivilege) {
+        this.uploadPrivilege = uploadPrivilege;
+    }
+
+    public String getDownloadPrivilege() {
+        if (opRight != null && opRight.trim().length() > 0 && opRight.contains("3")) {
+            return "3";
+        }
+        return downloadPrivilege;
+    }
+
+    public void setDownloadPrivilege(String downloadPrivilege) {
+        this.downloadPrivilege = downloadPrivilege;
+    }
+
+    public String getDeletePrivilege() {
+        if (opRight != null && opRight.trim().length() > 0 && opRight.contains("4")) {
+            return "4";
+        }
+        return deletePrivilege;
+    }
+
+    public void setDeletePrivilege(String deletePrivilege) {
+        this.deletePrivilege = deletePrivilege;
     }
 
     public String getUpdatePrivilege() {
@@ -348,16 +398,6 @@ public class DownloadView implements Serializable {
         this.updatePrivilege = updatePrivilege;
     }
 
-    public String getCancelPrivilege() {
-        if(opRight!=null && opRight.trim().length()>0 && opRight.contains("3")) {
-            return "3";
-        }
-        return cancelPrivilege;
-    }
-
-    public void setCancelPrivilege(String cancelPrivilege) {
-        this.cancelPrivilege = cancelPrivilege;
-    }
 
     public String getCreateTime() {
         return createTime;

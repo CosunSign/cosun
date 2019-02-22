@@ -43,6 +43,8 @@
             alert("您单次要下单的文件个数已超过200个,不能超过200个.");
         } else if (flag == "-369") {
             $("#some-element").busyLoad("hide");//遮罩层关闭
+        } else if(flag == "-258") {
+           alert("您要下载的文件没有权限,可联系上级帮你申请!")
         }
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
@@ -179,13 +181,13 @@
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
                             }
-                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                            folderhtml += "<li><input   type=\"checkbox\"   th:value=\""+ data[num]+"\" id='" + data[num] + "' name=\"downloadlist\">" +
                                 " <img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+data[num]+"' name=\"downloadlist\">" + data[num] + "</li>";
                             if (cominone2 == 0) {//代表没有文件夹
                                 $("#foldername").val(data[num]);
                             }
@@ -243,14 +245,14 @@
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             $("#foldername").val(data[num]);
 
-                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" +
+                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+data[num]+"' name=\"downloadlist\">" +
                                 " <img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
 
                         } else {//代表为文件
-                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+data[num]+"' name=\"downloadlist\">" + data[num] + "</li>";
                             if (cominone == 0) {
                                 $("#foldername").val(data[num]);
                             }
@@ -303,12 +305,12 @@
                         if (reg.test(data[num])) {
                             $("#backfolder").attr("disabled", "disabled");
                         }
-                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num] + " name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
+                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num] + " id='"+data[num]+"' name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
                             " align=\"middle\" border=\"0\"  value=" + data[num] + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         cominone2 = 1;
                     } else {//代表为文件
-                        fileshtml += "<li><input type=\"checkbox\" value=" + data[num] + " name=\"downloadlist\">" + data[num] + "</li>";
+                        fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+ data[num]+"'  name=\"downloadlist\">" + data[num] + "</li>";
                         if (cominone2 == 0) {//代表没有文件夹
                             $("#foldername").val(data[num]);
                         }
@@ -462,15 +464,28 @@
         return result[len-1];
     }
 
+
     function downloadBySelect() {
+        var reg1 = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g)
         //以下为勾选后,进行下载功能实现
         //第一步,获取勾取的所属订单号值和当前的flderName或fileName
         var obj = document.getElementsByName("downloadlist");
-        var check_val = [];
+        var checkval = [];
         var isChecked = 0;
+        var orderNo  = "";
         for (k in obj) {
+            var value={orderNo:'',folderOrFileName:''};
             if (obj[k].checked) {
-                check_val.push(obj[k].value);
+                if (reg1.test(obj[k].id)) {
+                    reg1 = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g)
+                    orderNo = obj[k].id;
+                    value["orderNo"]=orderNo;
+                }else{
+                    orderNo = $("#orderno").val();
+                    value["orderNo"]=orderNo;
+                }
+                value["folderOrFileName"]=obj[k].value;
+                checkval.push(value);
                 isChecked = 1;
             }
         }
@@ -479,15 +494,16 @@
             return false;
         }
         var orderno = $("#orderno").val();
+        alert(checkval)
 
         //第二步,向后台发送消息
         //$("#some-element").busyLoad("show");//遮罩层开启
         //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
         var jsonarray = {
             "orderNo": orderno, //订单编号
-            "check_val": check_val
+            "check_val": checkval
         };
-        var data = JSON.stringify(jsonarray);
+        var data = JSON.stringify(checkval);
         var urlstrArr = [];
         $.ajax({
             data: data,
@@ -840,9 +856,9 @@
                         <div id="innerfolderdiv">
                             <table>
                                 <div th:unless="${#lists.isEmpty(orderNumFolders)}">
-                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}" align="center">
+                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}"  align="center">
                                         <td>
-                                            <input type="checkbox" th:value="${folderName}" name="downloadlist">
+                                            <input type="checkbox" th:value="${folderName}"  th:id="${folderName}" name="downloadlist">
                                             <img src="/images/icon/Folder.png" align="middle" border="0"
                                                  th:value="${folderName}" ondblclick="shownextfolderorfiles(this)"
                                                  style="width: 30px; height: 30px; vertical-align: middle"

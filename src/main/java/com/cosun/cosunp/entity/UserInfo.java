@@ -11,6 +11,15 @@ public class UserInfo implements Serializable {
     private String userPwd;
     private Integer userActor;//角色
     private Integer type; //type是不同的权限配置
+    private Integer useruploadright;//上传权限  0代表没有  默认1代表有
+
+    public Integer getUseruploadright() {
+        return useruploadright;
+    }
+
+    public void setUseruploadright(Integer useruploadright) {
+        this.useruploadright = useruploadright;
+    }
 
     public Integer getuId() {
         return uId;

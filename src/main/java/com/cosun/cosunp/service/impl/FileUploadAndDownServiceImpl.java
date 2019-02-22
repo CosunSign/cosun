@@ -39,81 +39,74 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     @Override
-    public void saveOrUpdateFilePrivilege(List<String> userList, Integer fileurlid, String privileflag, UserInfo info, String oprighter) throws Exception {
-        FilemanRight fr = null;
+    public void saveOrUpdateFilePrivilege(List<DownloadView> views, List<String> privilegeusers, UserInfo in) throws Exception {
         DownloadView view = null;
         List<UserInfo> uis = null;
-        FileManFileInfo fileManFileInfo = null;
-        fr = fileUploadAndDownMapper.findFileRightById(fileurlid);
-        if (userList.size() > 1) {//存的是多个用户
-            for (String user : userList) {
-                if (fr != null) {
-                    fileManFileInfo = fileUploadAndDownMapper.getFileManFileInfoByInfoId(fr.getFileInfoId());
-                    view = fileUploadAndDownMapper.findFielRightFileByUidOrderNoSalorFileName(fr.getFileName(), fileManFileInfo.getExtInfo1(), fileManFileInfo.getOrderNum(), Integer.valueOf(user));
-                    if (view != null) {
-                        if (privileflag == "") {
-                            fileUploadAndDownMapper.deleteFileRightPrivileg(view.getFileRightId());
+        FileManFileInfo info = null;
+        FilemanRight right = null;
+        FilemanUrl url = null;
+        List<FilemanUrl> urls = null;
+        for (DownloadView vi : views) {
+            info = fileUploadAndDownMapper.getFileInfoByOrderNo(vi.getOrderNo());
+            for (String operrighter : privilegeusers) {
+                if (vi.getFolderOrFileName().contains(",")) {//代表是文件名
+                    right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid(info.getId(), vi.getFolderOrFileName(), Integer.valueOf(operrighter));
+                    //如果RIGHT为空,代表是RIGHT表中无数据,需要新增一条数据
+                    if (right == null) {
+                        //url = fileUploadAndDownMapper.getFileManUrlByFileInfoIdandFileName(right.getId(),vi.getFolderOrFileName());
+                        if ( vi.getOpRight().trim().length() > 0) {
+                            right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid2(info.getId(), vi.getFolderOrFileName());
+                            right.setOpRight(vi.getOpRight());
+                            right.setuId(Integer.valueOf(operrighter));
+                            fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
+                            fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
+                        }
+                    } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
+                        if (vi.getOpRight() == null || vi.getOpRight() == "") {
+                            fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
+                            fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
                         } else {
-                            fileUploadAndDownMapper.updateFileRightPrivileg(Integer.valueOf(user), fileurlid, privileflag, info.getUserName(), new Date());
+                            if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
+                                right.setOpRight(vi.getOpRight());
+                                right.setUpdateUser(in.getUserName());
+                                right.setUpdateTime(new Date());
+                                fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
+                            }
                         }
-                    } else {
-                        if (privileflag != "") {
-                            fileUploadAndDownMapper.saveFileRightPrivileg(Integer.valueOf(user), fileurlid, privileflag, info.getUserName(), new Date(), fr.getFileInfoId(), fr.getFileName());
-                        }
+
                     }
-                } else {
-                    fr = fileUploadAndDownMapper.findFileRightById(fileurlid);
-                    if (privileflag != "") {
-                        fileUploadAndDownMapper.saveFileRightPrivileg(Integer.valueOf(user), fileurlid, privileflag, info.getUserName(), new Date(), fr.getFileInfoId(), fr.getFileName());
+                } else {//代表是文件夹
+                    urls = fileUploadAndDownMapper.getFileManUrlByFileInfoId(info.getId());
+                    for (FilemanUrl u : urls) {
+                        if (u.getLogur1().indexOf("/" + vi.getFolderOrFileName() + "/") > -1) {//查询地址中有无选中的文件夹
+                            right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileRightIdandUid(info.getId(), u.getId(), Integer.valueOf(operrighter));
+                            if (right == null) {
+                                if ( vi.getOpRight().trim().length() > 0) {
+                                    right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileUrlId(info.getId(), u.getId());
+                                    right.setOpRight(vi.getOpRight());
+                                    right.setuId(Integer.valueOf(operrighter));
+                                    fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
+                                    fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
+                                }
+                            } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
+                                if (vi.getOpRight() == null || vi.getOpRight() == "") {
+                                    fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
+                                    fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
+                                } else {
+                                    if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
+                                        right.setOpRight(vi.getOpRight());
+                                        right.setUpdateUser(in.getUserName());
+                                        right.setUpdateTime(new Date());
+                                        fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
+                                    }
+                                }
+
+                            }
+                        }
                     }
                 }
             }
-
-
-        } else {//一个或者选择了公司所有人员
-            if (userList.get(0) == "0") { //代表公司所有的人
-                uis = fileUploadAndDownMapper.findAllUserInfo();
-                for (UserInfo us : uis) {
-                    fileManFileInfo = fileUploadAndDownMapper.getFileManFileInfoByInfoId(fr.getFileInfoId());
-                    view = fileUploadAndDownMapper.findFielRightFileByUidOrderNoSalorFileName(fr.getFileName(), fileManFileInfo.getExtInfo1(), fileManFileInfo.getOrderNum(), us.getuId());
-                    if (view != null) {
-                        if (privileflag == "") {
-                            fileUploadAndDownMapper.deleteFileRightPrivileg(view.getFileRightId());
-                        } else {
-                            fileUploadAndDownMapper.updateFileRightPrivileg(us.getuId(), fileurlid, privileflag, info.getUserName(), new Date());
-                        }
-                    } else {
-                        if (privileflag != "") {
-                            fileUploadAndDownMapper.saveFileRightPrivileg(us.getUserActor(), fileurlid, privileflag, info.getUserName(), new Date(), fr.getFileInfoId(), fr.getFileName());
-                        }
-                    }
-                }
-            } else {//代表只选择单个用户
-                fr = fileUploadAndDownMapper.findFileRightById(fileurlid);
-                if (fr != null) {
-                    fileManFileInfo = fileUploadAndDownMapper.getFileManFileInfoByInfoId(fr.getFileInfoId());
-                    view = fileUploadAndDownMapper.findFielRightFileByUidOrderNoSalorFileName(fr.getFileName(), fileManFileInfo.getExtInfo1(), fileManFileInfo.getOrderNum(), Integer.valueOf(userList.get(0)));
-                    if (view != null) {
-                        if (privileflag == "") {
-                            fileUploadAndDownMapper.deleteFileRightPrivileg(view.getFileRightId());
-                        } else {
-                            fileUploadAndDownMapper.updateFileRightPrivileg(Integer.valueOf(userList.get(0)), fileurlid, privileflag, info.getUserName(), new Date());
-                        }
-                    } else {
-                        if (privileflag != "") {
-                            fileUploadAndDownMapper.saveFileRightPrivileg(Integer.valueOf(userList.get(0)), fileurlid, privileflag, info.getUserName(), new Date(), fr.getFileInfoId(), fr.getFileName());
-                        }
-                    }
-                } else {
-                    fr = fileUploadAndDownMapper.findFileRightById(fileurlid);
-                    if (privileflag != "") {
-                        fileUploadAndDownMapper.saveFileRightPrivileg(Integer.valueOf(userList.get(0)), fileurlid, privileflag, info.getUserName(), new Date(), fr.getFileInfoId(), fr.getFileName());
-                    }
-                }
-            }
-
         }
-
     }
 
     @Override
@@ -204,6 +197,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 //    }
 
     /**
+     * 功能描述:
+     * @auther: homey Wong
+     * @date: 2019/2/22 0022 下午 7:34
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    public List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception{
+        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid(orderNo,uId);
+    }
+
+
+    /**
      * 功能描述:文件修改功能,即更新覆盖
      *
      * @auther: homey Wong
@@ -230,7 +237,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             for (FilemanUrl url : oldFileUrls) {
-                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(), "\\", 6);
+                Integer pointindex = StringUtils.ordinalIndexOf(url.getLogur1(), "/", 5);
                 String afterFourLevel = url.getLogur1().substring(pointindex + 1, url.getLogur1().length());
                 centerUrls.add(afterFourLevel);
             }
@@ -366,6 +373,22 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return view;
     }
 
+    @Transactional
+    public boolean checkFileUpdateRight(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception{
+        boolean isUpdateRight = true;//默认初始值代表有权限 只要有一个文件没有权限,即刻停止此业务,返回false
+        FilemanRight right = null;
+        String fileName = null;
+        for(MultipartFile file : fileArray) {
+            fileName = subAfterString(file.getOriginalFilename(), "/");
+            right = fileUploadAndDownMapper.getFileRightByOrderNoUidfileName(view.getOrderNo(),fileName,userInfo.getuId());
+            if(!right.getOpRight().contains("2")){
+                isUpdateRight = false;
+                return isUpdateRight;
+            }
+        }
+        return isUpdateRight;
+    }
+
 
     @Transactional
     public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
@@ -389,14 +412,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
                 oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
                 if (filemanUrl != null) {
-                   // FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
+                    // FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
 
                     fileName = file.getOriginalFilename();
                     index = fileName.lastIndexOf("/");
-                    centerPath = fileName.substring(0,index);
-                    fileName = fileName.substring(index+1,fileName.length());
-                    filePath = oldsPath+centerPath;
-                    FtpUtils.uploadFile(filePath,fileName,file.getInputStream());
+                    centerPath = fileName.substring(0, index);
+                    fileName = fileName.substring(index + 1, fileName.length());
+                    filePath = oldsPath + centerPath;
+                    FtpUtils.uploadFile(filePath, fileName, file.getInputStream());
 
 
                     //取老文件信息
@@ -447,15 +470,15 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             try {
                 //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
                 // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
-                 fileName = files.get(i).getOriginalFilename();
-                 index = fileName.lastIndexOf("/");
-                 centerPath = fileName.substring(0,index);
-                 fileName = fileName.substring(index+1,fileName.length());
-                 filePath = view.getUserName() + "/" + formateString(new Date()) + "/" +view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/"+centerPath;
-                FtpUtils.uploadFile(filePath,fileName,files.get(i).getInputStream());
+                fileName = files.get(i).getOriginalFilename();
+                index = fileName.lastIndexOf("/");
+                centerPath = fileName.substring(0, index);
+                fileName = fileName.substring(index + 1, fileName.length());
+                filePath = view.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
+                        + randomNum + "/" + view.getOrderNo() + "/" + centerPath;
+                FtpUtils.uploadFile(filePath, fileName, files.get(i).getInputStream());
                 //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
-                deskName = filePath+"/"+fileName;
+                deskName = filePath + "/" + fileName;
                 orginname = subAfterString(deskName, "/");
                 //存储文件路径
                 filemanUrl = new FilemanUrl();
@@ -474,7 +497,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setCreateTime(view.getCreateTime());
                 filemanRight.setCreateUser(userInfo.getUserName());
                 filemanRight.setFileName(orginname);
-                filemanRight.setuId(userInfo.getuId());
+                // filemanRight.setuId(userInfo.getuId());
                 filemanRight.setUserName(userInfo.getUserName());
                 filemanRight.setFileUrlId(filemanUrl.getId());
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -511,25 +534,26 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setUpdateTime(new Date());
         String fileName = null;
         int index;
-        String centerPath = null;;
+        String centerPath = null;
+        ;
         String filePath = null;
 
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
         for (MultipartFile file : fileArray) {
             //  name1 = file.getOriginalFilename().replaceAll("/", "\\\\");
-           // deskName = oldsPath + file.getOriginalFilename();
+            // deskName = oldsPath + file.getOriginalFilename();
             //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
             // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
             fileName = file.getOriginalFilename();
             index = fileName.lastIndexOf("/");
-            centerPath = fileName.substring(0,index);
-            fileName = fileName.substring(index+1,fileName.length());
-            filePath = oldsPath +centerPath;
-            FtpUtils.uploadFile(filePath,fileName,file.getInputStream());
+            centerPath = fileName.substring(0, index);
+            fileName = fileName.substring(index + 1, fileName.length());
+            filePath = oldsPath + centerPath;
+            FtpUtils.uploadFile(filePath, fileName, file.getInputStream());
             //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
-            deskName = filePath+"/"+fileName;
+            deskName = filePath + "/" + fileName;
             orginname = subAfterString(deskName, "/");
-           // FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
+            // FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
@@ -547,7 +571,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
             filemanRight.setFileName(orginname);
-            filemanRight.setuId(userInfo.getuId());
+            //filemanRight.setuId(userInfo.getuId());
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -686,7 +710,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
             ffi.setUpdateTime(new Date());
             ffi.setUpdateUser(view.getUserName());
-            int pointindex ;
+            int pointindex;
             String oldsPath = null;
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
@@ -696,7 +720,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     //FileUtil.modifyUpdateFileByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
                     pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
                     oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
-                    FtpUtils.uploadFile(oldsPath,file.getOriginalFilename(),file.getInputStream());
+                    FtpUtils.uploadFile(oldsPath, file.getOriginalFilename(), file.getInputStream());
                     //取老文件信息
 
 
@@ -730,10 +754,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (MultipartFile file : fileArray) {
             orginname = file.getOriginalFilename();
             deskName = pointpath + orginname;
-           // FileUtil.uploadFileByUrl(file, userInfo, view, pointpath);
+            // FileUtil.uploadFileByUrl(file, userInfo, view, pointpath);
             try {
-                FtpUtils.uploadFile(pointpath,orginname,file.getInputStream());
-            }catch (Exception e) {
+                FtpUtils.uploadFile(pointpath, orginname, file.getInputStream());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -754,7 +778,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
             filemanRight.setFileName(orginname);
-            filemanRight.setuId(userInfo.getuId());
+            // filemanRight.setuId(userInfo.getuId());
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -791,8 +815,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             orginname = file.getOriginalFilename();
             deskName = oldsPath + orginname;
             //FileUtil.uploadFileByUrl(file, userInfo, view, oldsPath);
-            FtpUtils.uploadFile( oldsPath,file.getOriginalFilename(),file.getInputStream());
-            deskName = oldsPath+file.getOriginalFilename();
+            FtpUtils.uploadFile(oldsPath, file.getOriginalFilename(), file.getInputStream());
+            deskName = oldsPath + file.getOriginalFilename();
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
@@ -810,7 +834,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
             filemanRight.setFileName(orginname);
-            filemanRight.setuId(userInfo.getuId());
+            // filemanRight.setuId(userInfo.getuId());
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -860,10 +884,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (int i = 0; i < files.size(); i++) {
             try {
                 //deskName = FileUtil.uploadFile(files.get(i), userInfo, view, randomNum);
-                FtpUtils.uploadFile( userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/",files.get(i).getOriginalFilename(),files.get(i).getInputStream());
+                FtpUtils.uploadFile(userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
+                        + randomNum + "/" + view.getOrderNo() + "/", files.get(i).getOriginalFilename(), files.get(i).getInputStream());
                 deskName = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/"+files.get(i).getOriginalFilename();
+                        + randomNum + "/" + view.getOrderNo() + "/" + files.get(i).getOriginalFilename();
                 orginname = files.get(i).getOriginalFilename();
 
 
@@ -884,7 +908,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setCreateTime(view.getCreateTime());
                 filemanRight.setCreateUser(userInfo.getUserName());
                 filemanRight.setFileName(orginname);
-                filemanRight.setuId(userInfo.getuId());
+                // filemanRight.setuId(userInfo.getuId());
                 filemanRight.setUserName(userInfo.getUserName());
                 filemanRight.setFileUrlId(filemanUrl.getId());
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -913,13 +937,55 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
+     * 功能描述:根据订单号获取相应订单信息
+     *
+     * @auther: homey Wong
+     * @date: 2019/2/20 0020 上午 11:27
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    public DownloadView findMessageByOrderNo(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findMessageByOrderNo(orderNo);
+    }
+
+    /**
+     * 功能描述:根据条件查询
+     *
+     * @auther: homey Wong
+     * @date: 2019/2/20 0020 下午 3:11
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    public List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception {
+        String linshiId = view.getLinshiId();
+        if(linshiId==null ||linshiId.trim().length()<=0 ){
+            view.setuId(0);
+        }else{
+            view.setuId(Integer.valueOf(linshiId.trim()));
+        }
+        if(view.getuId()==0){//代表查询所有人的权限
+            return fileUploadAndDownMapper.findAllUrlByParamThreeNew2(view);
+        }
+        List<FilemanRight> rights = fileUploadAndDownMapper.getFileRightByOperighter(view.getuId());
+        if(rights!=null && rights.size()>0) {//代表权限表中有权限的数据
+            return fileUploadAndDownMapper.findAllUrlByParamThreeNew2(view);
+        }else{//代表没有权限数据
+            return fileUploadAndDownMapper.findAllUrlByParamThreeNew3(view);
+        }
+    }
+
+    /**
      * @author:homey Wong
      * @Date: 2018.12.21
      */
     @Override
     public List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception {
-        List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
-        return list;
+        return fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
+
     }
 
     /**
@@ -938,6 +1004,21 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
+    public List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception {
+         return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
+    }
+
+    @Override
+    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception {
+        return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId,fileInfoId,uId);
+    }
+
+   @Override
+   public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
+       return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
+   }
+
+    @Override
     public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
     }
@@ -952,6 +1033,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.findAllUrlByParamThree(salor, engineer, orderno);
     }
 
+    @Override
+    public List<String> findAllUrlByParamThreeNew(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamThreeNew(view);
+    }
 
     @Override
     public int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception {
@@ -1138,12 +1223,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String centerstr = null;
         for (String urladdr : urls) {
             pointindex = StringUtils.ordinalIndexOf(urladdr, "/", 5);
-            if(pointindex>0) {
+            if (pointindex > 0) {
                 olderCenterstr = urladdr.substring(0, pointindex + 1);
-                centerstr = urladdr.substring(pointindex+1,urladdr.length());
-                centerstr = subMyString(centerstr,"/");
-               // centerstr = StringUtil.subMyString(urladdr, "/");
-               // centerstr = subMyString(urladdr,olderCenterstr);
+                centerstr = urladdr.substring(pointindex + 1, urladdr.length());
+                centerstr = subMyString(centerstr, "/");
+                // centerstr = StringUtil.subMyString(urladdr, "/");
+                // centerstr = subMyString(urladdr,olderCenterstr);
                 if (centerstr.contains("/")) {
                     mysqlcenterurls.add(centerstr.split("/"));
                 }

@@ -19,6 +19,11 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
+    List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception;
+    DownloadView findMessageByOrderNo(String orderNo) throws Exception;
+
+    boolean checkFileUpdateRight(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
+
     List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception;
 
     DownloadView addFilesData(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception;
@@ -29,13 +34,19 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
-    void saveOrUpdateFilePrivilege(List<String> userList, Integer filesId, String privileflag, UserInfo info, String oprighter) throws Exception;
+    void saveOrUpdateFilePrivilege(List<DownloadView> views,List<String> privilegeusers,UserInfo info) throws Exception;
 
     int findAllUploadFileCountByUserId(Integer uId) throws Exception;
+
+    List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception;
+
+    FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception;
 
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception;
 
     List<String> findAllOrderNum() throws Exception;
+
+    List<String> findAllUrlByOrderNo2(String orderNo) throws Exception;
 
     int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception;
 
@@ -49,11 +60,15 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
 
+    List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception;
+
     List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception;
 
     int findAllFilesByCondParamCount(DownloadView view) throws Exception;
 
     List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno) throws Exception;
+
+    List<String> findAllUrlByParamThreeNew(DownloadView view) throws Exception;
 
     List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception;
 }
