@@ -90,7 +90,7 @@ public interface FileUploadAndDownMapper {
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
             "left join userinfo c on c.uid = b.uid\n" +
             " where a.ordernum = #{orderNo} "+
-            "ORDER BY a.createtime DESC limit 1 ")
+            "ORDER BY a.createtime DESC limit 1  ")
     DownloadView findMessageByOrderNo(String orderNo);
 
     @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
@@ -119,8 +119,11 @@ public interface FileUploadAndDownMapper {
     @Select("select * from  filemanfileinfo where createuser= #{createUser} and ordernum= #{orderNum} and extinfo1= #{extInfo1} ")
     List<FileManFileInfo> isSameOrderNoandOtherMessage(@Param("createUser") String createUser, @Param("orderNum") String orderNum, @Param("extInfo1") String extInfo1);
 
-    @Select("select ordernum from filemanfileinfo order by ordernum desc")
-    List<String> findAllOrderNum();
+    @Select("select ordernum from filemanfileinfo order by ordernum desc LIMIT #{currentPageTotalNum},#{pageSize}")
+    List<String> findAllOrderNum(int currentPageTotalNum,int pageSize);
+
+    @Select("select count(*) from filemanfileinfo  ")
+    int findAllOrderNumCount();
 
     @Select("select * from userinfo ")
     List<UserInfo> findAllUserInfo();
@@ -256,6 +259,9 @@ public interface FileUploadAndDownMapper {
     @Select("select * from filemanright where uid = #{uId}")
     List<FilemanRight> getFileRightByOperighter(Integer uId);
 
+    @Select("select * from filemanfileinfo where ordernum = #{orderNo}")
+    DownloadView findOrderNobyOrderNo(String orderNo);
+
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParam")
     List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno);
 
@@ -265,11 +271,17 @@ public interface FileUploadAndDownMapper {
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew2")
     List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view);
 
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew2Count")
+    int findAllUrlByParamThreeNew2Count(DownloadView view);
+
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew3")
     List<DownloadView> findAllUrlByParamThreeNew3(DownloadView view);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByParamManyOrNo")
-    List<String> findAllUrlByParamManyOrNo(DownloadView view);
+    List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view);
+
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByParamManyOrNoCount")
+    int findAllUrlByParamManyOrNoCount(DownloadView view);
 
     @Select("SELECT\n" +
             "\ta.createuser AS engineer,\n" +
@@ -380,7 +392,62 @@ public interface FileUploadAndDownMapper {
             }
             sql.append("  GROUP BY a.ordernum" +
                     "  ORDER BY\n" +
-                    " a.createtime DESC ");
+                    " a.createtime DESC limit #{currentPageTotalNum},#{pageSize} ");
+            return sql.toString();
+        }
+
+
+        public String findAllUrlByThreeParamNew2Count(DownloadView view) {
+            StringBuilder sql = new StringBuilder(" select count(cc.orderNo) from ( SELECT " +
+                    "\ta.createuser AS engineer,\n" +
+                    "\ta.extinfo1 AS salor,\n" +
+                    "\ta.ordernum AS orderNo,\n" +
+                    "\tIFNULL(a.updatetime, a.createtime) AS createTime,\n" +
+                    "\tb.uid AS oprighter,\n" +
+                    "\tb.opright AS opRight,\n" +
+                    "d.logur1 as urlAddr, \n" +
+                    "a.id as id \n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo a\n" +
+                    "  LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+                    "  left join filemanurl d on b.fileurlid = d.id\n" +
+                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 ");
+            if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
+                sql.append(" and a.extinfo1 = #{salor} ");
+            }
+            if (view.getEngineer() != null && view.getEngineer()!="") {
+                view.setuId(Integer.valueOf(view.getEngineer()));
+                sql.append(" and a.uid = #{uId} ");
+            }
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" and a.ordernum = #{orderNo} ");
+            }
+
+            if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
+                sql.append(" and a.projectname like CONCAT('%',#{projectName},'%')");
+            }
+
+            if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
+                sql.append(" and d.orginname like  CONCAT('%',#{fileName},'%')");
+            }
+
+            if (view.getEngineer() != null && view.getEngineer().trim().length() > 0) {
+                sql.append(" and a.uid = #{engineer} ");
+            }
+
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime  >= #{startNewestSaveDateStr} and d.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime <= #{endNewestSaveDateStr}");
+            }
+
+            if(view.getuId()!=null && view.getuId()!=0) {
+                sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
+            }
+            sql.append("  GROUP BY a.ordernum" +
+                    " ) as cc ");
             return sql.toString();
         }
 
@@ -440,7 +507,7 @@ public interface FileUploadAndDownMapper {
         }
 
         public String findAllUrlByParamManyOrNo(DownloadView view) {
-            StringBuilder sql = new StringBuilder(" select fu.logur1 as addr from filemanurl fu left join ");
+            StringBuilder sql = new StringBuilder(" select ffi.ordernum as orderNo from filemanurl fu left join ");
             sql.append(" filemanfileinfo ffi on fu.fileInfoId = ffi.id ");
             sql.append(" where 1=1");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
@@ -480,6 +547,58 @@ public interface FileUploadAndDownMapper {
             } else if (view.getEndNewestSaveDateStr() != null) {
                 sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
             }
+
+
+            sql.append(" group by ffi.ordernum order by  ffi.ordernum desc limit #{currentPageTotalNum},#{pageSize} ");
+            return sql.toString();
+        }
+
+
+
+        public String findAllUrlByParamManyOrNoCount(DownloadView view) {
+            StringBuilder sql = new StringBuilder(" SELECT count(a.cc) as c FROM ( select count(*) as cc from filemanurl fu left join ");
+            sql.append(" filemanfileinfo ffi on fu.fileInfoId = ffi.id ");
+            sql.append(" where 1=1");
+            if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
+                sql.append(" and ffi.extinfo1 = #{salor} ");
+            }
+            if (view.getEngineer() != null) {
+                sql.append(" and ffi.uid = #{engineer} ");
+            }
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" and ffi.ordernum = #{orderNo} ");
+            }else{
+                if(view.getOrderNoMessage()!=null){
+                    if(view.getOrderNoMessage().contains(",")) {
+                        String[] orderNums = view.getOrderNoMessage().split(",");
+                        sql.append(" and ffi.ordernum  in( '" + orderNums[0] + "'");
+                        for(int a = 1;a < orderNums.length;a++) {
+                            sql.append( ",'" + orderNums[a] + "'");
+                        }
+                        sql.append(") ");
+                    }else{
+                        sql.append(" and ffi.ordernum = '" + view.getOrderNoMessage() + "' ");
+                    }
+
+                }
+            }
+
+            if (view.getProjectName() != null && view.getProjectName() != "" && view.getProjectName().trim().length() > 0) {
+                sql.append(" and ffi.projectname = #{projectName} ");
+            }
+            if (view.getFileName() != null && view.getFileName() != "" && view.getFileName().trim().length() > 0) {
+                sql.append(" and fu.orginname = #{fileName} ");
+            }
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fu.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
+            }
+
+            sql.append(" group by ffi.ordernum ) AS a ");
+
             return sql.toString();
         }
 

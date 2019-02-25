@@ -44,7 +44,9 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception;
 
-    List<String> findAllOrderNum() throws Exception;
+    List<String> findAllOrderNum(int currentPageTotalNum,int pageSize) throws Exception;
+
+    int findAllOrderNumCount() throws Exception;
 
     List<String> findAllUrlByOrderNo2(String orderNo) throws Exception;
 
@@ -66,9 +68,16 @@ public interface IFileUploadAndDownServ {
 
     int findAllFilesByCondParamCount(DownloadView view) throws Exception;
 
+    DownloadView findOrderNobyOrderNo(String orderNo) throws Exception;
+
     List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno) throws Exception;
+
+    int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception;
 
     List<String> findAllUrlByParamThreeNew(DownloadView view) throws Exception;
 
-    List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception;
+    List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view) throws Exception;
+
+    int findAllUrlByParamManyOrNoCount(DownloadView view) throws Exception;
+
 }

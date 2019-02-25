@@ -1273,12 +1273,28 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
 
-    public List<String> findAllOrderNum() throws Exception {
-        return fileUploadAndDownMapper.findAllOrderNum();
+    public List<String> findAllOrderNum(int currentPageTotalNum,int pageSize) throws Exception {
+        return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum,pageSize);
     }
 
-    public List<String> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
+    public int findAllOrderNumCount() throws Exception {
+        return fileUploadAndDownMapper.findAllOrderNumCount();
+    }
+
+    public List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
+    }
+
+    public int findAllUrlByParamManyOrNoCount(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
+    }
+
+    public int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamThreeNew2Count(view);
+    }
+
+    public DownloadView findOrderNobyOrderNo(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
     }
 
 }

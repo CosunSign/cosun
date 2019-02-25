@@ -51,7 +51,7 @@
             alert("上传失败!");
         } else if (flag == "-12") {
             alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
-        }else if(flag ="-258"){
+        }else if(flag =="-258"){
             alert("您所更新的文件里没有更新权限!请向上级申请.")
         }
 
@@ -892,7 +892,7 @@
                    th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
 
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
+                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
 
                 <p>
                 <p>

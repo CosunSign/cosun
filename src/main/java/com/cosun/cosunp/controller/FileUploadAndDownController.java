@@ -874,6 +874,42 @@ public class FileUploadAndDownController {
         }
     }
 
+    /**
+     * 功能描述:根据输入的订单号，检查是否重复。（数据库里的订单必须保证独一无二，后继操作才能按程序设计走）
+     *
+     * @auther: homey Wong
+     * @date: 2019/2/25 0025 下午 12:05
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    @ResponseBody
+    @RequestMapping(value = "/isSingleNORepeatOrderNo", method = RequestMethod.POST)
+    public void isSingleNORepeatOrderNo(@RequestBody(required = true) DownloadView view, HttpServletResponse response) throws Exception {
+        List<DownloadView> views = new ArrayList<DownloadView>();
+        DownloadView vi = fileUploadAndDownServ.findOrderNobyOrderNo(view.getOrderNo());
+        if (vi != null) {
+            view.setFlag("-159");
+        }
+        views.add(view);
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(views);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 功能描述:按条件查询  管理模块
@@ -897,21 +933,31 @@ public class FileUploadAndDownController {
         List<String> newurls = null;
         List<DownloadView> viewsNew = null;
         int pointindex = 0;
+        int maxPage = 0;
+        int recordCount = 0;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
+            view.setPageSize(12);
             viewsNew = new ArrayList<DownloadView>();
             views = new ArrayList<DownloadView>();
             folderOrFiles = new ArrayList<String>();
             strarray = new ArrayList<String[]>();
             norepeatFoldorFile = new ArrayList<String>();
             views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
-
+            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+            maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
             newurls = new ArrayList<String>();
             for (DownloadView v : views) {
                 pointindex = StringUtils.ordinalIndexOf(v.getUrlAddr(), "/", 4);
                 String[] b = v.getUrlAddr().substring(pointindex + 1, v.getUrlAddr().length()).split("/");
                 v.setFolderOrFileName(b[0]);
                 viewsNew.add(v);
-
+            }
+            if (viewsNew.size() > 0) {
+                viewsNew.get(0).setMaxPage(maxPage);
+                viewsNew.get(0).setRecordCount(recordCount);
+                viewsNew.get(0).setUserName(userInfo.getUserName());
+                viewsNew.get(0).setPassword(userInfo.getUserPwd());
+                viewsNew.get(0).setCurrentPage(view.getCurrentPage());
             }
 
         }
@@ -1051,16 +1097,17 @@ public class FileUploadAndDownController {
         File file = null;
         List<File> files = new ArrayList<File>();
 
-       //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
+        //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
         boolean isDownRight = true;
         int index = 0;
-        a:for(DownloadView view : vs) {
-            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(),info.getuId());
-            for(DownloadView vi : views) {
-                if(view.getFolderOrFileName().contains(",")){//代表是文件
-                    index = vi.getUrlAddr().indexOf( view.getFolderOrFileName() );
+        a:
+        for (DownloadView view : vs) {
+            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), info.getuId());
+            for (DownloadView vi : views) {
+                if (view.getFolderOrFileName().contains(",")) {//代表是文件
+                    index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
                     if (index > 0) {
-                        if(!vi.getOpRight().contains("3")){
+                        if (!vi.getOpRight().contains("3")) {
                             isDownRight = false;
                             break a;
                         }
@@ -1068,10 +1115,10 @@ public class FileUploadAndDownController {
                         file = new File(vi.getUrlAddr());
                         files.add(file);
                     }
-                }else{//代表是文件夹
+                } else {//代表是文件夹
                     index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
                     if (index > 0) {
-                        if(!vi.getOpRight().contains("3")){
+                        if (!vi.getOpRight().contains("3")) {
                             isDownRight = false;
                             break a;
                         }
@@ -1083,18 +1130,18 @@ public class FileUploadAndDownController {
             }
 
         }
-       //返回
+        //返回
 
-        if(isDownRight) {
-        boolean isLarge = FileUtil.checkDownloadFileSize(files, 2, "G");
-        if (!isLarge) {
-            vie.setFlag("-1");//文件太大
-        }
-        if (urls.size() > 200) {//代表文件超过200个
-            vie.setFlag("-369");
-        }
+        if (isDownRight) {
+            boolean isLarge = FileUtil.checkDownloadFileSize(files, 2, "G");
+            if (!isLarge) {
+                vie.setFlag("-1");//文件太大
+            }
+            if (urls.size() > 200) {//代表文件超过200个
+                vie.setFlag("-369");
+            }
 
-      }else{
+        } else {
             vie.setFlag("-258");
         }
 
@@ -1660,10 +1707,12 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "toprivilmanagepage", method = RequestMethod.GET)
-    public ModelAndView toPrivilManagePage(HttpSession session, int currentPage) throws Exception {
+    public ModelAndView toPrivilManagePage(HttpSession session, int currentPage, int pageSize) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
         DownloadView view = new DownloadView();
+        view.setCurrentPage(currentPage);
+        view.setPageSize(pageSize);
         view.setType(userInfo.getType());
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         view.setUserName(userInfo.getUserName());
@@ -1794,11 +1843,16 @@ public class FileUploadAndDownController {
     //默认下载清单(所有文件夹)
     @ResponseBody
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ModelAndView toFileDownPage(HttpSession session) throws Exception {
+    public ModelAndView toFileDownPage(int currentPage, HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("downloadpage");
         DownloadView view = new DownloadView();
+        view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
-        List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum();
+        List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
+        int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
         mav.addObject("orderNumFolders", orderNumFolders);
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -1878,41 +1932,49 @@ public class FileUploadAndDownController {
     public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession
             session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        List<String> urls = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
-        List<String> newurls = new ArrayList<String>();
-        int pointindex = 0;
-        for (String str : urls) {
-            pointindex = StringUtils.ordinalIndexOf(str, "/", 4);
-            newurls.add(str.substring(pointindex + 1, str.length()));
-        }
-        List<String> folderOrFiles = new ArrayList<String>();
-        List<String[]> strarray = new ArrayList<String[]>();
-        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<DownloadView> views = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//        List<DownloadView> views = new ArrayList<DownloadView>();
+//        int pointindex = 0;
+//        boolean isRepeat = true;
+//        String[] strarray = null;
+//        for (DownloadView u: urls) {
+//            pointindex = StringUtils.ordinalIndexOf(u.getUrlAddr(), "/", 4);
+//             strarray = u.getUrlAddr().substring(pointindex + 1, u.getUrlAddr().length()).split("/");
+//             if(views.size()<=0) {
+//                 views.add(u);
+//             }else {
+//                 for (DownloadView v : views) {
+//                     if (u.getUrlAddr().contains(strarray[0])) {
+//                         isRepeat = false;
+//                     }
+//                 }
+//                 if(isRepeat){
+//                     views.add(u);
+//                 }
+//             }
+//        }
 
+        int recordCount = fileUploadAndDownServ.findAllUrlByParamManyOrNoCount(view);
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        if (views != null && views.size() > 0) {
+            views.get(0).setMaxPage(maxPage);
+            views.get(0).setRecordCount(recordCount);
+            views.get(0).setUserName(userInfo.getUserName());
+            views.get(0).setPassword(userInfo.getUserPwd());
+            views.get(0).setCurrentPage(view.getCurrentPage());
+            views.get(0).setPassword(userInfo.getUserPwd());
+            views.get(0).setCurrentPage(view.getCurrentPage());
+        }
 
-        for (String str : newurls) {
-            //strarray.add(str.replaceAll("\\\\", "/").split("/"));
-            strarray.add(str.split("/"));
-        }
-        for (String[] stra : strarray) {
-            folderOrFiles.add(stra[0]);
-        }
-        for (String s : folderOrFiles) {
-            if (!norepeatFoldorFile.contains(s)) {
-                norepeatFoldorFile.add(s);
-            }
-        }
         String str = null;
-        if (norepeatFoldorFile != null) {
+        if (views.size() > 0) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(norepeatFoldorFile);
-
+                str = x.writeValueAsString(views);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
-
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
@@ -2130,6 +2192,7 @@ public class FileUploadAndDownController {
             int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);
 
             if (files.size() < 200 && isFileLarge && isSameFolderNameorFileName == 0) {
+            //if (isFileLarge && isSameFolderNameorFileName == 0) {
                 view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
             } else {
                 if (files.size() >= 200) {

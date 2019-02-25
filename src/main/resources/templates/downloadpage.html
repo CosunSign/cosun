@@ -275,6 +275,11 @@
     }
 
 
+    var currentPage; //当前页
+    var totalPage; //总多少页
+    var totaldata; //总共多少记录
+    var pageSize;//当前每页多少条
+
     function submitQueryByCondition() {
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
         var folderhtml = "";
@@ -299,24 +304,91 @@
             url: "/fileupdown/downloadbyquerycondition",
             success: function (msg) {
                 var data = eval(msg); //data为URLS
+                var image01 = $("#image01");
+                var image02 = $("#image02");
+                var image03 = $("#image03");
+                var image04 = $("#image04");
+                var maxpageid = $("#maxPage");
+                var n_currentPage = $("#n_currentPage");
+                var inputpage = $("#_tp");
+                image01.html("");
+                image02.html("");
+                image03.html("");
+                image04.html("");
+                var tbody = $("#showdatatable");
+                var tfoot = $("#s_tfoot");
+                tbody.html("");
+                if (data.length >0) {
+                    $("#nodatadiv").hide();
+                    $("#showdiv").show();
+                    currentPage = data[0].currentPage; //当前页
+                    totalPage = data[0].maxPage; //总多少页
+                    totaldata = data[0].recordCount; //总共多少记录
+                    username = data[0].userName;
+                    password = data[0].userPwd;
+                    pageSize = data[0].pageSize;
+                    maxpageid.val(totalPage);
+                    n_currentPage.val(currentPage);
+                    inputpage.val(currentPage);
                 $.each(data, function (num) {
-                    if (data[num].indexOf(".") <= 0) {//代表为文件夹
-                        $("#foldername").val(data[num]);
-                        if (reg.test(data[num])) {
+                    if (data[num].orderNo.indexOf(".") <= 0) {//代表为文件夹
+                        $("#foldername").val(data[num].orderNo);
+                        if (reg.test(data[num].orderNo)) {
                             $("#backfolder").attr("disabled", "disabled");
                         }
-                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num] + " id='"+data[num]+"' name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
-                            " align=\"middle\" border=\"0\"  value=" + data[num] + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
-                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num].orderNo + " id='"+data[num].orderNo+"' name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
+                            " align=\"middle\" border=\"0\"  value=" + data[num].orderNo + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].orderNo + "</li>";
                         cominone2 = 1;
                     } else {//代表为文件
-                        fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+ data[num]+"'  name=\"downloadlist\">" + data[num] + "</li>";
+                        fileshtml += "<li><input type=\"checkbox\" value='" + data[num].orderNo + "' id='"+ data[num].orderNo+"'  name=\"downloadlist\">" + data[num].orderNo + "</li>";
                         if (cominone2 == 0) {//代表没有文件夹
-                            $("#foldername").val(data[num]);
+                            $("#foldername").val(data[num].orderNo);
                         }
                     }
                 });
-                $("#innerfolderdiv").html(folderhtml + fileshtml)
+                $("#showdatatable").html(folderhtml + fileshtml)
+                $("#currentpagespan").html(currentPage);
+                $("#maxpagespan").html(totalPage);
+                $("#recordcountspan").html(totaldata);
+
+
+                if (currentPage > 1) {
+                    var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                    imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                    image01.html(imange01str);
+                } else {
+                    image01.html("");
+                }
+                if (currentPage <= 1) {
+                    var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                    image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                    image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                    image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                    image02.html(image02str);
+                } else {
+                    image02.html("");
+                }
+                if (currentPage < totalPage) {
+                    var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                    imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                    image03.html(imange03str);
+                } else {
+                    image03.html("");
+                }
+                if (currentPage >= totalPage) {
+                    var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                    image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                    image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                    image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                    image04.html(image04str);
+                } else {
+                    image04.html("");
+                }
+            }else{
+                $("#nodatadiv").show();
+                $("#showdiv").hide();
+    }
             },
             error: function (msg) {
                 // 隐藏loading
@@ -710,7 +782,7 @@
                th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
 
             <a class="btn btn-default"
-               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">管理</a>
+               th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
             <p>
 
                 <div id="">
@@ -854,9 +926,10 @@
 
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <div id="innerfolderdiv">
-                            <table>
+                            <table width="100%">
+                                <tbody id="showdatatable">
                                 <div th:unless="${#lists.isEmpty(orderNumFolders)}">
-                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}"  align="center">
+                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}"  align="left">
                                         <td>
                                             <input type="checkbox" th:value="${folderName}"  th:id="${folderName}" name="downloadlist">
                                             <img src="/images/icon/Folder.png" align="middle" border="0"
@@ -867,6 +940,74 @@
                                         </td>
                                     </tr>
                                 </div>
+                                </tbody>
+
+                                <tfoot id="s_tfoot">  <!-- 分页-->
+
+                                <tr id="showdiv">
+
+                                    <td  align="center">
+                                        <span>第</span>
+                                        <span th:text="${view.currentPage}" id="currentpagespan"> </span>
+                                        <span>页|共</span>
+                                        <span th:text="${view.maxPage}" id="maxpagespan"> </span>
+                                        <span>页|共</span>
+                                        <span th:text="${view.recordCount}" id="recordcountspan"> </span>
+                                        <span>条记录 </span>
+                                        <span id="image01">
+                            <span th:if="${view.currentPage gt 1}">
+                                    <img src="/images/page/sy-2.jpg" align="middle" border="0"
+                                         style="width: 20px; height: 20px; vertical-align: middle"
+                                         onClick="goPageone()"/>
+                                    <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPrePage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
+                                </span>
+                                </span>
+                                        <span id="image02">
+                            <span th:if="${view.currentPage le 1}">
+                                <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                                <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
+                            </span>
+                            </span>
+                                        <span id="image03">
+                            <span th:if="${view.currentPage lt view.maxPage}">
+                                    <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                                    <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
+                                         style="width: 20px; height: 20px; vertical-align: middle"/>
+                            </span>
+                                </span>
+                                        <span id="image04">
+                            <span th:if="${view.currentPage ge view.maxPage}">
+                                <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                                <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
+                                     style="width: 20px; height: 20px; vertical-align: middle"/>
+                            </span>
+                            </span>
+
+                                        |&nbsp;到第
+                                        <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
+                                               style="width: 50px"
+                                               id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
+                                        页&nbsp;
+                                        <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
+                                             style="width:20px;height:20px;vertical-align:middle">
+                                    </td>
+
+                                </tr>
+
+
+                                <tr style="display:none;" id="nodatadiv">
+                                    <td  align="center">
+                                        查无数据
+                                    </td>
+                                </tr>
+
+
+                                </tfoot>
                             </table>
                         </div>
                     </div>
