@@ -198,6 +198,9 @@ public class FileUploadAndDownController {
         List<DownloadView> views = null;
         boolean flag = true;
         String tempFolFileName = null;
+        int maxPage = 0;
+        //根据当前文件夹或文件名查找上一级文件夹名,如上一级文件夹名是以ORDERNO类形的,即开启limit查询
+        String upFolderName = null;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
             folderOrFiles = new ArrayList<String>();
             views = new ArrayList<DownloadView>();
@@ -212,6 +215,7 @@ public class FileUploadAndDownController {
                     lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
                     if (lastIndex != -1) {
                         String linshi1 = u.getLogur1().substring(0, lastIndex);
+                        upFolderName = StringUtil.subAfterString(linshi1,"/");
                         int linshilastIndex = linshi1.lastIndexOf("/");
                         String linshi2 = linshi1.substring(0, linshilastIndex);
                         foldername = StringUtil.subAfterString(linshi2, "/");
@@ -271,6 +275,7 @@ public class FileUploadAndDownController {
                     lastIndex = filefoldername.indexOf("/" + view.getFolderName());
                     if (lastIndex > 0) {
                         String linshi1 = filefoldername.substring(0, lastIndex);
+                        upFolderName = StringUtil.subAfterString(linshi1,"/");
                         int linshilastIndex = linshi1.lastIndexOf("/");
                         String linshi2 = linshi1.substring(0, linshilastIndex);
                         foldername = StringUtil.subAfterString(linshi2, "/");
@@ -318,6 +323,14 @@ public class FileUploadAndDownController {
                 }
             }
         }
+
+        if (views.size() > 0) {
+            maxPage = views.size() % view.getPageSize() == 0 ? views.size() / view.getPageSize() : views.size() / view.getPageSize() + 1;
+            views.get(0).setMaxPage(maxPage);//总页数
+            views.get(0).setCurrentPage(1);//当前页 默认1
+            views.get(0).setRecordCount(views.size());//总数
+        }
+
 
         String str = null;
         if (views != null) {
@@ -610,7 +623,7 @@ public class FileUploadAndDownController {
      * 功能描述:文件下载的双击文件夹任务
      *
      * @auther: homey Wong
-     * @date: 2019/2/19  20:20
+     * @date: 2019/2/19  20:20      增加伪分页技术2-25
      * @param:
      * @return:
      * @describtion
@@ -628,7 +641,9 @@ public class FileUploadAndDownController {
         DownloadView vi = null;
         FilemanRight right = null;
         List<DownloadView> views = null;
+        view.setPageSize(12);
         boolean flag = true;
+        int maxPage;
         String tempFolOrFileName = null;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
             views = new ArrayList<DownloadView>();
@@ -672,6 +687,13 @@ public class FileUploadAndDownController {
                 flag = true;
             }
         }
+        if (views.size() > 0) {
+            maxPage = views.size() % view.getPageSize() == 0 ? views.size() / view.getPageSize() : views.size() / view.getPageSize() + 1;
+            views.get(0).setMaxPage(maxPage);//总页数
+            views.get(0).setCurrentPage(view.getCurrentPage());//当前页 默认1
+            views.get(0).setRecordCount(views.size());//总数
+        }
+
         String str = null;
         if (views != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -1729,6 +1751,7 @@ public class FileUploadAndDownController {
             maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
             view.setMaxPage(maxPage);
             view.setRecordCount(recordCount);
+            view.setCurrentPage(view.getCurrentPage());
         } else {
             view.setFlag("-1");//代表没有权限
         }
@@ -2192,7 +2215,7 @@ public class FileUploadAndDownController {
             int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);
 
             if (files.size() < 200 && isFileLarge && isSameFolderNameorFileName == 0) {
-            //if (isFileLarge && isSameFolderNameorFileName == 0) {
+                //if (isFileLarge && isSameFolderNameorFileName == 0) {
                 view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
             } else {
                 if (files.size() >= 200) {
