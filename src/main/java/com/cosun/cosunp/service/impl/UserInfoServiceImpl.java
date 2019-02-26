@@ -5,7 +5,6 @@ import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IUserInfoServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserInfoServiceImpl implements IUserInfoServ {

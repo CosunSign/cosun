@@ -456,13 +456,25 @@ public class FileUploadAndDownController {
                 norepeatFoldorFile.add(s);
             }
         }
+        List<String> names = new ArrayList<String>();
+        for(String s : norepeatFoldorFile) {
+            if(!s.contains(".")){
+                names.add(s);
+            }
+        }
+        for(String s : norepeatFoldorFile) {
+            if(s.contains(".")){
+                names.add(s);
+            }
+        }
 
-        norepeatFoldorFile.add(view.getOrderNo());
+
+        names.add(view.getOrderNo());
         String str = null;
         if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(norepeatFoldorFile);
+                str = x.writeValueAsString(names);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -506,11 +518,13 @@ public class FileUploadAndDownController {
         if (!foldername.contains(".")) {
             for (String s : urls) {
                 lastIndex = s.indexOf("/" + view.getFolderName() + "/");
-                String linshi1 = s.substring(0, lastIndex);
-                int linshilastIndex = linshi1.lastIndexOf("/");
-                String linshi2 = linshi1.substring(0, linshilastIndex);
-                foldername = StringUtil.subAfterString(linshi2, "/");
-                break;
+                if(lastIndex!=-1) {
+                    String linshi1 = s.substring(0, lastIndex);
+                    int linshilastIndex = linshi1.lastIndexOf("/");
+                    String linshi2 = linshi1.substring(0, linshilastIndex);
+                    foldername = StringUtil.subAfterString(linshi2, "/");
+                    break;
+                }
             }
             for (String str : urls) {
                 index = str.indexOf("/" + foldername + "/");//字符串第一次出现的位置
@@ -559,11 +573,24 @@ public class FileUploadAndDownController {
                 norepeatFoldorFile.add(s);
             }
         }
+
+        List<String> names = new ArrayList<String>();
+        for(String s : norepeatFoldorFile) {
+            if(!s.contains(".")){
+                names.add(s);
+            }
+        }
+        for(String s : norepeatFoldorFile) {
+            if(s.contains(".")){
+                names.add(s);
+            }
+        }
+
         String str = null;
         if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(norepeatFoldorFile);
+                str = x.writeValueAsString(names);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -862,12 +889,23 @@ public class FileUploadAndDownController {
                 norepeatFoldorFile.add(s);
             }
         }
+        List<String> names = new ArrayList<String>();
+        for(String s :norepeatFoldorFile) {
+            if(!s.contains(".")) {
+                names.add(s);
+            }
+        }
+        for(String s :norepeatFoldorFile) {
+            if(s.contains(".")) {
+                names.add(s);
+            }
+        }
 
         String str = null;
         if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(norepeatFoldorFile);
+                str = x.writeValueAsString(names);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

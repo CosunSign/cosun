@@ -3,8 +3,6 @@ package com.cosun.cosunp.mapper;
 import com.cosun.cosunp.entity.*;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +14,7 @@ import java.util.List;
  * @Modified-date:2018/12/20 0020 下午 6:40
  */
 @Repository
+@Mapper
 public interface FileUploadAndDownMapper {
 
     @Select("select fio.username,fio.ordernum as orderNo,fio.extinfo1 as salor,fu.orginname as fileName,fu.uptime as lastUpdateTime,fu.singlefileupdatenum as singleFileUpdateNum from filemanurl fu " +
