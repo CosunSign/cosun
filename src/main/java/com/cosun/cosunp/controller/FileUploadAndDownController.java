@@ -196,6 +196,8 @@ public class FileUploadAndDownController {
         Integer index = null;
         DownloadView vi = null;
         List<DownloadView> views = null;
+        List<DownloadView> viewss = null;
+        DownloadView vvv = null;
         boolean flag = true;
         String tempFolFileName = null;
         int maxPage = 0;
@@ -215,7 +217,7 @@ public class FileUploadAndDownController {
                     lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
                     if (lastIndex != -1) {
                         String linshi1 = u.getLogur1().substring(0, lastIndex);
-                        upFolderName = StringUtil.subAfterString(linshi1,"/");
+                        upFolderName = StringUtil.subAfterString(linshi1, "/");
                         int linshilastIndex = linshi1.lastIndexOf("/");
                         String linshi2 = linshi1.substring(0, linshilastIndex);
                         foldername = StringUtil.subAfterString(linshi2, "/");
@@ -245,6 +247,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (flag) {
+                        vvv = new DownloadView();
                         vi.setFolderOrFileName(tempFolFileName);
                         if (right.getOpRight() != null) {
                             vi.setOpRight(right.getOpRight());
@@ -254,8 +257,8 @@ public class FileUploadAndDownController {
                         } else {
                             vi.setOpRight("");
                         }
-
-                        views.add(vi);
+                        vvv = vi;
+                        views.add(vvv);
                     }
                     flag = true;
                 }
@@ -275,7 +278,7 @@ public class FileUploadAndDownController {
                     lastIndex = filefoldername.indexOf("/" + view.getFolderName());
                     if (lastIndex > 0) {
                         String linshi1 = filefoldername.substring(0, lastIndex);
-                        upFolderName = StringUtil.subAfterString(linshi1,"/");
+                        upFolderName = StringUtil.subAfterString(linshi1, "/");
                         int linshilastIndex = linshi1.lastIndexOf("/");
                         String linshi2 = linshi1.substring(0, linshilastIndex);
                         foldername = StringUtil.subAfterString(linshi2, "/");
@@ -283,6 +286,10 @@ public class FileUploadAndDownController {
                 }
 
                 for (FilemanUrl u : urls) {
+                    vi = fileUploadAndDownServ.findMessageByOrderNo(view.getOrderNo());
+                    if (u.getLogur1().contains(foldername)) {
+                        filefoldername = u.getLogur1();
+                    }
                     index = u.getLogur1().indexOf("/" + foldername + "/");//字符串第一次出现的位置
                     lastIndex = u.getLogur1().indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
                     if (lastIndex == -1) {
@@ -307,6 +314,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (flag) {
+                        vvv = new DownloadView();
                         vi.setFolderOrFileName(tempFolFileName);
                         if (right.getOpRight() != null) {
                             vi.setOpRight(right.getOpRight());
@@ -316,8 +324,8 @@ public class FileUploadAndDownController {
                         } else {
                             vi.setOpRight("");
                         }
-
-                        views.add(vi);
+                        vvv = vi;
+                        views.add(vvv);
                     }
                     flag = true;
                 }
@@ -325,18 +333,33 @@ public class FileUploadAndDownController {
         }
 
         if (views.size() > 0) {
-            maxPage = views.size() % view.getPageSize() == 0 ? views.size() / view.getPageSize() : views.size() / view.getPageSize() + 1;
-            views.get(0).setMaxPage(maxPage);//总页数
-            views.get(0).setCurrentPage(1);//当前页 默认1
-            views.get(0).setRecordCount(views.size());//总数
+
+            viewss = new ArrayList<DownloadView>();
+            for (DownloadView vii : views) {
+                if (!vii.getFolderOrFileName().contains(".")) {
+                    viewss.add(vii);
+                }
+            }
+            for (DownloadView vii : views) {
+                if (vii.getFolderOrFileName().contains(".")) {
+                    viewss.add(vii);
+                }
+            }
+
+            view.setPageSize(12);
+            maxPage = viewss.size() % view.getPageSize() == 0 ? viewss.size() / view.getPageSize() : viewss.size() / view.getPageSize() + 1;
+            viewss.get(0).setMaxPage(maxPage);//总页数
+            viewss.get(0).setCurrentPage(1);//当前页 默认1
+            viewss.get(0).setRecordCount(views.size());//总数
+
         }
 
 
         String str = null;
-        if (views != null) {
+        if (viewss != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(views);
+                str = x.writeValueAsString(viewss);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -576,6 +599,7 @@ public class FileUploadAndDownController {
         }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
         List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> norepeatFoFiPAIXU = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
         Integer index = null;
         Integer lastIndex = null;
@@ -597,12 +621,23 @@ public class FileUploadAndDownController {
         }
 
 
-        norepeatFoldorFile.add(view.getOrderNo());
+        for(String s :norepeatFoldorFile) {
+            if(!s.contains(".")) {
+                norepeatFoFiPAIXU.add(s);
+            }
+        }
+        for(String s :norepeatFoldorFile) {
+            if(s.contains(".")) {
+                norepeatFoFiPAIXU.add(s);
+            }
+        }
+
+        norepeatFoFiPAIXU.add(view.getOrderNo());
         String str = null;
-        if (norepeatFoldorFile != null) {
+        if (norepeatFoFiPAIXU != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(norepeatFoldorFile);
+                str = x.writeValueAsString(norepeatFoFiPAIXU);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -641,6 +676,7 @@ public class FileUploadAndDownController {
         DownloadView vi = null;
         FilemanRight right = null;
         List<DownloadView> views = null;
+        List<DownloadView> viewss = null;
         view.setPageSize(12);
         boolean flag = true;
         int maxPage;
@@ -666,39 +702,51 @@ public class FileUploadAndDownController {
                     }
                     right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
                     tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
-                }
-                for (DownloadView v : views) {
-                    if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
-                        flag = false;
-                    }
-                }
-                if (flag) {
-                    vi.setFolderOrFileName(tempFolOrFileName);
-                    if (right.getOpRight() != null) {
-                        vi.setOpRight(right.getOpRight());
-                        if (right.getuId() != null) {
-                            vi.setOprighter(right.getuId().toString());
+
+                    for (DownloadView v : views) {
+                        if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
+                            flag = false;
                         }
-                    } else {
-                        vi.setOpRight("");
                     }
-                    views.add(vi);
+                    if (flag) {
+                        vi.setFolderOrFileName(tempFolOrFileName);
+                        if (right != null && right.getOpRight() != null) {
+                            vi.setOpRight(right.getOpRight());
+                            if (right.getuId() != null) {
+                                vi.setOprighter(right.getuId().toString());
+                            }
+                        } else {
+                            vi.setOpRight("");
+                        }
+                        views.add(vi);
+                    }
+                    flag = true;
                 }
-                flag = true;
             }
         }
         if (views.size() > 0) {
-            maxPage = views.size() % view.getPageSize() == 0 ? views.size() / view.getPageSize() : views.size() / view.getPageSize() + 1;
-            views.get(0).setMaxPage(maxPage);//总页数
-            views.get(0).setCurrentPage(view.getCurrentPage());//当前页 默认1
-            views.get(0).setRecordCount(views.size());//总数
+            viewss = new ArrayList<DownloadView>();
+            for (DownloadView vii : views) {
+                if (!vii.getFolderOrFileName().contains(".")) {
+                    viewss.add(vii);
+                }
+            }
+            for (DownloadView vii : views) {
+                if (vii.getFolderOrFileName().contains(".")) {
+                    viewss.add(vii);
+                }
+            }
+            maxPage = viewss.size() % view.getPageSize() == 0 ? viewss.size() / view.getPageSize() : viewss.size() / view.getPageSize() + 1;
+            viewss.get(0).setMaxPage(maxPage);//总页数
+            viewss.get(0).setCurrentPage(view.getCurrentPage());//当前页 默认1
+            viewss.get(0).setRecordCount(viewss.size());//总数
         }
 
         String str = null;
-        if (views != null) {
+        if (viewss != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
-                str = x.writeValueAsString(views);
+                str = x.writeValueAsString(viewss);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

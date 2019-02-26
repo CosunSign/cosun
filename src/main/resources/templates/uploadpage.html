@@ -524,28 +524,28 @@
                 $("#orderno").val("");
                 return false;
             }
-            var jsonarray = {
-                "orderNo": newstr
-            };
-            var data = JSON.stringify(jsonarray);
-            $.ajax({
-                data: data,
-                type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
-                url: "/fileupdown/isSingleNORepeatOrderNo",
-                success: function (msg) {
-                    var dat = eval(msg);
-                    if(dat[0].flag=="-159"){
-                        alert("您输入的订单系统中已存在,请起个新订单编号");
-                        $("#orderno").val("");
-                        return false;
-                    }
-                    $("#some-element").busyLoad("hide");
-                }, error: function (msg) {
-                    $("#some-element").busyLoad("hide");
-                    alert("查询失败");
-                }
-            });
+            // var jsonarray = {
+            //     "orderNo": newstr
+            // };
+            // var data = JSON.stringify(jsonarray);
+            // $.ajax({
+            //     data: data,
+            //     type: "POST",
+            //     contentType: "application/json",//上传内容格式为json结构
+            //     url: "/fileupdown/isSingleNORepeatOrderNo",
+            //     success: function (msg) {
+            //         var dat = eval(msg);
+            //         if(dat[0].flag=="-159"){
+            //             alert("您输入的订单系统中已存在,请起个新订单编号");
+            //             $("#orderno").val("");
+            //             return false;
+            //         }
+            //         $("#some-element").busyLoad("hide");
+            //     }, error: function (msg) {
+            //         $("#some-element").busyLoad("hide");
+            //         alert("查询失败");
+            //     }
+            // });
         }
         showFileUrl();
     }

@@ -567,6 +567,8 @@
             var engineer = $("#selectuser").val();
             var linshiOp = $("#oprighter").val();
             var orderNo = $("#orderno").val().trim();
+            currentPage = $("#n_currentPage").val();
+
             //做好文件夹切割容器 文件夹层数不能超过9层
             var folderhtml = "";
             var fileshtml = "";
@@ -624,7 +626,7 @@
                             vililegeflags = data[num].opRight;
                             if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                 folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                folderhtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
+                                folderhtml += "<td width=\"30px\" align=\"center\">"+((currentPage-1)*12+num+1)+"</td> ";
                                 if (isNull(vililegeflags) != "") {
                                     // if (vililegeflags.indexOf("1") > -1) {
                                     //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
@@ -663,7 +665,7 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                             } else {//代表为文件
                                 fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                fileshtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
+                                fileshtml += "<td width=\"30px\" align=\"center\">"+((currentPage-1)*12+num+1)+"</td> ";
                                 if (isNull(vililegeflags) != "") {
                                     // if (vililegeflags.indexOf("1") > -1) {
                                     //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
@@ -1908,11 +1910,12 @@
 
                                 <tr class="page_btn clear" style="display:none;" id="pagetfoottr" align="center">
                                     <td colspan="10" align="center">
-   <span class="page_box">
-    <a class="prev">上一页</a>
-       <span class="num"><span class="current_page">1</span>
-           <span style="padding:0 3px;">/</span>
-           <span class="total"></span></span><a class="next">下一页</a></span>
+                                       <span class="page_box">
+                                           <a class="prev">上一页</a>
+                                       <span class="num"><span class="current_page">1</span>
+                                       <span style="padding:0 3px;">/</span>
+                                           <span class="total"></span></span>
+                                           <a class="next">下一页</a></span>
                                     </td>
                                 </tr>
 

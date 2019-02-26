@@ -59,6 +59,37 @@
 
 </script>
 <style type="text/css">
+    .clear {
+        zoom: 1;
+    }
+
+    .clear:after {
+        content: "";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+
+    .page_btn {
+        padding-top: 20px;
+    }
+
+    .page_btn a {
+        cursor: pointer;
+        padding: 1px;
+        border: solid 1px #ccc;
+        font-size: 12px;
+    }
+
+    .page_box {
+        float: right;
+    }
+
+    .num {
+        padding: 0 10px;
+    }
+
     #folderdiv {
         border: 1px solid #9AC0CD;
         width: 1148px;
@@ -84,6 +115,43 @@
         var uls = $('.sidebar-nav > ul > *').clone();
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
+
+        //下一页
+        $(".next").click(function(){
+            if(current_num>=total_page){
+                return false;//如果大于等于总页数就禁用下一页
+            }
+            else{
+                $(".current_page").text(++current_num);//点击下一页的时候当前页数的值就加1
+                $.each($('#showdatatable li'),function(index,item){
+                    var start = current_page* (current_num-1);//起始范围
+                    var end = current_page * current_num;//结束范围
+                    if(index >= start && index < end){//如果索引值是在start和end之间的元素就显示，否则就隐
+                        $(this).show();
+                    }else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+        //上一页方法
+        $(".prev").click(function(){
+            if(current_num==1){
+                return false;
+            }else{
+                $(".current_page").text(--current_num);
+                $.each($('#showdatatable li'),function(index,item){
+                    var start = current_page* (current_num-1);//起始范围
+                    var end = current_page * current_num;//结束范围
+                    if(index >= start && index < end){//如果索引值是start和end之间的元素就显示，否则就隐藏
+                        $(this).show();
+                    }else {
+                        $(this).hide();
+                    }
+                });
+            }
+        })
+
     });
 
     var currentPage; //当前页
@@ -93,6 +161,9 @@
     var username;
     var password;
 
+    var current_page = 15;//每页显示的数据
+    var current_num = 1;//当前页数
+    var total_page;//总页数
     var fileDownloadCheckTimer;
 
     function blockUIForDownload() {
@@ -242,27 +313,63 @@
                 var totalnum = data.length;
                 $.each(data, function (num) {
                     if (num < totalnum - 1 && totalnum > 1) {
-                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
-                            $("#foldername").val(data[num]);
-
-                            folderhtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+data[num]+"' name=\"downloadlist\">" +
-                                " <img src=\"/images/icon/Folder.png\" " +
-                                " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
-                                " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                            cominone = 1;
-
-                        } else {//代表为文件
-                            fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='"+data[num]+"' name=\"downloadlist\">" + data[num] + "</li>";
-                            if (cominone == 0) {
+                        if(num<15) {
+                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
                                 $("#foldername").val(data[num]);
+
+                                folderhtml += "<li ><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
+                                    " <img src=\"/images/icon/Folder.png\" " +
+                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                cominone = 1;
+
+                            } else {//代表为文件
+                                fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                                if (cominone == 0) {
+                                    $("#foldername").val(data[num]);
+                                }
+                            }
+                        }else{
+                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                                $("#foldername").val(data[num]);
+
+                                folderhtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
+                                    " <img src=\"/images/icon/Folder.png\" " +
+                                    " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                cominone = 1;
+
+                            } else {//代表为文件
+                                fileshtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" + data[num] + "</li>";
+                                if (cominone == 0) {
+                                    $("#foldername").val(data[num]);
+                                }
                             }
                         }
+
+
                     } else if (num == totalnum - 1) {
                         $("#orderno").val(data[num]);
+
+
+                       var maxPages = Math.round((totalnum + 15 - 1)/15);
+
+                        var next=$(".next");//下一页
+                        var prev=$(".prev");//上一页
+                        $(".total").text(maxPages);//显示总页数
+                        $(".current_page").text(1);//当前的页数
+                        $("#n_currentPage").val(1)
+                        total_page = maxPages;//最大页数
+                        $("#_tp").val(1);
+                        $("#currentpagespan").val(1)
+
                     }
                 });
-                $("#innerfolderdiv").html(folderhtml + fileshtml)
-
+                //$("#innerfolderdiv").html(folderhtml + fileshtml)
+                $("#showdatatable").html(folderhtml + fileshtml)
+                $("#nodatadiv").hide();
+                $("#pagetfoottr").show();
+                $("#showdiv").hide();
             },
             error: function (msg) {
                 $("#some-element").busyLoad("hide");
@@ -1006,6 +1113,16 @@
                                     </td>
                                 </tr>
 
+                                <tr class="page_btn clear" style="display:none;" id="pagetfoottr" align="center">
+                                    <td  align="center">
+                                       <span class="page_box">
+                                           <a class="prev">上一页</a>
+                                       <span class="num"><span class="current_page">1</span>
+                                       <span style="padding:0 3px;">/</span>
+                                           <span class="total"></span></span>
+                                           <a class="next">下一页</a></span>
+                                    </td>
+                                </tr>
 
                                 </tfoot>
                             </table>
