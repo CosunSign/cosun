@@ -107,11 +107,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
+    @Transactional
     public List<UserInfo> findAllUser() throws Exception {
         return userInfoMapper.findAllUser();
     }
 
     @Override
+    @Transactional
     public List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findFileUrlDatabyOrderNoandSalorandUserName(view.getUserName(), view.getSalor(), view.getOrderNo());
     }
@@ -201,7 +203,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
-
+    @Transactional
     public List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception{
         return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid(orderNo,uId);
     }
@@ -276,6 +278,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
+    @Transactional
     public DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         boolean isAllNewFile = true; //全为新文件即为真
         String isExistFilesName = "";
@@ -928,6 +931,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @Date: 2018.12.21
      */
     @Override
+    @Transactional
     public List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception {
         List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByUserId(uid);
         return list;
@@ -943,6 +947,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
+    @Transactional
     public DownloadView findMessageByOrderNo(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findMessageByOrderNo(orderNo);
     }
@@ -957,6 +962,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
+    @Transactional
     public List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception {
         String linshiId = view.getLinshiId();
         if(linshiId==null ||linshiId.trim().length()<=0 ){
@@ -980,6 +986,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @Date: 2018.12.21
      */
     @Override
+    @Transactional
     public List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception {
         return fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
 
@@ -995,57 +1002,68 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
+    @Transactional
     public int findAllUploadFileCountByUserId(Integer uId) throws Exception {
         return fileUploadAndDownMapper.findAllUploadFileCountByUserId(uId);
 
     }
 
     @Override
+    @Transactional
     public List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception {
          return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
     }
 
     @Override
+    @Transactional
     public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception {
         return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId,fileInfoId,uId);
     }
 
    @Override
+   @Transactional
    public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
        return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
    }
 
     @Override
+    @Transactional
     public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
     }
 
     @Override
+    @Transactional
     public List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception {
         return fileUploadAndDownMapper.findAllFileUrlByCondition(uid, currentPageTotalNum, PageSize);
     }
 
     @Override
+    @Transactional
     public List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamThree(salor, engineer, orderno);
     }
 
     @Override
+    @Transactional
     public List<String> findAllUrlByParamThreeNew(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamThreeNew(view);
     }
 
     @Override
+    @Transactional
     public int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
     }
 
     @Override
+    @Transactional
     public List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllFilesByCondParam(view);
     }
 
     @Override
+    @Transactional
     public int findAllFilesByCondParamCount(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllFilesByCondParamCount(view);
     }
@@ -1060,6 +1078,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
+    @Transactional
     public boolean checkFileisSame(DownloadView view, UserInfo userInfo, List<MultipartFile> fileArray) {
         //第一步，查看上传文件们的是否有重复
         List<String> originNames = new ArrayList<String>();
@@ -1097,6 +1116,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
 
     @Override
+    @Transactional
     public int isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, List<MultipartFile> fileArray) {
         int isSameFileUploadFolderName = 0;//代表没有
         //首先第一步
@@ -1269,27 +1289,27 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     }
 
-
+    @Transactional
     public List<String> findAllOrderNum(int currentPageTotalNum,int pageSize) throws Exception {
         return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum,pageSize);
     }
-
+    @Transactional
     public int findAllOrderNumCount() throws Exception {
         return fileUploadAndDownMapper.findAllOrderNumCount();
     }
-
+    @Transactional
     public List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
     }
-
+    @Transactional
     public int findAllUrlByParamManyOrNoCount(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
     }
-
+    @Transactional
     public int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamThreeNew2Count(view);
     }
-
+    @Transactional
     public DownloadView findOrderNobyOrderNo(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
     }
