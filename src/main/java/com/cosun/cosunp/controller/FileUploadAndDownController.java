@@ -5,36 +5,29 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.FileUtil;
-import com.cosun.cosunp.tool.IOUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.*;
-import java.util.zip.ZipOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -46,7 +39,7 @@ public class FileUploadAndDownController {
     @Autowired
     private IFileUploadAndDownServ fileUploadAndDownServ;
 
-
+    private static Logger logger = LogManager.getLogger(FileUploadAndDownController.class);
     @ResponseBody
     @RequestMapping("/touploadpage")
     public ModelAndView toUploadPage() throws Exception {
@@ -66,51 +59,6 @@ public class FileUploadAndDownController {
     @ResponseBody
     @RequestMapping(value = "/browserbyquerycondition", method = RequestMethod.POST)
     public void browserbyQuerycondition(@RequestBody DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
-//        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-//        if (view.getEngineer() == null) {
-//            view.setEngineer(userInfo.getuId().toString());
-//        }
-//        List<String> urls = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
-//        List<String> newurls = new ArrayList<String>();
-//        int pointindex = 0;
-//        for (String str : urls) {
-//            pointindex = StringUtils.ordinalIndexOf(str, "\\", 5);
-//            newurls.add(str.substring(pointindex + 1, str.length()));
-//        }
-//        List<String> folderOrFiles = new ArrayList<String>();
-//        List<String[]> strarray = new ArrayList<String[]>();
-//        List<String> norepeatFoldorFile = new ArrayList<String>();
-//
-//
-//        for (String str : newurls) {
-//            strarray.add(str.replaceAll("\\\\", "/").split("/"));
-//        }
-//        for (String[] stra : strarray) {
-//            folderOrFiles.add(stra[0]);
-//        }
-//        for (String s : folderOrFiles) {
-//            if (!norepeatFoldorFile.contains(s)) {
-//                norepeatFoldorFile.add(s);
-//            }
-//        }
-//        String str = null;
-//        if (norepeatFoldorFile != null) {
-//            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-//            try {
-//                str = x.writeValueAsString(norepeatFoldorFile);
-//
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        try {
-//            findIsExistFilesFolderresponse.setCharacterEncoding("UTF-8");
-//            response.setContentType("text/html;charset=UTF-8");
-//            response.getWriter().print(str); //返回前端ajax
-//        } catch (IOExcdownloadbyqueryconditioneption e) {
-//            e.printStackTrace();
-//        }
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setuId(Integer.valueOf(view.getEngineer()));
         List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
@@ -130,7 +78,7 @@ public class FileUploadAndDownController {
                 str1 = x.writeValueAsString(dataList);
 
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                logger.debug(e.getMessage());
             }
         }
         try {
@@ -138,7 +86,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
         }
 
     }
@@ -362,7 +310,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(viewss);
 
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                logger.debug(e.getMessage());
             }
         }
         try {
@@ -370,7 +318,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
         }
     }
 
@@ -477,7 +425,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(names);
 
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                logger.debug(e.getMessage());
             }
         }
 
@@ -486,7 +434,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
         }
     }
 
@@ -2042,27 +1990,6 @@ public class FileUploadAndDownController {
             session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<DownloadView> views = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
-//        List<DownloadView> views = new ArrayList<DownloadView>();
-//        int pointindex = 0;
-//        boolean isRepeat = true;
-//        String[] strarray = null;
-//        for (DownloadView u: urls) {
-//            pointindex = StringUtils.ordinalIndexOf(u.getUrlAddr(), "/", 4);
-//             strarray = u.getUrlAddr().substring(pointindex + 1, u.getUrlAddr().length()).split("/");
-//             if(views.size()<=0) {
-//                 views.add(u);
-//             }else {
-//                 for (DownloadView v : views) {
-//                     if (u.getUrlAddr().contains(strarray[0])) {
-//                         isRepeat = false;
-//                     }
-//                 }
-//                 if(isRepeat){
-//                     views.add(u);
-//                 }
-//             }
-//        }
-
         int recordCount = fileUploadAndDownServ.findAllUrlByParamManyOrNoCount(view);
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         if (views != null && views.size() > 0) {
@@ -2091,35 +2018,6 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-//        List<DownloadView> dataList = fileUploadAndDownServ.findAllUploadFileByParaCondition(view);
-//        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByParaCondition(view);
-//        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-//        if (dataList != null && dataList.size() > 0) {
-//            dataList.get(0).setMaxPage(maxPage);
-//            dataList.get(0).setRecordCount(recordCount);
-//            dataList.get(0).setUserName(userInfo.getUserName());
-//            dataList.get(0).setPassword(userInfo.getUserPwd());
-//            dataList.get(0).setCurrentPage(view.getCurrentPage());
-//        }
-//        String str1 = null;
-//        if (dataList != null) {
-//            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-//            try {
-//                str1 = x.writeValueAsString(dataList);
-//
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        try {
-//            response.setCharacterEncoding("UTF-8");
-//            response.setContentType("text/html;charset=UTF-8");
-//            response.getWriter().print(str1); //返回前端ajax
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
 
     }
 
@@ -2338,63 +2236,6 @@ public class FileUploadAndDownController {
             view.setFlag("-258");//代表没有权限
         }
         return new ModelAndView("uploadpage");
-
-
-//        List<UserInfo> uis = fileUploadAndDownServ.findAllUser();//查找所有设计师
-//        List<Integer> enginers = new ArrayList<Integer>();
-//        for(UserInfo fo : uis) {
-//            enginers.add(fo.getuId());
-//        }
-//        List<String> salors = StringUtil.getAllSalors();//业务员全部名单
-//        String yearMonth = "^2019[0|1][0-9]$";//年月正则
-//        String orderNo = "^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$";//订单编号正则
-//        Pattern yearMonthpattern = Pattern.compile(yearMonth);
-//        Pattern orderNopattern = Pattern.compile(orderNo);
-//        boolean isRightUrl = true;//为true上传的文件夹符合四层并命名正确
-//        String[] urls = null;
-//        String orginurl = null;
-//        for(MultipartFile file : files) {
-//        orginurl = file.getOriginalFilename();
-//        urls = orginurl.split("/");
-//            System.out.println(urls.length);
-//        if(urls.length>=5){//表示是由标准的四层文件夹组成
-//            System.out.println(urls.length);
-//            if(!enginers.contains(Integer.valueOf(urls[0]))){
-//                isRightUrl = false;
-//                view.setFlag("-33");//该标识代表设计师上传的文件夹第一层不符合标准，
-//                return new ModelAndView("uploadpage");
-//            }
-//            Matcher matcher = yearMonthpattern.matcher(urls[1]);
-//            boolean isRight = matcher.find();
-//            if(!isRight){
-//                isRightUrl = false;
-//                view.setFlag("-66");//该标识代表设计师上传的文件夹第二层不符合标准，
-//                return new ModelAndView("uploadpage");
-//            }
-//            if(!salors.contains(urls[2])){
-//                isRightUrl = false;
-//                view.setFlag("-99");//该标识代表设计师上传的文件夹第三层不符合标准，
-//                return new ModelAndView("uploadpage");
-//            }
-//            Matcher matcher1 = orderNopattern.matcher(urls[3]);
-//            boolean isRight1 = matcher1.find();
-//            if(!isRight1){
-//                isRightUrl = false;
-//                view.setFlag("-100");//该标识代表设计师上传的文件夹第四层不符合标准，
-//                return new ModelAndView("uploadpage");
-//            }
-//            if(!urls[4].contains(".")){
-//                isRightUrl = false;
-//                view.setFlag("-101");//该标识代表设计师上传的文件夹第5层不是文件，
-//                return new ModelAndView("uploadpage");
-//            }
-//
-//        }else{
-//            isRightUrl = false;
-//            view.setFlag("-333");//该标识代表设计师上传的文件夹不符合标准，
-//            return new ModelAndView("uploadpage");
-//        }
-//        }
     }
 }
 

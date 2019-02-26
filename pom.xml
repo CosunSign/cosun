@@ -106,6 +106,13 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
+        <!-- Needed for Async Logging with Log4j2 -->
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.3.6</version>
+        </dependency>
+
         <!--支持使用 JDBC 访问数据库-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
