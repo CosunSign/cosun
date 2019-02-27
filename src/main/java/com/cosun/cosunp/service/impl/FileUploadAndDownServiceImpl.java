@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.*;
 
 import static com.cosun.cosunp.tool.StringUtil.*;
 
@@ -46,7 +47,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (DownloadView vi : views) {
             info = fileUploadAndDownMapper.getFileInfoByOrderNo(vi.getOrderNo());
             for (String operrighter : privilegeusers) {
-                if (vi.getFolderOrFileName().contains(",")) {//代表是文件名
+                if (vi.getFolderOrFileName().contains(".")) {//代表是文件名
                     right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid(info.getId(), vi.getFolderOrFileName(), Integer.valueOf(operrighter));
                     //如果RIGHT为空,代表是RIGHT表中无数据,需要新增一条数据
                     if (right == null) {
@@ -268,6 +269,39 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return view;
     }
 
+    /**
+     * 功能描述:文件夹名验证
+     * @auther: homey Wong
+     * @date: 2019/2/27 0027 上午 10:13
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Transactional
+    public  boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception {
+        boolean isFolderNameForEngDateOrderNoSalor = true;
+        List<String> salorNames = fileUploadAndDownMapper.getAllSalorNames();
+        List<String> designers = fileUploadAndDownMapper.getAllDesigners();
+        Pattern orderNoRegex = Pattern.compile("^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$");
+        Pattern dataRegex = Pattern.compile("^2019[0|1][0-9]$");
+        String[] foldersName = null;
+        for(MultipartFile file : files) {
+            foldersName = file.getOriginalFilename().split("/");
+            for(String strname : foldersName) {
+                if(salorNames.contains(strname) || designers.contains(strname)){
+                    isFolderNameForEngDateOrderNoSalor = false;
+                    return isFolderNameForEngDateOrderNoSalor;
+                }
+                Matcher match = orderNoRegex.matcher(strname);
+                Matcher match1 = dataRegex.matcher(strname);
+                if(match.matches()||match1.matches()) {
+                 isFolderNameForEngDateOrderNoSalor = false;
+                 return isFolderNameForEngDateOrderNoSalor;
+                }
+            }
+        }
+        return isFolderNameForEngDateOrderNoSalor;
+    }
 
     /**
      * 功能描述:文件夹上传功能 根据上传的文件夹
@@ -970,8 +1004,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }else{
             view.setuId(Integer.valueOf(linshiId.trim()));
         }
-        if(view.getuId()==0){//代表查询所有人的权限
-            return fileUploadAndDownMapper.findAllUrlByParamThreeNew2(view);
+        if(view.getuId()==0) {// 没有选择权限者,只准查所有文件
+            return fileUploadAndDownMapper.findAllUrlByParamThreeNew5(view);
         }
         List<FilemanRight> rights = fileUploadAndDownMapper.getFileRightByOperighter(view.getuId());
         if(rights!=null && rights.size()>0) {//代表权限表中有权限的数据

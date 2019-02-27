@@ -201,6 +201,8 @@ public class FileUploadAndDownController {
                             vi.setOpRight(right.getOpRight());
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
+                            } else{
+                                vi.setOprighter("");
                             }
                         } else {
                             vi.setOpRight("");
@@ -268,6 +270,8 @@ public class FileUploadAndDownController {
                             vi.setOpRight(right.getOpRight());
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
+                            }else{
+                                vi.setOprighter("");
                             }
                         } else {
                             vi.setOpRight("");
@@ -650,11 +654,13 @@ public class FileUploadAndDownController {
         Integer lastIndex = null;
         DownloadView vi = null;
         FilemanRight right = null;
+        FilemanRight right1 = null;
         List<DownloadView> views = null;
         List<DownloadView> viewss = null;
         view.setPageSize(12);
         boolean flag = true;
         int maxPage;
+        String allOprights = "";
         String tempFolOrFileName = null;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
             views = new ArrayList<DownloadView>();
@@ -677,18 +683,44 @@ public class FileUploadAndDownController {
                     }
                     right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
                     tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
-
-                    for (DownloadView v : views) {
-                        if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
-                            flag = false;
+                        for (DownloadView v : views) {
+                            if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
+                                flag = false;
+                            }
                         }
-                    }
                     if (flag) {
                         vi.setFolderOrFileName(tempFolOrFileName);
+                        if(!tempFolOrFileName.contains(".")) {
+                            for (FilemanUrl uu : urls) {
+                                if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
+                                    right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
+                                if (right1 != null && right1.getOpRight() != null) {
+                                    if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
+                                        allOprights += "2,";
+                                    }
+                                    if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
+                                        allOprights += "3,";
+                                    }
+                                    if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
+                                        allOprights += "4,";
+                                    }
+                                    if (allOprights != "") {
+                                        allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
+                                    }
+                                }
+                            }
+                        }
                         if (right != null && right.getOpRight() != null) {
-                            vi.setOpRight(right.getOpRight());
+                            if(tempFolOrFileName.contains(".")){
+                                vi.setOpRight(right.getOpRight());
+                            }else{
+                                vi.setOpRight(allOprights);
+                            }
+
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
+                            }else{
+                                vi.setOprighter("");
                             }
                         } else {
                             vi.setOpRight("");
@@ -2042,7 +2074,7 @@ public class FileUploadAndDownController {
             }
             boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
             boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
-            if (isFileLarge && !isExsitFileName) {//没超过并没有重复的名字
+            if (isFileLarge && !isExsitFileName && fileArray.size()<200) {//没超过并没有重复的名字并且单次上传不超过200个文件
                 view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
                 //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
             } else {
@@ -2051,6 +2083,9 @@ public class FileUploadAndDownController {
                 }
                 if (isExsitFileName) {
                     view.setFlag("-222");//有重复的名字
+                }
+                if (fileArray.size() >= 200) {
+                    view.setFlag("-369");
                 }
             }
 
@@ -2196,9 +2231,10 @@ public class FileUploadAndDownController {
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
-            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);
+            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
+            boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
 
-            if (files.size() < 200 && isFileLarge && isSameFolderNameorFileName == 0) {
+            if (isFolderNameForEngDateOrderNoSalor && files.size() < 200 && isFileLarge && isSameFolderNameorFileName == 0) {
                 //if (isFileLarge && isSameFolderNameorFileName == 0) {
                 view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
             } else {
@@ -2230,6 +2266,9 @@ public class FileUploadAndDownController {
                 }
                 if (isSameFolderNameorFileName == -8) {
                     view.setFlag("-987");
+                }
+                if(!isFolderNameForEngDateOrderNoSalor){
+                    view.setFlag("-162");//代表文件夹结构中有订单名，日期，业务员，设计师
                 }
             }
         } else {

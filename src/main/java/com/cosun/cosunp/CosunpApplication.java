@@ -1,4 +1,5 @@
 package com.cosun.cosunp;
+
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,15 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.MultipartConfigElement;
-import javax.sql.DataSource;
 
 @EnableTransactionManagement
 @SpringBootApplication(scanBasePackages = "com.cosun.cosunp")
@@ -27,7 +22,6 @@ public class CosunpApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CosunpApplication.class, args);
-
     }
 
     @Bean

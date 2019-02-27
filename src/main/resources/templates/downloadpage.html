@@ -1082,6 +1082,11 @@
                                         </td>
                                     </tr>
                                 </div>
+                                <div th:if="${#lists.isEmpty(orderNumFolders)}">
+                                    <tr>
+                                        <td  align="center">暂无文件清单信息</td>
+                                    </tr>
+                                </div>
                                 </tbody>
 
                                 <tfoot id="s_tfoot">  <!-- 分页-->

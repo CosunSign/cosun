@@ -60,6 +60,8 @@ public interface IFileUploadAndDownServ {
 
     DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
 
+    boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception;
+
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
 
     List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception;

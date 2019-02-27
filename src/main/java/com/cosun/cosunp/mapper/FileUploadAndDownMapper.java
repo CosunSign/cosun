@@ -261,6 +261,12 @@ public interface FileUploadAndDownMapper {
     @Select("select * from filemanfileinfo where ordernum = #{orderNo}")
     DownloadView findOrderNobyOrderNo(String orderNo);
 
+    @Select("select name from employee")
+    List<String> getAllSalorNames();
+
+    @Select("select username from userinfo")
+    List<String> getAllDesigners();
+
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParam")
     List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno);
 
@@ -269,6 +275,9 @@ public interface FileUploadAndDownMapper {
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew2")
     List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view);
+
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew5")
+    List<DownloadView> findAllUrlByParamThreeNew5(DownloadView view);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew2Count")
     int findAllUrlByParamThreeNew2Count(DownloadView view);
@@ -340,21 +349,39 @@ public interface FileUploadAndDownMapper {
             return sql.toString();
         }
 
-        public String findAllUrlByThreeParamNew2(DownloadView view) {
+        public String findAllUrlByThreeParamNew5(DownloadView view) {
             StringBuilder sql = new StringBuilder(" SELECT " +
                     "\ta.createuser AS engineer,\n" +
                     "\ta.extinfo1 AS salor,\n" +
                     "\ta.ordernum AS orderNo,\n" +
                     "\tIFNULL(a.updatetime, a.createtime) AS createTime,\n" +
                     "\tb.uid AS oprighter,\n" +
-                    "\tb.opright AS opRight,\n" +
+                    "\tCONCAT(\n" +
+                    "\t\tmax(IF (\n" +
+                    "\t\t\tLOCATE('2', b.opright) <> 0,\n" +
+                    "\t\t\t'2',\n" +
+                    "\t\t\t''\n" +
+                    "\t\t)),\n" +
+                    "\n" +
+                    "\tmax(IF (\n" +
+                    "\t\tLOCATE('3', b.opright) <> 0,\n" +
+                    "\t\t'3',\n" +
+                    "\t\t''\n" +
+                    "\t)),\n" +
+                    "\n" +
+                    "max(IF (\n" +
+                    "\tLOCATE('4', b.opright) <> 0,\n" +
+                    "\t'4',\n" +
+                    "\t''\n" +
+                    "))\n" +
+                    "\t) AS opRight,"+
                     "d.logur1 as urlAddr, \n" +
                     "a.id as id \n" +
                     "FROM\n" +
                     "\tfilemanfileinfo a\n" +
                     "  LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
                     "  left join filemanurl d on b.fileurlid = d.id\n" +
-                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 ");
+                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 and b.uid is  NULL");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and a.extinfo1 = #{salor} ");
             }
@@ -389,7 +416,80 @@ public interface FileUploadAndDownMapper {
             if(view.getuId()!=null && view.getuId()!=0) {
                 sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
             }
-            sql.append("  GROUP BY a.ordernum" +
+            sql.append("  GROUP BY a.ordernum,b.uid" +
+                    "  ORDER BY\n" +
+                    " a.createtime DESC limit #{currentPageTotalNum},#{pageSize} ");
+            return sql.toString();
+        }
+
+        public String findAllUrlByThreeParamNew2(DownloadView view) {
+            StringBuilder sql = new StringBuilder(" SELECT " +
+                    "\ta.createuser AS engineer,\n" +
+                    "\ta.extinfo1 AS salor,\n" +
+                    "\ta.ordernum AS orderNo,\n" +
+                    "\tIFNULL(a.updatetime, a.createtime) AS createTime,\n" +
+                    "\tb.uid AS oprighter,\n" +
+                    "\tCONCAT(\n" +
+                    "\t\tmax(IF (\n" +
+                    "\t\t\tLOCATE('2', b.opright) <> 0,\n" +
+                    "\t\t\t'2',\n" +
+                    "\t\t\t''\n" +
+                    "\t\t)),\n" +
+                    "\n" +
+                    "\tmax(IF (\n" +
+                    "\t\tLOCATE('3', b.opright) <> 0,\n" +
+                    "\t\t'3',\n" +
+                    "\t\t''\n" +
+                    "\t)),\n" +
+                    "\n" +
+                    "max(IF (\n" +
+                    "\tLOCATE('4', b.opright) <> 0,\n" +
+                    "\t'4',\n" +
+                    "\t''\n" +
+                    "))\n" +
+                    "\t) AS opRight,"+
+                    "d.logur1 as urlAddr, \n" +
+                    "a.id as id \n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo a\n" +
+                    "  LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+                    "  left join filemanurl d on b.fileurlid = d.id\n" +
+                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 and b.uid is not NULL ");
+            if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
+                sql.append(" and a.extinfo1 = #{salor} ");
+            }
+            if (view.getEngineer() != null && view.getEngineer()!="") {
+                view.setuId(Integer.valueOf(view.getEngineer()));
+                sql.append(" and a.uid = #{uId} ");
+            }
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" and a.ordernum = #{orderNo} ");
+            }
+
+            if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
+                sql.append(" and a.projectname like CONCAT('%',#{projectName},'%')");
+            }
+
+            if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
+                sql.append(" and d.orginname like  CONCAT('%',#{fileName},'%')");
+            }
+
+            if (view.getEngineer() != null && view.getEngineer().trim().length() > 0) {
+                sql.append(" and a.uid = #{engineer} ");
+            }
+
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime  >= #{startNewestSaveDateStr} and d.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and d.uptime <= #{endNewestSaveDateStr}");
+            }
+
+            if(view.getuId()!=null && view.getuId()!=0) {
+                sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
+            }
+            sql.append("  GROUP BY a.ordernum,b.uid" +
                     "  ORDER BY\n" +
                     " a.createtime DESC limit #{currentPageTotalNum},#{pageSize} ");
             return sql.toString();
@@ -410,7 +510,7 @@ public interface FileUploadAndDownMapper {
                     "\tfilemanfileinfo a\n" +
                     "  LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
                     "  left join filemanurl d on b.fileurlid = d.id\n" +
-                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 ");
+                    "  LEFT JOIN userinfo c ON c.uid = b.uid  where 1=1 and b.uid is not NULL ");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and a.extinfo1 = #{salor} ");
             }
@@ -445,7 +545,7 @@ public interface FileUploadAndDownMapper {
             if(view.getuId()!=null && view.getuId()!=0) {
                 sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
             }
-            sql.append("  GROUP BY a.ordernum" +
+            sql.append("  GROUP BY a.ordernum,b.uid" +
                     " ) as cc ");
             return sql.toString();
         }

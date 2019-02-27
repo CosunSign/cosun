@@ -31,6 +31,11 @@
                 placeholder: 'This is a placeholder',
                 csvDispCount: 2,
                 csvSepChar: ","
+                // captionFormat: '已选择：{0}(个)',
+                // selectAll:true,
+                // captionFormatAllSelected: "全选",
+                // okCancelInMulti: true,
+                // locale : ['确定', '取消', '']
             });
             // var flag = $("#type").val();
             //
@@ -353,10 +358,12 @@
             var trs = $("#showlistbody tr");
             for (var i = 0; i < trs.length; i++) {
                 var trid = trs[i].id;//privilegenum
-                privilelist[i] = trid;
-                $('input[name="privilegenum' + trid + '"]:checked').each(function () {//拼接是重点  容易拼接出错
-                    privilelist[i] += "," + $(this).val();
-                });
+                if (trid != "showdiv" && trid != "nodatadiv" && trid != "pagetfoottr") {
+                    privilelist[i] = trid;
+                    $('input[name="privilegenum' + trid + '"]:checked').each(function () {//拼接是重点  容易拼接出错
+                        privilelist[i] += "," + $(this).val();
+                    });
+                }
             }
             var salor = $("#salorid").val();
             var engineer = $("#selectuser").val();
@@ -387,7 +394,8 @@
                 traditional: true,
                 url: "/fileupdown/updateandsaveprivilegestatus",
                 success: function (msg) {
-                    folderhtml = "<table class=\"grid\" id=\"showlistbody\">";
+                    $("#oprighter").val("");
+                    folderhtml = "";
                     var data = eval(msg); //data为URLS
                     var len = data.length;
                     var vililegeflags;
@@ -396,6 +404,7 @@
                             vililegeflags = data[num].opRight;
                             if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                 folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
+                                folderhtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
                                 if (isNull(vililegeflags) != "") {
                                     // if (vililegeflags.indexOf("1") > -1) {
                                     //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
@@ -427,13 +436,14 @@
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                    "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                     " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                     " <td width=\"520px\" align=\"left+\" id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                     " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                             } else {//代表为文件
                                 fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
+                                fileshtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
                                 if (isNull(vililegeflags) != "") {
                                     // if (vililegeflags.indexOf("1") > -1) {
                                     //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
@@ -465,16 +475,18 @@
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                    "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                     " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                     " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                             }
                             // $("#orderno").val(data[num].orderNo);
                             $("#foldername").val(data[num].folderOrFileName);
                         });
-                        $("#innerfolderdiv").html(folderhtml + fileshtml + "</table>")
+                        $("#showdatatable").html(folderhtml + fileshtml )
+                        $("#showdiv").show();
+                        $("#pagetfoottr").hide();
                     } else {
-                        $("#innerfolderdiv").html("<table class=\"grid\"><tr><td colspan=\"9\" width='1200px' align='center'>查无数据</td></tr></table>");
+                        $("#showdatatable").html("<tr><td colspan=\"9\" width='1200px' align='center'>查无数据</td></tr>");
                     }
                     $("#some-element").busyLoad("hide");
                 },
@@ -488,7 +500,7 @@
         }
 
         function isNull(arg1) {
-            if (arg1 == "null" || arg1 == null) {
+            if (arg1 == "null" || arg1 == null || arg1 ==0 || arg1 == "0") {
                 return "";
             }
             return arg1;
@@ -658,7 +670,7 @@
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                    "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                     " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                     " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                     " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
@@ -697,7 +709,7 @@
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                     " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                    "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                     " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                     " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                             }
@@ -803,17 +815,12 @@
                             if(num<12) {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    folderhtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
+                                    folderhtml += "<td width=\"29px\" align=\"center\">"+(num+1)+"</td> ";
                                     if (isNull(vililegeflags) != "") {
-                                        // if (vililegeflags.indexOf("1") > -1) {
-                                        //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo  + data[num].folderOrFileName + "\"></td>";
-                                        // } else {
-                                        //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // }
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
                                             folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
@@ -826,8 +833,7 @@
                                             folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                     } else {
-                                        // folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
@@ -835,29 +841,24 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
                                     fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    fileshtml += "<td width=\"30px\" align=\"center\">"+(num+1)+"</td> ";
+                                    fileshtml += "<td width=\"29px\" align=\"center\">"+(num+1)+"</td>";
                                     if (isNull(vililegeflags) != "") {
-                                        // if (vililegeflags.indexOf("1") > -1) {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // } else {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // }
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
                                             fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("4") > -1) {
                                             fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
@@ -865,8 +866,7 @@
                                             fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                     } else {
-                                        // fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
@@ -874,7 +874,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                                 }
@@ -913,7 +913,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
@@ -952,7 +952,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                                 }
@@ -972,7 +972,7 @@
                         $(".current_page").text(current_num);//当前的页数
                         total_page = data[0].maxPage;
                     } else {
-                        $("#innerfolderdiv").html("<table class=\"grid\"><tr><td colspan=\"10\" width='1200px' align='center'>查无数据</td></tr></table>");
+                        $("#showdatatable").html("<tr><td colspan=\"10\" width='1200px' align='center'>查无数据</td></tr>");
                     }
                 },
                 error: function (msg) {
@@ -1133,7 +1133,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
@@ -1165,7 +1165,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                                 }
@@ -1199,7 +1199,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
@@ -1231,7 +1231,7 @@
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\"> " + isNull(data[num].oprighter) + " </td>" +
+                                        "<td width=\"50px\" align=\"center\">" + isNull(data[num].oprighter) + "</td>" +
                                         " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
                                         " <td width=\"520px\" align=\"left\"><i>" + data[num].folderOrFileName + "</i><td></tr>"
                                 }
@@ -1821,8 +1821,7 @@
                                             <td width="50px" align="center">
                                                 <i th:text="${view.engineer}"></i>
                                             </td>
-                                            <td width="50px" align="center">
-                                                <i th:text="${view.oprighter}">***</i>
+                                            <td width="50px" align="center" th:text="${view.oprighter}">
                                             </td>
                                             <td width="150px" align="center">
                                                 <i th:text="${view.createTime}"></i>
