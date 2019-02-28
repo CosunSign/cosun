@@ -1239,6 +1239,9 @@ public class FileUploadAndDownController {
                     }
                 }
             }
+            if(views==null || views.size()==0){
+                vie.setFlag("-258");
+            }
 
         }
         //返回
@@ -2105,21 +2108,21 @@ public class FileUploadAndDownController {
             for (MultipartFile mfile : files) {
                 fileArray.add(mfile);
             }
-            boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
+            //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
             boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
-            if (isFileLarge && !isExsitFileName && fileArray.size() < 200) {//没超过并没有重复的名字并且单次上传不超过200个文件
+            if ( !isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
                 view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
                 //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
             } else {
-                if (!isFileLarge) {
-                    view.setFlag("-2");//超过
-                }
+//                if (!isFileLarge) {
+//                    view.setFlag("-2");//超过
+//                }
                 if (isExsitFileName) {
                     view.setFlag("-222");//有重复的名字
                 }
-                if (fileArray.size() >= 200) {
-                    view.setFlag("-369");
-                }
+//                if (fileArray.size() >= 200) {
+////                    view.setFlag("-369");
+////                }
             }
 
         } else {
@@ -2263,23 +2266,24 @@ public class FileUploadAndDownController {
         if (userInfo.getUseruploadright() == 1) {
             MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
             List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-            boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
+           // boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
             int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
 
-            if (isFolderNameForEngDateOrderNoSalor && files.size() < 200 && isFileLarge && isSameFolderNameorFileName == 0) {
+            if (isFolderNameForEngDateOrderNoSalor  && isSameFolderNameorFileName == 0) {
                 //if (isFileLarge && isSameFolderNameorFileName == 0) {
                 view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
             } else {
-                if (files.size() >= 200) {
-                    view.setFlag("-369");
-                }
-                if (!isFileLarge) {
-                    view.setFlag("-2");
-                } else if (isSameFolderNameorFileName == -1) {
+//                if (files.size() >= 200) {
+//                    view.setFlag("-369");
+//                }
+//                if (!isFileLarge) {
+//                    view.setFlag("-2");
+//                } else
+                    if (isSameFolderNameorFileName == -1) {
                     view.setFlag("-9999");//代表上传的文件中有同名
                 }
                 if (isSameFolderNameorFileName == -2) {

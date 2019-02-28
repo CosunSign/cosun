@@ -308,15 +308,15 @@ public interface FileUploadAndDownMapper {
             "WHERE\n" +
             "\tb.uid = #{uId} \n" +
             "AND a.ordernum = #{orderNum} \n" +
-            "OR b.id IN (\n" +
-            "\tSELECT\n" +
-            "\t\tid\n" +
-            "\tFROM\n" +
-            "\t\tfilemanright\n" +
-            "\tWHERE\n" +
-            "\t\tuid IS NULL\n" +
-            "\tAND a.ordernum = #{orderNum} \n" +
-            ")\n" +
+//            "OR b.id IN (\n" +
+//            "\tSELECT\n" +
+//            "\t\tid\n" +
+//            "\tFROM\n" +
+//            "\t\tfilemanright\n" +
+//            "\tWHERE\n" +
+//            "\t\tuid IS NULL\n" +
+//            "\tAND a.ordernum = #{orderNum} \n" +
+//            ")\n" +
             "GROUP BY\n" +
             "\ta.ordernum,\n" +
             "\tb.fileurlid")
