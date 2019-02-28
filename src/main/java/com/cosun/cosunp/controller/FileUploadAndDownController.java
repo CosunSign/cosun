@@ -546,6 +546,7 @@ public class FileUploadAndDownController {
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
+                logger.debug(e.getMessage());
             }
         }
 
@@ -555,6 +556,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             e.printStackTrace();
+            logger.debug(e.getMessage());
         }
     }
 
@@ -619,6 +621,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(norepeatFoFiPAIXU);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -628,6 +631,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -765,6 +769,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -818,6 +823,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(norepeatFoldorFile);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -827,6 +833,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -888,6 +895,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(names);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -897,6 +905,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -949,6 +958,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(norepeatFoldorFile);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -958,6 +968,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -987,6 +998,7 @@ public class FileUploadAndDownController {
             str = x.writeValueAsString(views);
 
         } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
 
@@ -995,6 +1007,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1056,6 +1069,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(viewsNew);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1065,6 +1079,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1134,6 +1149,7 @@ public class FileUploadAndDownController {
                 str1 = x.writeValueAsString(views);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1142,6 +1158,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
 
@@ -1240,6 +1257,7 @@ public class FileUploadAndDownController {
                 str = x.writeValueAsString(urls);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1249,6 +1267,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1850,6 +1869,7 @@ public class FileUploadAndDownController {
                 str1 = x.writeValueAsString(dataList);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -1858,6 +1878,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
 
@@ -1916,6 +1937,7 @@ public class FileUploadAndDownController {
                 num = bufferedInputStream.read(buff);
             }
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             throw new RuntimeException(e.getMessage());
         } finally {
             if (bufferedInputStream != null) {
@@ -1993,6 +2015,7 @@ public class FileUploadAndDownController {
                 str1 = x.writeValueAsString(fileUrlList);
 
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -2002,6 +2025,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -2040,6 +2064,7 @@ public class FileUploadAndDownController {
             try {
                 str = x.writeValueAsString(views);
             } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -2048,6 +2073,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             e.printStackTrace();
         }
 

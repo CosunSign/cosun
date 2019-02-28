@@ -3,9 +3,14 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IUserInfoServ;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -23,7 +28,7 @@ public class AccountController {
     private IUserInfoServ userInfoServ;
 
     private static final String INDEX = "index";
-
+    private static Logger logger = LogManager.getLogger(AccountController.class);
     @ResponseBody
     @RequestMapping(value = "/tologin")
     public ModelAndView toLoginPage() throws Exception {
