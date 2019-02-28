@@ -574,6 +574,11 @@
         var totaldata; //总共多少记录
         var pageSize;//当前每页多少条
         function findFoldersByQueryParam() {
+            var flag12 = $("#type").val();
+            if (flag12 == "0") {
+                alert("您没有管理权限，无法进行管理权限分配操作,如需要请向上级申请！");
+                return false;
+            }
             var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
             var salor = $("#salorid").val();
             var engineer = $("#selectuser").val();

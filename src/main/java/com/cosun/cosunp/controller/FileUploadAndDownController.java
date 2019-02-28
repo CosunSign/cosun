@@ -40,6 +40,7 @@ public class FileUploadAndDownController {
     private IFileUploadAndDownServ fileUploadAndDownServ;
 
     private static Logger logger = LogManager.getLogger(FileUploadAndDownController.class);
+
     @ResponseBody
     @RequestMapping("/touploadpage")
     public ModelAndView toUploadPage() throws Exception {
@@ -201,7 +202,7 @@ public class FileUploadAndDownController {
                             vi.setOpRight(right.getOpRight());
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
-                            } else{
+                            } else {
                                 vi.setOprighter("");
                             }
                         } else {
@@ -270,7 +271,7 @@ public class FileUploadAndDownController {
                             vi.setOpRight(right.getOpRight());
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
-                            }else{
+                            } else {
                                 vi.setOprighter("");
                             }
                         } else {
@@ -409,13 +410,13 @@ public class FileUploadAndDownController {
             }
         }
         List<String> names = new ArrayList<String>();
-        for(String s : norepeatFoldorFile) {
-            if(!s.contains(".")){
+        for (String s : norepeatFoldorFile) {
+            if (!s.contains(".")) {
                 names.add(s);
             }
         }
-        for(String s : norepeatFoldorFile) {
-            if(s.contains(".")){
+        for (String s : norepeatFoldorFile) {
+            if (s.contains(".")) {
                 names.add(s);
             }
         }
@@ -470,7 +471,7 @@ public class FileUploadAndDownController {
         if (!foldername.contains(".")) {
             for (String s : urls) {
                 lastIndex = s.indexOf("/" + view.getFolderName() + "/");
-                if(lastIndex!=-1) {
+                if (lastIndex != -1) {
                     String linshi1 = s.substring(0, lastIndex);
                     int linshilastIndex = linshi1.lastIndexOf("/");
                     String linshi2 = linshi1.substring(0, linshilastIndex);
@@ -527,13 +528,13 @@ public class FileUploadAndDownController {
         }
 
         List<String> names = new ArrayList<String>();
-        for(String s : norepeatFoldorFile) {
-            if(!s.contains(".")){
+        for (String s : norepeatFoldorFile) {
+            if (!s.contains(".")) {
                 names.add(s);
             }
         }
-        for(String s : norepeatFoldorFile) {
-            if(s.contains(".")){
+        for (String s : norepeatFoldorFile) {
+            if (s.contains(".")) {
                 names.add(s);
             }
         }
@@ -602,13 +603,13 @@ public class FileUploadAndDownController {
         }
 
 
-        for(String s :norepeatFoldorFile) {
-            if(!s.contains(".")) {
+        for (String s : norepeatFoldorFile) {
+            if (!s.contains(".")) {
                 norepeatFoFiPAIXU.add(s);
             }
         }
-        for(String s :norepeatFoldorFile) {
-            if(s.contains(".")) {
+        for (String s : norepeatFoldorFile) {
+            if (s.contains(".")) {
                 norepeatFoFiPAIXU.add(s);
             }
         }
@@ -687,14 +688,14 @@ public class FileUploadAndDownController {
                     }
                     right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
                     tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
-                        for (DownloadView v : views) {
-                            if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
-                                flag = false;
-                            }
+                    for (DownloadView v : views) {
+                        if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
+                            flag = false;
                         }
+                    }
                     if (flag) {
                         vi.setFolderOrFileName(tempFolOrFileName);
-                        if(!tempFolOrFileName.contains(".")) {
+                        if (!tempFolOrFileName.contains(".")) {
                             for (FilemanUrl uu : urls) {
                                 if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
                                     right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
@@ -715,15 +716,15 @@ public class FileUploadAndDownController {
                             }
                         }
                         if (right != null && right.getOpRight() != null) {
-                            if(tempFolOrFileName.contains(".")){
+                            if (tempFolOrFileName.contains(".")) {
                                 vi.setOpRight(right.getOpRight());
-                            }else{
+                            } else {
                                 vi.setOpRight(allOprights);
                             }
 
                             if (right.getuId() != null) {
                                 vi.setOprighter(right.getuId().toString());
-                            }else{
+                            } else {
                                 vi.setOprighter("");
                             }
                         } else {
@@ -877,13 +878,13 @@ public class FileUploadAndDownController {
             }
         }
         List<String> names = new ArrayList<String>();
-        for(String s :norepeatFoldorFile) {
-            if(!s.contains(".")) {
+        for (String s : norepeatFoldorFile) {
+            if (!s.contains(".")) {
                 names.add(s);
             }
         }
-        for(String s :norepeatFoldorFile) {
-            if(s.contains(".")) {
+        for (String s : norepeatFoldorFile) {
+            if (s.contains(".")) {
                 names.add(s);
             }
         }
@@ -1223,9 +1224,14 @@ public class FileUploadAndDownController {
                 } else {//代表是文件夹
                     index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
                     if (index > 0) {
-                        if (!vi.getOpRight().contains("3")) {
+                        if (vi.getOpRight() == null) {
                             isDownRight = false;
                             break a;
+                        } else {
+                            if (!vi.getOpRight().contains("3")) {
+                                isDownRight = false;
+                                break a;
+                            }
                         }
                         urls.add(vi.getUrlAddr());
                         file = new File(vi.getUrlAddr());
@@ -1250,6 +1256,7 @@ public class FileUploadAndDownController {
             vie.setFlag("-258");
         }
 
+        urls.add(vie.getFlag());
         String str = null;
         if (urls != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -2100,7 +2107,7 @@ public class FileUploadAndDownController {
             }
             boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
             boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
-            if (isFileLarge && !isExsitFileName && fileArray.size()<200) {//没超过并没有重复的名字并且单次上传不超过200个文件
+            if (isFileLarge && !isExsitFileName && fileArray.size() < 200) {//没超过并没有重复的名字并且单次上传不超过200个文件
                 view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
                 //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
             } else {
@@ -2167,27 +2174,30 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/modifypage", method = RequestMethod.POST)
     public ModelAndView modifyPage(HttpSession session, @ModelAttribute(value = "view") DownloadView view,
                                    @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
-        List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        view.setUserName(userInfo.getUserName());
-        view.setPassword(userInfo.getUserPwd());
-        view.setuId(userInfo.getuId());
-        for (MultipartFile mfile : files) {
-            fileArray.add(mfile);
-        }
-        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
-        if (isAllFileUpdateRight) {
-            boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-            if (isFileLarge) {//没超过
-                view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
-                //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-            } else {
-                view.setFlag("-2");//超过
+        try {
+            List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            view.setUserName(userInfo.getUserName());
+            view.setPassword(userInfo.getUserPwd());
+            view.setuId(userInfo.getuId());
+            for (MultipartFile mfile : files) {
+                fileArray.add(mfile);
             }
-        } else {
-            view.setFlag("-258");
+            boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
+            if (isAllFileUpdateRight) {
+                boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
+                if (isFileLarge) {//没超过
+                    view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
+                    //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
+                } else {
+                    view.setFlag("-2");//超过
+                }
+            } else {
+                view.setFlag("-258");
+            }
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
         }
-
         return new ModelAndView("modifypage");
 
     }
@@ -2293,7 +2303,7 @@ public class FileUploadAndDownController {
                 if (isSameFolderNameorFileName == -8) {
                     view.setFlag("-987");
                 }
-                if(!isFolderNameForEngDateOrderNoSalor){
+                if (!isFolderNameForEngDateOrderNoSalor) {
                     view.setFlag("-162");//代表文件夹结构中有订单名，日期，业务员，设计师
                 }
             }

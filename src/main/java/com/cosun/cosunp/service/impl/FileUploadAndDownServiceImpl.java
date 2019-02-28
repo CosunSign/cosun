@@ -52,7 +52,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     //如果RIGHT为空,代表是RIGHT表中无数据,需要新增一条数据
                     if (right == null) {
                         //url = fileUploadAndDownMapper.getFileManUrlByFileInfoIdandFileName(right.getId(),vi.getFolderOrFileName());
-                        if ( vi.getOpRight().trim().length() > 0) {
+                        if (vi.getOpRight().trim().length() > 0) {
                             right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid2(info.getId(), vi.getFolderOrFileName());
                             right.setOpRight(vi.getOpRight());
                             right.setuId(Integer.valueOf(operrighter));
@@ -79,7 +79,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                         if (u.getLogur1().indexOf("/" + vi.getFolderOrFileName() + "/") > -1) {//查询地址中有无选中的文件夹
                             right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileRightIdandUid(info.getId(), u.getId(), Integer.valueOf(operrighter));
                             if (right == null) {
-                                if ( vi.getOpRight().trim().length() > 0) {
+                                if (vi.getOpRight().trim().length() > 0) {
                                     right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileUrlId(info.getId(), u.getId());
                                     right.setOpRight(vi.getOpRight());
                                     right.setuId(Integer.valueOf(operrighter));
@@ -198,6 +198,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     /**
      * 功能描述:
+     *
      * @auther: homey Wong
      * @date: 2019/2/22 0022 下午 7:34
      * @param:
@@ -205,8 +206,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Transactional
-    public List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception{
-        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid(orderNo,uId);
+    public List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo, Integer uId) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid(orderNo, uId);
     }
 
 
@@ -271,6 +272,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     /**
      * 功能描述:文件夹名验证
+     *
      * @auther: homey Wong
      * @date: 2019/2/27 0027 上午 10:13
      * @param:
@@ -278,25 +280,25 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Transactional
-    public  boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception {
+    public boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception {
         boolean isFolderNameForEngDateOrderNoSalor = true;
         List<String> salorNames = fileUploadAndDownMapper.getAllSalorNames();
         List<String> designers = fileUploadAndDownMapper.getAllDesigners();
         Pattern orderNoRegex = Pattern.compile("^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$");
         Pattern dataRegex = Pattern.compile("^2019[0|1][0-9]$");
         String[] foldersName = null;
-        for(MultipartFile file : files) {
+        for (MultipartFile file : files) {
             foldersName = file.getOriginalFilename().split("/");
-            for(String strname : foldersName) {
-                if(salorNames.contains(strname) || designers.contains(strname)){
+            for (String strname : foldersName) {
+                if (salorNames.contains(strname) || designers.contains(strname)) {
                     isFolderNameForEngDateOrderNoSalor = false;
                     return isFolderNameForEngDateOrderNoSalor;
                 }
                 Matcher match = orderNoRegex.matcher(strname);
                 Matcher match1 = dataRegex.matcher(strname);
-                if(match.matches()||match1.matches()) {
-                 isFolderNameForEngDateOrderNoSalor = false;
-                 return isFolderNameForEngDateOrderNoSalor;
+                if (match.matches() || match1.matches()) {
+                    isFolderNameForEngDateOrderNoSalor = false;
+                    return isFolderNameForEngDateOrderNoSalor;
                 }
             }
         }
@@ -347,8 +349,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
         } else {//如果没有文件夹,直接当成新文件全部存.
-            view = this.addFilesDatabyFolder(view, fileArray, userInfo);
-            view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
+            FileManFileInfo f = fileUploadAndDownMapper.getFileInfoByOrderNo(view.getOrderNo());
+            if (f != null) {//判断订单号有没有被使用  如使用，返回
+               view.setFlag("-357");
+            } else {//订单号没有被使用，可以存储
+                view = this.addFilesDatabyFolder(view, fileArray, userInfo);
+                view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
+            }
         }
 
         return view;
@@ -408,14 +415,18 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional
-    public boolean checkFileUpdateRight(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception{
+    public boolean checkFileUpdateRight(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         boolean isUpdateRight = true;//默认初始值代表有权限 只要有一个文件没有权限,即刻停止此业务,返回false
         FilemanRight right = null;
         String fileName = null;
-        for(MultipartFile file : fileArray) {
+        for (MultipartFile file : fileArray) {
             fileName = subAfterString(file.getOriginalFilename(), "/");
-            right = fileUploadAndDownMapper.getFileRightByOrderNoUidfileName(view.getOrderNo(),fileName,userInfo.getuId());
-            if(!right.getOpRight().contains("2")){
+            right = fileUploadAndDownMapper.getFileRightByOrderNoUidfileName(view.getOrderNo(), fileName, userInfo.getuId());
+            if(right==null) {
+                isUpdateRight=false;
+                return isUpdateRight;
+            }
+            if (!right.getOpRight().contains("2")) {
                 isUpdateRight = false;
                 return isUpdateRight;
             }
@@ -674,8 +685,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
         } else {//如果没有文件夹,直接当成新文件全部存.
-            view = this.addFilesData(view, fileArray, userInfo);
-            view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
+            FileManFileInfo info = fileUploadAndDownMapper.getFileInfoByOrderNo(view.getOrderNo());
+            if(info!=null) {//查看订单编号有没有被占用
+                view.setFlag("-357");
+            }else {
+                view = this.addFilesData(view, fileArray, userInfo);
+                view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
+            }
         }
 
         return view;
@@ -999,18 +1015,18 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional
     public List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception {
         String linshiId = view.getLinshiId();
-        if(linshiId==null ||linshiId.trim().length()<=0 ){
+        if (linshiId == null || linshiId.trim().length() <= 0) {
             view.setuId(0);
-        }else{
+        } else {
             view.setuId(Integer.valueOf(linshiId.trim()));
         }
-        if(view.getuId()==0) {// 没有选择权限者,只准查所有文件
+        if (view.getuId() == 0) {// 没有选择权限者,只准查所有文件
             return fileUploadAndDownMapper.findAllUrlByParamThreeNew5(view);
         }
         List<FilemanRight> rights = fileUploadAndDownMapper.getFileRightByOperighter(view.getuId());
-        if(rights!=null && rights.size()>0) {//代表权限表中有权限的数据
+        if (rights != null && rights.size() > 0) {//代表权限表中有权限的数据
             return fileUploadAndDownMapper.findAllUrlByParamThreeNew2(view);
-        }else{//代表没有权限数据
+        } else {//代表没有权限数据
             return fileUploadAndDownMapper.findAllUrlByParamThreeNew3(view);
         }
     }
@@ -1045,20 +1061,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional
     public List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception {
-         return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
+        return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
     }
 
     @Override
     @Transactional
-    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception {
-        return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId,fileInfoId,uId);
+    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId) throws Exception {
+        return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId, fileInfoId, uId);
     }
 
-   @Override
-   @Transactional
-   public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
-       return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
-   }
+    @Override
+    @Transactional
+    public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
+    }
 
     @Override
     @Transactional
@@ -1324,25 +1340,30 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional
-    public List<String> findAllOrderNum(int currentPageTotalNum,int pageSize) throws Exception {
-        return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum,pageSize);
+    public List<String> findAllOrderNum(int currentPageTotalNum, int pageSize) throws Exception {
+        return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum, pageSize);
     }
+
     @Transactional
     public int findAllOrderNumCount() throws Exception {
         return fileUploadAndDownMapper.findAllOrderNumCount();
     }
+
     @Transactional
     public List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
     }
+
     @Transactional
     public int findAllUrlByParamManyOrNoCount(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
     }
+
     @Transactional
     public int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByParamThreeNew2Count(view);
     }
+
     @Transactional
     public DownloadView findOrderNobyOrderNo(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);

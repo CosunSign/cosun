@@ -708,7 +708,6 @@
             return false;
         }
         var orderno = $("#orderno").val();
-        alert(checkval)
 
         //第二步,向后台发送消息
         //$("#some-element").busyLoad("show");//遮罩层开启
@@ -730,11 +729,14 @@
                 var flag = data[totalnum-1];
                 if(flag=="-1"){
                     alert("您要下载的文件已超过2G！严禁下载。");
-                    return;
+                    return false;
                 }
                 if(flag=="-369"){
                     alert("您要下载的文件已超过200个，请重新选择!");
-                    return;
+                    return false;
+                }if(flag=="-258"){
+                    alert("您要下载的文件没有下载权限，请向上级申请!")
+                    return false;
                 }
                  $.each(data, function (num) {
                      if (num < totalnum - 1 && totalnum > 1) {

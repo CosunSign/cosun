@@ -130,8 +130,8 @@
         if ("" == str) {
             str2 = "用户名为空";
             return str2;
-        } else if ((str.length < 5) || (str.length > 20)) {
-            str2 = "用户名必须为5 ~ 20位";
+        } else if ((str.length < 4) || (str.length > 20)) {
+            str2 = "用户名必须为4 ~ 20位";
             return str2;
         } else if (check_other_char(str)) {
             str2 = "不能含有特殊字符";
