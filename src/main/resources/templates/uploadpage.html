@@ -23,6 +23,7 @@
 <body class=" theme-blue">
 <script type="text/javascript">
     $(function () {
+        $("#uploadprogress").hide();
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         var isMessage = $("#existFileMessage").val();
         var isExistNum = $("#isExistNum").val();
@@ -74,9 +75,9 @@
 
         } else if (flag == "-258") {
             alert("您没有上传权限!");
-        } else if(flag == "-162") {
+        } else if (flag == "-162") {
             alert("您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!")
-        }else if(flag=="-357") {
+        } else if (flag == "-357") {
             alert("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!")
         }
         $("#salorid").val("");
@@ -107,6 +108,7 @@
     #listdiv {
         border: 1px solid #9AC0CD;
         width: 1160px;
+        height: 250;
         Margin: 2px;
         padding: 3px;
     }
@@ -114,7 +116,7 @@
     #folderdiv {
         border: 1px solid #9AC0CD;
         width: 1148px;
-        height: 410px;
+        height: 320px;
         Margin: 2px;
         padding: 3px;
     }
@@ -122,7 +124,7 @@
     #innerfolderdiv {
         border: 1px solid #9AC0CD;
         width: 1120px;
-        height: 355px;
+        height: 250px;
         Margin: 10px;
         padding: 3px;
     }
@@ -187,7 +189,7 @@
         top: 0;
         bottom: 0;
         width: 1165px;
-        height: 380px;
+        height: 250px;
         right: 0;
 
     }
@@ -199,6 +201,7 @@
         top: 0;
         bottom: 0;
         width: 1148px;
+        height: 320;
         right: 0;
     }
 
@@ -680,6 +683,80 @@
         return arg1;
     }
 
+    var fileDownloadCheckTimer;
+
+    function showAjax() {
+        // $.ajax({
+        //     data: "",
+        //     type: "POST",
+        //     contentType: "application/json",//上传内容格式为json结构
+        //     url: "/fileupdown/getSessionValue",
+        //     success: function (msg) {
+        //         $("#uploadprogress").show();
+        //         var data = eval(msg);
+        //         var fileNo = data.id;
+        //         var RecordCount = data.recordCount;
+        //         var fileName = data.fileName;
+        //         var uploadOverByte = data.uploadOverByte;
+        //         var totalFilesByte = data.totalFilesByte;
+        //         $("#uploadOverByte").html(uploadOverByte);
+        //         $("#totalFilesByte").html(totalFilesByte);
+        //         $("#fileno").html(fileNo);
+        //         $("#filenameuploading").html(fileName);
+        //         $("#totaluploadnum").html(RecordCount);
+        //     },
+        //     error: function (msg) {
+        //         alert("显示进度信息失败!");
+        //     }
+       // });
+
+        var fileno = getCookie('fileno');
+        var filenameuploading = getCookie('filenameuploading');
+        var totaluploadnum = getCookie('totaluploadnum');
+        var totalFilesByte = getCookie('totalFilesByte');
+        var uploadOverByte = getCookie('uploadOverByte');
+        alert(fileno)
+        alert(filenameuploading)
+        alert(totaluploadnum)
+        alert(totalFilesByte)
+        alert(uploadOverByte)
+
+
+
+    }
+
+    // 定义一个函数，用来读取特定的cookie值。
+    function getCookie(cookie_name) {
+        var allcookies = document.cookie;
+        //索引长度，开始索引的位置
+        var cookie_pos = allcookies.indexOf(cookie_name);
+
+        // 如果找到了索引，就代表cookie存在,否则不存在
+        if (cookie_pos != -1) {
+            // 把cookie_pos放在值的开始，只要给值加1即可
+            //计算取cookie值得开始索引，加的1为“=”
+            cookie_pos = cookie_pos + cookie_name.length + 1;
+            //计算取cookie值得结束索引
+            var cookie_end = allcookies.indexOf(";", cookie_pos);
+
+            if (cookie_end == -1) {
+                cookie_end = allcookies.length;
+
+            }
+            //得到想要的cookie的值
+            var value = unescape(allcookies.substring(cookie_pos, cookie_end));
+        }
+        return value;
+    }
+
+    function finishInterval() {
+        window.clearInterval(fileDownloadCheckTimer);
+    }
+
+    function showSessionMessage() {
+        fileDownloadCheckTimer = window.setInterval("showAjax()", 2000);
+    }
+
     function submitalldata() {
         var filefolder = $('#filefolder').val();
         var salorid = $("#salorid").val();
@@ -724,7 +801,9 @@
         }
 
         $("#folderselect").val(filesaveselect);
+        //showSessionMessage();//定时器开启
         document.getElementById("form1").submit();
+
         $("#some-element").busyLoad("show");//遮罩层开启
 
 
@@ -858,7 +937,6 @@
 <![endif]-->
 
 <!-- Le fav and touch icons -->
-
 
 
 <!--[if lt IE 7 ]>
@@ -1149,7 +1227,7 @@
 
                     <div id="showurldiv">
                         <table class="grid" style="width: 100%;height: 360px" id="tablecss">
-                            <tbody align="center" id="urltbody" style="height: 360px;">
+                            <tbody align="center" id="urltbody" style="height: 250px;">
                             <tr>
                                 <td colspan="7">暂无数据</td>
                             </tr>
@@ -1174,6 +1252,22 @@
                         <input type="button" onclick="submitalldata()" value="上传">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="button" value="全部清空" onclick="removeallbutonetr()">
 
+
+                    </div>
+                </div>
+
+                <div id="uploadprogress" style="display: none">
+                <div>
+                        <font color="#FF0000" size="2">正在上传第</font><span id="fileno"></span><font color="#FF0000"
+                                                                                                  size="2">个文件</font>
+                    <br>
+                        <font color="#FF0000" size="2">当前上传的文件名为</font><span id="filenameuploading"></span>
+                    <br>
+                        <font color="#FF0000" size="2">总需要上传的文件个数</font><span id="totaluploadnum"></span>
+                    <br>
+                    <font color="#FF0000" size="2">已经上传了</font><span id="uploadOverByte"></span><font color="#FF0000" size="2">M字节</font>
+                <br>
+                <font color="#FF0000" size="2">总共</font><span id="totalFilesByte"></span><font color="#FF0000" size="2">M字节</font>
 
                     </div>
                 </div>

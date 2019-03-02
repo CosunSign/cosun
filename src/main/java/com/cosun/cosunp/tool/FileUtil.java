@@ -7,6 +7,7 @@ import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -273,6 +274,55 @@ public class FileUtil {
 
 
     /**
+     * 判断上传的文件大小
+     *
+     * @param :multipartFile:上传的文件
+     * @param :                限制大小
+     * @param unit:限制单位（B,K,M,G)
+     * @return boolean:是否大于
+     */
+    public static double getFileSize(List<MultipartFile> multipartFiles, String unit) {
+        long len = 0;  //上传文件的大小, 单位为字节.
+        for (MultipartFile file : multipartFiles) {
+            len += file.getSize();
+        }
+        //准备接收换算后文件大小的容器
+        double fileSize = 0;
+        if ("B".equals(unit.toUpperCase())) {
+            fileSize = (double) len;
+        } else if ("K".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1024;
+        } else if ("M".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1048576;
+        } else if ("G".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1073741824;
+        }
+        //如果上传文件大于限定的容量
+
+       return fileSize;
+    }
+
+
+    public static double getFileSizeFrSingle(MultipartFile multipartFiles, String unit) {
+        long len = multipartFiles.getSize();
+
+        //准备接收换算后文件大小的容器
+        double fileSize = 0;
+        if ("B".equals(unit.toUpperCase())) {
+            fileSize = (double) len;
+        } else if ("K".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1024;
+        } else if ("M".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1048576;
+        } else if ("G".equals(unit.toUpperCase())) {
+            fileSize = (double) len / 1073741824;
+        }
+        //如果上传文件大于限定的容量
+
+        return fileSize;
+    }
+
+    /**
      * 判断要下载的文件大小
      *
      * @param :multipartFile:上传的文件
@@ -285,7 +335,7 @@ public class FileUtil {
         for (File file : files) {
             len += file.length();
         }
-        //准备接收换算后文件大小的容器
+        //准备接收换算后checkFileSize文件大小的容器
         double fileSize = 0;
         if ("B".equals(unit.toUpperCase())) {
             fileSize = (double) len;
@@ -332,6 +382,13 @@ public class FileUtil {
             return false;
         }
         return true;
+    }
+
+    public static Cookie addCookie(String cookieName,String cookieValue) {
+        Cookie cookie = new Cookie(cookieName,cookieValue);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600 * 24);
+       return cookie;
     }
 
 }
