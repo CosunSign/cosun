@@ -56,6 +56,7 @@ public class ModifyPageFolderServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8"); // 设置返回字体
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setProgressListener(new MyProgressListener(req));
         HttpSession session = req.getSession();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = (DownloadView) session.getAttribute("view");
@@ -124,23 +125,10 @@ public class ModifyPageFolderServlet extends HttpServlet {
                 }
 
                 if (fileArray.size() > 0) {
-                    //查看要更新的所有文件有没有权限
-                    boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
-                    if (isAllFileUpdateRight) {
-                        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");
-                        if (isFileLarge) {
-                            upload.setProgressListener(new MyProgressListener(req));
-                            view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(fileArray, view, userInfo);
-                        } else {
-                            view.setFlag("-2");
-                        }
-                    } else {
-                        view.setFlag("-258");
-                    }
+                    view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(fileArray, view, userInfo);
                 }
             }
-
-            resp.sendRedirect("tomainpage?currentPage=1&flag="+view.getFlag());
+            resp.sendRedirect("tomodifypage?currentPage=1&flag=" + view.getFlag());
         } catch (Exception e) {
             System.out.println("文件上传发生错误！");
             e.printStackTrace();

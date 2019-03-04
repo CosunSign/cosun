@@ -133,23 +133,13 @@ public class ModifyPageServlet extends HttpServlet {
                     }
                 }
 
-                if (fileArray.size() > 0) {
-                    boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
-                    if (isAllFileUpdateRight) {
-                        boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-                        if (isFileLarge) {//没超过
-                            view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
-                            //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-                        } else {
-                            view.setFlag("-2");//超过
-                        }
-                    } else {
-                        view.setFlag("-258");
-                    }
-                }
+                if(fileArray.size()>0)
+                view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
+
+
             }
 
-            resp.sendRedirect("tomainpage?currentPage=1&flag="+view.getFlag());
+            resp.sendRedirect("tomodifypage?currentPage=1&flag=" + view.getFlag());
         } catch (Exception e) {
             System.out.println("文件上传发生错误！");
             e.printStackTrace();
@@ -161,7 +151,6 @@ public class ModifyPageServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
-
 
 
 }

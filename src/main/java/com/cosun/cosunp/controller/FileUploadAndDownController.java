@@ -2,6 +2,7 @@ package com.cosun.cosunp.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.cosun.cosunp.entity.*;
+import com.cosun.cosunp.listener.MyProgressListener;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.FileUtil;
@@ -2039,6 +2040,88 @@ public class FileUploadAndDownController {
         }
     }
 
+    @RequestMapping(value = "/checkupdatemessagefolder", method = RequestMethod.POST)
+    public void checkUpdateMessageFolder(MultipartFile[] fileFolder, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setuId(userInfo.getuId());
+        List<MultipartFile> files = null;
+        int flag = 520;
+        files = new ArrayList<MultipartFile>();
+        for (int i = 0; i < fileFolder.length; i++) {
+            files.add(fileFolder[i]);
+        }
+        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(files, view, userInfo);
+        if (isAllFileUpdateRight) {
+            boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
+            if (!isFileLarge) {
+                flag = -2;
+            }
+        } else {
+            flag = -258;
+        }
+
+        String str1 = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(flag);
+
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/checkupdatemessage", method = RequestMethod.POST)
+    public void checkUpdateMessage(MultipartFile[] file, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setuId(userInfo.getuId());
+        List<MultipartFile> fileArray = null;
+        int flag = 520;
+        for (MultipartFile mfile : file) {
+            fileArray.add(mfile);
+        }
+        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
+        if (isAllFileUpdateRight) {
+            boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
+            if (!isFileLarge) {//没超过
+                flag = -2;
+            } else {
+                flag = -258;
+            }
+        }
+
+        String str1 = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(flag);
+
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     @RequestMapping(value = "/checkmessagefolder", method = RequestMethod.POST)
     public void checkMessageFolder(MultipartFile[] fileFolder, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
@@ -2261,16 +2344,17 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(String userName, String password, int currentPage, HttpServletRequest
+    public ModelAndView toModifyPage(HttpSession session,String userName, String password, int currentPage,String flag, HttpServletRequest
             request) throws
             Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
         DownloadView view = new DownloadView();
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFlag(flag);
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("downloadViews", downloadViews);
