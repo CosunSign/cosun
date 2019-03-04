@@ -4,13 +4,16 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
+import com.cosun.cosunp.singleton.ProgressSingleton;
 import com.cosun.cosunp.tool.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -511,10 +514,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         int index;
         String centerPath = null;
         String filePath = null;
+        //文件进度长度
         for (int i = 0; i < files.size(); i++) {
             try {
-                //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
-                // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
                 fileName = files.get(i).getOriginalFilename();
                 index = fileName.lastIndexOf("/");
                 centerPath = fileName.substring(0, index);
@@ -522,10 +524,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filePath = view.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
                         + randomNum + "/" + view.getOrderNo() + "/" + centerPath;
                 FtpUtils.uploadFile(filePath, fileName, files.get(i).getInputStream());
-                //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
                 deskName = filePath + "/" + fileName;
                 orginname = subAfterString(deskName, "/");
-                //存储文件路径
                 filemanUrl = new FilemanUrl();
                 filemanUrl.setOrginName(orginname);
                 filemanUrl.setuId(view.getuId());
@@ -542,7 +542,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setCreateTime(view.getCreateTime());
                 filemanRight.setCreateUser(userInfo.getUserName());
                 filemanRight.setFileName(orginname);
-                // filemanRight.setuId(userInfo.getuId());
                 filemanRight.setUserName(userInfo.getUserName());
                 filemanRight.setFileUrlId(filemanUrl.getId());
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -580,25 +579,17 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String fileName = null;
         int index;
         String centerPath = null;
-        ;
         String filePath = null;
-
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
         for (MultipartFile file : fileArray) {
-            //  name1 = file.getOriginalFilename().replaceAll("/", "\\\\");
-            // deskName = oldsPath + file.getOriginalFilename();
-            //deskName = FileUtil.uploadFileFolder(files.get(i), view, randomNum);
-            // fileName = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
             fileName = file.getOriginalFilename();
             index = fileName.lastIndexOf("/");
             centerPath = fileName.substring(0, index);
             fileName = fileName.substring(index + 1, fileName.length());
             filePath = oldsPath + centerPath;
             FtpUtils.uploadFile(filePath, fileName, file.getInputStream());
-            //  name1 = files.get(i).getOriginalFilename().replaceAll("/", "\\\\");
             deskName = filePath + "/" + fileName;
             orginname = subAfterString(deskName, "/");
-            // FileUtil.uploadFileFolderByUrl(file, userInfo, view, oldsPath);
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);

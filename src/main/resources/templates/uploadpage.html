@@ -27,9 +27,10 @@
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         var isMessage = $("#existFileMessage").val();
         var isExistNum = $("#isExistNum").val();
-        if (flag == "1") {
-            alert("文件全部上传成功！");
-        } else if (flag == "-222") {
+        if(flag=="1") {
+            alert("上传成功!")
+        }
+        if (flag == "-222") {
             alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
         } else if (flag == "-369") {
             alert("您上传的文件夹超过200个，系统不受理!")
@@ -207,6 +208,18 @@
 
     #selecradio {
         padding: 8px;
+    }
+
+    progress {
+        width: 168px;
+        height: 5px;
+        color: #f00;
+        background: #EFEFF4; /* 表示总长度背景色 */
+    }
+
+    /* 表示已完成进度背景色 */
+    progress::-moz-progress-bar {
+        background-color: #f00;
     }
 
 
@@ -708,7 +721,7 @@
         //     error: function (msg) {
         //         alert("显示进度信息失败!");
         //     }
-       // });
+        // });
 
         var fileno = getCookie('fileno');
         var filenameuploading = getCookie('filenameuploading');
@@ -720,7 +733,6 @@
         alert(totaluploadnum)
         alert(totalFilesByte)
         alert(uploadOverByte)
-
 
 
     }
@@ -802,10 +814,270 @@
 
         $("#folderselect").val(filesaveselect);
         //showSessionMessage();//定时器开启
-        document.getElementById("form1").submit();
-
+        //document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
+        var formData = new FormData($("#form1")[0]);
+        if (fileInput == "") {
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: "/fileupdown/checkmessagefolder",
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (msg) {
+                    $("#some-element").busyLoad("hide");//遮罩层开启
+                    var flag = msg;
+                    if (flag == "-222") {
+                        alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
+                        return false;
+                    } else if (flag == "-369") {
+                        alert("您上传的文件夹超过200个，系统不受理!")
+                        return false;
+                    } else if (flag == "-789") {
+                        alert("您上传的单个文件 的路径发生重名!")
+                        return false;
+                    } else if (flag == "-9999") {
+                        alert("您上传的文件夹内文件有重复!")
+                        return false;
+                    } else if (flag == "-123") {
+                        alert("您上传的文件夹名发生重命名!")
+                        return false;
+                    } else if (flag == "-666") {
+                        alert("您上传的文件内文件名与数据库相应订单的文件名重复!")
+                        return false;
+                    } else if (flag == "-777") {
+                        alert("您上传的文件夹内文件文名有重复的文件夹名!")
+                        return false;
+                    } else if (flag == "-888") {
+                        alert("您上传的文件夹名和数据库的文件夹名发生重复!");
+                        return false;
+                    } else if (flag == "0") {
+                        alert("上传文件为空文件，请重新选择上传！");
+                        return false;
+                    } else if (flag == "-1") {
+                        alert("文件上传失败！");
+                        return false;
+                    } else if (flag == "-2") {
+                        alert("上传失败，总文件大小超过1024M！");
+                        return false;
+                    } else if (flag == "-33") {
+                        alert("您上传的文件夹第一层设计师编号不符合要求！")
+                        return false;
+                    } else if (flag == "-66") {
+                        alert("您上传的文件夹第二层年份日期不符合要求！")
+                        return false;
+                    } else if (flag == "-99") {
+                        alert("您上传的文件夹第三层业务员名字不符合要求!")
+                        return false;
+                    } else if (flag == "-100") {
+                        alert("您上传的文件夹第四层订单编号不符合要求!")
+                        return false;
+                    } else if (flag == "-101") {
+                        alert("您上传的文件夹里文件没有扩展名，不符合要求！")
+                        return false;
+                    } else if (flag == "-987") {
+                        alert("您上传的文件夹命名不能出现订单编号，业务员，设计师，和日期    ")
+                        return false;
+                    } else if (flag == "-333") {
+                        alert("您上传的文件夹不是标准的四层结构，不符合要求！")
+                        return false;
+                    } else if (flag == "-3") {
+                        if (isMessage != "") {
+                            alert("您本次上传的文件无法受理,因为上传的文件里在服务器里存过一次,请重新选择.提示信息为," +
+                                "您总共有" + isExistNum + "个文件已经存在过,分别为" + isMessage);
+                            return false;
+                        } else {
+                            alert("您本次上传的文件无法受理,因为根据提供的订单信息全部为已存在过的文件.");
+                            return false;
+                        }
 
+                    } else if (flag == "-258") {
+                        alert("您没有上传权限!");
+                        return false;
+                    } else if (flag == "-162") {
+                        alert("您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!")
+                        return false;
+                    } else if (flag == "-357") {
+                        alert("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!")
+                        return false;
+                    }
+                    if (flag == 520) {
+                        $("#some-element").busyLoad("show");//遮罩层开启
+                        document.getElementById("form1").submit();
+                        var pro = null;
+                        pro = setInterval(function () {
+                            if (fileInput != "") {
+                                $.get("/fileupdown/upload", "", function (data) {
+                                    if (data >= '99%') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("上传进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("上传进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            } else {
+                                $.get("/fileupdown/uploadfolder", "", function (data) {
+                                    if (data >= '99%') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("上传进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("上传进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            }
+                        }, 200);
+                    }
+
+
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+        }else{
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: "/fileupdown/checkmessage",
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (msg) {
+                    $("#some-element").busyLoad("hide");//遮罩层开启
+                    var flag = msg;
+                    if (flag == "-222") {
+                        alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
+                        return false;
+                    } else if (flag == "-369") {
+                        alert("您上传的文件夹超过200个，系统不受理!")
+                        return false;
+                    } else if (flag == "-789") {
+                        alert("您上传的单个文件 的路径发生重名!")
+                        return false;
+                    } else if (flag == "-9999") {
+                        alert("您上传的文件夹内文件有重复!")
+                        return false;
+                    } else if (flag == "-123") {
+                        alert("您上传的文件夹名发生重命名!")
+                        return false;
+                    } else if (flag == "-666") {
+                        alert("您上传的文件内文件名与数据库相应订单的文件名重复!")
+                        return false;
+                    } else if (flag == "-777") {
+                        alert("您上传的文件夹内文件文名有重复的文件夹名!")
+                        return false;
+                    } else if (flag == "-888") {
+                        alert("您上传的文件夹名和数据库的文件夹名发生重复!");
+                        return false;
+                    } else if (flag == "0") {
+                        alert("上传文件为空文件，请重新选择上传！");
+                        return false;
+                    } else if (flag == "-1") {
+                        alert("文件上传失败！");
+                        return false;
+                    } else if (flag == "-2") {
+                        alert("上传失败，总文件大小超过1024M！");
+                        return false;
+                    } else if (flag == "-33") {
+                        alert("您上传的文件夹第一层设计师编号不符合要求！")
+                        return false;
+                    } else if (flag == "-66") {
+                        alert("您上传的文件夹第二层年份日期不符合要求！")
+                        return false;
+                    } else if (flag == "-99") {
+                        alert("您上传的文件夹第三层业务员名字不符合要求!")
+                        return false;
+                    } else if (flag == "-100") {
+                        alert("您上传的文件夹第四层订单编号不符合要求!")
+                        return false;
+                    } else if (flag == "-101") {
+                        alert("您上传的文件夹里文件没有扩展名，不符合要求！")
+                        return false;
+                    } else if (flag == "-987") {
+                        alert("您上传的文件夹命名不能出现订单编号，业务员，设计师，和日期    ")
+                        return false;
+                    } else if (flag == "-333") {
+                        alert("您上传的文件夹不是标准的四层结构，不符合要求！")
+                        return false;
+                    } else if (flag == "-3") {
+                        if (isMessage != "") {
+                            alert("您本次上传的文件无法受理,因为上传的文件里在服务器里存过一次,请重新选择.提示信息为," +
+                                "您总共有" + isExistNum + "个文件已经存在过,分别为" + isMessage);
+                            return false;
+                        } else {
+                            alert("您本次上传的文件无法受理,因为根据提供的订单信息全部为已存在过的文件.");
+                            return false;
+                        }
+
+                    } else if (flag == "-258") {
+                        alert("您没有上传权限!");
+                        return false;
+                    } else if (flag == "-162") {
+                        alert("您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!")
+                        return false;
+                    } else if (flag == "-357") {
+                        alert("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!")
+                        return false;
+                    }
+                    if (flag == 520) {
+                        $("#some-element").busyLoad("show");//遮罩层开启
+                        document.getElementById("form1").submit();
+                        var pro = null;
+                        pro = setInterval(function () {
+                            if (fileInput != "") {
+                                $.get("/fileupdown/upload", "", function (data) {
+                                    if (data >= '99%') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("上传进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("上传进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            } else {
+                                $.get("/fileupdown/uploadfolder", "", function (data) {
+                                    if (data >= '99%') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("上传进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("上传进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            }
+                        }, 200);
+                    }
+
+
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+        }
 
     }
 
@@ -1046,8 +1318,8 @@
     <div class="content">
         <form action="/fileupdown/uploadfolder" method="post" id="form1" enctype="multipart/form-data"
               th:object="${view}">
-            <input type="hidden" th:field="*{salor}" id="salorvalue">
-            <input type="hidden" th:field="*{saveFolderName}" id="folderselect">
+            <!--<input type="hidden" name="salor" id="salorvalue">-->
+            <input type="hidden" name="saveFolderName" id="folderselect">
             <div id="tabs">
 
                 <a class="btn btn-primary"
@@ -1073,7 +1345,7 @@
                     <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
-                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="showFileUrl()">
+                    <select id="salorid" style="width: 153px" name="salor" onchange="showFileUrl()">
                         <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
                         <option value="邹时雨">邹时雨</option>
                         <option value="胡锋">胡锋</option>
@@ -1105,16 +1377,16 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     订单编号
-                    <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)">
+                    <input type="text" id="orderno" name="orderNo" onblur="checkOrderNo(this)">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     项目名称
-                    <input type="text" id="projectno" th:field="*{projectName}">
+                    <input type="text" id="projectno" name="projectName">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     上传时间
-                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
+                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
                 </div>
                 <p>
                 <div>
@@ -1125,9 +1397,9 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input
                         type="text" style="width: 400px;"
                         id="filedescribtion"
-                        th:field="*{filedescribtion}">
+                        name="filedescribtion">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 399px;"
-                                                                  th:field="*{remark}">
+                                                                  name="remark">
                     <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新增行&nbsp;&nbsp;<img src="/images/icon/Add.png" align="middle"-->
                     <!--style="width: 20px; height: 20px; vertical-align: middle"-->
                     <!--onclick="addrow('bodycss')"/>-->
@@ -1256,43 +1528,23 @@
                     </div>
                 </div>
 
-                <div id="uploadprogress" style="display: none">
-                <div>
-                        <font color="#FF0000" size="2">正在上传第</font><span id="fileno"></span><font color="#FF0000"
-                                                                                                  size="2">个文件</font>
-                    <br>
-                        <font color="#FF0000" size="2">当前上传的文件名为</font><span id="filenameuploading"></span>
-                    <br>
-                        <font color="#FF0000" size="2">总需要上传的文件个数</font><span id="totaluploadnum"></span>
-                    <br>
-                    <font color="#FF0000" size="2">已经上传了</font><span id="uploadOverByte"></span><font color="#FF0000" size="2">M字节</font>
-                <br>
-                <font color="#FF0000" size="2">总共</font><span id="totalFilesByte"></span><font color="#FF0000" size="2">M字节</font>
 
+                <div id="progress">
+                    <div class="col-lg-5"
+                         style="padding-left: 0; padding-right: 0; margin-bottom: 0px;">
+                        <div class="progress progress-striped active" style="display: ">
+                            <div id="progressBar" class="progress-bar progress-bar-success"
+                                 role="progressbar" aria-valuemin="0" aria-valuenow="0"
+                                 aria-valuemax="100" style="width: 20%">
+
+                            </div>
+                        </div>
                     </div>
+                    <span id="proInfo">上传进度：0%</span>
                 </div>
-                <!--<div id="uploadpage">-->
-
-
-                <!--<form action="/fileupdown/upload" method="post" th:object="${view}" enctype="multipart/form-data">-->
-                <!--<input type="hidden" th:field="*{userName}" >-->
-                <!--<input type="hidden" th:field="*{password}" >-->
-                <!--<input id="uploadflag" th:field="*{flag}" type="hidden" >-->
-                <!--<input type="file" id="file" name="file">-->
-
-
-                <!--业务员:<input type="text" id="salorid" th:field="*{salor}" ><br/>-->
-                <!--订单编号:<input type="text" id="orderid" th:field="*{orderNo}"><br/>-->
-                <!--项目名称:<input type="text" id="projectid" th:field="*{projectName}"><br/>-->
-                <!--<input type="submit" onclick="return checksalormessage()" value="确认提交">-->
-                <!--<br/>-->
-                <!--<div id="showuploadstatusmessage" style="display:none;">-->
-                <!--</div>-->
-                <!--<div id="showtipmessage" style="display:none;" ></div>-->
-
-
-                <!--</form>-->
-                <!--</div>-->
+            </div>
+        </form>
+    </div>
 
 
 </body>

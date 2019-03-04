@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,10 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -1239,7 +1237,7 @@ public class FileUploadAndDownController {
                     }
                 }
             }
-            if(views==null || views.size()==0){
+            if (views == null || views.size() == 0) {
                 vie.setFlag("-258");
             }
 
@@ -1902,12 +1900,13 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password,
+    public ModelAndView goPrivilegeManagePage(String userName, String password, String flag,
                                               int currentPage, HttpServletRequest
-                                                      request) throws Exception {
+                                                      request, HttpServletResponse response, HttpSession session) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setFlag(flag);
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
@@ -2041,6 +2040,121 @@ public class FileUploadAndDownController {
     }
 
 
+    @RequestMapping(value = "/checkmessagefolder", method = RequestMethod.POST)
+    public void checkMessageFolder(MultipartFile[] fileFolder, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setuId(userInfo.getuId());
+        List<MultipartFile> files = null;
+        int flag = 520;
+        if (userInfo.getUseruploadright() == 1) {
+            files = new ArrayList<MultipartFile>();
+            for (int i = 0; i < fileFolder.length; i++) {
+                files.add(fileFolder[i]);
+            }
+            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
+            boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
+
+            if (!isFolderNameForEngDateOrderNoSalor || isSameFolderNameorFileName != 0) {
+                if (isSameFolderNameorFileName == -1) {
+                    flag = -9999;
+                }
+                if (isSameFolderNameorFileName == -2) {
+                    flag = -666;
+                }
+                if (isSameFolderNameorFileName == -3) {
+                    flag = -777;
+                }
+                if (isSameFolderNameorFileName == -4) {
+                    flag = -888;
+                }
+                if (isSameFolderNameorFileName == -5) {
+                    flag = -123;
+                }
+                if (isSameFolderNameorFileName == -6) {
+                    flag = -789;
+                }
+                if (isSameFolderNameorFileName == -7) {
+                    flag = -678;
+                }
+                if (isSameFolderNameorFileName == -8) {
+                    flag = -987;
+                }
+                if (!isFolderNameForEngDateOrderNoSalor) {
+                    flag = -162;
+                }
+            }
+        } else {
+            view.setFlag("-258");//代表没有权限
+            flag = -258;
+        }
+
+        String str1 = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(flag);
+
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping(value = "/checkmessage", method = RequestMethod.POST)
+    public void checkMessage(MultipartFile[] file, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setuId(userInfo.getuId());
+        List<MultipartFile> files = null;
+        int flag = 520;
+        if (userInfo.getUseruploadright() == 1) {
+            files = new ArrayList<MultipartFile>();
+            for (int i = 0; i < file.length; i++) {
+                files.add(file[i]);
+            }
+            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, files);//判断是否有重名的文件名
+
+            if (isExsitFileName) {
+                flag = -222;
+            }
+
+        } else {
+            flag = -258;
+        }
+
+        String str1 = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(flag);
+
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * 功能描述:按条件查询需下载的文件
      *
@@ -2095,7 +2209,7 @@ public class FileUploadAndDownController {
      */
     //多文件上传
     @ResponseBody
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload1", method = RequestMethod.POST)
     public ModelAndView toFileUpAndDownPage(HttpSession session, @ModelAttribute(value = "view") DownloadView
             view,
                                             @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
@@ -2110,7 +2224,7 @@ public class FileUploadAndDownController {
             }
             //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
             boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
-            if ( !isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
+            if (!isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
                 view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
                 //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
             } else {
@@ -2174,7 +2288,7 @@ public class FileUploadAndDownController {
      */
     //文件更新
     @ResponseBody
-    @RequestMapping(value = "/modifypage", method = RequestMethod.POST)
+    @RequestMapping(value = "/modifypage1", method = RequestMethod.POST)
     public ModelAndView modifyPage(HttpSession session, @ModelAttribute(value = "view") DownloadView view,
                                    @RequestParam("file") MultipartFile[] files, Model model) throws Exception {
         try {
@@ -2217,7 +2331,7 @@ public class FileUploadAndDownController {
      */
     //文件夹更新
     @ResponseBody
-    @RequestMapping(value = "/modifypagefolder", method = RequestMethod.POST)
+    @RequestMapping(value = "/modifypagefolder1", method = RequestMethod.POST)
     public ModelAndView modifyPageFolder(HttpServletRequest
                                                  request, @ModelAttribute(value = "view") DownloadView
                                                  view, HttpSession session) throws Exception {
@@ -2245,6 +2359,7 @@ public class FileUploadAndDownController {
 
     }
 
+
     /**
      * 功能描述:  文件夹上传
      *
@@ -2255,7 +2370,7 @@ public class FileUploadAndDownController {
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "/uploadfolder", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
     public ModelAndView saveFolderFiles(HttpServletRequest
                                                 request, @ModelAttribute(value = "view") DownloadView
                                                 view, HttpSession session) throws Exception {
@@ -2266,14 +2381,14 @@ public class FileUploadAndDownController {
         if (userInfo.getUseruploadright() == 1) {
             MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
             List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
-           // boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
+            // boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
             int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
 
-            if (isFolderNameForEngDateOrderNoSalor  && isSameFolderNameorFileName == 0) {
+            if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {
                 //if (isFileLarge && isSameFolderNameorFileName == 0) {
                 view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
             } else {
@@ -2283,7 +2398,7 @@ public class FileUploadAndDownController {
 //                if (!isFileLarge) {
 //                    view.setFlag("-2");
 //                } else
-                    if (isSameFolderNameorFileName == -1) {
+                if (isSameFolderNameorFileName == -1) {
                     view.setFlag("-9999");//代表上传的文件中有同名
                 }
                 if (isSameFolderNameorFileName == -2) {

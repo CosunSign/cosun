@@ -1,13 +1,14 @@
 package com.cosun.cosunp.tool;
 
+import com.cosun.cosunp.listener.TransforEventListener;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
+import javax.swing.event.EventListenerList;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.SocketException;
 
 /**
  * @author:homey Wong
@@ -17,6 +18,8 @@ import java.net.SocketException;
  * @Modified-date:
  */
 public class FtpUtils {
+
+    private EventListenerList eventListenerList = new EventListenerList();
 
     //ftp服务器地址
     public static String hostname = "192.168.1.31";
@@ -76,55 +79,6 @@ public class FtpUtils {
             initFtpClient();
             ftpClient.setFileType(ftpClient.BINARY_FILE_TYPE);
             CreateDirecroty(pathname);
-            ftpClient.makeDirectory(pathname);
-            ftpClient.changeWorkingDirectory(pathname);
-            ftpClient.storeFile(fileName, inputStream);
-            inputStream.close();
-            ftpClient.logout();
-            flag = true;
-            System.out.println("上传文件成功");
-        } catch (Exception e) {
-            System.out.println("上传文件失败");
-            e.printStackTrace();
-        } finally {
-            if (ftpClient.isConnected()) {
-                try {
-                    ftpClient.disconnect();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != inputStream) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return true;
-    }
-
-
-
-    /**
-     * 上传文件
-     *
-     * @param pathname       ftp服务保存地址
-     * @param fileName       上传到ftp的文件名
-     * @param originfilename 待上传文件的名称（绝对地址） *
-     * @return
-     */
-    public static boolean uploadFile(String pathname, String fileName, String originfilename) {
-        boolean flag = false;
-        InputStream inputStream = null;
-        try {
-            System.out.println("开始上传文件");
-            inputStream = new FileInputStream(new File(originfilename));
-            initFtpClient();
-            ftpClient.setFileType(ftpClient.BINARY_FILE_TYPE);
-            CreateDirecroty(pathname);
-            // if(pathname)
             ftpClient.makeDirectory(pathname);
             ftpClient.changeWorkingDirectory(pathname);
             ftpClient.storeFile(fileName, inputStream);
@@ -328,10 +282,100 @@ public class FtpUtils {
     }
 
 
-    public static void main(String[] args) {
-        uploadFile("admin/201902/王世君/27043156/COSUN20190108WW69/12121/12", "000001 (1).exe", "C:\\Users\\Administrator\\Desktop\\测试02\\000001 (1).exe");
+    /**
+     * 上传文件
+     *
+     * @param pathname       ftp服务保存地址
+     * @param fileName       上传到ftp的文件名
+     * @param originfilename 待上传文件的名称（绝对地址） *
+     * @return
+     */
+    public static boolean uploadFile(String pathname, String fileName, String originfilename) {
+        boolean flag = false;
+        InputStream inputStream = null;
+        try {
+            System.out.println("开始上传文件");
+            inputStream = new FileInputStream(new File(originfilename));
+            initFtpClient();
+            ftpClient.setFileType(ftpClient.BINARY_FILE_TYPE);
+            CreateDirecroty(pathname);
+            // if(pathname)
+            ftpClient.makeDirectory(pathname);
+            ftpClient.changeWorkingDirectory(pathname);
+            ftpClient.storeFile(fileName, inputStream);
+            inputStream.close();
+            ftpClient.logout();
+            flag = true;
+            System.out.println("上传文件成功");
+        } catch (Exception e) {
+            System.out.println("上传文件失败");
+            e.printStackTrace();
+        } finally {
+            if (ftpClient.isConnected()) {
+                try {
+                    ftpClient.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != inputStream) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
+    public void sendFile(String pathname, String fileName, String originfilename) throws IOException {
+        initFtpClient();
+        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+        File _file = new File(originfilename);
+        int n = -1;
+        long size = _file.length();
+        long trans = 0;
+        int bufferSize = ftpClient.getBufferSize();
+        byte[] buffer = new byte[bufferSize];
+        CreateDirecroty(pathname);
+        // if(pathname)
+        ftpClient.makeDirectory(pathname);
+        ftpClient.changeWorkingDirectory(pathname);
+        FileInputStream fileInputStream = new FileInputStream(_file);
+        String outputpath = pathname+"/"+fileName;
+        OutputStream outputstream = ftpClient.storeFileStream(originfilename);
+        while ((n = fileInputStream.read(buffer)) != -1) {
+            outputstream.write(buffer);
+            trans += n;
+            TransforEventListener[] listeners = eventListenerList.getListeners(TransforEventListener.class);
+            for (int i = listeners.length -1; i >= 0  ; i--) {
+                listeners[i].update(trans, size);
+            }
+        }
+        fileInputStream.close();
+        outputstream.flush();
+        outputstream.close();
+    }
+
+    public void addListener(TransforEventListener l) {
+        eventListenerList.add(TransforEventListener.class, l);
+    }
+
+    public void removeListener(TransforEventListener l) {
+        eventListenerList.remove(TransforEventListener.class, l);
+    }
+
+
+   // public static void main(String[] args) {
+//        FtpUtils u = new FtpUtils();
+//        try {
+//            u.sendFile("ftpserver/admin/201902/王世君/27043156/COSUN20190108WW69/12121/12", "000001 (1).exe", "C:/Users/Administrator/Desktop/测试02/000001 (1).exe");
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
         //ftp.downloadFile("ftpFile/data", "123.docx", "F://");
         //ftp.deleteFile("ftpFile/data", "123.docx");
-        System.out.println("ok");
-    }
+    //    System.out.println("ok");
+  //  }
 }

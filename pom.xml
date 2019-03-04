@@ -200,6 +200,10 @@
             <artifactId>commons-io</artifactId>
             <version>2.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.gqhmt</groupId>
+            <artifactId>gq-file-ops</artifactId>
+        </dependency>
 
         <!-- 引入thymeleaf依赖包 -->
         <dependency>
