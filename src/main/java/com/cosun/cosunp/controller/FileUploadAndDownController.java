@@ -2,7 +2,6 @@ package com.cosun.cosunp.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.cosun.cosunp.entity.*;
-import com.cosun.cosunp.listener.MyProgressListener;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.FileUtil;
@@ -13,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
@@ -118,6 +120,7 @@ public class FileUploadAndDownController {
         mav.addObject("view", view);
         mav.addObject("downloadViewList", downloadViewList);
         mav.addObject("userInfos", userInfos);
+        mav.addObject("employees", employees);
         return mav;
     }
 
@@ -1830,6 +1833,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         view.setPageSize(pageSize);
         view.setType(userInfo.getType());
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -1851,6 +1855,7 @@ public class FileUploadAndDownController {
         }
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
+        modelAndView.addObject("employees", employees);
         modelAndView.addObject("views", views);
         return modelAndView;
     }
@@ -1909,12 +1914,14 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setFlag(flag);
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("downloadViews", downloadViews);
+        modelAndView.addObject("employees", employees);
         return modelAndView;
     }
 
@@ -1969,6 +1976,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
@@ -1978,6 +1986,7 @@ public class FileUploadAndDownController {
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         mav.addObject("view", view);
+        mav.addObject("employees", employees);
         return mav;
     }
 //    @ResponseBody
@@ -2041,24 +2050,16 @@ public class FileUploadAndDownController {
     }
 
     @RequestMapping(value = "/checkupdatemessagefolder", method = RequestMethod.POST)
-    public void checkUpdateMessageFolder(MultipartFile[] fileFolder, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void checkUpdateMessageFolder(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setuId(userInfo.getuId());
-        List<MultipartFile> files = null;
         int flag = 520;
-        files = new ArrayList<MultipartFile>();
-        for (int i = 0; i < fileFolder.length; i++) {
-            files.add(fileFolder[i]);
-        }
-        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(files, view, userInfo);
-        if (isAllFileUpdateRight) {
-            boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
-            if (!isFileLarge) {
-                flag = -2;
-            }
-        } else {
-            flag = -258;
+        flag = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
+        if (flag == 520) {//有权限进行下一步操作
+            view.setFlag("520");
+            view = fileUploadAndDownServ.checkIsExistFilesFolderforUpdate(view.getFilePathName(), view, userInfo);
+            flag = Integer.valueOf(view.getFlag());
         }
 
         String str1 = null;
@@ -2082,24 +2083,16 @@ public class FileUploadAndDownController {
     }
 
     @RequestMapping(value = "/checkupdatemessage", method = RequestMethod.POST)
-    public void checkUpdateMessage(MultipartFile[] file, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void checkUpdateMessage(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
         int flag = 520;
-        for (MultipartFile mfile : file) {
-            fileArray.add(mfile);
-        }
-        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
-        if (isAllFileUpdateRight) {
-            boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-            if (!isFileLarge) {//没超过
-                flag = -2;
-            } else {
-                flag = -258;
-            }
+        flag = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
+        if (flag==520) {
+            view.setFlag("520");
+            view = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
         }
 
         String str1 = null;
@@ -2124,24 +2117,25 @@ public class FileUploadAndDownController {
 
 
     @RequestMapping(value = "/checkmessagefolder", method = RequestMethod.POST)
-    public void checkMessageFolder(MultipartFile[] fileFolder, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void checkMessageFolder(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        List<MultipartFile> files = null;
+        FileManFileInfo info = null;
         int flag = 520;
         if (userInfo.getUseruploadright() == 1) {
-            files = new ArrayList<MultipartFile>();
-            for (int i = 0; i < fileFolder.length; i++) {
-                files.add(fileFolder[i]);
-            }
-
             int isSameFolderNameorFileName = 0;
             boolean isFolderNameForEngDateOrderNoSalor = true;
-            isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);//文件夹名验证，文件夹名不能有订单，业务员，设计师命名
+            isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(view.getFilePathName());//文件夹名验证，文件夹名不能有订单，业务员，设计师命名
             if (isFolderNameForEngDateOrderNoSalor) {
-                isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
+                info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
+                if (info != null) {
+                    if (!info.getExtInfo1().equals(view.getSalor())) {//查看订单编号有没有被占用
+                        flag = -357;
+                    }
+                }
+                isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
 
             }
 
@@ -2169,6 +2163,9 @@ public class FileUploadAndDownController {
                 }
                 if (isSameFolderNameorFileName == -8) {
                     flag = -987;
+                }
+                if (isSameFolderNameorFileName == -9) {
+                    flag = -9;
                 }
                 if (!isFolderNameForEngDateOrderNoSalor) {
                     flag = -162;
@@ -2200,25 +2197,26 @@ public class FileUploadAndDownController {
 
 
     @RequestMapping(value = "/checkmessage", method = RequestMethod.POST)
-    public void checkMessage(MultipartFile[] file, DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
+    public void checkMessage(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        List<MultipartFile> files = null;
         boolean isExsitFileName = false;
+        FileManFileInfo info = null;
         int flag = 520;
         if (userInfo.getUseruploadright() == 1) {//有无权限
-            files = new ArrayList<MultipartFile>();
-            for (int i = 0; i < file.length; i++) {
-                files.add(file[i]);
-            }
-
-            isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, files);//判断是否有重名的文件名
+            isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
             //上传的文件或文件夹有无重复，有无存在
-
             if (isExsitFileName) {
                 flag = -222;
+            } else {
+                info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
+                if (info != null) {
+                    if (!info.getExtInfo1().equals(view.getSalor())) {
+                        flag = -357;
+                    }
+                }
             }
 
         } else {
@@ -2314,7 +2312,7 @@ public class FileUploadAndDownController {
                 fileArray.add(mfile);
             }
             //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, fileArray);//判断是否有重名的文件名
+            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, null);//判断是否有重名的文件名
             if (!isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
                 view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
                 //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
@@ -2359,6 +2357,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -2366,6 +2365,7 @@ public class FileUploadAndDownController {
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("downloadViews", downloadViews);
+        modelAndView.addObject("employees", employees);
         return modelAndView;
     }
 
@@ -2392,18 +2392,17 @@ public class FileUploadAndDownController {
             for (MultipartFile mfile : files) {
                 fileArray.add(mfile);
             }
-            boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(fileArray, view, userInfo);
-            if (isAllFileUpdateRight) {
-                boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-                if (isFileLarge) {//没超过
-                    view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
-                    //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-                } else {
-                    view.setFlag("-2");//超过
-                }
-            } else {
-                view.setFlag("-258");
-            }
+//            boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(null, view, userInfo);
+//            if (isAllFileUpdateRight) {
+//                boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
+//                if (isFileLarge) {//没超过
+//                    view = fileUploadAndDownServ.findIsExistFilesforUpdate(fileArray, view, userInfo);
+//                } else {
+//                    view.setFlag("-2");//超过
+//                }
+//            } else {
+//                view.setFlag("-258");
+//            }
         } catch (Exception e) {
             logger.debug(e.getMessage());
         }
@@ -2434,17 +2433,17 @@ public class FileUploadAndDownController {
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
         //查看要更新的所有文件有没有权限
-        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(files, view, userInfo);
-        if (isAllFileUpdateRight) {
-            boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
-            if (isFileLarge) {
-                view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(files, view, userInfo);
-            } else {
-                view.setFlag("-2");
-            }
-        } else {
-            view.setFlag("-258");
-        }
+//        boolean isAllFileUpdateRight = fileUploadAndDownServ.checkFileUpdateRight(null, view, userInfo);
+//        if (isAllFileUpdateRight) {
+//            boolean isFileLarge = FileUtil.checkFileSize(files, 1024, "M");
+//            if (isFileLarge) {
+//                view = fileUploadAndDownServ.findIsExistFilesFolderforUpdate(files, view, userInfo);
+//            } else {
+//                view.setFlag("-2");
+//            }
+//        } else {
+//            view.setFlag("-258");
+//        }
 
         return new ModelAndView("modifypage");
 
@@ -2477,8 +2476,8 @@ public class FileUploadAndDownController {
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
-            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
-            boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
+            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
+            boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(null);
 
             if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {
                 //if (isFileLarge && isSameFolderNameorFileName == 0) {

@@ -16,20 +16,24 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
-    boolean checkFileisSame(DownloadView view, UserInfo userInfo, List<MultipartFile> fileArray) throws Exception;
+    boolean checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
 
     List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
     List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception;
     DownloadView findMessageByOrderNo(String orderNo) throws Exception;
 
-    boolean checkFileUpdateRight(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
+    int checkFileUpdateRight(String pathNames, DownloadView view, UserInfo userInfo) throws Exception;
+
+    DownloadView checkIsExistFilesFolderforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
+
+    DownloadView checkIsExistFilesforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
 
     List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception;
 
     DownloadView addFilesData(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception;
 
-    int isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, List<MultipartFile> fileArray) throws Exception;
+    int isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
 
     List<UserInfo> findAllUser() throws Exception;
 
@@ -61,9 +65,11 @@ public interface IFileUploadAndDownServ {
 
     DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
 
-    boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception;
+    boolean isFolderNameForEngDateOrderNoSalor(String filePathName) throws Exception;
 
     FileManFileInfo getFileInfoByOrderNo(String orderNo) throws Exception;
+
+    List<Employee> findAllSalor() throws Exception;
 
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
 

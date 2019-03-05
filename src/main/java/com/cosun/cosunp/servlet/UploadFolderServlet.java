@@ -131,7 +131,7 @@ public class UploadFolderServlet extends HttpServlet {
                             view = fileUploadAndDownServ.findIsExistFilesFolder(fileArray, view, userInfo);
                     }
                 }
-            resp.sendRedirect("tomainpage?currentPage=1&flag="+1);
+            resp.sendRedirect("tomainpage?currentPage=1&flag="+view.getFlag());
         } catch (Exception e) {
             System.out.println("文件上传发生错误！");
             e.printStackTrace();

@@ -65,6 +65,15 @@ public class DownloadView implements Serializable {
     private List<String> orderNoS;
     private  String saveFolderName;
     private String linshiId;
+    private String filePathName;
+
+    public String getFilePathName() {
+        return filePathName;
+    }
+
+    public void setFilePathName(String filePathName) {
+        this.filePathName = filePathName;
+    }
 
     public String getLinshiId() {
         return linshiId;

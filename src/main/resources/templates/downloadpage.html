@@ -949,31 +949,8 @@
                                                         hidden="hidden">
                                                     请选择业务员
                                                 </option>
-                                                <option value="邹时雨">邹时雨</option>
-                                                <option value="胡锋">胡锋</option>
-                                                <option value="王世珺">王世珺</option>
-                                                <option value="赵彩霞">赵彩霞</option>
-                                                <option value="亚晓艾">亚晓艾</option>
-                                                <option value="钟源">钟源</option>
-                                                <option value="陈小迷">陈小迷</option>
-                                                <option value="熊新宇">熊新宇</option>
-                                                <option value="潘莉">潘莉</option>
-                                                <option value="连鸿业">连鸿业</option>
-                                                <option value="刘彩云">刘彩云</option>
-                                                <option value="明松">明松</option>
-                                                <option value="周涛">周涛</option>
-                                                <option value="梁浩">梁浩</option>
-                                                <option value="肖昌升">肖昌升</option>
-                                                <option value="高玉昕">高玉昕</option>
-                                                <option value="吴亚莹">吴亚莹</option>
-                                                <option value="何嘉琪">何嘉琪</option>
-                                                <option value="李彩苹">李彩苹</option>
-                                                <option value="龚菁">龚菁</option>
-                                                <option value="李晨">李晨</option>
-                                                <option value="梁国程">梁国程</option>
-                                                <option value="陈双全">陈双全</option>
-                                                <option value="彭亚明">彭亚明</option>
-                                                <option value="陈军">陈军</option>
+                                                <option th:each="c:${employees}" th:value="${c.name}"
+                                                        th:text="${c.name}"></option>
 
                                             </select>
                                         </td>

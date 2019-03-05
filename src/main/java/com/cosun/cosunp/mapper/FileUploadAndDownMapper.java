@@ -127,6 +127,9 @@ public interface FileUploadAndDownMapper {
     @Select("select * from userinfo ")
     List<UserInfo> findAllUserInfo();
 
+    @Select(" select * from employee ")
+    List<Employee> findAllSalor();
+
     @Select("select * from filemanright where id = #{fileurlid}  and uid = #{uid} ")
     FilemanRight findFileRightByUserIdandFileUrlId(Integer uid, Integer fileurlid);
 
@@ -139,6 +142,18 @@ public interface FileUploadAndDownMapper {
             "and a.filename= #{fileName} \n" +
             "and a.uid = #{uId} \n")
     FilemanRight getFileRightByOrderNoUidfileName(String orderNo,String fileName,Integer uId);
+
+    @Select("SELECT\n" +
+            "\tb.orginname AS orginName\n" +
+            "FROM\n" +
+            "\tfilemanfileinfo a\n" +
+            "LEFT JOIN filemanurl b ON a.id = b.fileInfoId\n" +
+            "WHERE\n" +
+            "\ta.ordernum = #{orderNo}\n" +
+            "AND a.extinfo1 = #{salor}\n" +
+            "AND a.uid = #{uId}\n" +
+            "AND b.orginname = #{fileName}")
+    FilemanUrl getFileUrlByOrderNoSo(String orderNo,String salor,Integer uId,String fileName);
 
     @Select("SELECT\n" +
             "\tfr.uid,fr.id as fileRightId,fr.filename,fi.extinfo1,fi.ordernum\n" +

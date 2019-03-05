@@ -23,9 +23,27 @@
 <body class=" theme-blue">
 <script type="text/javascript">
     $(function () {
+        var test = document.getElementById('filefolder');
+        test.addEventListener('change', function() {
+            var filePathName = ""
+            var t_files = this.files;
+            for (var i = 0, len = t_files.length; i < len; i++) {
+                filePathName += t_files[i].webkitRelativePath+",";
+            };
+            $("#filePathName").val(filePathName);
+        }, false);
+
+        var test1 = document.getElementById('file');
+        test1.addEventListener('change', function() {
+            var filePathName1 = ""
+            var t_files1 = this.files;
+            for (var i = 0, len = t_files1.length; i < len; i++) {
+                filePathName1 += t_files1[i].name+",";
+            };
+            $("#filePathName").val(filePathName1);
+        }, false);
+
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
-        var isMessage = $("#existFileMessage").val();
-        var isExistNum = $("#isExistNum").val();
         if (flag == "-18") {
             alert("文件全部更新成功！");
 
@@ -50,7 +68,7 @@
         } else if (flag == "-1") {
             alert("更新失败!");
         } else if (flag == "-12") {
-            alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
+            alert("您本次更新的有新文件,请重新选择!");
         } else if (flag == "-258") {
             alert("您所更新的文件里没有更新权限!请向上级申请.")
         }
@@ -646,7 +664,10 @@
             return false;
         }
         $("#some-element").busyLoad("show");//遮罩层开启
-        var formData = new FormData($("#form1")[0]);
+        var formData = new FormData();
+        formData.append('filePathName',$("#filePathName").val() );
+        formData.append('orderNo',$("#orderno").val() );
+        formData.append('salor',$("#salorid").val() );
         var url = "";
         if(fileInput!="") {
             url = "/fileupdown/checkupdatemessage";
@@ -698,7 +719,7 @@
                         alert("更新失败!");
                         return;
                     } else if (flag == "-12") {
-                        alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
+                        alert("您本次更新的有新文件,请重新选择!");
                         return;
                     } else if (flag == "-258") {
                         alert("您所更新的文件里没有更新权限!请向上级申请.")
@@ -711,7 +732,7 @@
                         pro = setInterval(function () {
                             if (fileInput != "") {
                                 $.get("/fileupdown/modifypage", "", function (data) {
-                                    if (data.substring(0, data.lastIndexOf('%')) >= '99') {
+                                    if (data.substring(0, data.lastIndexOf('%')) >= '96') {
                                         clearInterval(pro);
                                         $("#proInfo").text("更新进度：99%");
                                         //更新进度条
@@ -725,7 +746,7 @@
                                 });
                             } else {
                                 $.get("/fileupdown/modifypagefolder", "", function (data) {
-                                    if (data.substring(0, data.lastIndexOf('%')) >= '99') {
+                                    if (data.substring(0, data.lastIndexOf('%')) >= '96') {
                                         clearInterval(pro);
                                         $("#proInfo").text("更新进度：99%");
                                         //更新进度条
@@ -992,8 +1013,9 @@
     <div class="content">
         <form action="/fileupdown/modifyPage" method="post" id="form1" enctype="multipart/form-data"
               th:object="${view}">
-            <input type="hidden" th:field="*{salor}" id="salorvalue">
-            <input type="hidden" th:field="*{saveFolderName}" id="folderselect">
+            <input type="hidden" name="*{salor}" id="salorvalue">
+            <input type="hidden" name="*{saveFolderName}" id="folderselect">
+            <input type="hidden" name="filePathName" id="filePathName">
             <div id="tabs">
 
                 <a class="btn btn-default"
@@ -1017,51 +1039,28 @@
                     <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
-                    <select id="salorid" style="width: 153px" name="*{salor}" onchange="showFileUrl()">
+                    <select id="salorid" style="width: 153px" name="salor" onchange="showFileUrl()">
                         <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
-                        <option value="邹时雨">邹时雨</option>
-                        <option value="胡锋">胡锋</option>
-                        <option value="王世珺">王世珺</option>
-                        <option value="赵彩霞">赵彩霞</option>
-                        <option value="亚晓艾">亚晓艾</option>
-                        <option value="钟源">钟源</option>
-                        <option value="陈小迷">陈小迷</option>
-                        <option value="熊新宇">熊新宇</option>
-                        <option value="潘莉">潘莉</option>
-                        <option value="连鸿业">连鸿业</option>
-                        <option value="刘彩云">刘彩云</option>
-                        <option value="明松">明松</option>
-                        <option value="周涛">周涛</option>
-                        <option value="梁浩">梁浩</option>
-                        <option value="肖昌升">肖昌升</option>
-                        <option value="高玉昕">高玉昕</option>
-                        <option value="吴亚莹">吴亚莹</option>
-                        <option value="何嘉琪">何嘉琪</option>
-                        <option value="李彩苹">李彩苹</option>
-                        <option value="龚菁">龚菁</option>
-                        <option value="李晨">李晨</option>
-                        <option value="梁国程">梁国程</option>
-                        <option value="陈双全">陈双全</option>
-                        <option value="彭亚明">彭亚明</option>
-                        <option value="陈军">陈军</option>
+                        <option th:each="c:${employees}" th:value="${c.name}"
+                                th:text="${c.name}"></option>
 
                     </select>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     订单编号
-                    <input type="text" id="orderno" th:field="*{orderNo}" onblur="checkOrderNo(this)">
+                    <input type="text" id="orderno" name="orderNo" onblur="checkOrderNo(this)">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <font color="#FF0000" size="2">*</font>
                     项目名称
-                    <input type="text" id="projectno" th:field="*{projectName}">
+                    <input type="text" id="projectno" name="projectName">
                     &nbsp;&nbsp;&nbsp;&nbsp;更新时间
-                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" th:field="*{createTime}">
+                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
                 </div>
                 <p>
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     文件设计师 <input type="text" id="fileuploader" style="width: 80px;" readonly="readonly"
-                                 th:value="${view.userName}">
+                                th:field="${view.userName}">
 
                     <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input type="text" style="width: 400px;"-->
                     <!--id="filedescribtion"-->
@@ -1098,7 +1097,7 @@
                             </td>
 
                             <td>
-                                <input type="text" style="width: 300px" id="modifyreason" th:field="*{modifyReason}">
+                                <input type="text" style="width: 300px" id="modifyreason" name="modifyReason">
 
                             </td>
 
