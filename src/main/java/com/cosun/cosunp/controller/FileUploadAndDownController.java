@@ -2087,7 +2087,7 @@ public class FileUploadAndDownController {
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        List<MultipartFile> fileArray = null;
+        List<MultipartFile> fileArray = new ArrayList<MultipartFile>();
         int flag = 520;
         for (MultipartFile mfile : file) {
             fileArray.add(mfile);
@@ -2136,8 +2136,14 @@ public class FileUploadAndDownController {
             for (int i = 0; i < fileFolder.length; i++) {
                 files.add(fileFolder[i]);
             }
-            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
-            boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);
+
+            int isSameFolderNameorFileName = 0;
+            boolean isFolderNameForEngDateOrderNoSalor = true;
+            isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(files);//文件夹名验证，文件夹名不能有订单，业务员，设计师命名
+            if (isFolderNameForEngDateOrderNoSalor) {
+                isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, files);//同一订单下文件夹重名验证
+
+            }
 
             if (!isFolderNameForEngDateOrderNoSalor || isSameFolderNameorFileName != 0) {
                 if (isSameFolderNameorFileName == -1) {
@@ -2169,7 +2175,6 @@ public class FileUploadAndDownController {
                 }
             }
         } else {
-            view.setFlag("-258");//代表没有权限
             flag = -258;
         }
 
@@ -2201,13 +2206,16 @@ public class FileUploadAndDownController {
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
         List<MultipartFile> files = null;
+        boolean isExsitFileName = false;
         int flag = 520;
-        if (userInfo.getUseruploadright() == 1) {
+        if (userInfo.getUseruploadright() == 1) {//有无权限
             files = new ArrayList<MultipartFile>();
             for (int i = 0; i < file.length; i++) {
                 files.add(file[i]);
             }
-            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, files);//判断是否有重名的文件名
+
+            isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, files);//判断是否有重名的文件名
+            //上传的文件或文件夹有无重复，有无存在
 
             if (isExsitFileName) {
                 flag = -222;
@@ -2344,7 +2352,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(HttpSession session,String userName, String password, int currentPage,String flag, HttpServletRequest
+    public ModelAndView toModifyPage(HttpSession session, String userName, String password, int currentPage, String flag, HttpServletRequest
             request) throws
             Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");

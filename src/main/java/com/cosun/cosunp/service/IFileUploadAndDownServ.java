@@ -63,6 +63,8 @@ public interface IFileUploadAndDownServ {
 
     boolean isFolderNameForEngDateOrderNoSalor(List<MultipartFile> files) throws Exception;
 
+    FileManFileInfo getFileInfoByOrderNo(String orderNo) throws Exception;
+
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
 
     List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception;

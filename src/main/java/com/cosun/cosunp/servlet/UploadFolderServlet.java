@@ -38,6 +38,10 @@ public class UploadFolderServlet extends HttpServlet {
 
     private static Logger logger = LogManager.getLogger(UploadServlet.class);
 
+    public UploadFolderServlet(){
+
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //取出监听器MyProgress在session中保存的进度信息

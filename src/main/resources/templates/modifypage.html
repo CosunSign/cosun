@@ -617,11 +617,11 @@
             return false;
         }
 
-        if (filefolder != "" && fileInput == "") {
-            document.getElementById("form1").submit();
-            $("#some-element").busyLoad("show");//遮罩层开启
-            return false;
-        }
+        // if (filefolder != "" && fileInput == "") {
+        //     document.getElementById("form1").submit();
+        //     $("#some-element").busyLoad("show");//遮罩层开启
+        //     return false;
+        // }
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
             return false;
@@ -645,201 +645,110 @@
             $("#filefolder").val("");
             return false;
         }
-        document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
         var formData = new FormData($("#form1")[0]);
-        if (fileInput == "") {
-            $.ajax({
-                data: formData,
-                type: "POST",
-                url: "/fileupdown/checkupdatemessagefolder",
-                async: false,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (msg) {
-                    $("#some-element").busyLoad("hide");//遮罩层开启
-                    var flag = msg;
-                    if (flag == "-18") {
-                        alert("文件全部更新成功！");
-
-                    } else if (flag == "-11") {
-                        alert("您更新的文件服务器没有订单类信息,视为新订单新文件,请去上传页面处理！");
-                        return;
-
-                    } else if (flag == "-2") {
-                        alert("更新失败，总文件大小超过20M！");
-                        return;
-
-                    } else if (flag == "-33") {
-                        alert("您更新的文件夹第一层设计师编号不符合要求！")
-                        return;
-                    } else if (flag == "-66") {
-                        alert("您更新的文件夹第二层年份日期不符合要求！")
-                        return;
-                    } else if (flag == "-99") {
-                        alert("您更新的文件夹第三层业务员名字不符合要求!")
-                        return;
-                    } else if (flag == "-100") {
-                        alert("您更新的文件夹第四层订单编号不符合要求!")
-                        return;
-                    } else if (flag == "-101") {
-                        alert("您更新的文件夹里文件没有扩展名，不符合要求！")
-                        return;
-                    } else if (flag == "-333") {
-                        alert("您更新的文件夹不是标准的四层结构，不符合要求！")
-                        return;
-                    } else if (flag == "-1") {
-                        alert("更新失败!");
-                        return;
-                    } else if (flag == "-12") {
-                        alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
-                        return;
-                    } else if (flag == "-258") {
-                        alert("您所更新的文件里没有更新权限!请向上级申请.")
-                        return;
-                    }
-                    if (flag == 520) {
-                        $("#some-element").busyLoad("show");//遮罩层开启
-                        document.getElementById("form1").submit();
-                        var pro = null;
-                        pro = setInterval(function () {
-                            if (fileInput != "") {
-                                $.get("/fileupdown/modifypage", "", function (data) {
-                                    if (data >= '99%') {
-                                        clearInterval(pro);
-                                        $("#proInfo").text("更新进度：99%");
-                                        //更新进度条
-                                        $("#progressBar").width("99%");
-                                    } else {//正在上传
-                                        //更新进度信息
-                                        $("#proInfo").text("更新进度：" + data);
-                                        //更新进度条
-                                        $("#progressBar").width(data);
-                                    }
-                                });
-                            } else {
-                                $.get("/fileupdown/modifypagefolder", "", function (data) {
-                                    if (data >= '99%') {
-                                        clearInterval(pro);
-                                        $("#proInfo").text("更新进度：99%");
-                                        //更新进度条
-                                        $("#progressBar").width("99%");
-                                    } else {//正在上传
-                                        //更新进度信息
-                                        $("#proInfo").text("更新进度：" + data);
-                                        //更新进度条
-                                        $("#progressBar").width(data);
-                                    }
-                                });
-                            }
-                        }, 200);
-                    }
-
-
-                },
-                error: function (msg) {
-                    $("#some-element").busyLoad("hide");
-                    alert("查询失败");
-                }
-            });
-        } else {
-            $.ajax({
-                data: formData,
-                type: "POST",
-                url: "/fileupdown/checkupdatemessage",
-                async: false,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function (msg) {
-                    $("#some-element").busyLoad("hide");//遮罩层开启
-                    var flag = msg;
-                    if (flag == "-18") {
-                        alert("文件全部更新成功！");
-                        return;
-
-                    } else if (flag == "-11") {
-                        alert("您更新的文件服务器没有订单类信息,视为新订单新文件,请去上传页面处理！");
-                        return;
-
-                    } else if (flag == "-2") {
-                        alert("更新失败，总文件大小超过20M！");
-                        return;
-
-                    } else if (flag == "-33") {
-                        alert("您更新的文件夹第一层设计师编号不符合要求！")
-                        return;
-                    } else if (flag == "-66") {
-                        alert("您更新的文件夹第二层年份日期不符合要求！")
-                        return;
-                    } else if (flag == "-99") {
-                        alert("您更新的文件夹第三层业务员名字不符合要求!")
-                        return;
-                    } else if (flag == "-100") {
-                        alert("您更新的文件夹第四层订单编号不符合要求!")
-                        return;
-                    } else if (flag == "-101") {
-                        alert("您更新的文件夹里文件没有扩展名，不符合要求！")
-                        return;
-                    } else if (flag == "-333") {
-                        alert("您更新的文件夹不是标准的四层结构，不符合要求！")
-                        return;
-                    } else if (flag == "-1") {
-                        alert("更新失败!");
-                        return;
-                    } else if (flag == "-12") {
-                        alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
-                        return;
-                    } else if (flag == "-258") {
-                        alert("您所更新的文件里没有更新权限!请向上级申请.")
-                        return;
-                    }
-                    if (flag == 520) {
-                        $("#some-element").busyLoad("show");//遮罩层开启
-                        document.getElementById("form1").submit();
-                        var pro = null;
-                        pro = setInterval(function () {
-                            if (fileInput != "") {
-                                $.get("/fileupdown/modifypage", "", function (data) {
-                                    if (data >= '99%') {
-                                        clearInterval(pro);
-                                        $("#proInfo").text("更新进度：99%");
-                                        //更新进度条
-                                        $("#progressBar").width("99%");
-                                    } else {//正在上传
-                                        //更新进度信息
-                                        $("#proInfo").text("更新进度：" + data);
-                                        //更新进度条
-                                        $("#progressBar").width(data);
-                                    }
-                                });
-                            } else {
-                                $.get("/fileupdown/modifypagefolder", "", function (data) {
-                                    if (data >= '99%') {
-                                        clearInterval(pro);
-                                        $("#proInfo").text("更新进度：99%");
-                                        //更新进度条
-                                        $("#progressBar").width("99%");
-                                    } else {//正在上传
-                                        //更新进度信息
-                                        $("#proInfo").text("更新进度：" + data);
-                                        //更新进度条
-                                        $("#progressBar").width(data);
-                                    }
-                                });
-                            }
-                        }, 200);
-                    }
-
-
-                },
-                error: function (msg) {
-                    $("#some-element").busyLoad("hide");
-                    alert("查询失败");
-                }
-            });
+        var url = "";
+        if(fileInput!="") {
+            url = "/fileupdown/checkupdatemessage";
+        }else if(filefolder!="") {
+            url = "/fileupdown/checkupdatemessagefolder";
         }
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: url,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (msg) {
+                    $("#some-element").busyLoad("hide");//遮罩层开启
+                    var flag = msg;
+                    if (flag == "-18") {
+                        alert("文件全部更新成功！");
+                        return;
+
+                    } else if (flag == "-11") {
+                        alert("您更新的文件服务器没有订单类信息,视为新订单新文件,请去上传页面处理！");
+                        return;
+
+                    } else if (flag == "-2") {
+                        alert("更新失败，总文件大小超过20M！");
+                        return;
+
+                    } else if (flag == "-33") {
+                        alert("您更新的文件夹第一层设计师编号不符合要求！")
+                        return;
+                    } else if (flag == "-66") {
+                        alert("您更新的文件夹第二层年份日期不符合要求！")
+                        return;
+                    } else if (flag == "-99") {
+                        alert("您更新的文件夹第三层业务员名字不符合要求!")
+                        return;
+                    } else if (flag == "-100") {
+                        alert("您更新的文件夹第四层订单编号不符合要求!")
+                        return;
+                    } else if (flag == "-101") {
+                        alert("您更新的文件夹里文件没有扩展名，不符合要求！")
+                        return;
+                    } else if (flag == "-333") {
+                        alert("您更新的文件夹不是标准的四层结构，不符合要求！")
+                        return;
+                    } else if (flag == "-1") {
+                        alert("更新失败!");
+                        return;
+                    } else if (flag == "-12") {
+                        alert("您本次更新的" + isExistNum + "个文件:" + isMessage + "是为新文件,请重新选择!");
+                        return;
+                    } else if (flag == "-258") {
+                        alert("您所更新的文件里没有更新权限!请向上级申请.")
+                        return;
+                    }
+                    if (flag == 520) {
+                        $("#some-element").busyLoad("show");//遮罩层开启
+                        document.getElementById("form1").submit();
+                        var pro = null;
+                        pro = setInterval(function () {
+                            if (fileInput != "") {
+                                $.get("/fileupdown/modifypage", "", function (data) {
+                                    if (data.substring(0, data.lastIndexOf('%')) >= '99') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("更新进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("更新进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            } else {
+                                $.get("/fileupdown/modifypagefolder", "", function (data) {
+                                    if (data.substring(0, data.lastIndexOf('%')) >= '99') {
+                                        clearInterval(pro);
+                                        $("#proInfo").text("更新进度：99%");
+                                        //更新进度条
+                                        $("#progressBar").width("99%");
+                                    } else {//正在上传
+                                        //更新进度信息
+                                        $("#proInfo").text("更新进度：" + data);
+                                        //更新进度条
+                                        $("#progressBar").width(data);
+                                    }
+                                });
+                            }
+                        }, 200);
+                    }
+
+
+                },
+                error: function (msg) {
+                    $("#some-element").busyLoad("hide");
+                    alert("查询失败");
+                }
+            });
+
 
 
     }
@@ -1299,7 +1208,7 @@
                             </div>
                         </div>
                     </div>
-                    <span id="proInfo">上传进度：0%</span>
+                    <span id="proInfo">更新进度：0%</span>
                 </div>
             </div>
         </form>
