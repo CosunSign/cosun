@@ -945,8 +945,8 @@ public class FileUploadAndDownController {
         List<String> folderOrFiles = new ArrayList<String>();
         List<String[]> strarray = new ArrayList<String[]>();
         List<String> norepeatFoldorFile = new ArrayList<String>();
-        if (view.getEngineer() == null) {
-            view.setEngineer(userInfo.getuId().toString());
+        if(view.getuId()!=null) {
+            view.setEngineer(view.getuId().toString());
         }
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
             List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);

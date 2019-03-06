@@ -484,10 +484,6 @@ public interface FileUploadAndDownMapper {
                 view.setuId(Integer.valueOf(view.getEngineer()));
                 sql.append(" and a.uid = #{uId} ");
             }
-            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
-                sql.append(" and a.ordernum = #{orderNo} ");
-            }
-
             if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
                 sql.append(" and a.projectname like CONCAT('%',#{projectName},'%')");
             }
@@ -511,8 +507,13 @@ public interface FileUploadAndDownMapper {
             if(view.getuId()!=null && view.getuId()!=0) {
                 sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
             }
-            sql.append("  GROUP BY a.ordernum,b.uid" +
-                    "  ORDER BY\n" +
+            sql.append("  GROUP BY a.ordernum,b.uid " );
+
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" HAVING  ordernum  = #{orderNo} ");
+            }
+
+            sql.append("  ORDER BY\n" +
                     " a.createtime DESC limit #{currentPageTotalNum},#{pageSize} ");
             return sql.toString();
         }
@@ -540,10 +541,6 @@ public interface FileUploadAndDownMapper {
                 view.setuId(Integer.valueOf(view.getEngineer()));
                 sql.append(" and a.uid = #{uId} ");
             }
-            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
-                sql.append(" and a.ordernum = #{orderNo} ");
-            }
-
             if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
                 sql.append(" and a.projectname like CONCAT('%',#{projectName},'%')");
             }
@@ -567,8 +564,11 @@ public interface FileUploadAndDownMapper {
             if(view.getuId()!=null && view.getuId()!=0) {
                 sql.append("  AND b.uid = #{uId} or b.uid is null and b.fileInfoId not in (select fileInfoId from filemanright where uid = #{uId}) ");
             }
-            sql.append("  GROUP BY a.ordernum,b.uid" +
-                    " ) as cc ");
+            sql.append("  GROUP BY a.ordernum,b.uid" );
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" HAVING  ordernum = #{orderNo} ");
+            }
+            sql.append(" ) as cc ");
             return sql.toString();
         }
 
@@ -730,12 +730,29 @@ public interface FileUploadAndDownMapper {
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 = #{salor} ");
             }
-            if (view.getEngineer() != null && view.getEngineer()!="") {
+            if (view.getEngineer() != null && view.getEngineer()!="" &&!view.getEngineer().equals("0")) {
                 view.setuId(Integer.valueOf(view.getEngineer()));
                 sql.append(" and ffi.uid = #{uId} ");
             }
             if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
                 sql.append(" and ffi.ordernum = #{orderNo} ");
+            }
+
+
+            if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
+                sql.append(" and ffi.projectname like CONCAT('%',#{projectName},'%')");
+            }
+
+            if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
+                sql.append(" and fu.orginname like  CONCAT('%',#{fileName},'%')");
+            }
+
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fu.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
             }
             return sql.toString();
         }
@@ -882,7 +899,7 @@ public interface FileUploadAndDownMapper {
             }
 
             if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
-                sql.append(" and ffi.filename like  CONCAT('%',#{fileName},'%')");
+                sql.append(" and  fmu.orginname like  CONCAT('%',#{fileName},'%')");
             }
 
             if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
@@ -932,7 +949,7 @@ public interface FileUploadAndDownMapper {
             }
 
             if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
-                sql.append(" and ffi.filename like  CONCAT('%',#{fileName},'%')");
+                sql.append(" and fmu.orginname like  CONCAT('%',#{fileName},'%')");
             }
 
             if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {

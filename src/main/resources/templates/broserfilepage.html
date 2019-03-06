@@ -274,40 +274,49 @@
         var orderNo = $("#orderno").val().trim();
         var fileInput = $('#file').val();
         var filefolder = $('#filefolder').val();
+        var projectname = $("#projectname").val();
+        var filename = $("#filename").val();
+        var startnewestsavedate = $("#startnewestsavedate").val();
+        var endnewestsavedate = $("#endnewestsavedate").val();
         //做好文件夹切割容器 文件夹层数不能超过9层
         var folderhtml = "";
         var fileshtml = "";
-        if (salor == "") {
-            alert("请选择业务人员!");
-            $("#foldershow").removeAttr("checked");
-            $("#listshow").prop("checked", 'checked');
-            $("#listdiv").attr("style", "display:block;")
-            $("#folderdiv").attr("style", "display:none;")
-            return false;
-        }
-        if (engineer == 0) {
-            alert("请选择设计师!");
-            $("#foldershow").removeAttr("checked");
-            $("#listshow").prop("checked", 'checked');
-            $("#listdiv").attr("style", "display:block;")
-            $("#folderdiv").attr("style", "display:none;")
-            return false;
-        }
-        if (orderNo == "") {
-            alert("请填写订单编号!");
-            $("#foldershow").removeAttr("checked");
-            $("#listshow").prop("checked", 'checked');
-            $("#listdiv").attr("style", "display:block;")
-            $("#folderdiv").attr("style", "display:none;")
-            return false;
-        }
+        // if (salor == "") {
+        //     alert("请选择业务人员!");
+        //     $("#foldershow").removeAttr("checked");
+        //     $("#listshow").prop("checked", 'checked');
+        //     $("#listdiv").attr("style", "display:block;")
+        //     $("#folderdiv").attr("style", "display:none;")
+        //     return false;
+        // }
+        // if (engineer == 0) {
+        //     alert("请选择设计师!");
+        //     $("#foldershow").removeAttr("checked");
+        //     $("#listshow").prop("checked", 'checked');
+        //     $("#listdiv").attr("style", "display:block;")
+        //     $("#folderdiv").attr("style", "display:none;")
+        //     return false;
+        // }
+        // if (orderNo == "") {
+        //     alert("请填写订单编号!");
+        //     $("#foldershow").removeAttr("checked");
+        //     $("#listshow").prop("checked", 'checked');
+        //     $("#listdiv").attr("style", "display:block;")
+        //     $("#folderdiv").attr("style", "display:none;")
+        //     return false;
+        // }
         $("#folderdiv").attr("style", "display:block;")
         $("#listdiv").attr("style", "display:none;")
         $("#some-element").busyLoad("show");//遮罩层开启
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
-            "orderNo": orderNo //订单编号
+            "orderNo": orderNo, //订单编号
+            "projectName":projectname,
+            "fileName":filename,
+            "startNewestSaveDateStr":startnewestsavedate,
+            "endNewestSaveDateStr":endnewestsavedate
+
         };
         var data = JSON.stringify(jsonarray);
         $.ajax({
@@ -946,6 +955,10 @@
                     $("#showdiv").hide();
                 }
                 // 隐藏loading
+               $("#foldershow").removeAttr("checked");
+               $("#listshow").prop("checked", 'checked');
+                $("#folderdiv").attr("style", "display:none;")
+                $("#listdiv").attr("style", "display:block;")
                 $("#some-element").busyLoad("hide");
             },
             error: function (msg) {
