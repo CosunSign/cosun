@@ -807,6 +807,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     }
 
+    @Override
+    @Transactional
+    public int findAllFileUrlByConditionCount(Integer uId) throws Exception {
+        return fileUploadAndDownMapper.findAllFileUrlByConditionCount(uId);
+    }
+
     @Transactional
     public DownloadView addOFilesByPointFile(DownloadView view, List<MultipartFile> fileArray,
                                              UserInfo userInfo, String pointpath,
@@ -1219,27 +1225,29 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if(paths[ii].contains(",")){
                 isSameFileUploadFolderName = -9;//表示上传文件夹中,存在
                 return isSameFileUploadFolderName;
-            }else{
-            String centerurl = StringUtil.subMyString(paths[ii], "/");
-            //第一步,查看上传文件夹下的文件名是否相同
-            if (originFNames.contains(subAfterString(paths[ii], "/"))) {
-                isSameFileUploadFolderName = -1;//表示上传文件夹中就有相同文件名字存在
-                return isSameFileUploadFolderName;
-            } else {
-                //第二步,上传的文件夹下的文件名与数据库的文件名是否重复
-                originFNames.add(subAfterString(paths[ii], "/"));
-                if (urlss.contains(subAfterString(paths[ii], "/"))) {
-                    isSameFileUploadFolderName = -2;//有重复,即刻返回
+            }else {
+                String centerurl = StringUtil.subMyString(paths[ii], "/");
+                //第一步,查看上传文件夹下的文件名是否相同
+                if (originFNames.contains(subAfterString(paths[ii], "/"))) {
+                    isSameFileUploadFolderName = -1;//表示上传文件夹中就有相同文件名字存在
                     return isSameFileUploadFolderName;
+                } else {
+                    //第二步,上传的文件夹下的文件名与数据库的文件名是否重复
+                    originFNames.add(subAfterString(paths[ii], "/"));
+                    if (urlss.contains(subAfterString(paths[ii], "/"))) {
+                        isSameFileUploadFolderName = -2;//有重复,即刻返回
+                        return isSameFileUploadFolderName;
+                    }
+                }
+                //第三步,查看上传的文件夹下的文件夹名是否有重复//自比较？？？？？？可以优化成不断插入子目录，循环判断
+                if (centerurl != null) {
+                    if (centerurl.contains("/")) {
+                        afterstr = centerurl.replaceAll("/", "\\\\");
+                        splitArray = afterstr.split("\\\\");
+                        foldernameLists.add(splitArray);
+                    }
                 }
             }
-            //第三步,查看上传的文件夹下的文件夹名是否有重复//自比较？？？？？？可以优化成不断插入子目录，循环判断
-            if (centerurl.contains("/")) {
-                afterstr = centerurl.replaceAll("/", "\\\\");
-                splitArray = afterstr.split("\\\\");
-                foldernameLists.add(splitArray);
-            }
-        }
     }
 
         //自单个路径比较

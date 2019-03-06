@@ -111,7 +111,7 @@ public class FileUploadAndDownController {
         List<Employee> employees = fileUploadAndDownServ.findAllSalor();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
-        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+        int recordCount = fileUploadAndDownServ.findAllFileUrlByConditionCount(userInfo.getuId());
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         view.setMaxPage(maxPage);
         view.setRecordCount(recordCount);
@@ -193,19 +193,25 @@ public class FileUploadAndDownController {
 
 
                     for (DownloadView v : views) {
-                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
-                            flag = false;
+                        if (v.getFolderOrFileName() != null) {
+                            if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                                flag = false;
+                            }
                         }
                     }
                     if (flag) {
                         vvv = new DownloadView();
                         vi.setFolderOrFileName(tempFolFileName);
-                        if (right.getOpRight() != null) {
-                            vi.setOpRight(right.getOpRight());
-                            if (right.getuId() != null) {
-                                vi.setOprighter(right.getuId().toString());
+                        if (right != null) {
+                            if (right.getOpRight() != null) {
+                                vi.setOpRight(right.getOpRight());
+                                if (right.getuId() != null) {
+                                    vi.setOprighter(right.getuId().toString());
+                                } else {
+                                    vi.setOprighter("");
+                                }
                             } else {
-                                vi.setOprighter("");
+                                vi.setOpRight("");
                             }
                         } else {
                             vi.setOpRight("");
@@ -262,19 +268,25 @@ public class FileUploadAndDownController {
                     }
 
                     for (DownloadView v : views) {
-                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
-                            flag = false;
+                        if (v.getFolderOrFileName() != null) {
+                            if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                                flag = false;
+                            }
                         }
                     }
                     if (flag) {
                         vvv = new DownloadView();
                         vi.setFolderOrFileName(tempFolFileName);
-                        if (right.getOpRight() != null) {
-                            vi.setOpRight(right.getOpRight());
-                            if (right.getuId() != null) {
-                                vi.setOprighter(right.getuId().toString());
+                        if (right != null) {
+                            if (right.getOpRight() != null) {
+                                vi.setOpRight(right.getOpRight());
+                                if (right.getuId() != null) {
+                                    vi.setOprighter(right.getuId().toString());
+                                } else {
+                                    vi.setOprighter("");
+                                }
                             } else {
-                                vi.setOprighter("");
+                                vi.setOpRight("");
                             }
                         } else {
                             vi.setOpRight("");
@@ -291,13 +303,17 @@ public class FileUploadAndDownController {
 
             viewss = new ArrayList<DownloadView>();
             for (DownloadView vii : views) {
-                if (!vii.getFolderOrFileName().contains(".")) {
-                    viewss.add(vii);
+                if (vii.getFolderOrFileName() != null) {
+                    if (!vii.getFolderOrFileName().contains(".")) {
+                        viewss.add(vii);
+                    }
                 }
             }
             for (DownloadView vii : views) {
-                if (vii.getFolderOrFileName().contains(".")) {
-                    viewss.add(vii);
+                if (vii.getFolderOrFileName() != null) {
+                    if (vii.getFolderOrFileName().contains(".")) {
+                        viewss.add(vii);
+                    }
                 }
             }
 
@@ -2090,7 +2106,7 @@ public class FileUploadAndDownController {
         view.setuId(userInfo.getuId());
         int flag = 520;
         flag = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
-        if (flag==520) {
+        if (flag == 520) {
             view.setFlag("520");
             view = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
         }

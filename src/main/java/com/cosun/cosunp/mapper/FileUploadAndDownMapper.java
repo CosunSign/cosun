@@ -61,6 +61,13 @@ public interface FileUploadAndDownMapper {
             "   ffi.createtime DESC limit #{currentPageTotalNum},#{PageSize} ")
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize);
 
+
+    @Select("SELECT count(ffi.id) as totalnum " +
+            "                     FROM  " +
+            "                     filemanfileinfo ffi " +
+            "                     LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId ")
+    int findAllFileUrlByConditionCount(Integer uId);
+
     @Select("SELECT    \n" +
             "\ta.ordernum as orderNo,\n" +
             "\ta.extinfo1 as salor,\n" +
