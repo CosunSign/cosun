@@ -22,24 +22,38 @@
 </head>
 <body class=" theme-blue">
 <script type="text/javascript">
+    var isFilePathRight = 1;
+    var filePathName1 = "";
     var filePathName = "";
     $(function () {
         var test = document.getElementById('filefolder');
         test.addEventListener('change', function() {
-            var filePathName = ""
+            isFilePathRight = 1;
+            filePathName = "";
             var t_files = this.files;
             for (var i = 0, len = t_files.length; i < len; i++) {
-               filePathName += t_files[i].webkitRelativePath+",";
+                if(t_files[i].webkitRelativePath.indexOf(",") == -1 ) {
+                    filePathName += t_files[i].webkitRelativePath + ",";
+                }else{
+                    isFilePathRight = 0;
+                    return;
+                }
             };
             $("#filePathName").val(filePathName);
         }, false);
 
         var test1 = document.getElementById('file');
         test1.addEventListener('change', function() {
-            var filePathName1 = ""
+            isFilePathRight = 1;
+            filePathName1 = "";
             var t_files1 = this.files;
             for (var i = 0, len = t_files1.length; i < len; i++) {
-                filePathName1 += t_files1[i].name+",";
+                if(t_files1[i].name.indexOf(",") == -1 ) {
+                    filePathName1 += t_files1[i].name + ",";
+                }else{
+                    isFilePathRight = 0;
+                    return;
+                }
             };
             $("#filePathName").val(filePathName1);
         }, false);
@@ -839,6 +853,11 @@
         //showSessionMessage();//定时器开启
         //document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
+        if(isFilePathRight==0) {
+            alert("您要上传的文件夹或文件名不能包含,符号.");
+            $("#some-element").busyLoad("hide");//遮罩层开启
+            return;
+        }
         var formData = new FormData();
         formData.append('filePathName',$("#filePathName").val() );
         formData.append('orderNo',$("#orderno").val() );
