@@ -1380,6 +1380,30 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
 
         @Transactional
+        public DownloadView findMessageByOrderNoandUid(String orderNo,String linshiId) throws Exception {
+            Integer uId = 0;
+            if (linshiId == null || linshiId.trim().length() <= 0) {
+                uId = 0;
+            } else {
+                uId = Integer.valueOf(linshiId.trim());
+            }
+            return fileUploadAndDownMapper.findMessageByOrderNoandUid(orderNo,uId);
+        }
+
+        @Transactional
+        public List<FilemanUrl> findAllUrlByOrderNoAndUid(String orderNo,String linshiId) throws  Exception {
+            Integer uId = 0;
+            if (linshiId == null || linshiId.trim().length() <= 0) {
+                uId = 0;
+            } else {
+                uId = Integer.valueOf(linshiId.trim());
+            }
+            return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid2(orderNo,uId);
+        }
+
+
+
+    @Transactional
         public DownloadView findOrderNobyOrderNo (String orderNo) throws Exception {
             return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
         }

@@ -91,7 +91,7 @@ public interface FileUploadAndDownMapper {
             "\ta.ordernum as orderNo,\n" +
             "\tIFNULL(a.updatetime, a.createtime) as createTime,\n" +
             "\tb.uid as oprighter,\n" +
-            "  b.opright as opRight\n" +
+            "  b.opright as opRight,c.fullName as fullName    \n" +
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
@@ -99,6 +99,9 @@ public interface FileUploadAndDownMapper {
             " where a.ordernum = #{orderNo} " +
             "ORDER BY a.createtime DESC limit 1  ")
     DownloadView findMessageByOrderNo(String orderNo);
+
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findMessageByOrderNoandUid")
+    DownloadView findMessageByOrderNoandUid(String orderNo, Integer uId);
 
     @Select("select ffi.id,ffi.username as creator,ffi.updateuser as lastUpdator, ffi.filename as fileName,ffi.extinfo1 as salor," +
             "    ffi.ordernum as orderNo,ffi.projectname as projectName,ffi.createtime as lastUpdateTime" +
@@ -242,6 +245,10 @@ public interface FileUploadAndDownMapper {
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "getFileRightByUrlIdAndFileInfoIdAnaUid")
     FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId);
+
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByOrderNoAndUid2")
+    List<FilemanUrl> findAllUrlByOrderNoAndUid2(String orderNo,Integer uId);
+
 
     @Select("select * from filemanright where id = #{id}")
     FilemanRight findFileRightById(Integer id);
@@ -453,12 +460,12 @@ public interface FileUploadAndDownMapper {
                     "\tfr.uid AS oprighter,\n" +
                     "\tfr.opright AS opRight,\n" +
                     "\tfu.logur1 AS urlAddr,\n" +
-                    "\tinfo.id AS id\n" +
+                    "\tinfo.id AS id,u.fullname as fullName \n" +
                     "\n" +
                     "FROM\n" +
                     "\tfilemanfileinfo info\n" +
                     "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
-                    "JOIN filemanurl fu ON fr.fileurlid = fu.id\n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on fr.uid = u.uid  \n" +
                     "where fr.uid is null  ");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and info.extinfo1 = #{salor} ");
@@ -537,11 +544,11 @@ public interface FileUploadAndDownMapper {
                     "\t\t)\n" +
                     "\t) AS opRight,\n" +
                     "\tfu.logur1 AS urlAddr,\n" +
-                    "\tinfo.id AS id\n" +
+                    "\tinfo.id AS id,u.fullname as fullName   \n" +
                     "FROM\n" +
                     "\tfilemanfileinfo info\n" +
                     "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
-                    "JOIN filemanurl fu ON fr.fileurlid = fu.id\n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on u.uid = fr.uid \n" +
                     "where 1=1 ");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and info.extinfo1 = #{salor} ");
@@ -1194,6 +1201,48 @@ public interface FileUploadAndDownMapper {
             return sql.toString();
 
         }
+
+        public String findMessageByOrderNoandUid(String orderNo, Integer uId) {
+            StringBuilder sql = new StringBuilder("SELECT\n" +
+                    "\ta.extinfo1 as salor,\n" +
+                    "\ta.createuser as engineer,\n" +
+                    "\ta.ordernum as orderNo,\n" +
+                    "\tIFNULL(a.updatetime, a.createtime) as createTime,\n" +
+                    "\tb.uid as oprighter,\n" +
+                    "  b.opright as opRight,c.fullName as fullName    \n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo a\n" +
+                    "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+                    "left join userinfo c on c.uid = b.uid\n" +
+                    " where a.ordernum = #{orderNo} ");
+            if (uId != 0) {
+                sql.append(" and b.uId = #{uId} ");
+            } else {
+                sql.append(" and b.uId is null ");
+            }
+
+            sql.append("ORDER BY a.createtime DESC limit 1  ");
+            return sql.toString();
+        }
+
+        public String findAllUrlByOrderNoAndUid2(String orderNo,Integer uId) {
+            StringBuilder sql = new StringBuilder("SELECT fu.*    \n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo a\n" +
+                    "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+                    "left join filemanurl fu on b.fileurlid = fu.id   "+
+                    "left join userinfo c on c.uid = b.uid\n" +
+                    " where a.ordernum = #{orderNo} ");
+            if (uId != 0) {
+                sql.append(" and b.uId = #{uId} ");
+            } else {
+                sql.append(" and b.uId is null ");
+            }
+
+            sql.append("ORDER BY a.createtime DESC   ");
+            return sql.toString();
+        }
+
     }
 
 

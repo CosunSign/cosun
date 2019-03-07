@@ -160,12 +160,12 @@ public class FileUploadAndDownController {
             views = new ArrayList<DownloadView>();
             norepeatFoldorFile = new ArrayList<String>();
             // urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
-            urls = fileUploadAndDownServ.findAllUrlByOrderNo(view.getOrderNo());
+            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(),view.getLinshiId());
 
             //取上二级文件夹名 由下找下一层文件夹或文件
             if (!foldername.contains(".")) {
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNo(view.getOrderNo());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
                     lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
                     if (lastIndex != -1) {
                         String linshi1 = u.getLogur1().substring(0, lastIndex);
@@ -228,7 +228,7 @@ public class FileUploadAndDownController {
                 String filefoldername = null;
                 String backFolderName = null;
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNo(view.getOrderNo());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
                     if (u.getLogur1().contains(foldername)) {
                         filefoldername = u.getLogur1();
                     }
@@ -246,7 +246,7 @@ public class FileUploadAndDownController {
                 }
 
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNo(view.getOrderNo());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
                     if (u.getLogur1().contains(foldername)) {
                         filefoldername = u.getLogur1();
                     }
@@ -683,11 +683,11 @@ public class FileUploadAndDownController {
         String tempFolOrFileName = null;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
             views = new ArrayList<DownloadView>();
-            urls = fileUploadAndDownServ.findAllUrlByOrderNo(view.getOrderNo());
+            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(),view.getLinshiId());
             norepeatFoldorFile = new ArrayList<String>();
             folderOrFiles = new ArrayList<String>();
             for (FilemanUrl u : urls) {
-                vi = fileUploadAndDownServ.findMessageByOrderNo(view.getOrderNo());
+                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
                 index = u.getLogur1().indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
                 lastIndex = u.getLogur1().indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {

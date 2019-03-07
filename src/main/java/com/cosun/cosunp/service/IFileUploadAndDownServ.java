@@ -27,6 +27,10 @@ public interface IFileUploadAndDownServ {
 
     DownloadView checkIsExistFilesFolderforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
 
+    DownloadView findMessageByOrderNoandUid(String orderNo,String uId) throws Exception;
+
+    List<FilemanUrl> findAllUrlByOrderNoAndUid(String orderNo,String uId) throws  Exception;
+
     int findAllFileUrlByConditionCount(Integer uId) throws Exception;
 
     DownloadView checkIsExistFilesforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
