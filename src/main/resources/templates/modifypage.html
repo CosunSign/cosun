@@ -367,7 +367,8 @@
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         cominone2 = 1;
                     } else {//代表为文件
-                        fileshtml += "<li>" + data[num] + "</li>";
+                        fileshtml += "<li><img src=\"/images/icon/File.png\" " +
+                            " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         if (cominone2 == 0) {//代表没有文件夹
                             $("#foldername").val(data[num]);
                         }
@@ -429,7 +430,8 @@
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         cominone = 1;
                     } else {//代表为文件
-                        fileshtml += "<li>" + data[num] + "</li>";
+                        fileshtml += "<li><img src=\"/images/icon/File.png\" " +
+                            " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         if (cominone == 0) {
                             $("#foldername").val(data[num]);
                         }
@@ -493,7 +495,8 @@
                             " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                     } else {//代表为文件
-                        fileshtml += "<li>" + data[num] + "</li>";
+                        fileshtml += "<li><img src=\"/images/icon/File.png\" " +
+                            " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
 
                     }
                 });
@@ -878,7 +881,7 @@
                             " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                             " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                     } else {//代表为文件
-                        fileshtml += "<li>" + data[num] + "</li>";
+                        fileshtml += "<li><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
 
                     }
                 });

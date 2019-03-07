@@ -478,7 +478,8 @@ public class FileUploadAndDownController {
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
         }
-        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view);
+        //List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
         Integer lastIndex = null;
@@ -597,7 +598,7 @@ public class FileUploadAndDownController {
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
         }
-        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> norepeatFoFiPAIXU = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
@@ -874,7 +875,8 @@ public class FileUploadAndDownController {
         if (view.getEngineer() == null) {
             view.setEngineer(userInfo.getuId().toString());
         }
-        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+       // List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
         Integer index = null;

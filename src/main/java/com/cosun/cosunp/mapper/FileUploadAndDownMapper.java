@@ -290,7 +290,7 @@ public interface FileUploadAndDownMapper {
     List<String> getAllDesigners();
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParam")
-    List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno);
+    List<String> findAllUrlByParamThree(DownloadView view);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByThreeParamNew")
     List<String> findAllUrlByParamThreeNew(DownloadView view);
@@ -758,18 +758,35 @@ public interface FileUploadAndDownMapper {
         }
 
 
-        public String findAllUrlByThreeParam(String salor, Integer engineer, String orderno) {
+        public String findAllUrlByThreeParam(DownloadView view) {
             StringBuilder sql = new StringBuilder(" select fu.logur1 as addr from filemanurl fu left join ");
             sql.append(" filemanfileinfo ffi on fu.fileInfoId = ffi.id ");
             sql.append(" where 1=1");
-            if (salor != "" && salor != null && salor.trim().length() > 0) {
+
+            if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 = #{salor} ");
             }
-            if (engineer != null) {
-                sql.append(" and ffi.uid = #{engineer} ");
+            if (view.getEngineer() != null && view.getEngineer()!="" &&!view.getEngineer().equals("0")) {
+                view.setuId(Integer.valueOf(view.getEngineer()));
+                sql.append(" and ffi.uid = #{uId} ");
             }
-            if (orderno != null && orderno != "" && orderno.trim().length() > 0) {
-                sql.append(" and ffi.ordernum = #{orderno} ");
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" and ffi.ordernum = #{orderNo} ");
+            }
+            if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
+                sql.append(" and ffi.projectname like CONCAT('%',#{projectName},'%')");
+            }
+
+            if (view.getFileName() != null && view.getFileName().trim().length() > 0) {
+                sql.append(" and fu.orginname like  CONCAT('%',#{fileName},'%')");
+            }
+
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fu.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
             }
             return sql.toString();
         }

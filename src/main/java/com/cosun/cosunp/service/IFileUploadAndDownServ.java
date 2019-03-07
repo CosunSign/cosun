@@ -83,7 +83,7 @@ public interface IFileUploadAndDownServ {
 
     DownloadView findOrderNobyOrderNo(String orderNo) throws Exception;
 
-    List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno) throws Exception;
+    List<String> findAllUrlByParamThree(DownloadView view) throws Exception;
 
     int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception;
 

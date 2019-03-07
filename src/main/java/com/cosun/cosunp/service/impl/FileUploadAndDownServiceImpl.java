@@ -1119,8 +1119,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional
-    public List<String> findAllUrlByParamThree(String salor, Integer engineer, String orderno) throws Exception {
-        return fileUploadAndDownMapper.findAllUrlByParamThree(salor, engineer, orderno);
+    public List<String> findAllUrlByParamThree(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamThree(view);
     }
 
     @Override
