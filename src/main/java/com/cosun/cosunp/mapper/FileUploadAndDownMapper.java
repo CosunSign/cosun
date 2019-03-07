@@ -634,7 +634,7 @@ public interface FileUploadAndDownMapper {
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 = #{salor} ");
             }
-            if (view.getEngineer() != null) {
+            if (view.getEngineer() != null && view.getEngineer()!="" && view.getEngineer().trim().length()>0) {
                 sql.append(" and ffi.uid = #{engineer} ");
             }
             if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
@@ -683,7 +683,7 @@ public interface FileUploadAndDownMapper {
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and ffi.extinfo1 = #{salor} ");
             }
-            if (view.getEngineer() != null) {
+            if (view.getEngineer() != null && view.getEngineer()!="" && view.getEngineer().trim().length()>0) {
                 sql.append(" and ffi.uid = #{engineer} ");
             }
             if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {

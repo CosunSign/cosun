@@ -43,8 +43,8 @@
             alert("您单次要下单的文件个数已超过200个,不能超过200个.");
         } else if (flag == "-369") {
             $("#some-element").busyLoad("hide");//遮罩层关闭
-        } else if(flag == "-258") {
-           alert("您要下载的文件没有权限,可联系上级帮你申请!")
+        } else if (flag == "-258") {
+            alert("您要下载的文件没有权限,可联系上级帮你申请!")
         }
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
         if (match) var color = match[1];
@@ -117,35 +117,34 @@
         $('#main-menu').append(uls.clone());
 
         //下一页
-        $(".next").click(function(){
-            if(current_num>=total_page){
+        $(".next").click(function () {
+            if (current_num >= total_page) {
                 return false;//如果大于等于总页数就禁用下一页
-            }
-            else{
+            } else {
                 $(".current_page").text(++current_num);//点击下一页的时候当前页数的值就加1
-                $.each($('#showdatatable li'),function(index,item){
-                    var start = current_page* (current_num-1);//起始范围
+                $.each($('#showdatatable li'), function (index, item) {
+                    var start = current_page * (current_num - 1);//起始范围
                     var end = current_page * current_num;//结束范围
-                    if(index >= start && index < end){//如果索引值是在start和end之间的元素就显示，否则就隐
+                    if (index >= start && index < end) {//如果索引值是在start和end之间的元素就显示，否则就隐
                         $(this).show();
-                    }else {
+                    } else {
                         $(this).hide();
                     }
                 });
             }
         });
         //上一页方法
-        $(".prev").click(function(){
-            if(current_num==1){
+        $(".prev").click(function () {
+            if (current_num == 1) {
                 return false;
-            }else{
+            } else {
                 $(".current_page").text(--current_num);
-                $.each($('#showdatatable li'),function(index,item){
-                    var start = current_page* (current_num-1);//起始范围
+                $.each($('#showdatatable li'), function (index, item) {
+                    var start = current_page * (current_num - 1);//起始范围
                     var end = current_page * current_num;//结束范围
-                    if(index >= start && index < end){//如果索引值是start和end之间的元素就显示，否则就隐藏
+                    if (index >= start && index < end) {//如果索引值是start和end之间的元素就显示，否则就隐藏
                         $(this).show();
-                    }else {
+                    } else {
                         $(this).hide();
                     }
                 });
@@ -248,7 +247,7 @@
                 $.each(data, function (num) {
 
                     if (num < totalnum - 1 && totalnum > 1) {
-                        if(num<15) {
+                        if (num < 15) {
                             if (data[num].indexOf(".") <= 0) {//代表为文件夹
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
@@ -267,7 +266,7 @@
                                     $("#foldername").val(data[num]);
                                 }
                             }
-                        }else{
+                        } else {
                             if (data[num].indexOf(".") <= 0) {//代表为文件夹
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
@@ -279,9 +278,9 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone2 = 1;
                             } else {//代表为文件
-                                fileshtml += "<li style='display: none;'><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"+
-                                "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" +
-                                 data[num] + "</li>";
+                                fileshtml += "<li style='display: none;'><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
+                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" +
+                                    data[num] + "</li>";
                                 if (cominone2 == 0) {//代表没有文件夹
                                     $("#foldername").val(data[num]);
                                 }
@@ -291,10 +290,10 @@
                     }
                 });
                 $("#showdatatable").html(folderhtml + fileshtml)
-                var maxPages = Math.round((totalnum + 15 - 1)/15);
+                var maxPages = Math.round((totalnum + 15 - 1) / 15);
 
-                var next=$(".next");//下一页
-                var prev=$(".prev");//上一页
+                var next = $(".next");//下一页
+                var prev = $(".prev");//上一页
                 $(".total").text(maxPages);//显示总页数
                 $(".current_page").text(1);//当前的页数
                 $("#n_currentPage").val(1)
@@ -352,7 +351,7 @@
                 var totalnum = data.length;
                 $.each(data, function (num) {
                     if (num < totalnum - 1 && totalnum > 1) {
-                        if(num<15) {
+                        if (num < 15) {
                             if (data[num].indexOf(".") <= 0) {//代表为文件夹
                                 $("#foldername").val(data[num]);
 
@@ -370,7 +369,7 @@
                                     $("#foldername").val(data[num]);
                                 }
                             }
-                        }else{
+                        } else {
                             if (data[num].indexOf(".") <= 0) {//代表为文件夹
                                 $("#foldername").val(data[num]);
 
@@ -382,7 +381,7 @@
 
                             } else {//代表为文件
                                 fileshtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
-                                    +"<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
+                                    + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
                                     + data[num] + "</li>";
                                 if (cominone == 0) {
                                     $("#foldername").val(data[num]);
@@ -395,10 +394,10 @@
                         $("#orderno").val(data[num]);
 
 
-                       var maxPages = Math.round((totalnum + 15 - 1)/15);
+                        var maxPages = Math.round((totalnum + 15 - 1) / 15);
 
-                        var next=$(".next");//下一页
-                        var prev=$(".prev");//上一页
+                        var next = $(".next");//下一页
+                        var prev = $(".prev");//上一页
                         $(".total").text(maxPages);//显示总页数
                         $(".current_page").text(1);//当前的页数
                         $("#n_currentPage").val(1)
@@ -431,6 +430,7 @@
     var pageSize;//当前每页多少条
 
     function submitQueryByCondition() {
+        $("#pagetfoottr").hide();
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
         var folderhtml = "";
         var fileshtml = "";
@@ -468,79 +468,85 @@
                 var tbody = $("#showdatatable");
                 var tfoot = $("#s_tfoot");
                 tbody.html("");
-                if (data.length >0) {
-                    $("#nodatadiv").hide();
-                    $("#showdiv").show();
-                    currentPage = data[0].currentPage; //当前页
-                    totalPage = data[0].maxPage; //总多少页
-                    totaldata = data[0].recordCount; //总共多少记录
-                    username = data[0].userName;
-                    password = data[0].userPwd;
-                    pageSize = data[0].pageSize;
-                    maxpageid.val(totalPage);
-                    n_currentPage.val(currentPage);
-                    inputpage.val(currentPage);
-                $.each(data, function (num) {
-                    if (data[num].orderNo.indexOf(".") <= 0) {//代表为文件夹
-                        $("#foldername").val(data[num].orderNo);
-                        if (reg.test(data[num].orderNo)) {
-                            $("#backfolder").attr("disabled", "disabled");
+                if (data != null) {
+                    if (data.length > 0) {
+                        $("#nodatadiv").hide();
+                        $("#showdiv").show();
+                        currentPage = data[0].currentPage; //当前页
+                        totalPage = data[0].maxPage; //总多少页
+                        totaldata = data[0].recordCount; //总共多少记录
+                        username = data[0].userName;
+                        password = data[0].userPwd;
+                        pageSize = data[0].pageSize;
+                        maxpageid.val(totalPage);
+                        n_currentPage.val(currentPage);
+                        inputpage.val(currentPage);
+                        $.each(data, function (num) {
+                            if (data[num].orderNo.indexOf(".") <= 0) {//代表为文件夹
+                                $("#foldername").val(data[num].orderNo);
+                                if (reg.test(data[num].orderNo)) {
+                                    $("#backfolder").attr("disabled", "disabled");
+                                }
+                                folderhtml += "<li><input type=\"checkbox\" value=" + data[num].orderNo + " id='" + data[num].orderNo + "' name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
+                                    " align=\"middle\" border=\"0\"  value=" + data[num].orderNo + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].orderNo + "</li>";
+                                cominone2 = 1;
+                            } else {//代表为文件
+                                fileshtml += "<li><input type=\"checkbox\" value='" + data[num].orderNo + "' id='" + data[num].orderNo + "'  name=\"downloadlist\">"
+                                    + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
+                                    + data[num].orderNo + "</li>";
+                                if (cominone2 == 0) {//代表没有文件夹
+                                    $("#foldername").val(data[num].orderNo);
+                                }
+                            }
+                        });
+                        $("#showdatatable").html(folderhtml + fileshtml)
+                        $("#currentpagespan").html(currentPage);
+                        $("#maxpagespan").html(totalPage);
+                        $("#recordcountspan").html(totaldata);
+
+
+                        if (currentPage > 1) {
+                            var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image01.html(imange01str);
+                        } else {
+                            image01.html("");
                         }
-                        folderhtml += "<li><input type=\"checkbox\" value=" + data[num].orderNo + " id='"+data[num].orderNo+"' name=\"downloadlist\"><img src=\"/images/icon/Folder.png\" " +
-                            " align=\"middle\" border=\"0\"  value=" + data[num].orderNo + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
-                            " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].orderNo + "</li>";
-                        cominone2 = 1;
-                    } else {//代表为文件
-                        fileshtml += "<li><input type=\"checkbox\" value='" + data[num].orderNo + "' id='"+ data[num].orderNo+"'  name=\"downloadlist\">"
-                            +"<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
-                            + data[num].orderNo + "</li>";
-                        if (cominone2 == 0) {//代表没有文件夹
-                            $("#foldername").val(data[num].orderNo);
+                        if (currentPage <= 1) {
+                            var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image02.html(image02str);
+                        } else {
+                            image02.html("");
+                        }
+                        if (currentPage < totalPage) {
+                            var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image03.html(imange03str);
+                        } else {
+                            image03.html("");
+                        }
+                        if (currentPage >= totalPage) {
+                            var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image04.html(image04str);
+                        } else {
+                            image04.html("");
                         }
                     }
-                });
-                $("#showdatatable").html(folderhtml + fileshtml)
-                $("#currentpagespan").html(currentPage);
-                $("#maxpagespan").html(totalPage);
-                $("#recordcountspan").html(totaldata);
-
-
-                if (currentPage > 1) {
-                    var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-                    imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-                    image01.html(imange01str);
                 } else {
-                    image01.html("");
+                    $("#nodatadiv").show();
+                    $("#showdiv").hide();
+                    $("#currentpagespan").html(0);
+                    $("#maxpagespan").html(0);
+                    $("#recordcountspan").html(0);
+                    $("#_tp").val(0)
                 }
-                if (currentPage <= 1) {
-                    var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
-                    image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-                    image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
-                    image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-                    image02.html(image02str);
-                } else {
-                    image02.html("");
-                }
-                if (currentPage < totalPage) {
-                    var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-                    imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-                    image03.html(imange03str);
-                } else {
-                    image03.html("");
-                }
-                if (currentPage >= totalPage) {
-                    var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
-                    image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-                    image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
-                    image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-                    image04.html(image04str);
-                } else {
-                    image04.html("");
-                }
-            }else{
-                $("#nodatadiv").show();
-                $("#showdiv").hide();
-    }
             },
             error: function (msg) {
                 // 隐藏loading
@@ -683,9 +689,9 @@
     }
 
     function subUrlFileName(str) {
-        var result=str.split("/");
+        var result = str.split("/");
         var len = result.length;
-        return result[len-1];
+        return result[len - 1];
     }
 
 
@@ -696,19 +702,19 @@
         var obj = document.getElementsByName("downloadlist");
         var checkval = [];
         var isChecked = 0;
-        var orderNo  = "";
+        var orderNo = "";
         for (k in obj) {
-            var value={orderNo:'',folderOrFileName:''};
+            var value = {orderNo: '', folderOrFileName: ''};
             if (obj[k].checked) {
                 if (reg1.test(obj[k].id)) {
                     reg1 = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g)
                     orderNo = obj[k].id;
-                    value["orderNo"]=orderNo;
-                }else{
+                    value["orderNo"] = orderNo;
+                } else {
                     orderNo = $("#orderno").val();
-                    value["orderNo"]=orderNo;
+                    value["orderNo"] = orderNo;
                 }
-                value["folderOrFileName"]=obj[k].value;
+                value["folderOrFileName"] = obj[k].value;
                 checkval.push(value);
                 isChecked = 1;
             }
@@ -736,32 +742,33 @@
             success: function (msg) {
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
-                var flag = data[totalnum-1];
-                if(flag=="-1"){
+                var flag = data[totalnum - 1];
+                if (flag == "-1") {
                     alert("您要下载的文件已超过2G！严禁下载。");
                     return false;
                 }
-                if(flag=="-369"){
+                if (flag == "-369") {
                     alert("您要下载的文件已超过200个，请重新选择!");
                     return false;
-                }if(flag=="-258"){
+                }
+                if (flag == "-258") {
                     alert("您要下载的文件没有下载权限，请向上级申请!")
                     return false;
                 }
-                 $.each(data, function (num) {
-                     if (num < totalnum - 1 && totalnum > 1) {
-                         var urlsingle = data[num];
-                         var urlName = subUrlFileName(urlsingle);
-                         var value={name:'',url:'',dir:''};
-                         value["name"]=urlName;
-                         //value["url"]="ftp://root:123@192.168.1.31/"+urlsingle;
+                $.each(data, function (num) {
+                    if (num < totalnum - 1 && totalnum > 1) {
+                        var urlsingle = data[num];
+                        var urlName = subUrlFileName(urlsingle);
+                        var value = {name: '', url: '', dir: ''};
+                        value["name"] = urlName;
+                        //value["url"]="ftp://root:123@192.168.1.31/"+urlsingle;
                         // ftp://username:userpass@172.16.20.14/filepath
-                         value["url"]="ftp://192.168.1.31/"+urlsingle;
-                         value["dir"]="";
-                         urlstrArr.push(value);
-                     }
-                 });
-               // urlstrArr = [{name:'IntelliJIDEA2018.5.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.5.zip',dir:''},{name:'IntelliJIDEA2018.4.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.4.zip',dir:''}];
+                        value["url"] = "ftp://192.168.1.31/" + urlsingle;
+                        value["dir"] = "";
+                        urlstrArr.push(value);
+                    }
+                });
+                // urlstrArr = [{name:'IntelliJIDEA2018.5.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.5.zip',dir:''},{name:'IntelliJIDEA2018.4.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.4.zip',dir:''}];
                 thunderLink.newTask({
                     minVersion: '10.0.1.0', // 指定响应批量任务的迅雷最低版本；格式匹配：/^\d+\.\d+\.\d+(?:\.\d+)?$/ 【一般不必填写】
                     downloadDir: '', // 指定当前任务的下载目录，迅雷会在用户剩余空间最大的磁盘根目录中创建这个目录。【若不填此项，会下载到用户默认下载目录】
@@ -771,22 +778,22 @@
                     excludePath: '', // 如果您希望批量下载的文件在用户本地保持与服务器上相同的文件目录结构，可以指定排除URL的前缀，迅雷会根据被排除前缀后的URL路径，创建文件夹保存对应的文件。【若不填此项，将把所有文件都放置于同一层下载目录中】
                     threadCount: 5, // 指定原始地址线程数【10.1.3及后续版本支持此功能。一般不必填写，但某些下载地址的服务器会限制单个IP的最大同时连接数，例如部分“网盘、在线视频”网站等，此时可将此项数值设为1，从而避免被服务器断开连接】
                     tasks: [{
-                            name: "软件开发2月份周报2.docx", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
-                            url: "ftp://192.168.1.31:21/liusm/201902/王世珺/30174652/COSUN20190108WW01/12121/12/22/软件开发2月份周报2.docx",
+                        name: "软件开发2月份周报2.docx", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
+                        url: "ftp://192.168.1.31:21/liusm/201902/王世珺/30174652/COSUN20190108WW01/12121/12/22/软件开发2月份周报2.docx",
                         //url: "ftp://root:123@192.168.1.31:21/liusm/201902/王世珺/30174652/COSUN20190108WW01/12121/12/22/软件开发2月份周报2.docx",
 
                         dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
-                        }]
-                        // {
-                        //     name: "IntelliJIDEA2018.4.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
-                        //     url: "http://localhost:8080/lib/IntelliJIDEA2018.4.zip",
-                        //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
-                        // },
-                        // {
-                        //     name: "IntelliJIDEA2018.5.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
-                        //     url: "http://localhost:8080/lib/IntelliJIDEA2018.5.zip",
-                        //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
-                        // }
+                    }]
+                    // {
+                    //     name: "IntelliJIDEA2018.4.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
+                    //     url: "http://localhost:8080/lib/IntelliJIDEA2018.4.zip",
+                    //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
+                    // },
+                    // {
+                    //     name: "IntelliJIDEA2018.5.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
+                    //     url: "http://localhost:8080/lib/IntelliJIDEA2018.5.zip",
+                    //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
+                    // }
 
 
                     //]
@@ -915,7 +922,7 @@
                 <!--<li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>-->
                 <!--<li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>-->
                 <!--<li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>-->
-            <!---->
+                <!---->
             </ul>
         </li>
     </ul>
@@ -955,8 +962,8 @@
                                         </td>
                                         <td>
                                             <select id="salor" style="width: 120px" name="view.salor" form="form0">
-                                                <option value="" selected="selected" disabled="disabled"
-                                                        hidden="hidden">
+                                                <option value="" selected="selected"
+                                                >
                                                     请选择业务员
                                                 </option>
                                                 <option th:each="c:${employees}" th:value="${c.name}"
@@ -969,9 +976,9 @@
                                                    form="form0"
                                                    onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
                                         </td>
-                                        <td align="right"> 顶目编码:</td>
+                                        <td align="right"> 顶目名称:</td>
                                         <td><input type="text" id="projectname" name="view.projectName"
-                                                   style="width:150px"
+                                                   style="width:200px"
                                                    form="form0"
                                                    onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
                                         </td>
@@ -983,8 +990,8 @@
                                         <td align="right">设计师:</td>
                                         <td>
                                             <select id="engineer" style="width: 120px" name="view.engineer">
-                                                <option value="" selected="selected" disabled="disabled"
-                                                        hidden="hidden">
+                                                <option value="" selected="selected"
+                                                >
                                                     请选择设计师
                                                 </option>
                                                 <option value="1000012">段金星</option>
@@ -1061,9 +1068,10 @@
                             <table width="100%">
                                 <tbody id="showdatatable">
                                 <div th:unless="${#lists.isEmpty(orderNumFolders)}">
-                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}"  align="left">
+                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}" align="left">
                                         <td>
-                                            <input type="checkbox" th:value="${folderName}"  th:id="${folderName}" name="downloadlist">
+                                            <input type="checkbox" th:value="${folderName}" th:id="${folderName}"
+                                                   name="downloadlist">
                                             <img src="/images/icon/Folder.png" align="middle" border="0"
                                                  th:value="${folderName}" ondblclick="shownextfolderorfiles(this)"
                                                  style="width: 30px; height: 30px; vertical-align: middle"
@@ -1074,7 +1082,7 @@
                                 </div>
                                 <div th:if="${#lists.isEmpty(orderNumFolders)}">
                                     <tr>
-                                        <td  align="center">暂无文件清单信息</td>
+                                        <td align="center">暂无文件清单信息</td>
                                     </tr>
                                 </div>
                                 </tbody>
@@ -1083,7 +1091,7 @@
 
                                 <tr id="showdiv">
 
-                                    <td  align="center">
+                                    <td align="center">
                                         <span>第</span>
                                         <span th:text="${view.currentPage}" id="currentpagespan"> </span>
                                         <span>页|共</span>
@@ -1128,7 +1136,8 @@
                                         |&nbsp;到第
                                         <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
                                                style="width: 50px"
-                                               id="_tp" th:name="currentPage" type="text" th:value="${view.currentPage}"/>
+                                               id="_tp" th:name="currentPage" type="text"
+                                               th:value="${view.currentPage}"/>
                                         页&nbsp;
                                         <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
                                              style="width:20px;height:20px;vertical-align:middle">
@@ -1138,13 +1147,13 @@
 
 
                                 <tr style="display:none;" id="nodatadiv">
-                                    <td  align="center">
+                                    <td align="center">
                                         查无数据
                                     </td>
                                 </tr>
 
                                 <tr class="page_btn clear" style="display:none;" id="pagetfoottr" align="center">
-                                    <td  align="center">
+                                    <td align="center">
                                        <span class="page_box">
                                            <a class="prev">上一页</a>
                                        <span class="num"><span class="current_page">1</span>

@@ -330,14 +330,26 @@
         var cominone2 = 0;
         if (salor == "") {
             alert("请选择业务人员!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (engineer == "") {
             alert("请选择设计师!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (orderNo == "") {
             alert("请填写订单编号!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
 
@@ -397,14 +409,26 @@
         var cominone = 0;
         if (salor == "") {
             alert("请选择业务人员!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (engineer == "") {
             alert("请选择设计师!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (orderNo == "") {
             alert("请填写订单编号!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         $("#some-element").busyLoad("show");//遮罩层开启
@@ -463,14 +487,26 @@
 
         if (salor == "") {
             alert("请选择业务人员!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (engineer == "") {
             alert("请选择设计师!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (orderNo == "") {
             alert("请填写订单编号!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         $("#some-element").busyLoad("show");//遮罩层开启
@@ -666,10 +702,10 @@
             alert("请填写业务订单号！");
             return false;
         }
-        if (projecto == "") {
-            alert("请填写项目名称！");
-            return false;
-        }
+        // if (projecto == "") {
+        //     alert("请填写项目名称！");
+        //     return false;
+        // }
 
         if (fileInput == "" && filefolder == "") {
             alert("请选择上传文件！")
@@ -799,6 +835,7 @@
 
 
     function removeallbutonetr2() {
+        $("#urltbody").html("");
         $("#innerfolderdiv").html("");
         $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
         $("#foldershow").removeAttr("checked");
@@ -849,14 +886,26 @@
 
         if (salor == "") {
             alert("请选择业务人员!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (engineer == "") {
             alert("请选择设计师!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         if (orderNo == "") {
             alert("请填写订单编号!");
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#folderdiv").attr("style", "display:none;")
+            $("#listdiv").attr("style", "display:block;")
             return false;
         }
         $("#some-element").busyLoad("show");//遮罩层开启
@@ -1073,7 +1122,7 @@
                     订单编号
                     <input type="text" id="orderno" name="orderNo" onblur="checkOrderNo(this)">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <font color="#FF0000" size="2">*</font>
+                    <!--<font color="#FF0000" size="2">*</font>-->
                     项目名称
                     <input type="text" id="projectno" name="projectName">
                     &nbsp;&nbsp;&nbsp;&nbsp;更新时间

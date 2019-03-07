@@ -475,9 +475,6 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/findBackFoldersByQueryParam")
     public void findBackFoldersByQueryParam(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        if (view.getEngineer() == null) {
-            view.setEngineer(userInfo.getuId().toString());
-        }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view);
         //List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
@@ -595,9 +592,6 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/findNextFoldersByQueryParam2")
     public void findNextFoldersByQueryParam2(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        if (view.getEngineer() == null) {
-            view.setEngineer(userInfo.getuId().toString());
-        }
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> norepeatFoFiPAIXU = new ArrayList<String>();
@@ -872,9 +866,6 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/findNextFoldersByQueryParam")
     public void findNextFoldersByQueryParam(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        if (view.getEngineer() == null) {
-            view.setEngineer(userInfo.getuId().toString());
-        }
        // List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
