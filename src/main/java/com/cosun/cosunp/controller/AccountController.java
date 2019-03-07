@@ -54,6 +54,7 @@ public class AccountController {
         UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(),view.getPassword());
         if (userInfo != null && userInfo.getUserName() != null) {
             session.setAttribute("account",userInfo);
+            view.setFullName(userInfo.getFullName());
             session.setAttribute("view",view);
             mav = new ModelAndView("mainindex");
             session.setAttribute("username", userInfo.getUserName());

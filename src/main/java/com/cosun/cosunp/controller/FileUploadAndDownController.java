@@ -117,6 +117,7 @@ public class FileUploadAndDownController {
         view.setRecordCount(recordCount);
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
         mav.addObject("view", view);
         mav.addObject("downloadViewList", downloadViewList);
         mav.addObject("userInfos", userInfos);
@@ -1862,6 +1863,7 @@ public class FileUploadAndDownController {
         } else {
             view.setFlag("-1");//代表没有权限
         }
+        view.setFullName(userInfo.getFullName());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("employees", employees);
@@ -1927,6 +1929,7 @@ public class FileUploadAndDownController {
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("downloadViews", downloadViews);
@@ -1986,6 +1989,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
         List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
@@ -1994,8 +1998,10 @@ public class FileUploadAndDownController {
         mav.addObject("orderNumFolders", orderNumFolders);
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
         mav.addObject("view", view);
         mav.addObject("employees", employees);
+        mav.addObject("userInfos", userInfos);
         return mav;
     }
 //    @ResponseBody
@@ -2370,6 +2376,7 @@ public class FileUploadAndDownController {
         List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
         view.setFlag(flag);
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);

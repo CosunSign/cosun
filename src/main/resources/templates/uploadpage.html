@@ -1212,7 +1212,7 @@
             <li class="dropdown hidden-xs">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
-                          th:text="${view.userName}"></span>
+                          th:text="${view.fullName}"></span>
 
                     <i class="fa fa-caret-down"></i>
                 </a>
@@ -1337,13 +1337,13 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     上传时间
-                    <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
+                    <input type="text" style="width: 160px" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
                 </div>
                 <p>
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     文件设计师 <input type="text" id="fileuploader" style="width: 89px;" readonly="readonly"
-                                 th:value="${view.userName}">
+                                 th:value="${view.fullName}">
 
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input
                         type="text" style="width: 400px;"

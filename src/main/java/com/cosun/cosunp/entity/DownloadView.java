@@ -26,6 +26,7 @@ public class DownloadView implements Serializable {
     private String[] check_val;
     private String projectName;//项目名称
     private String lastUpdateTime;
+    private String fullName;
     private String createTime;//上传时间
     private Integer totalUpdateNum;
     private String opRight; //操作权限
@@ -66,6 +67,14 @@ public class DownloadView implements Serializable {
     private  String saveFolderName;
     private String linshiId;
     private String filePathName;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public String getFilePathName() {
         return filePathName;

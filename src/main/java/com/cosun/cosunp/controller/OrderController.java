@@ -29,6 +29,7 @@ public class OrderController {
         ModelAndView mav = new ModelAndView("singleorder");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
         mav.addObject("view",view);
         return mav;
     }

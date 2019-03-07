@@ -1498,7 +1498,7 @@
                     <li class="dropdown hidden-xs">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user padding-right-small"
-                                  style="position:relative;top: 3px;" th:text="${view.userName}"></span>
+                                  style="position:relative;top: 3px;" th:text="${view.fullName}"></span>
 
                             <i class="fa fa-caret-down"></i>
                         </a>
@@ -1635,7 +1635,7 @@
                                         <select name="selectuser" id="selectuser" style="width: 153px">
                                             <option value="" selected="selected">请选择设计师</option>
                                             <option th:each="c:${userInfos}" th:value="${c.uId}"
-                                                    th:text="${c.userName}"></option>
+                                                    th:text="${c.fullName}"></option>
                                         </select>
                                     </td>
                                     <td align="right">订单编号:</td>
@@ -1651,25 +1651,9 @@
                                     <td>
                                         <select id="oprighter" style="width: 153px" name="view.oprighter">
                                             <option value="" selected="selected">选择权限者</option>
-                                            <option value="1000012">段金星</option>
-                                            <option value="1000008">吴运翠</option>
-                                            <option value="1000011">刘穗梅</option>
-                                            <option value="1000013">黄炳杰</option>
-                                            <option value="1000018">吴亚民</option>
-                                            <option value="1000007">罗元青</option>
-                                            <option value="1000019">黄国胜</option>
-                                            <option value="1000014">曾红红</option>
-                                            <option value="1000021">梁家强</option>
-                                            <option value="1000015">徐姜华</option>
-                                            <option value="1000017">朱海培</option>
-                                            <option value="1000023">彭金伟</option>
-                                            <option value="1000006">黄杰生</option>
-                                            <option value="1000009">骆云飞</option>
-                                            <option value="1000010">李晓波</option>
-                                            <option value="1000005">admin</option>
-                                            <option value="1000020">luoxh</option>
-                                            <option value="1000019">huanggs</option>
-                                            <option value="1000016">lin</option>
+                                            <option th:each="c:${userInfos}" th:value="${c.uId}"
+                                                    th:text="${c.fullName}"></option>
+                                        </select>
                                     </td>
 
                                 </tr>
@@ -1717,26 +1701,9 @@
                                     <select multiple="multiple" placeholder="权限被更改者"
                                             class="SlectBox" id="SlectBox"
                                             required style="width: 145px">
-                                        <!--<option value="1">全部人员</option>-->
-                                        <option value="1000012">段金星</option>
-                                        <option value="1000008">吴运翠</option>
-                                        <option value="1000011">刘穗梅</option>
-                                        <option value="1000013">黄炳杰</option>
-                                        <option value="1000018">吴亚民</option>
-                                        <option value="1000007">罗元青</option>
-                                        <option value="1000019">黄国胜</option>
-                                        <option value="1000014">曾红红</option>
-                                        <option value="1000021">梁家强</option>
-                                        <option value="1000015">徐姜华</option>
-                                        <option value="1000017">朱海培</option>
-                                        <option value="1000023">彭金伟</option>
-                                        <option value="1000006">黄杰生</option>
-                                        <option value="1000009">骆云飞</option>
-                                        <option value="1000010">李晓波</option>
-                                        <option value="1000005">admin</option>
-                                        <option value="1000020">luoxh</option>
-                                        <option value="1000019">huanggs</option>
-                                        <option value="1000016">lin</option>
+                                        <option th:each="c:${userInfos}" th:value="${c.uId}"
+                                                th:text="${c.fullName}"></option>
+
                                     </select>
 
                                 </td>
