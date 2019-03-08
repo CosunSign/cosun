@@ -23,9 +23,9 @@ public interface IFileUploadAndDownServ {
     List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception;
     DownloadView findMessageByOrderNo(String orderNo) throws Exception;
 
-    int checkFileUpdateRight(String pathNames, DownloadView view, UserInfo userInfo) throws Exception;
+    String checkFileUpdateRight(String pathNames, DownloadView view, UserInfo userInfo) throws Exception;
 
-    DownloadView checkIsExistFilesFolderforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
+    String checkIsExistFilesFolderforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
 
     DownloadView findMessageByOrderNoandUid(String orderNo,String uId) throws Exception;
 
@@ -33,7 +33,7 @@ public interface IFileUploadAndDownServ {
 
     int findAllFileUrlByConditionCount(Integer uId) throws Exception;
 
-    DownloadView checkIsExistFilesforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
+    String checkIsExistFilesforUpdate(String pathName,DownloadView view,UserInfo info) throws Exception;
 
     List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception;
 

@@ -2069,18 +2069,16 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setuId(userInfo.getuId());
-        int flag = 520;
-        flag = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
-        if (flag == 520) {//有权限进行下一步操作
-            view.setFlag("520");
-            view = fileUploadAndDownServ.checkIsExistFilesFolderforUpdate(view.getFilePathName(), view, userInfo);
-            flag = Integer.valueOf(view.getFlag());
+        String returnMessage = "OK";
+        returnMessage = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
+        if (returnMessage.equals("OK")) {//有权限进行下一步操作
+            returnMessage = fileUploadAndDownServ.checkIsExistFilesFolderforUpdate(view.getFilePathName(), view, userInfo);
         }
 
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(flag);
+            str1 = x.writeValueAsString(returnMessage);
 
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
@@ -2103,17 +2101,16 @@ public class FileUploadAndDownController {
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        int flag = 520;
-        flag = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
-        if (flag == 520) {
-            view.setFlag("520");
-            view = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
+        String returnMessage = "OK";
+        returnMessage = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
+        if (returnMessage.equals("OK")) {
+            returnMessage = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
         }
 
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(flag);
+            str1 = x.writeValueAsString(returnMessage);
 
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
@@ -2192,7 +2189,7 @@ public class FileUploadAndDownController {
         if (userInfo.getUseruploadright() == 1) {//有无权限
             returnMessage = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
             //上传的文件或文件夹有无重复，有无存在
-            if (returnMessage=="OK") {
+            if (returnMessage.equals("OK")) {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
                     if (!info.getExtInfo1().equals(view.getSalor())) {

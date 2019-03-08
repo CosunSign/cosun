@@ -216,13 +216,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     @Override
-    public DownloadView checkIsExistFilesforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
+    public String checkIsExistFilesforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
         String[] names = null;
         if (pathName.contains(",")) {
             names = pathName.split(",");
         } else {
             names[0] = pathName;
         }
+        String returnMessage = "OK";
         boolean isAllExistFile = true;//true代表文件以前全部存过
         String noExistFileNames = "";
         int isNoExsitFileNum = 0;
@@ -251,18 +252,15 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
             if (!isAllExistFile) {
-                view.setIsExistNum(isNoExsitFileNum);
-                view.setFlag("-12");//代表为新文件,
-                view.setNoExsitFileMessage(noExistFileNames);//返回信息,告知哪些是新文件
-                return view;
+               returnMessage = "您本次要更新的文件里,有部分文件系统中不存在,共有"+isNoExsitFileNum+"个，分别是:"+noExistFileNames;
+               return returnMessage;
             }
 
         } else {//代表文件夹不存在,直接不受理
-            view.setFlag("-11");//代表文件夹不存在,去上传页面
-            return view;
+           returnMessage = "您本次要更新的为新订单，请去上传中心";
         }
 
-        return view;
+        return returnMessage;
     }
 
 
@@ -301,20 +299,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             for (MultipartFile file : fileArray) {
                 if (strnames.contains(subAfterString(file.getOriginalFilename(), "/"))) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
-                } else {
-                    isNoExsitFileNum++;
-                    isAllExistFile = false;
-                    noExistFileNames += file.getOriginalFilename() + "===";
                 }
             }
             if (isAllExistFile) {
                 updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
                 view.setFlag("-18");//代表文件全部更新成功
-            } else {
-                view.setIsExistNum(isNoExsitFileNum);
-                view.setFlag("-12");//代表为新文件,
-                view.setNoExsitFileMessage(noExistFileNames);//返回信息,告知哪些是新文件
-                return view;
             }
 
         } else {//代表文件夹不存在,直接不受理
@@ -404,7 +393,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional
-    public DownloadView checkIsExistFilesFolderforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
+    public String checkIsExistFilesFolderforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
+        String returnMessage = "OK";
         String[] urlPaths = null;
         if (pathName.contains(",")) {
             urlPaths = pathName.split(",");
@@ -441,18 +431,16 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             if (!isAllExistFile) {
-                view.setIsExistNum(isNoExsitFileNum);
-                view.setFlag("-12");//代表为新文件,
-                view.setNoExsitFileMessage(noExistFileNames);//返回信息,告知哪些是新文件
-                return view;
+                returnMessage = "您本次更新的文件夹内有些许新文件，共有"+isNoExsitFileNum+"个，分别是:"+noExistFileNames+"或者您本次更新的文件夹结构与上次上传的文件夹结构不一致，请检查!";
+                return returnMessage;
             }
 
         } else {//代表前四级文件夹不存在,直接不受理
-            view.setFlag("-11");//代表文件夹不存在,去上传页面
-            return view;
+            returnMessage = "您本次要更新的文件夹结构不对，请按上次上传的文件夹层次结构来!";
+            return returnMessage;
         }
 
-        return view;
+        return returnMessage;
     }
 
 
@@ -484,21 +472,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             for (MultipartFile file : fileArray) {
                 if (strnames.contains(subAfterString(file.getOriginalFilename(), "/")) && centerUrls.contains(file.getOriginalFilename())) {//查看文件夹下的文件是否完全一样
                     newFileArray.add(file);
-                } else {
-                    isNoExsitFileNum++;
-                    isAllExistFile = false;
-                    noExistFileNames += file.getOriginalFilename() + "===";
                 }
             }
 
             if (isAllExistFile) {//代表文件夹与文件全是以前存在过的
                 updateFilesDataFolder(fileManFileInfo, view, newFileArray, userInfo);
                 view.setFlag("-18");//代表文件全部更新成功
-            } else {
-                view.setIsExistNum(isNoExsitFileNum);
-                view.setFlag("-12");//代表为新文件,
-                view.setNoExsitFileMessage(noExistFileNames);//返回信息,告知哪些是新文件
-                return view;
             }
 
         } else {//代表前四级文件夹不存在,直接不受理
@@ -510,7 +489,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional
-    public int checkFileUpdateRight(String pathName, DownloadView view, UserInfo userInfo) throws Exception {
+    public String checkFileUpdateRight(String pathName, DownloadView view, UserInfo userInfo) throws Exception {
         String[] pathNames = null;
         if (pathName.contains(",")) {
             pathNames = pathName.split(",");
@@ -520,25 +499,25 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FilemanRight right = null;
         String fileName = null;
         FilemanUrl url = null;
-        int flag = 520;
+        String returnMessage = "OK";
         for (int i = 0; i < pathNames.length; i++) {
             fileName = subAfterString(pathNames[i], "/");
             right = fileUploadAndDownMapper.getFileRightByOrderNoUidfileName(view.getOrderNo(), fileName, userInfo.getuId());
             if (right == null) {//如果是空代表没有权限，接着往下查URL里有没有文此文件
                 url = fileUploadAndDownMapper.getFileUrlByOrderNoSo(view.getOrderNo(), view.getSalor(), userInfo.getuId(), fileName);
                 if (url == null) {
-                    flag = -12;
+                    returnMessage = "您本次要更新的文件里有新文件，应去上传区进行上传，如:"+fileName+"系统里就不存在";
                 } else {
-                    flag = -258;
+                    returnMessage = "您没有权限，如:"+fileName+"就没有权限!";
                 }
 
             } else {
                 if (!right.getOpRight().contains("2")) {
-                    flag = -258;
+                    returnMessage = "您没有权限，如:"+fileName+"就没有权限!";
                 }
             }
         }
-        return flag;
+        return returnMessage;
     }
 
 

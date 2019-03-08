@@ -61,31 +61,6 @@
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         if (flag == "-18") {
             alert("文件全部更新成功！");
-
-        } else if (flag == "-11") {
-            alert("您更新的文件服务器没有订单类信息,视为新订单新文件,请去上传页面处理！");
-
-        } else if (flag == "-2") {
-            alert("更新失败，总文件大小超过20M！");
-
-        } else if (flag == "-33") {
-            alert("您更新的文件夹第一层设计师编号不符合要求！")
-        } else if (flag == "-66") {
-            alert("您更新的文件夹第二层年份日期不符合要求！")
-        } else if (flag == "-99") {
-            alert("您更新的文件夹第三层业务员名字不符合要求!")
-        } else if (flag == "-100") {
-            alert("您更新的文件夹第四层订单编号不符合要求!")
-        } else if (flag == "-101") {
-            alert("您更新的文件夹里文件没有扩展名，不符合要求！")
-        } else if (flag == "-333") {
-            alert("您更新的文件夹不是标准的四层结构，不符合要求！")
-        } else if (flag == "-1") {
-            alert("更新失败!");
-        } else if (flag == "-12") {
-            alert("您本次更新的有新文件,请重新选择!");
-        } else if (flag == "-258") {
-            alert("您所更新的文件里没有更新权限!请向上级申请.")
         }
 
         $("#salorid").val("");
@@ -744,47 +719,10 @@
                 success: function (msg) {
                     $("#some-element").busyLoad("hide");//遮罩层开启
                     var flag = msg;
-                    if (flag == "-18") {
-                        alert("文件全部更新成功！");
+                    if(flag!='"OK"') {
+                        alert(flag);
                         return;
-
-                    } else if (flag == "-11") {
-                        alert("您更新的文件服务器没有订单类信息,视为新订单新文件,请去上传页面处理！");
-                        return;
-
-                    } else if (flag == "-2") {
-                        alert("更新失败，总文件大小超过20M！");
-                        return;
-
-                    } else if (flag == "-33") {
-                        alert("您更新的文件夹第一层设计师编号不符合要求！")
-                        return;
-                    } else if (flag == "-66") {
-                        alert("您更新的文件夹第二层年份日期不符合要求！")
-                        return;
-                    } else if (flag == "-99") {
-                        alert("您更新的文件夹第三层业务员名字不符合要求!")
-                        return;
-                    } else if (flag == "-100") {
-                        alert("您更新的文件夹第四层订单编号不符合要求!")
-                        return;
-                    } else if (flag == "-101") {
-                        alert("您更新的文件夹里文件没有扩展名，不符合要求！")
-                        return;
-                    } else if (flag == "-333") {
-                        alert("您更新的文件夹不是标准的四层结构，不符合要求！")
-                        return;
-                    } else if (flag == "-1") {
-                        alert("更新失败!");
-                        return;
-                    } else if (flag == "-12") {
-                        alert("您本次更新的有新文件,请重新选择!");
-                        return;
-                    } else if (flag == "-258") {
-                        alert("您所更新的文件里没有更新权限!请向上级申请.")
-                        return;
-                    }
-                    if (flag == 520) {
+                    } else{
                         $("#some-element").busyLoad("show");//遮罩层开启
                         document.getElementById("form1").submit();
                         var pro = null;
