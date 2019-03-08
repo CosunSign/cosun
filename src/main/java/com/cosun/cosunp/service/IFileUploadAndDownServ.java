@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
-    boolean checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
+    String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
 
     List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
@@ -39,7 +39,7 @@ public interface IFileUploadAndDownServ {
 
     DownloadView addFilesData(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception;
 
-    int isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
+    String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
 
     List<UserInfo> findAllUser() throws Exception;
 

@@ -1050,31 +1050,31 @@ public class FileUploadAndDownController {
         int maxPage = 0;
         int recordCount = 0;
         //if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
-            view.setPageSize(12);
-            viewsNew = new ArrayList<DownloadView>();
-            views = new ArrayList<DownloadView>();
-            folderOrFiles = new ArrayList<String>();
-            strarray = new ArrayList<String[]>();
-            norepeatFoldorFile = new ArrayList<String>();
-            views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
-            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
-            maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-            newurls = new ArrayList<String>();
-            for (DownloadView v : views) {
-                pointindex = StringUtils.ordinalIndexOf(v.getUrlAddr(), "/", 4);
-                String[] b = v.getUrlAddr().substring(pointindex + 1, v.getUrlAddr().length()).split("/");
-                v.setFolderOrFileName(b[0]);
-                viewsNew.add(v);
-            }
-            if (viewsNew.size() > 0) {
-                viewsNew.get(0).setMaxPage(maxPage);
-                viewsNew.get(0).setRecordCount(recordCount);
-                viewsNew.get(0).setUserName(userInfo.getUserName());
-                viewsNew.get(0).setPassword(userInfo.getUserPwd());
-                viewsNew.get(0).setCurrentPage(view.getCurrentPage());
-            }
+        view.setPageSize(12);
+        viewsNew = new ArrayList<DownloadView>();
+        views = new ArrayList<DownloadView>();
+        folderOrFiles = new ArrayList<String>();
+        strarray = new ArrayList<String[]>();
+        norepeatFoldorFile = new ArrayList<String>();
+        views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
+        recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+        maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        newurls = new ArrayList<String>();
+        for (DownloadView v : views) {
+            pointindex = StringUtils.ordinalIndexOf(v.getUrlAddr(), "/", 4);
+            String[] b = v.getUrlAddr().substring(pointindex + 1, v.getUrlAddr().length()).split("/");
+            v.setFolderOrFileName(b[0]);
+            viewsNew.add(v);
+        }
+        if (viewsNew.size() > 0) {
+            viewsNew.get(0).setMaxPage(maxPage);
+            viewsNew.get(0).setRecordCount(recordCount);
+            viewsNew.get(0).setUserName(userInfo.getUserName());
+            viewsNew.get(0).setPassword(userInfo.getUserPwd());
+            viewsNew.get(0).setCurrentPage(view.getCurrentPage());
+        }
 
-       // }
+        // }
         String str = null;
         if (viewsNew != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -2138,62 +2138,31 @@ public class FileUploadAndDownController {
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
         FileManFileInfo info = null;
-        int flag = 520;
+        String returnmessage = "OK";
         if (userInfo.getUseruploadright() == 1) {
-            int isSameFolderNameorFileName = 0;
             boolean isFolderNameForEngDateOrderNoSalor = true;
             isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(view.getFilePathName());//文件夹名验证，文件夹名不能有订单，业务员，设计师命名
             if (isFolderNameForEngDateOrderNoSalor) {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
                     if (!info.getExtInfo1().equals(view.getSalor())) {//查看订单编号有没有被占用
-                        flag = -357;
+                        returnmessage = "您输入的订单编号系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
                     }
                 }
-                isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
+                returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
 
             }
-
-            if (!isFolderNameForEngDateOrderNoSalor || isSameFolderNameorFileName != 0) {
-                if (isSameFolderNameorFileName == -1) {
-                    flag = -9999;
-                }
-                if (isSameFolderNameorFileName == -2) {
-                    flag = -666;
-                }
-                if (isSameFolderNameorFileName == -3) {
-                    flag = -777;
-                }
-                if (isSameFolderNameorFileName == -4) {
-                    flag = -888;
-                }
-                if (isSameFolderNameorFileName == -5) {
-                    flag = -123;
-                }
-                if (isSameFolderNameorFileName == -6) {
-                    flag = -789;
-                }
-                if (isSameFolderNameorFileName == -7) {
-                    flag = -678;
-                }
-                if (isSameFolderNameorFileName == -8) {
-                    flag = -987;
-                }
-                if (isSameFolderNameorFileName == -9) {
-                    flag = -9;
-                }
-                if (!isFolderNameForEngDateOrderNoSalor) {
-                    flag = -162;
-                }
+            if (!isFolderNameForEngDateOrderNoSalor) {
+                returnmessage = "您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!";
             }
         } else {
-            flag = -258;
+            returnmessage = "您没有上传权限!";
         }
 
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(flag);
+            str1 = x.writeValueAsString(returnmessage);
 
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
@@ -2219,29 +2188,27 @@ public class FileUploadAndDownController {
         view.setuId(userInfo.getuId());
         boolean isExsitFileName = false;
         FileManFileInfo info = null;
-        int flag = 520;
+        String returnMessage = "OK";
         if (userInfo.getUseruploadright() == 1) {//有无权限
-            isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
+            returnMessage = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
             //上传的文件或文件夹有无重复，有无存在
-            if (isExsitFileName) {
-                flag = -222;
-            } else {
+            if (returnMessage=="OK") {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
                     if (!info.getExtInfo1().equals(view.getSalor())) {
-                        flag = -357;
+                        returnMessage = "您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
                     }
                 }
             }
 
         } else {
-            flag = -258;
+                returnMessage = "您没有上传权限，如需要请向上级申请!";
         }
 
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(flag);
+            str1 = x.writeValueAsString(returnMessage);
 
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
@@ -2322,30 +2289,30 @@ public class FileUploadAndDownController {
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
-        if (userInfo.getUseruploadright() == 1) {
-            for (MultipartFile mfile : files) {
-                fileArray.add(mfile);
-            }
+//        if (userInfo.getUseruploadright() == 1) {
+//            for (MultipartFile mfile : files) {
+//                fileArray.add(mfile);
+//            }
             //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
-            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, null);//判断是否有重名的文件名
-            if (!isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
-                view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
-                //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
-            } else {
-//                if (!isFileLarge) {
-//                    view.setFlag("-2");//超过
-//                }
-                if (isExsitFileName) {
-                    view.setFlag("-222");//有重复的名字
-                }
-//                if (fileArray.size() >= 200) {
-////                    view.setFlag("-369");
+//            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, null);//判断是否有重名的文件名
+//            if (!isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
+//                view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
+//                //  view = fileUploadAndDownServ.addFilesData(view, fileArray, userInfo);
+//            } else {
+////                if (!isFileLarge) {
+////                    view.setFlag("-2");//超过
 ////                }
-            }
-
-        } else {
-            view.setFlag("-258");
-        }
+//                if (isExsitFileName) {
+//                    view.setFlag("-222");//有重复的名字
+//                }
+////                if (fileArray.size() >= 200) {
+//////                    view.setFlag("-369");
+//////                }
+//            }
+//
+//        } else {
+//            view.setFlag("-258");
+//        }
         return new ModelAndView("uploadpage");
 
     }
@@ -2492,49 +2459,50 @@ public class FileUploadAndDownController {
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
-            int isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
+            String isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(null);
 
-            if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {
-                //if (isFileLarge && isSameFolderNameorFileName == 0) {
-                view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
-            } else {
-//                if (files.size() >= 200) {
-//                    view.setFlag("-369");
+//            if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {
+//                //if (isFileLarge && isSameFolderNameorFileName == 0) {
+//                view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
+//            } else {
+////                if (files.size() >= 200) {
+////                    view.setFlag("-369");
+////                }
+////                if (!isFileLarge) {
+////                    view.setFlag("-2");
+////                } else
+//                if (isSameFolderNameorFileName == -1) {
+//                    view.setFlag("-9999");//代表上传的文件中有同名
 //                }
-//                if (!isFileLarge) {
-//                    view.setFlag("-2");
-//                } else
-                if (isSameFolderNameorFileName == -1) {
-                    view.setFlag("-9999");//代表上传的文件中有同名
-                }
-                if (isSameFolderNameorFileName == -2) {
-                    view.setFlag("-666");//代表上传的文件与数据库对应的订单有重名
-                }
-                if (isSameFolderNameorFileName == -3) {
-                    view.setFlag("-777");//代表上传过来的文件夹有重名
-                }
-                if (isSameFolderNameorFileName == -4) {
-                    view.setFlag("-888");//代表上传过来的文件夹与数据库的文件夹发生重名
-                }
-                if (isSameFolderNameorFileName == -5) {
-                    view.setFlag("-123");
-                }
-                if (isSameFolderNameorFileName == -6) {
-                    view.setFlag("-789");
-                }
-                if (isSameFolderNameorFileName == -7) {
-                    view.setFlag("-678");
-                }
-                if (isSameFolderNameorFileName == -8) {
-                    view.setFlag("-987");
-                }
-                if (!isFolderNameForEngDateOrderNoSalor) {
-                    view.setFlag("-162");//代表文件夹结构中有订单名，日期，业务员，设计师
-                }
-            }
-        } else {
-            view.setFlag("-258");//代表没有权限
+//                if (isSameFolderNameorFileName == -2) {
+//                    view.setFlag("-666");//代表上传的文件与数据库对应的订单有重名
+//                }
+//                if (isSameFolderNameorFileName == -3) {
+//                    view.setFlag("-777");//代表上传过来的文件夹有重名
+//                }
+//                if (isSameFolderNameorFileName == -4) {
+//                    view.setFlag("-888");//代表上传过来的文件夹与数据库的文件夹发生重名
+//                }
+//                if (isSameFolderNameorFileName == -5) {
+//                    view.setFlag("-123");
+//                }
+//                if (isSameFolderNameorFileName == -6) {
+//                    view.setFlag("-789");
+//                }
+//                if (isSameFolderNameorFileName == -7) {
+//                    view.setFlag("-678");
+//                }
+//                if (isSameFolderNameorFileName == -8) {
+//                    view.setFlag("-987");
+//                }
+//                if (!isFolderNameForEngDateOrderNoSalor) {
+//                    view.setFlag("-162");//代表文件夹结构中有订单名，日期，业务员，设计师
+//                }
+//            }
+//        } else {
+//            view.setFlag("-258");//代表没有权限
+//        }
         }
         return new ModelAndView("uploadpage");
     }

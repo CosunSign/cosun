@@ -1159,7 +1159,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
          */
         @Override
         @Transactional
-        public boolean checkFileisSame (DownloadView view, UserInfo userInfo, String filePathName){
+        public String checkFileisSame (DownloadView view, UserInfo userInfo, String filePathName){
             //第一步，查看上传文件们的是否有重复
             String[] names = null;
             if (filePathName.contains(",")) {
@@ -1168,10 +1168,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 names[0] = filePathName;
             }
             List<String> originNames = new ArrayList<String>();
-            boolean isSameFileUpload = false;//代表没有
+            String isSameFileUpload = "OK";//代表没有
             for (int i = 0; i < names.length; i++) {
                 if (originNames.contains(names[i])) {
-                    isSameFileUpload = true;//有，即刻返回
+                    isSameFileUpload = "您要上传的文件文件名有重复,如:"+names[i];//有，即刻返回
                     return isSameFileUpload;
                 } else {
                     originNames.add(names[0]);
@@ -1184,7 +1184,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
             for (String s : originNames) {
                 if (urls.contains(s)) {
-                    isSameFileUpload = true;//有重复,即刻返回
+                    isSameFileUpload = "同一订单下您的文件已上传过,如:"+s;//有重复,即刻返回
+                    return isSameFileUpload;
                 }
             }
             return isSameFileUpload;
@@ -1203,14 +1204,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
         @Override
         @Transactional
-        public int isSameFolderNameorFileNameMethod (UserInfo userInfo, DownloadView view, String filePathName){
+        public String isSameFolderNameorFileNameMethod (UserInfo userInfo, DownloadView view, String filePathName){
             String[] paths = null;
             if (filePathName.contains(",")) {
                 paths = filePathName.split(",");
             } else {
                 paths[0] = filePathName;
             }
-            int isSameFileUploadFolderName = 0;//代表没有重复
+            String isSameFileUploadFolderName = "OK";//代表没有重复
             List<String> originFNames = new ArrayList<String>();
             List<String[]> foldernameLists = new ArrayList<String[]>();
             String afterstr = null;
@@ -1218,19 +1219,23 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             List<String> urlss = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
             for (int ii = 0; ii < paths.length; ii++) {
                 if (paths[ii].contains(",")) {
-                    isSameFileUploadFolderName = -9;//表示上传文件夹中,存在
+                    isSameFileUploadFolderName = "文件夹或文件名不能包含,号!如:"+paths[ii];//表示上传文件夹中,存在
                     return isSameFileUploadFolderName;
                 } else {
                     String centerurl = StringUtil.subMyString(paths[ii], "/");
                     //第一步,查看上传文件夹下的文件名是否相同
                     if (originFNames.contains(subAfterString(paths[ii], "/"))) {
-                        isSameFileUploadFolderName = -1;//表示上传文件夹中就有相同文件名字存在
+                        isSameFileUploadFolderName = "文件夹内有重复文件名文件！如:"+subAfterString(paths[ii], "/");//表示上传文件夹中就有相同文件名字存在
                         return isSameFileUploadFolderName;
                     } else {
+                        if(!subAfterString(paths[ii], "/").contains(".")){
+                            isSameFileUploadFolderName = "文件夹内的文件必须要有扩展名，如:"+subAfterString(paths[ii], "/")+"没有扩展名";//有重复,即刻返回
+                            return isSameFileUploadFolderName;
+                        }
                         //第二步,上传的文件夹下的文件名与数据库的文件名是否重复
                         originFNames.add(subAfterString(paths[ii], "/"));
                         if (urlss.contains(subAfterString(paths[ii], "/"))) {
-                            isSameFileUploadFolderName = -2;//有重复,即刻返回
+                            isSameFileUploadFolderName = "您订单下的文件夹内文件与系统中已存在的文件重复!如:"+subAfterString(paths[ii], "/");//有重复,即刻返回
                             return isSameFileUploadFolderName;
                         }
                     }
@@ -1252,7 +1257,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 aa = foldernameLists.get(a);
                 for (int b = 0; b < aa.length; b++) {
                     if (singleFolder.contains(aa[b])) {
-                        isSameFileUploadFolderName = -6;
+                        isSameFileUploadFolderName = "您的文件夹内有重复文件夹名,如:"+aa[b];
                         return isSameFileUploadFolderName;
                     }
                     singleFolder.add(aa[b]);
@@ -1274,14 +1279,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                             if (k == f && centerfolderone1[k].equals(centerfoldertwo2[f])) {
                                 for (int o = 0; o <= k; o++) {
                                     if (!centerfolderone1[o].equals(centerfoldertwo2[o])) {
-                                        isSameFileUploadFolderName = -5;//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfoldertwo2[o];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
                                         return isSameFileUploadFolderName;
                                     }
                                 }
                             } else {
                                 if (centerfolderone1[k].equals(centerfoldertwo2[f])) {
                                     {//如果不是同一层次的文件夹名字一样.即视重复
-                                        isSameFileUploadFolderName = -5;//有重复,即刻返回
+                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfoldertwo2[f];//有重复,即刻返回
                                         return isSameFileUploadFolderName;
 
                                     }
@@ -1326,14 +1331,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                             if (k == f && centerfolderone[k].equals(centerfoldertwo[f])) {
                                 for (int o = 0; o <= k; o++) {
                                     if (!centerfolderone[o].equals(centerfoldertwo[o])) {
-                                        isSameFileUploadFolderName = -5;//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfoldertwo[o];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
                                         return isSameFileUploadFolderName;
                                     }
                                 }
                             } else {
                                 if (centerfolderone[k].equals(centerfoldertwo[f])) {
                                     {//如果不是同一层次的文件夹名字一样.即视重复
-                                        isSameFileUploadFolderName = -5;//有重复,即刻返回
+                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfoldertwo[f];//有重复,即刻返回
                                         return isSameFileUploadFolderName;
 
                                     }

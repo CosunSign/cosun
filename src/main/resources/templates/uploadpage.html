@@ -49,7 +49,13 @@
             var t_files1 = this.files;
             for (var i = 0, len = t_files1.length; i < len; i++) {
                 if(t_files1[i].name.indexOf(",") == -1 ) {
-                    filePathName1 += t_files1[i].name + ",";
+                    if(t_files1[i].name.indexOf(".") != -1) {
+                        filePathName1 += t_files1[i].name + ",";
+                    }else{
+                        alert("文件名必须要有扩展名,如:"+t_files1[i].name+"就没有扩展名!");
+                        isFilePathRight = 2;
+                        return;
+                    }
                 }else{
                     isFilePathRight = 0;
                     return;
@@ -64,59 +70,6 @@
         var isExistNum = $("#isExistNum").val();
         if (flag == "1") {
             alert("上传成功!")
-        }
-        if (flag == "-222") {
-            alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
-        } else if (flag == "-369") {
-            alert("您上传的文件夹超过200个，系统不受理!")
-        } else if (flag == "-789") {
-            alert("您上传的单个文件 的路径发生重名!")
-        } else if (flag == "-9999") {
-            alert("您上传的文件夹内文件有重复!")
-        } else if (flag == "-123") {
-            alert("您上传的文件夹名发生重命名!")
-        } else if (flag == "-666") {
-            alert("您上传的文件内文件名与数据库相应订单的文件名重复!")
-        } else if (flag == "-777") {
-            alert("您上传的文件夹内文件文名有重复的文件夹名!")
-        } else if (flag == "-888") {
-            alert("您上传的文件夹名和数据库的文件夹名发生重复!");
-        } else if (flag == "0") {
-            alert("上传文件为空文件，请重新选择上传！");
-        } else if (flag == "-1") {
-            alert("文件上传失败！");
-        } else if (flag == "-2") {
-            alert("上传失败，总文件大小超过1024M！");
-        } else if (flag == "-33") {
-            alert("您上传的文件夹第一层设计师编号不符合要求！")
-        } else if (flag == "-66") {
-            alert("您上传的文件夹第二层年份日期不符合要求！")
-        } else if (flag == "-99") {
-            alert("您上传的文件夹第三层业务员名字不符合要求!")
-        } else if (flag == "-100") {
-            alert("您上传的文件夹第四层订单编号不符合要求!")
-        } else if (flag == "-101") {
-            alert("您上传的文件夹里文件没有扩展名，不符合要求！")
-        } else if (flag == "-987") {
-            alert("您上传的文件夹命名不能出现订单编号，业务员，设计师，和日期    ")
-        } else if (flag == "-333") {
-            alert("您上传的文件夹不是标准的四层结构，不符合要求！")
-        } else if (flag == "-3") {
-            if (isMessage != "") {
-                alert("您本次上传的文件无法受理,因为上传的文件里在服务器里存过一次,请重新选择.提示信息为," +
-                    "您总共有" + isExistNum + "个文件已经存在过,分别为" + isMessage);
-            } else {
-                alert("您本次上传的文件无法受理,因为根据提供的订单信息全部为已存在过的文件.");
-            }
-
-        } else if (flag == "-258") {
-            alert("您没有上传权限!");
-        } else if (flag == "-162") {
-            alert("您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!")
-        } else if (flag == "-357") {
-            alert("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!")
-        }else if(flag == -9) {
-            alert("文件夹名或者文件名不能有,号!")
         }
         $("#salorid").val("");
         $("#orderno").val("");
@@ -901,6 +854,11 @@
             $("#some-element").busyLoad("hide");//遮罩层开启
             return;
         }
+        if(isFilePathRight==2) {
+            alert("您要上传的文件名必须要有扩展名!");
+            $("#some-element").busyLoad("hide");//遮罩层开启
+            return;
+        }
         var formData = new FormData();
         formData.append('filePathName',$("#filePathName").val() );
         formData.append('orderNo',$("#orderno").val() );
@@ -923,83 +881,10 @@
             success: function (msg) {
                 $("#some-element").busyLoad("hide");//遮罩层开启
                 var flag = msg;
-                if (flag == "-222") {
-                    alert("您上传的文件里有重复的名字或上传的文件名已存过一次!");
-                    return false;
-                } else if (flag == "-369") {
-                    alert("您上传的文件夹超过200个，系统不受理!")
-                    return false;
-                } else if (flag == "-789") {
-                    alert("您上传的单个文件 的路径发生重名!")
-                    return false;
-                } else if (flag == "-9999") {
-                    alert("您上传的文件夹内文件有重复!")
-                    return false;
-                } else if (flag == "-123") {
-                    alert("您上传的文件夹名发生重命名!")
-                    return false;
-                } else if (flag == "-666") {
-                    alert("您上传的文件内文件名与数据库相应订单的文件名重复!")
-                    return false;
-                } else if (flag == "-777") {
-                    alert("您上传的文件夹内文件文名有重复的文件夹名!")
-                    return false;
-                } else if (flag == "-888") {
-                    alert("您上传的文件夹名和数据库的文件夹名发生重复!");
-                    return false;
-                } else if (flag == "0") {
-                    alert("上传文件为空文件，请重新选择上传！");
-                    return false;
-                } else if (flag == "-1") {
-                    alert("文件上传失败！");
-                    return false;
-                } else if (flag == "-2") {
-                    alert("上传失败，总文件大小超过1024M！");
-                    return false;
-                } else if (flag == "-33") {
-                    alert("您上传的文件夹第一层设计师编号不符合要求！")
-                    return false;
-                } else if (flag == "-66") {
-                    alert("您上传的文件夹第二层年份日期不符合要求！")
-                    return false;
-                } else if (flag == "-99") {
-                    alert("您上传的文件夹第三层业务员名字不符合要求!")
-                    return false;
-                } else if (flag == "-100") {
-                    alert("您上传的文件夹第四层订单编号不符合要求!")
-                    return false;
-                } else if (flag == "-101") {
-                    alert("您上传的文件夹里文件没有扩展名，不符合要求！")
-                    return false;
-                } else if (flag == "-987") {
-                    alert("您上传的文件夹命名不能出现订单编号，业务员，设计师，和日期    ")
-                    return false;
-                } else if (flag == "-333") {
-                    alert("您上传的文件夹不是标准的四层结构，不符合要求！")
-                    return false;
-                } else if (flag == "-3") {
-                    if (isMessage != "") {
-                        alert("您本次上传的文件无法受理,因为上传的文件里在服务器里存过一次,请重新选择.提示信息为," +
-                            "您总共有" + isExistNum + "个文件已经存在过,分别为" + isMessage);
-                        return false;
-                    } else {
-                        alert("您本次上传的文件无法受理,因为根据提供的订单信息全部为已存在过的文件.");
-                        return false;
-                    }
-
-                } else if (flag == "-258") {
-                    alert("您没有上传权限!");
-                    return false;
-                } else if (flag == "-162") {
-                    alert("您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!")
-                    return false;
-                } else if (flag == "-357") {
-                    alert("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!")
-                    return false;
-                }else if(flag == -9) {
-                    alert("文件夹名或者文件名不能有,号!")
-                }
-                if (flag == 520) {
+                if(flag!='"OK"') {
+                    alert(flag);
+                    return;
+                } else{
                     $("#some-element").busyLoad("show");//遮罩层开启
                     document.getElementById("form1").submit();
                     var pro = null;
