@@ -160,12 +160,12 @@ public class FileUploadAndDownController {
             views = new ArrayList<DownloadView>();
             norepeatFoldorFile = new ArrayList<String>();
             // urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
-            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(),view.getLinshiId());
+            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
 
             //取上二级文件夹名 由下找下一层文件夹或文件
             if (!foldername.contains(".")) {
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                     lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
                     if (lastIndex != -1) {
                         String linshi1 = u.getLogur1().substring(0, lastIndex);
@@ -228,7 +228,7 @@ public class FileUploadAndDownController {
                 String filefoldername = null;
                 String backFolderName = null;
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                     if (u.getLogur1().contains(foldername)) {
                         filefoldername = u.getLogur1();
                     }
@@ -246,7 +246,7 @@ public class FileUploadAndDownController {
                 }
 
                 for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
+                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                     if (u.getLogur1().contains(foldername)) {
                         filefoldername = u.getLogur1();
                     }
@@ -683,11 +683,11 @@ public class FileUploadAndDownController {
         String tempFolOrFileName = null;
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
             views = new ArrayList<DownloadView>();
-            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(),view.getLinshiId());
+            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
             norepeatFoldorFile = new ArrayList<String>();
             folderOrFiles = new ArrayList<String>();
             for (FilemanUrl u : urls) {
-                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(),view.getLinshiId());
+                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                 index = u.getLogur1().indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
                 lastIndex = u.getLogur1().indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
                 if (lastIndex == -1) {
@@ -867,7 +867,7 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/findNextFoldersByQueryParam")
     public void findNextFoldersByQueryParam(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-       // List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
+        // List<String> urls = fileUploadAndDownServ.findAllUrlByParamThree(view.getSalor(), Integer.valueOf(view.getEngineer()), view.getOrderNo());
         List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
         List<String> norepeatFoldorFile = new ArrayList<String>();
         List<String> folderOrFiles = new ArrayList<String>();
@@ -939,7 +939,7 @@ public class FileUploadAndDownController {
         List<String> folderOrFiles = new ArrayList<String>();
         List<String[]> strarray = new ArrayList<String[]>();
         List<String> norepeatFoldorFile = new ArrayList<String>();
-        if(view.getuId()!=null) {
+        if (view.getuId() != null) {
             view.setEngineer(view.getuId().toString());
         }
         if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
@@ -1049,7 +1049,7 @@ public class FileUploadAndDownController {
         int pointindex = 0;
         int maxPage = 0;
         int recordCount = 0;
-        if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
+        //if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
             view.setPageSize(12);
             viewsNew = new ArrayList<DownloadView>();
             views = new ArrayList<DownloadView>();
@@ -1074,7 +1074,7 @@ public class FileUploadAndDownController {
                 viewsNew.get(0).setCurrentPage(view.getCurrentPage());
             }
 
-        }
+       // }
         String str = null;
         if (viewsNew != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -1852,17 +1852,17 @@ public class FileUploadAndDownController {
         int maxPage;
 
         //查看所有人的权限
-        if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
-            views = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
-            //查看所有人权限总数
-            recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
-            maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-            view.setMaxPage(maxPage);
-            view.setRecordCount(recordCount);
-            view.setCurrentPage(view.getCurrentPage());
-        } else {
-            view.setFlag("-1");//代表没有权限
-        }
+        //  if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
+        views = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
+        //查看所有人权限总数
+        recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
+        maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
+        view.setCurrentPage(view.getCurrentPage());
+        //  } else {
+        //view.setFlag("-1");//代表没有权限
+        // }
         view.setFullName(userInfo.getFullName());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
