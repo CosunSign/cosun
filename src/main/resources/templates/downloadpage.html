@@ -784,6 +784,7 @@
 
 
     function downloadBySelect() {
+
         var reg1 = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g)
         //以下为勾选后,进行下载功能实现
         //第一步,获取勾取的所属订单号值和当前的flderName或fileName
@@ -812,7 +813,7 @@
             return false;
         }
         var orderno = $("#orderno").val();
-
+        $("#coverbehidepage").show();
         //第二步,向后台发送消息
         //$("#some-element").busyLoad("show");//遮罩层开启
         //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
@@ -895,6 +896,7 @@
             }
         });
         //第三步,下载完成
+        $("#coverbehidepage").hide();
         $("#some-element").busyLoad("hide");
         blockUIForDownload();
     }
@@ -1015,7 +1017,7 @@
         </li>
     </ul>
 </div>
-<div id="coverbehidepage" style="display: none"></div>
+<div id="coverbehidepage" style="display: none" th:align="center">请耐心等待...</div>
 <div id="some-element">
     <div class="content">
 

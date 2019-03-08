@@ -718,10 +718,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (fileManFileInfo.size() > 0) {  //有文件夹
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             for (FilemanUrl fu : oldFileUrls) {
-                if (view.getSaveFolderName() != "" && f) {
-                    if (fu.getLogur1().contains(view.getSaveFolderName())) {
-                        pointFolder = fu.getLogur1();
-                        f = false;
+                if(view.getSaveFolderName()!=null) {
+                    if (view.getSaveFolderName() != "" && f) {
+                        if (fu.getLogur1().contains(view.getSaveFolderName())) {
+                            pointFolder = fu.getLogur1();
+                            f = false;
+                        }
                     }
                 }
                 urlStr.add(fu.getLogur1());
@@ -1289,8 +1291,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     olderCenterstr = urladdr.substring(0, pointindex + 1);
                     centerstr = urladdr.substring(pointindex + 1, urladdr.length());
                     centerstr = subMyString(centerstr, "/");
-                    if (centerstr.contains("/")) {
-                        mysqlcenterurls.add(centerstr.split("/"));
+                    if(centerstr!=null && centerstr!="") {
+                        if (centerstr.contains("/")) {
+                            mysqlcenterurls.add(centerstr.split("/"));
+                        }
                     }
                 }
             }

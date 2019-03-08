@@ -428,7 +428,7 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             }
                         } else {
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><input type='radio' name='filesaveselect'  value='\" + data[num] + \"'><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
 
@@ -520,7 +520,7 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             }
                         } else {
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><input type='radio' name='filesaveselect'  value='\" + data[num] + \"'><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
@@ -629,7 +629,7 @@
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         } else {
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><input type='radio' checked name='filesaveselect' value='\" + data[num] + \"'><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
@@ -900,6 +900,7 @@
         var filesaveselect = $('input[name="filesaveselect"]:checked').val();
         if (typeof (filesaveselect) == "undefined") {
             if (fileInput != "") {
+                $("#folderselect").val("");
                 alert("您没有指定文件夹,系统将默认存放在以订单为名和目录下!");
             }
         } else {
