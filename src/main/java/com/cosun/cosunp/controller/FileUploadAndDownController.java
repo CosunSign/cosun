@@ -1056,8 +1056,10 @@ public class FileUploadAndDownController {
         folderOrFiles = new ArrayList<String>();
         strarray = new ArrayList<String[]>();
         norepeatFoldorFile = new ArrayList<String>();
-        views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
-        recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+        if(view.getCurrentPageTotalNum()>=0) {
+            views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
+            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+        }
         maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         newurls = new ArrayList<String>();
         for (DownloadView v : views) {
@@ -1138,7 +1140,9 @@ public class FileUploadAndDownController {
                 views.add(view);
             }
 
+            if(views.size()>0)
             fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
+
 
             views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(viewHtml);
             List<DownloadView> viewsNew = new ArrayList<DownloadView>();

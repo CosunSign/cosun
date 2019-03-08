@@ -27,40 +27,42 @@
     var filePathName = "";
     $(function () {
         var test = document.getElementById('filefolder');
-        test.addEventListener('change', function() {
+        test.addEventListener('change', function () {
             isFilePathRight = 1;
             filePathName = "";
             var t_files = this.files;
             for (var i = 0, len = t_files.length; i < len; i++) {
-                if(t_files[i].webkitRelativePath.indexOf(",") == -1 ) {
+                if (t_files[i].webkitRelativePath.indexOf(",") == -1) {
                     filePathName += t_files[i].webkitRelativePath + ",";
-                }else{
+                } else {
                     isFilePathRight = 0;
                     return;
                 }
-            };
+            }
+            ;
             $("#filePathName").val(filePathName);
         }, false);
 
         var test1 = document.getElementById('file');
-        test1.addEventListener('change', function() {
+        test1.addEventListener('change', function () {
             isFilePathRight = 1;
             filePathName1 = "";
             var t_files1 = this.files;
             for (var i = 0, len = t_files1.length; i < len; i++) {
-                if(t_files1[i].name.indexOf(",") == -1 ) {
-                    if(t_files1[i].name.indexOf(".") != -1) {
+                if (t_files1[i].name.indexOf(",") == -1) {
+                    if (t_files1[i].name.indexOf(".") != -1) {
                         filePathName1 += t_files1[i].name + ",";
-                    }else{
-                        alert("文件名必须要有扩展名,如:"+t_files1[i].name+"就没有扩展名!");
+                    } else {
+                        alert("文件名必须要有扩展名,如:" + t_files1[i].name + "就没有扩展名!");
                         isFilePathRight = 2;
                         return;
                     }
-                }else{
+                } else {
                     isFilePathRight = 0;
                     return;
                 }
-            };
+            }
+            ;
             $("#filePathName").val(filePathName1);
         }, false);
 
@@ -110,6 +112,85 @@
         height: 320px;
         Margin: 2px;
         padding: 3px;
+    }
+
+    #coverbehidepage {
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1001;
+        -moz-opacity: 0.3;
+        opacity: .30;
+        filter: alpha(opacity=30);
+
+    }
+
+    #showMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 800px;
+        height: 500px;
+        Margin: 2px;
+        padding: 3px;
+        z-index: 1007;
+        background-color: #E0EEEE;
+        position: absolute;
+        top: 19%;
+        left: 28%;;
+    }
+
+    #innershowMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 787px;
+        height: 487px;
+        Margin: 3px;
+        padding: 3px;
+        z-index: 1008;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+    #innershowMessageDiv1 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 390px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-top: 15px;
+        padding: 3px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv11 {
+        width: 745px;
+        height: 30px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv12 {
+        width: 745px;
+        height: 360px;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+
+    #innershowMessageDiv2 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 50px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-bottom: 3px;
+        background-color: #E0EEEE;
+        position: absolute;
+
     }
 
     #innerfolderdiv {
@@ -184,6 +265,7 @@
         right: 0;
 
     }
+
 
     #showtabledivhead {
         margin-top: 1px;
@@ -467,7 +549,13 @@
     }
 
     function alertMessageDiv() {
-        $("#some-element").busyLoad("show");//遮罩层开启
+        $("#coverbehidepage").show();
+        $("#showMessageDiv").show();
+    }
+
+    function closeShowMessage() {
+        $("#coverbehidepage").hide();
+        $("#showMessageDiv").hide();
     }
 
 
@@ -849,20 +937,20 @@
         //showSessionMessage();//定时器开启
         //document.getElementById("form1").submit();
         $("#some-element").busyLoad("show");//遮罩层开启
-        if(isFilePathRight==0) {
+        if (isFilePathRight == 0) {
             alert("您要上传的文件夹或文件名不能包含,符号.");
             $("#some-element").busyLoad("hide");//遮罩层开启
             return;
         }
-        if(isFilePathRight==2) {
+        if (isFilePathRight == 2) {
             alert("您要上传的文件名必须要有扩展名!");
             $("#some-element").busyLoad("hide");//遮罩层开启
             return;
         }
         var formData = new FormData();
-        formData.append('filePathName',$("#filePathName").val() );
-        formData.append('orderNo',$("#orderno").val() );
-        formData.append('salor',$("#salorid").val() );
+        formData.append('filePathName', $("#filePathName").val());
+        formData.append('orderNo', $("#orderno").val());
+        formData.append('salor', $("#salorid").val());
         var url = "";
         if (fileInput != "") {
             url = "/fileupdown/checkmessage";
@@ -881,10 +969,10 @@
             success: function (msg) {
                 $("#some-element").busyLoad("hide");//遮罩层开启
                 var flag = msg;
-                if(flag!='"OK"') {
+                if (flag != '"OK"') {
                     alert(flag);
                     return;
-                } else{
+                } else {
                     $("#some-element").busyLoad("show");//遮罩层开启
                     document.getElementById("form1").submit();
                     var pro = null;
@@ -1171,7 +1259,7 @@
     </ul>
 </div>
 
-
+<div id="coverbehidepage" style="display: none"></div>
 </div>
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
@@ -1209,8 +1297,9 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a onclick="alertMessageDiv()" href="#"><font color="#FF0000" size="2"><u><strong>温馨提示</strong></u></font></a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                              size="2"><u><strong>温馨小贴士</strong></u></font></a>
 
 
                 <p>
@@ -1236,7 +1325,8 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     上传时间
-                    <input type="text" style="width: 160px" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
+                    <input type="text" style="width: 160px" readonly="readonly" class="Wdate" id="uploaddatetime"
+                           name="createTime">
                 </div>
                 <p>
                 <div>
@@ -1287,37 +1377,6 @@
                         </tbody>
 
                         <tfoot>
-
-                        <!--<tr>-->
-                        <!--<td colspan="3">-->
-                        <!--<p>-->
-                        <!--<font color="#FF0000" size="2">注："*"代表必填选项.</font>-->
-                        <!--<p>-->
-
-
-                        <!--<font color="#FF0000"-->
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--单次上传总文件大小不超过50M.否则服务器不接受请求。</font>-->
-                        <!--<p>-->
-
-
-                        <!--<font color="#FF0000"-->
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--上传的两种方式为文件夹与文件，二选一。</font>-->
-                        <!--<p>-->
-                        <!--<font color="#FF0000"-->
-
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--本上传功能只接收全新未存过的文件，或以前存过但新增的一些文件。如存储的文件以前有存储过也有新文件，则服务器全不受理。</font>-->
-                        <!--<p>-->
-                        <!--<font color="#FF0000"-->
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--本上传功能是根据订单号设计师业务中文件名来判断是否是新文件。如同一订单下不同的文件夹目录下有某个相同的文件名，则服务器视为同一文件不受理上传。</font>-->
-                        <!--<p>-->
-
-
-                        <!--</td>-->
-                        <!--</tr>-->
 
                         </tfoot>
                     </table>
@@ -1395,8 +1454,41 @@
             </div>
         </form>
     </div>
+    <div id="showMessageDiv" style="display: none">
+        <div id="innershowMessageDiv">
+            <div id="innershowMessageDiv1">
+                <div id="innershowMessageDiv11" th:align="center">
+                    <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
+                </div>
+                <div id="innershowMessageDiv12" th:align="left">
+                    <p>
+                    <font color="#000000" size="2" th:align="center">一,上传方式:文件夹和文件二选一.</font>
+                    <p>
+                        <font color="#000000" size="2" th:align="center">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>
+                    <p>
+                        <font color="#000000" size="2" th:align="center">三,文件命名:文件名必须有扩展名,并不能有","符号.</font>
+                    <p>
+                        <font color="#000000" size="2" th:align="center">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>
+                    <p>
+                    <font color="#000000" size="2" th:align="center">五,同一订单下不能出现重复文件名.</font>
+
+                    <p>
+                        <font color="#000000" size="2" th:align="center">六,文件上传非初次上传可以自主选择上级目录.</font>
+                    <p>
+                    <font color="#000000" size="2" th:align="center">七,为方便后续操作,请尽量将信息填写完整.</font>
+
+                </div>
+            </div>
+            <div id="innershowMessageDiv2" th:align="right">
+                <p>
+                    <br>
+                    <input type="button" value="关闭" onclick="closeShowMessage()">
+            </div>
+        </div>
+    </div>
 
 
+</div>
 </body>
 
 </html>

@@ -262,6 +262,70 @@
         color: #fff;
     }
 
+    #showMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 800px;
+        height: 500px;
+        Margin: 2px;
+        padding: 3px;
+        z-index: 1007;
+        background-color: #E0EEEE;
+        position: absolute;
+        top: 19%;
+        left: 28%;;
+    }
+
+    #innershowMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 787px;
+        height: 487px;
+        Margin: 3px;
+        padding: 3px;
+        z-index: 1008;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+    #innershowMessageDiv1 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 390px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-top: 15px;
+        padding: 3px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv11 {
+        width: 745px;
+        height: 30px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv12 {
+        width: 745px;
+        height: 360px;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+
+    #innershowMessageDiv2 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 50px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-bottom: 3px;
+        background-color: #E0EEEE;
+        position: absolute;
+
+    }
+
     #coverbehidepage {
         display: none;
         position: absolute;
@@ -595,6 +659,16 @@
         mm = mm < 10 ? "0" + mm : mm;
         ss = ss < 10 ? "0" + ss : ss;
         return h + "-" + m + "-" + d + " " + hh + ":" + mm + ":" + ss;
+    }
+
+    function alertMessageDiv() {
+        $("#coverbehidepage").show();
+        $("#showMessageDiv").show();
+    }
+
+    function closeShowMessage() {
+        $("#coverbehidepage").hide();
+        $("#showMessageDiv").hide();
     }
 
     function setsalorvalue() {
@@ -1013,7 +1087,7 @@
     </ul>
 </div>
 
-
+<div id="coverbehidepage" style="display: none"></div>
 </div>
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.noExsitFileMessage}" id="existFileMessage">
@@ -1042,9 +1116,23 @@
 
                 <a class="btn btn-default"
                    th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                              size="2"><u><strong>温馨小贴士</strong></u></font></a>
+
+
+
 
                 <p>
                 <p>
+
 
                     <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
                 <div>
@@ -1222,6 +1310,39 @@
             </div>
         </form>
     </div>
+
+
+
+
+
+    <div id="showMessageDiv" style="display: none">
+        <div id="innershowMessageDiv">
+            <div id="innershowMessageDiv1">
+                <div id="innershowMessageDiv11" th:align="center">
+                    <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
+                </div>
+                <div id="innershowMessageDiv12" th:align="left">
+                    <p>
+                        <font color="#000000" size="2" th:align="center">一,更新方式:文件夹和文件二选一.</font>
+                    <p>
+                        <font color="#000000" size="2" th:align="center">二,接收种类:文件更新功能只接收您要更新的文件全部已上传过.</font>
+                    <p>
+                        <font color="#000000" size="2" th:align="center">三,您得需要有您准备更新的文件的更新权限..</font>
+
+                    <p>
+                        <font color="#000000" size="2" th:align="center">四,为方便后续操作,请尽量将信息填写完整.</font>
+
+                </div>
+            </div>
+            <div id="innershowMessageDiv2" th:align="right">
+                <p>
+                    <br>
+                    <input type="button" value="关闭" onclick="closeShowMessage()">
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 

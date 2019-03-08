@@ -63,6 +63,84 @@
         zoom: 1;
     }
 
+    #showMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 800px;
+        height: 500px;
+        Margin: 2px;
+        padding: 3px;
+        z-index: 1007;
+        background-color: #E0EEEE;
+        position: absolute;
+        top: 19%;
+        left: 28%;;
+    }
+    #coverbehidepage {
+        display: none;
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index: 1006;
+        -moz-opacity: 0.3;
+        opacity: .30;
+        filter: alpha(opacity=30);
+
+    }
+
+    #innershowMessageDiv {
+        border: 1px solid #9AC0CD;
+        width: 787px;
+        height: 487px;
+        Margin: 3px;
+        padding: 3px;
+        z-index: 1008;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+    #innershowMessageDiv1 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 390px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-top: 15px;
+        padding: 3px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv11 {
+        width: 745px;
+        height: 30px;
+        background-color: #E0EEEE;
+    }
+
+    #innershowMessageDiv12 {
+        width: 745px;
+        height: 360px;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+
+    #innershowMessageDiv2 {
+        border: 1px solid #9AC0CD;
+        width: 750px;
+        height: 50px;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-bottom: 3px;
+        background-color: #E0EEEE;
+        position: absolute;
+
+    }
+
     .clear:after {
         content: "";
         display: block;
@@ -176,6 +254,16 @@
                 finishDownload();
             }
         }, 1000);
+    }
+
+    function alertMessageDiv() {
+        $("#coverbehidepage").show();
+        $("#showMessageDiv").show();
+    }
+
+    function closeShowMessage() {
+        $("#coverbehidepage").hide();
+        $("#showMessageDiv").hide();
     }
 
     // 定义一个函数，用来读取特定的cookie值。
@@ -927,6 +1015,7 @@
         </li>
     </ul>
 </div>
+<div id="coverbehidepage" style="display: none"></div>
 <div id="some-element">
     <div class="content">
 
@@ -945,6 +1034,21 @@
 
             <a class="btn btn-default"
                th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                          size="2"><u><strong>温馨小贴士</strong></u></font></a>
+
+
+
+
             <p>
 
                 <div id="">
@@ -1157,6 +1261,32 @@
 
     </div>
 </div>
+
+
+<div id="showMessageDiv" style="display: none">
+    <div id="innershowMessageDiv">
+        <div id="innershowMessageDiv1">
+            <div id="innershowMessageDiv11" th:align="center">
+                <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
+            </div>
+            <div id="innershowMessageDiv12" th:align="left">
+                <p>
+                    <font color="#000000" size="2" th:align="center">一,您得需要有您准备下载的文件(夹)的下载权限.</font>
+
+
+
+            </div>
+        </div>
+        <div id="innershowMessageDiv2" th:align="right">
+            <p>
+                <br>
+                <input type="button" value="关闭" onclick="closeShowMessage()">
+        </div>
+    </div>
+</div>
+
+
+
 </div>
 </body>
 </html>

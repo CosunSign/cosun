@@ -118,6 +118,85 @@
             bottom: 0;
         }
 
+        #showMessageDiv {
+            border: 1px solid #9AC0CD;
+            width: 800px;
+            height: 500px;
+            Margin: 2px;
+            padding: 3px;
+            z-index: 1007;
+            background-color: #E0EEEE;
+            position: absolute;
+            top: 19%;
+            left: 28%;;
+        }
+
+        #innershowMessageDiv {
+            border: 1px solid #9AC0CD;
+            width: 787px;
+            height: 487px;
+            Margin: 3px;
+            padding: 3px;
+            z-index: 1008;
+            background-color: #E0EEEE;
+            position: absolute;
+        }
+
+        #innershowMessageDiv1 {
+            border: 1px solid #9AC0CD;
+            width: 750px;
+            height: 390px;
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-top: 15px;
+            padding: 3px;
+            background-color: #E0EEEE;
+        }
+
+        #innershowMessageDiv11 {
+            width: 745px;
+            height: 30px;
+            background-color: #E0EEEE;
+        }
+
+        #innershowMessageDiv12 {
+            width: 745px;
+            height: 360px;
+            background-color: #E0EEEE;
+            position: absolute;
+        }
+
+
+        #innershowMessageDiv2 {
+            border: 1px solid #9AC0CD;
+            width: 750px;
+            height: 50px;
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            padding-left: 3px;
+            padding-right: 3px;
+            padding-bottom: 3px;
+            background-color: #E0EEEE;
+            position: absolute;
+
+        }
+
+        #coverbehidepage {
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 1006;
+            -moz-opacity: 0.3;
+            opacity: .30;
+            filter: alpha(opacity=30);
+
+        }
+
         #titlename1 {
             border: 1px solid #9AC0CD;
             width: 1095px;
@@ -337,6 +416,16 @@
             }
         }
 
+        function alertMessageDiv() {
+            $("#coverbehidepage").show();
+            $("#showMessageDiv").show();
+        }
+
+        function closeShowMessage() {
+            $("#coverbehidepage").hide();
+            $("#showMessageDiv").hide();
+        }
+
         function submitprivilegestatus() {
             var folderhtml = "";
             var fileshtml = "";
@@ -364,6 +453,11 @@
                         privilelist[i] += "," + $(this).val();
                     });
                 }
+            }
+            if(privilelist=="") {
+                alert("没有任何数据，无法进行保存操作！");
+                $("#some-element").busyLoad("hide");
+                return;
             }
             var salor = $("#salorid").val();
             var engineer = $("#selectuser").val();
@@ -1605,7 +1699,7 @@
                 </li>
             </ul>
         </div>
-
+        <div id="coverbehidepage" style="display: none"></div>
         <div class="content">
 
             <div id="tabs">
@@ -1625,6 +1719,22 @@
 
                 <a class="btn btn-primary"
                    th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                              size="2"><u><strong>温馨小贴士</strong></u></font></a>
+
+
+
+
+
                 <p>
 
                 <form id="queryform" th:action="@{/fileupdown/downloadbyquerycondition}" method="post"
@@ -1862,7 +1972,7 @@
 
 
                                 <tr style="display:none;" id="nodatadiv">
-                                    <td align="center" colspan="10">
+                                    <td align="center" width="1100px">
                                         查无数据
                                     </td>
                                 </tr>
@@ -1888,6 +1998,33 @@
                 </div>
             </div>
 
+        </div>
+
+
+
+        <div id="showMessageDiv" style="display: none">
+            <div id="innershowMessageDiv">
+                <div id="innershowMessageDiv1">
+                    <div id="innershowMessageDiv11" th:align="center">
+                        <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
+                    </div>
+                    <div id="innershowMessageDiv12" th:align="left">
+                        <p>
+                            <font color="#000000" size="2" th:align="center">一,权限:公司的管理层才有对文件(夹)的权限更改权力.其它只有查阅,无更改权限.</font>
+                        <p>
+                            <font color="#000000" size="2" th:align="center">二,初次进入管理层页面,展示的是服务器中所有文件资源(与权限无关).</font>
+                        <p>
+                            <font color="#000000" size="2" th:align="center">三,点击查询,展示的将是服务器中所有的文件资源和有关的权限联系.</font>
+                        <p>
+                            <font color="#000000" size="2" th:align="center">四,请谨慎对文件权限更改操作,以防他人误更新文件.由误操作带来的文件损失不由开发人员承担.</font>
+                    </div>
+                </div>
+                <div id="innershowMessageDiv2" th:align="right">
+                    <p>
+                        <br>
+                        <input type="button" value="关闭" onclick="closeShowMessage()">
+                </div>
+            </div>
         </div>
     </div>
 
