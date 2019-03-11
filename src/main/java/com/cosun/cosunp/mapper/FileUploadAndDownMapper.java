@@ -183,7 +183,7 @@ public interface FileUploadAndDownMapper {
     @Select("select * from  filemanfileinfo where id= #{id} ")
     FileManFileInfo getFileManFileInfoByInfoId(Integer id);
 
-    @Select("select * from  filemanfileinfo where ordernum= #{orderNo} ")
+    @Select("select * from  filemanfileinfo where ordernum= #{orderNo} limit 1 ")
     FileManFileInfo getFileInfoByOrderNo(String orderNo);
 
     @Select("select * from filemanurl where fileInfoId = #{fileInfoId} and orginname = #{fileName} ")

@@ -1056,7 +1056,7 @@ public class FileUploadAndDownController {
         folderOrFiles = new ArrayList<String>();
         strarray = new ArrayList<String[]>();
         norepeatFoldorFile = new ArrayList<String>();
-        if(view.getCurrentPageTotalNum()>=0) {
+        if (view.getCurrentPageTotalNum() >= 0) {
             views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
             recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
         }
@@ -1110,6 +1110,7 @@ public class FileUploadAndDownController {
         UserInfo info = (UserInfo) session.getAttribute("account");
         DownloadView viewHtml = bean.getView();
         DownloadView view = null;
+        viewHtml.setPageSize(12);
         List<String> privilelist = bean.getPrivilegestrs();//权限
         List<String> privilegeusers = bean.getPrivilegeusers();//用户
         String oprighter = viewHtml.getOprighter();//权限被修改者 空为所有人
@@ -1118,6 +1119,8 @@ public class FileUploadAndDownController {
         String fileOrFolderName = null;
         String opright = null;
         int index;
+        int recordCount = 0;
+        int maxPage = 0;
         if (info.getUserActor() == 2 || info.getUserActor() == 1) {
             views = new ArrayList<DownloadView>();
             String tempStr = null;
@@ -1140,11 +1143,12 @@ public class FileUploadAndDownController {
                 views.add(view);
             }
 
-            if(views.size()>0)
-            fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
-
+            if (views.size() > 0)
+                fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
 
             views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(viewHtml);
+            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+            maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
             List<DownloadView> viewsNew = new ArrayList<DownloadView>();
             int pointindex;
             for (DownloadView v : views) {
@@ -1157,6 +1161,12 @@ public class FileUploadAndDownController {
             //int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
             // int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
 
+        }
+        if (views != null && views.size() > 0) {
+            views.get(0).setMaxPage(maxPage);
+            views.get(0).setRecordCount(recordCount);
+            views.get(0).setCurrentPage(view.getCurrentPage());
+            views.get(0).setPageSize(12);
         }
 
         String str1 = null;
@@ -2148,12 +2158,13 @@ public class FileUploadAndDownController {
                 if (info != null) {
                     if (!info.getExtInfo1().equals(view.getSalor())) {//查看订单编号有没有被占用
                         returnmessage = "您输入的订单编号系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
+                    } else {
+                        returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
                     }
+                } else {
+                    returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
                 }
-                returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
-
-            }
-            if (!isFolderNameForEngDateOrderNoSalor) {
+            } else {
                 returnmessage = "您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!";
             }
         } else {
@@ -2203,7 +2214,7 @@ public class FileUploadAndDownController {
             }
 
         } else {
-                returnMessage = "您没有上传权限，如需要请向上级申请!";
+            returnMessage = "您没有上传权限，如需要请向上级申请!";
         }
 
         String str1 = null;
@@ -2294,7 +2305,7 @@ public class FileUploadAndDownController {
 //            for (MultipartFile mfile : files) {
 //                fileArray.add(mfile);
 //            }
-            //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
+        //boolean isFileLarge = FileUtil.checkFileSize(fileArray, 1024, "M");//判断文件是否超过限制大小
 //            boolean isExsitFileName = fileUploadAndDownServ.checkFileisSame(view, userInfo, null);//判断是否有重名的文件名
 //            if (!isExsitFileName) {//没超过并没有重复的名字并且单次上传不超过200个文件
 //                view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);

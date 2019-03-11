@@ -1260,14 +1260,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                             if (k == f && centerfolderone1[k].equals(centerfoldertwo2[f])) {
                                 for (int o = 0; o <= k; o++) {
                                     if (!centerfolderone1[o].equals(centerfoldertwo2[o])) {
-                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfoldertwo2[o];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfolderone1[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
                                         return isSameFileUploadFolderName;
                                     }
                                 }
                             } else {
                                 if (centerfolderone1[k].equals(centerfoldertwo2[f])) {
                                     {//如果不是同一层次的文件夹名字一样.即视重复
-                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfoldertwo2[f];//有重复,即刻返回
+                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfolderone1[k];//有重复,即刻返回
                                         return isSameFileUploadFolderName;
 
                                     }
@@ -1314,7 +1314,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                             if (k == f && centerfolderone[k].equals(centerfoldertwo[f])) {
                                 for (int o = 0; o <= k; o++) {
                                     if (!centerfolderone[o].equals(centerfoldertwo[o])) {
-                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfoldertwo[o];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfolderone[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
                                         return isSameFileUploadFolderName;
                                     }
                                 }

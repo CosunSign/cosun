@@ -430,7 +430,14 @@
             var folderhtml = "";
             var fileshtml = "";
             var privilegeusers = "";
+            var maxpageid = $("#maxPage");
+            var n_currentPage = $("#n_currentPage");
+            var inputpage = $("#_tp");
             var flag = $("#type").val();
+            var image01 = $("#image01");
+            var image02 = $("#image02");
+            var image03 = $("#image03");
+            var image04 = $("#image04");
             if (flag == "0") {
                 alert("您没有管理权限，无法进行管理权限分配操作,如需要请向上级申请！");
                 return false;
@@ -490,10 +497,21 @@
                 success: function (msg) {
                     $("#oprighter").val("");
                     folderhtml = "";
+                    image01.html("");
+                    image02.html("");
+                    image03.html("");
+                    image04.html("");
                     var data = eval(msg); //data为URLS
                     var len = data.length;
                     var vililegeflags;
                     if (len >= 1) {
+                        currentPage = data[0].currentPage; //当前页
+                        totalPage = data[0].maxPage; //总多少页
+                        totaldata = data[0].recordCount; //总共多少记录
+                        pageSize = data[0].pageSize;
+                        maxpageid.val(totalPage);
+                        n_currentPage.val(currentPage);
+                        inputpage.val(currentPage);
                         $.each(data, function (num) {
                             vililegeflags = data[num].opRight;
                             if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
@@ -576,6 +594,38 @@
                             // $("#orderno").val(data[num].orderNo);
                             $("#foldername").val(data[num].folderOrFileName);
                         });
+                        if (currentPage > 1) {
+                            var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image01.html(imange01str);
+                        } else {
+                            image01.html("");
+                        }
+                        if (currentPage <= 1) {
+                            var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image02.html(image02str);
+                        } else {
+                            image02.html("");
+                        }
+                        if (currentPage < totalPage) {
+                            var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange03str += '<img src="/images/page/my-2.jpg" onClick="goMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image03.html(imange03str);
+                        } else {
+                            image03.html("");
+                        }
+                        if (currentPage >= totalPage) {
+                            var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image04.html(image04str);
+                        } else {
+                            image04.html("");
+                        }
                         $("#showdatatable").html(folderhtml + fileshtml )
                         $("#showdiv").show();
                         $("#pagetfoottr").hide();
