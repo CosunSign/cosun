@@ -36,7 +36,7 @@ public class UploadFolderServlet extends HttpServlet {
     @Autowired
     private IFileUploadAndDownServ fileUploadAndDownServ;
 
-    private static Logger logger = LogManager.getLogger(UploadServlet.class);
+    private static Logger logger = LogManager.getLogger(UploadFolderServlet.class);
 
     public UploadFolderServlet(){
 
