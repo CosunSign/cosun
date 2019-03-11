@@ -186,6 +186,10 @@
         var folderhtml = "";
         var fileshtml = "";
         var cominone2 = 0;
+        if(orderNo=="" || orderNo==null) {
+            alert("点击返回的时候，订单编号不能为空！请不要删空它。")
+            return;
+        }
         // if (salor == "") {
         //     alert("请选择业务人员!");
         //     return false;

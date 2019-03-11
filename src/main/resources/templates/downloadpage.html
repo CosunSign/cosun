@@ -316,6 +316,10 @@
         var folderhtml = "";
         var fileshtml = "";
         var cominone2 = 0;
+        if(orderNo=="" || orderNo==null) {
+            alert("点击返回的时候，订单编号不能为空！请不要删空它。")
+            return;
+        }
         //$("#some-element").busyLoad("show");//遮罩层开启
         var jsonarray = {
             "salor": salor, //业务员

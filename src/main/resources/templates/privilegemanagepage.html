@@ -931,7 +931,7 @@
         var topfolder;
 
         function backFolder3() {
-            $("#some-element").busyLoad("show");
+
             current_num = 1;
             var foldername = $("#foldername").val();
             var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
@@ -942,6 +942,11 @@
             var folderhtml = "";
             var fileshtml = "";
             var cominone2 = 0;
+            if(orderNo=="" || orderNo==null) {
+                alert("点击返回的时候，订单编号不能为空！请不要删空它。")
+                return;
+            }
+            $("#some-element").busyLoad("show");
             //$("#some-element").busyLoad("show");//遮罩层开启
             //var trid = $(foldername).parent().parent().parent().find("td:eq(7)").text();
             var trid = $('#showlistbody').find('tr:eq(0)').find('td:eq(7)').attr("name");
