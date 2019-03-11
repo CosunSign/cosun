@@ -626,11 +626,11 @@
                         $("#foldername").val(data[num]);
                         if (fileInput != "") {
                             folderhtml += "<li><input type='radio' checked name='filesaveselect' value='" + data[num] + "'><img src=\"/images/icon/Folder.png\" " +
-                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
+                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         } else {
-                            folderhtml += "<li><input type='radio' checked name='filesaveselect' value='\" + data[num] + \"'><img src=\"/images/icon/Folder.png\" " +
-                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
+                            folderhtml += "<li><input type='radio' checked name='filesaveselect' value='" + data[num] + "'><img src=\"/images/icon/Folder.png\" " +
+                                " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
                     } else {//代表为文件

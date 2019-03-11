@@ -5,6 +5,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.io.Util;
 
 import javax.swing.event.EventListenerList;
 import java.io.*;
@@ -78,6 +79,7 @@ public class FtpUtils {
             System.out.println("开始上传文件");
             initFtpClient();
             ftpClient.setFileType(ftpClient.BINARY_FILE_TYPE);
+            ftpClient.setBufferSize(Util.DEFAULT_COPY_BUFFER_SIZE);
             CreateDirecroty(pathname);
             ftpClient.makeDirectory(pathname);
             ftpClient.changeWorkingDirectory(pathname);

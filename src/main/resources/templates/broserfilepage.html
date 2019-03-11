@@ -411,6 +411,11 @@
                 $("#orderno").val(orderNo);
             }
         }
+
+        if(orderNo=="") {
+            alert("进行点击文件夹操作,请不要删除输入框的订单编号!");
+            return;
+        }
         // if (salor == "") {
         //     alert("请选择业务人员!");
         //     return false;

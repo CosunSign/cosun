@@ -421,6 +421,10 @@
                 orderNo = foldername;
             }
         }
+        if(orderNo=="") {
+            alert("进行点击文件夹操作,请不要删除输入框的订单编号!");
+            return;
+        }
 
         var folderhtml = "";
         var fileshtml = "";

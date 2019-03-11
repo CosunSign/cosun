@@ -1215,7 +1215,7 @@
         }
 
         function shownextfolderorfiles(foldername) {
-            $("#some-element").busyLoad("show");
+
             foldername1 = foldername.getAttribute("value");
             var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
             $("#backfolder").removeAttr("disabled");
@@ -1228,6 +1228,12 @@
                     orderNo = foldername1;
                 }
             }
+
+            if(orderNo=="") {
+                alert("进行点击文件夹操作,请不要删除输入框的订单编号!");
+                return;
+            }
+            $("#some-element").busyLoad("show");
             var folderhtml = "";
             var fileshtml = "";
             // if (salor == "") {

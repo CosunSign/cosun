@@ -155,7 +155,7 @@ public class FileUploadAndDownController {
         int maxPage = 0;
         //根据当前文件夹或文件名查找上一级文件夹名,如上一级文件夹名是以ORDERNO类形的,即开启limit查询
         String upFolderName = null;
-        if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
+       // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
             folderOrFiles = new ArrayList<String>();
             views = new ArrayList<DownloadView>();
             norepeatFoldorFile = new ArrayList<String>();
@@ -298,7 +298,7 @@ public class FileUploadAndDownController {
                     flag = true;
                 }
             }
-        }
+
 
         if (views.size() > 0) {
 
@@ -681,7 +681,7 @@ public class FileUploadAndDownController {
         int maxPage;
         String allOprights = "";
         String tempFolOrFileName = null;
-        if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
+       // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
             views = new ArrayList<DownloadView>();
             urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
             norepeatFoldorFile = new ArrayList<String>();
@@ -749,7 +749,7 @@ public class FileUploadAndDownController {
                     flag = true;
                 }
             }
-        }
+        //}
         if (views.size() > 0) {
             viewss = new ArrayList<DownloadView>();
             for (DownloadView vii : views) {
@@ -942,28 +942,28 @@ public class FileUploadAndDownController {
         if (view.getuId() != null) {
             view.setEngineer(view.getuId().toString());
         }
-        if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
-            List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
-            List<String> newurls = new ArrayList<String>();
-            int pointindex = 0;
-            for (String str : urls) {
-                pointindex = StringUtils.ordinalIndexOf(str, "/", 4);
-                newurls.add(str.substring(pointindex + 1, str.length()));
-            }
 
-            for (String str : newurls) {
-                //strarray.add(str.replaceAll("\\\\", "/").split("/"));
-                strarray.add(str.split("/"));
-            }
-            for (String[] stra : strarray) {
-                folderOrFiles.add(stra[0]);
-            }
-            for (String s : folderOrFiles) {
-                if (!norepeatFoldorFile.contains(s)) {
-                    norepeatFoldorFile.add(s);
-                }
+        List<String> urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
+        List<String> newurls = new ArrayList<String>();
+        int pointindex = 0;
+        for (String str : urls) {
+            pointindex = StringUtils.ordinalIndexOf(str, "/", 4);
+            newurls.add(str.substring(pointindex + 1, str.length()));
+        }
+
+        for (String str : newurls) {
+            //strarray.add(str.replaceAll("\\\\", "/").split("/"));
+            strarray.add(str.split("/"));
+        }
+        for (String[] stra : strarray) {
+            folderOrFiles.add(stra[0]);
+        }
+        for (String s : folderOrFiles) {
+            if (!norepeatFoldorFile.contains(s)) {
+                norepeatFoldorFile.add(s);
             }
         }
+
         String str = null;
         if (norepeatFoldorFile != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
