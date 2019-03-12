@@ -2227,6 +2227,8 @@ public class FileUploadAndDownController {
             e.printStackTrace();
         }
 
+
+
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
