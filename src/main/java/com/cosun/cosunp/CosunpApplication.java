@@ -9,6 +9,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,6 +21,7 @@ import javax.servlet.MultipartConfigElement;
 @MapperScan("com.cosun.cosunp.mapper")
 @Configuration
 @ServletComponentScan("com.cosun.cosunp.servlet")
+@EnableCaching
 public class CosunpApplication extends SpringBootServletInitializer {
 
 

@@ -4,20 +4,20 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
-import com.cosun.cosunp.singleton.ProgressSingleton;
-import com.cosun.cosunp.tool.*;
+import com.cosun.cosunp.tool.FtpUtils;
+import com.cosun.cosunp.tool.MathUtil;
+import com.cosun.cosunp.tool.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.cosun.cosunp.tool.StringUtil.*;
 
@@ -29,6 +29,7 @@ import static com.cosun.cosunp.tool.StringUtil.*;
  * @Modified-date:2018/12/20 0020 下午 6:37
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
@@ -38,7 +39,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Autowired
     private FileUploadAndDownMapper fileUploadAndDownMapper;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveOrUpdateFilePrivilege(List<DownloadView> views, List<String> privilegeusers, UserInfo in) throws Exception {
         DownloadView view = null;
@@ -252,12 +253,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
             if (!isAllExistFile) {
-               returnMessage = "您本次要更新的文件里,有部分文件系统中不存在,共有"+isNoExsitFileNum+"个，分别是:"+noExistFileNames;
-               return returnMessage;
+                returnMessage = "您本次要更新的文件里,有部分文件系统中不存在,共有" + isNoExsitFileNum + "个，分别是:" + noExistFileNames;
+                return returnMessage;
             }
 
         } else {//代表文件夹不存在,直接不受理
-           returnMessage = "您本次要更新的为新订单，请去上传中心";
+            returnMessage = "您本次要更新的为新订单，请去上传中心";
         }
 
         return returnMessage;
@@ -274,7 +275,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView findIsExistFilesforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         boolean isAllExistFile = true;//true代表文件以前全部存过
         String noExistFileNames = "";
@@ -327,7 +328,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean isFolderNameForEngDateOrderNoSalor(String filePathName) throws Exception {
         String[] pathName = null;
         if (filePathName.contains(",")) {
@@ -370,7 +371,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         boolean isAllNewFile = true; //全为新文件即为真
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
@@ -392,7 +393,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String checkIsExistFilesFolderforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
         String returnMessage = "OK";
         String[] urlPaths = null;
@@ -431,7 +432,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             if (!isAllExistFile) {
-                returnMessage = "您本次更新的文件夹内有些许新文件，共有"+isNoExsitFileNum+"个，分别是:"+noExistFileNames+"或者您本次更新的文件夹结构与上次上传的文件夹结构不一致，请检查!";
+                returnMessage = "您本次更新的文件夹内有些许新文件，共有" + isNoExsitFileNum + "个，分别是:" + noExistFileNames + "或者您本次更新的文件夹结构与上次上传的文件夹结构不一致，请检查!";
                 return returnMessage;
             }
 
@@ -444,7 +445,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public DownloadView findIsExistFilesFolderforUpdate(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         boolean isAllExistFile = true;//true代表文件以前全部存过
@@ -488,7 +489,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return view;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String checkFileUpdateRight(String pathName, DownloadView view, UserInfo userInfo) throws Exception {
         String[] pathNames = null;
         if (pathName.contains(",")) {
@@ -506,14 +507,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if (right == null) {//如果是空代表没有权限，接着往下查URL里有没有文此文件
                 url = fileUploadAndDownMapper.getFileUrlByOrderNoSo(view.getOrderNo(), view.getSalor(), userInfo.getuId(), fileName);
                 if (url == null) {
-                    returnMessage = "您本次要更新的文件里有新文件，应去上传区进行上传，如:"+fileName+"系统里就不存在";
+                    returnMessage = "您本次要更新的文件里有新文件，应去上传区进行上传，如:" + fileName + "系统里就不存在";
                 } else {
-                    returnMessage = "您没有权限，如:"+fileName+"就没有权限!";
+                    returnMessage = "您没有权限，如:" + fileName + "就没有权限!";
                 }
 
             } else {
                 if (!right.getOpRight().contains("2")) {
-                    returnMessage = "您没有权限，如:"+fileName+"就没有权限!";
+                    returnMessage = "您没有权限，如:" + fileName + "就没有权限!";
                 }
             }
         }
@@ -521,7 +522,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
@@ -564,7 +565,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView addFilesDatabyFolder(DownloadView view, List<MultipartFile> files, UserInfo userInfo) throws Exception {
         if (files == null || files.size() <= 0) { // //空文件返回 0
             view.setFlag("0");
@@ -635,6 +636,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             } catch (Exception e) {
                 view.setFlag("-1");
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -643,7 +645,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     //上传的是文件夹,根据以前的路径存文件
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView addOldOrderNoNewFilesByFolder(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         Integer pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
@@ -706,7 +708,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     //以下功能为文件上传功能,只对新的文件进行存储
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
         //根据业务员订单号设计师看有没有文件夹
@@ -718,7 +720,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (fileManFileInfo.size() > 0) {  //有文件夹
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             for (FilemanUrl fu : oldFileUrls) {
-                if(view.getSaveFolderName()!=null) {
+                if (view.getSaveFolderName() != null) {
                     if (view.getSaveFolderName() != "" && f) {
                         if (fu.getLogur1().contains(view.getSaveFolderName())) {
                             pointFolder = fu.getLogur1();
@@ -755,7 +757,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @return:
      * @describtion
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
@@ -789,15 +791,15 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int findAllFileUrlByConditionCount(Integer uId) throws Exception {
         return fileUploadAndDownMapper.findAllFileUrlByConditionCount(uId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView addOFilesByPointFile(DownloadView view, List<MultipartFile> fileArray,
                                              UserInfo userInfo, String pointpath,
-                                             List<FileManFileInfo> fileManFileInfos) {
+                                             List<FileManFileInfo> fileManFileInfos) throws Exception{
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\按客户指定目录保存文件
 
         String orginname = "";//原始文件名
@@ -819,6 +821,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 FtpUtils.uploadFile(pointpath, orginname, file.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();
+                throw e;
             }
 
             //存储文件路径
@@ -849,7 +852,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return view;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView addOldOrderNoNewFiles(DownloadView view, List<MultipartFile> fileArray,
                                               UserInfo userInfo, List<String> oldPaths,
                                               List<FileManFileInfo> fileManFileInfos) throws Exception {
@@ -910,7 +913,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public DownloadView addFilesData(DownloadView view, List<MultipartFile> files, UserInfo userInfo) throws Exception {
         if (files == null || files.size() <= 0) { // //空文件返回 0
@@ -979,6 +982,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             } catch (Exception e) {
                 view.setFlag("-1");
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -991,7 +995,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @Date: 2018.12.21
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception {
         List<DownloadView> list = fileUploadAndDownMapper.findAllUploadFileByUserId(uid);
         return list;
@@ -1007,7 +1011,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DownloadView findMessageByOrderNo(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findMessageByOrderNo(orderNo);
     }
@@ -1022,7 +1026,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<DownloadView> findAllUrlByParamThreeNew2(DownloadView view) throws Exception {
         String linshiId = view.getLinshiId();
         if (linshiId == null || linshiId.trim().length() <= 0) {
@@ -1033,367 +1037,367 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.findAllUrlByParamThreeNew2(view);
     }
 
-        /**
-         * @author:homey Wong
-         * @Date: 2018.12.21
-         */
-        @Override
-        @Transactional
-        public List<DownloadView> findAllUploadFileByCondition (Integer uid,int currentPageTotalNum, int PageSize) throws
-        Exception {
-            return fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
-
-        }
-
-        /**
-         * 功能描述:分页
-         *
-         * @auther: homey Wong
-         * @date: 2018/12/29 0029 上午 9:47
-         * @param:
-         * @return:
-         * @describtion
-         */
-        @Override
-        @Transactional
-        public int findAllUploadFileCountByUserId (Integer uId) throws Exception {
-            return fileUploadAndDownMapper.findAllUploadFileCountByUserId(uId);
-
-        }
-
-        @Override
-        @Transactional
-        public List<FilemanUrl> findAllUrlByOrderNo (String orderNo) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
-        }
-
-        @Override
-        @Transactional
-        public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid (Integer urlId, Integer fileInfoId, Integer uId) throws
-        Exception {
-            return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId, fileInfoId, uId);
-        }
-
-        @Override
-        @Transactional
-        public List<String> findAllUrlByOrderNo2 (String orderNo) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
-        }
-
-        @Override
-        @Transactional
-        public List<DownloadView> findAllUploadFileByParaCondition (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
-        }
-
-        @Override
-        @Transactional
-        public List<DownloadView> findAllFileUrlByCondition (Integer uid,int currentPageTotalNum, int PageSize) throws
-        Exception {
-            return fileUploadAndDownMapper.findAllFileUrlByCondition(uid, currentPageTotalNum, PageSize);
-        }
-
-        @Override
-        @Transactional
-        public List<String> findAllUrlByParamThree (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByParamThree(view);
-        }
-
-        @Override
-        @Transactional
-        public List<String> findAllUrlByParamThreeNew (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByParamThreeNew(view);
-        }
-
-        @Override
-        @Transactional
-        public int findAllUploadFileCountByParaCondition (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
-        }
-
-        @Override
-        @Transactional
-        public List<DownloadView> findAllFilesByCondParam (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllFilesByCondParam(view);
-        }
-
-        @Override
-        @Transactional
-        public int findAllFilesByCondParamCount (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllFilesByCondParamCount(view);
-        }
-
-
-        @Override
-        public FileManFileInfo getFileInfoByOrderNo (String orderNo) throws Exception {
-            return fileUploadAndDownMapper.getFileInfoByOrderNo(orderNo);
-        }
-
-        /**
-         * 功能描述:文件上传查看名是否有重复
-         *
-         * @auther: homey Wong
-         * @date: 2019/1/18 0018 下午 4:31
-         * @param:
-         * @return:
-         * @describtion
-         */
-        @Override
-        @Transactional
-        public String checkFileisSame (DownloadView view, UserInfo userInfo, String filePathName){
-            //第一步，查看上传文件们的是否有重复
-            String[] names = null;
-            if (filePathName.contains(",")) {
-                names = filePathName.split(",");
-            } else {
-                names[0] = filePathName;
-            }
-            List<String> originNames = new ArrayList<String>();
-            String isSameFileUpload = "OK";//代表没有
-            for (int i = 0; i < names.length; i++) {
-                if (originNames.contains(names[i])) {
-                    isSameFileUpload = "您要上传的文件文件名有重复,如:"+names[i];//有，即刻返回
-                    return isSameFileUpload;
-                } else {
-                    originNames.add(names[0]);
-                }
-
-            }
-            //第二步，查看数据库里与现在要上传的文件们是否有重复
-
-            List<String> urls = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
-
-            for (String s : originNames) {
-                if (urls.contains(s)) {
-                    isSameFileUpload = "同一订单下您的文件已上传过,如:"+s;//有重复,即刻返回
-                    return isSameFileUpload;
-                }
-            }
-            return isSameFileUpload;
-
-        }
-
-        /**
-         * 功能描述:查看要上传的文件夹有没重名和文件夹下的文件名有无重名
-         *
-         * @auther: homey Wong
-         * @date: 2019/1/18 0018 下午 4:45
-         * @param:
-         * @return:
-         * @describtion
-         */
-
-        @Override
-        @Transactional
-        public String isSameFolderNameorFileNameMethod (UserInfo userInfo, DownloadView view, String filePathName){
-            String[] paths = null;
-            if (filePathName.contains(",")) {
-                paths = filePathName.split(",");
-            } else {
-                paths[0] = filePathName;
-            }
-            String isSameFileUploadFolderName = "OK";//代表没有重复
-            List<String> originFNames = new ArrayList<String>();
-            List<String[]> foldernameLists = new ArrayList<String[]>();
-            String afterstr = null;
-            String[] splitArray = null;
-            List<String> urlss = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
-            for (int ii = 0; ii < paths.length; ii++) {
-                if (paths[ii].contains(",")) {
-                    isSameFileUploadFolderName = "文件夹或文件名不能包含,号!如:"+paths[ii];//表示上传文件夹中,存在
-                    return isSameFileUploadFolderName;
-                } else {
-                    String centerurl = StringUtil.subMyString(paths[ii], "/");
-                    //第一步,查看上传文件夹下的文件名是否相同
-                    if (originFNames.contains(subAfterString(paths[ii], "/"))) {
-                        isSameFileUploadFolderName = "文件夹内有重复文件名文件！如:"+subAfterString(paths[ii], "/");//表示上传文件夹中就有相同文件名字存在
-                        return isSameFileUploadFolderName;
-                    } else {
-                        if(!subAfterString(paths[ii], "/").contains(".")){
-                            isSameFileUploadFolderName = "文件夹内的文件必须要有扩展名，如:"+subAfterString(paths[ii], "/")+"没有扩展名";//有重复,即刻返回
-                            return isSameFileUploadFolderName;
-                        }
-                        //第二步,上传的文件夹下的文件名与数据库的文件名是否重复
-                        originFNames.add(subAfterString(paths[ii], "/"));
-                        if (urlss.contains(subAfterString(paths[ii], "/"))) {
-                            isSameFileUploadFolderName = "您订单下的文件夹内文件与系统中已存在的文件重复!如:"+subAfterString(paths[ii], "/");//有重复,即刻返回
-                            return isSameFileUploadFolderName;
-                        }
-                    }
-                    //第三步,查看上传的文件夹下的文件夹名是否有重复//自比较？？？？？？可以优化成不断插入子目录，循环判断
-                    if (centerurl != null) {
-                        if (centerurl.contains("/")) {
-                            afterstr = centerurl.replaceAll("/", "\\\\");
-                            splitArray = afterstr.split("\\\\");
-                            foldernameLists.add(splitArray);
-                        }
-                    }
-                }
-            }
-
-            //自单个路径比较
-            String[] aa = null;
-            List<String> singleFolder = new ArrayList<String>();
-            for (int a = 0; a < foldernameLists.size(); a++) {
-                aa = foldernameLists.get(a);
-                for (int b = 0; b < aa.length; b++) {
-                    if (singleFolder.contains(aa[b])) {
-                        isSameFileUploadFolderName = "您的文件夹内有重复文件夹名,如:"+aa[b];
-                        return isSameFileUploadFolderName;
-                    }
-                    singleFolder.add(aa[b]);
-                }
-                singleFolder.clear();
-            }
-
-            //以下为文件夹交叉排除重复
-            String[] centerfolderone1 = null;
-            String[] centerfoldertwo2 = null;
-            //查找数据文件夹与上传过来的文件夹有没有重名
-            for (int i = 0; i < foldernameLists.size(); i++) {
-                centerfolderone1 = foldernameLists.get(i);
-                for (int j = 1; j < foldernameLists.size(); j++) {
-                    centerfoldertwo2 = foldernameLists.get(j);
-                    for (int k = 0; k < centerfolderone1.length; k++) {
-                        for (int f = 0; f < centerfoldertwo2.length; f++) {
-                            //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
-                            if (k == f && centerfolderone1[k].equals(centerfoldertwo2[f])) {
-                                for (int o = 0; o <= k; o++) {
-                                    if (!centerfolderone1[o].equals(centerfoldertwo2[o])) {
-                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfolderone1[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
-                                        return isSameFileUploadFolderName;
-                                    }
-                                }
-                            } else {
-                                if (centerfolderone1[k].equals(centerfoldertwo2[f])) {
-                                    {//如果不是同一层次的文件夹名字一样.即视重复
-                                        isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:"+centerfolderone1[k];//有重复,即刻返回
-                                        return isSameFileUploadFolderName;
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            //第四步,查看上传的文件夹名与数据库的文件夹名是否重复
-            List<String> urls = fileUploadAndDownMapper.findAllFileUrlLogursByOrderNoandSalorUserName(userInfo.getuId(), view.getSalor(), view.getOrderNo());
-            List<String[]> mysqlcenterurls = new ArrayList<String[]>();
-            Integer pointindex = null;
-            String olderCenterstr = null;
-            String centerstr = null;
-            for (String urladdr : urls) {
-                pointindex = StringUtils.ordinalIndexOf(urladdr, "/", 5);
-                if (pointindex > 0) {
-                    olderCenterstr = urladdr.substring(0, pointindex + 1);
-                    centerstr = urladdr.substring(pointindex + 1, urladdr.length());
-                    centerstr = subMyString(centerstr, "/");
-                    if(centerstr!=null && centerstr!="") {
-                        if (centerstr.contains("/")) {
-                            mysqlcenterurls.add(centerstr.split("/"));
-                        }
-                    }
-                }
-            }
-
-
-            String[] centerfolderone = null;
-            String[] centerfoldertwo = null;
-            mysqlcenterurls.addAll(foldernameLists);//集合为数据库的文件夹名与上传过来的文件夹名
-            //查找数据文件夹与上传过来的文件夹有没有重名
-            for (int i = 0; i < mysqlcenterurls.size(); i++) {
-                centerfolderone = mysqlcenterurls.get(i);
-                for (int j = 1; j < mysqlcenterurls.size(); j++) {
-                    centerfoldertwo = mysqlcenterurls.get(j);
-                    for (int k = 0; k < centerfolderone.length; k++) {
-                        for (int f = 0; f < centerfoldertwo.length; f++) {
-                            //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
-                            if (k == f && centerfolderone[k].equals(centerfoldertwo[f])) {
-                                for (int o = 0; o <= k; o++) {
-                                    if (!centerfolderone[o].equals(centerfoldertwo[o])) {
-                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfolderone[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
-                                        return isSameFileUploadFolderName;
-                                    }
-                                }
-                            } else {
-                                if (centerfolderone[k].equals(centerfoldertwo[f])) {
-                                    {//如果不是同一层次的文件夹名字一样.即视重复
-                                        isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:"+centerfoldertwo[f];//有重复,即刻返回
-                                        return isSameFileUploadFolderName;
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            return isSameFileUploadFolderName;
-
-        }
-
-        @Transactional
-        public List<String> findAllOrderNum ( int currentPageTotalNum, int pageSize) throws Exception {
-            return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum, pageSize);
-        }
-
-        @Transactional
-        public int findAllOrderNumCount () throws Exception {
-            return fileUploadAndDownMapper.findAllOrderNumCount();
-        }
-
-        @Transactional
-        public List<DownloadView> findAllUrlByParamManyOrNo (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
-        }
-
-        @Transactional
-        public int findAllUrlByParamManyOrNoCount (DownloadView view) throws Exception {
-            return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
-        }
-
-        @Transactional
-        public int findAllUrlByParamThreeNew2Count (DownloadView view) throws Exception {
-            String linshiId = view.getLinshiId();
-            if (linshiId == null || linshiId.trim().length() <= 0) {
-                view.setuId(0);
-            } else {
-                view.setuId(Integer.valueOf(linshiId.trim()));
-            }
-            return fileUploadAndDownMapper.findAllUrlByParamThreeNew2Count(view);
-        }
-
-        @Transactional
-        public DownloadView findMessageByOrderNoandUid(String orderNo,String linshiId) throws Exception {
-            Integer uId = 0;
-            if (linshiId == null || linshiId.trim().length() <= 0) {
-                uId = 0;
-            } else {
-                uId = Integer.valueOf(linshiId.trim());
-            }
-            return fileUploadAndDownMapper.findMessageByOrderNoandUid(orderNo,uId);
-        }
-
-        @Transactional
-        public List<FilemanUrl> findAllUrlByOrderNoAndUid(String orderNo,String linshiId) throws  Exception {
-            Integer uId = 0;
-            if (linshiId == null || linshiId.trim().length() <= 0) {
-                uId = 0;
-            } else {
-                uId = Integer.valueOf(linshiId.trim());
-            }
-            return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid2(orderNo,uId);
-        }
-
-
-
-    @Transactional
-        public DownloadView findOrderNobyOrderNo (String orderNo) throws Exception {
-            return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
-        }
+    /**
+     * @author:homey Wong
+     * @Date: 2018.12.21
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws
+            Exception {
+        return fileUploadAndDownMapper.findAllUploadFileByCondition(uid, currentPageTotalNum, PageSize);
 
     }
+
+    /**
+     * 功能描述:分页
+     *
+     * @auther: homey Wong
+     * @date: 2018/12/29 0029 上午 9:47
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllUploadFileCountByUserId(Integer uId) throws Exception {
+        return fileUploadAndDownMapper.findAllUploadFileCountByUserId(uId);
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByOrderNo(orderNo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId) throws
+            Exception {
+        return fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId, fileInfoId, uId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUploadFileByParaCondition(view);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws
+            Exception {
+        return fileUploadAndDownMapper.findAllFileUrlByCondition(uid, currentPageTotalNum, PageSize);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> findAllUrlByParamThree(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamThree(view);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> findAllUrlByParamThreeNew(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamThreeNew(view);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUploadFileCountByParaCondition(view);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllFilesByCondParam(view);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllFilesByCondParamCount(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllFilesByCondParamCount(view);
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FileManFileInfo getFileInfoByOrderNo(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.getFileInfoByOrderNo(orderNo);
+    }
+
+    /**
+     * 功能描述:文件上传查看名是否有重复
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/18 0018 下午 4:31
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) {
+        //第一步，查看上传文件们的是否有重复
+        String[] names = null;
+        if (filePathName.contains(",")) {
+            names = filePathName.split(",");
+        } else {
+            names[0] = filePathName;
+        }
+        List<String> originNames = new ArrayList<String>();
+        String isSameFileUpload = "OK";//代表没有
+        for (int i = 0; i < names.length; i++) {
+            if (originNames.contains(names[i])) {
+                isSameFileUpload = "您要上传的文件文件名有重复,如:" + names[i];//有，即刻返回
+                return isSameFileUpload;
+            } else {
+                originNames.add(names[0]);
+            }
+
+        }
+        //第二步，查看数据库里与现在要上传的文件们是否有重复
+
+        List<String> urls = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
+
+        for (String s : originNames) {
+            if (urls.contains(s)) {
+                isSameFileUpload = "同一订单下您的文件已上传过,如:" + s;//有重复,即刻返回
+                return isSameFileUpload;
+            }
+        }
+        return isSameFileUpload;
+
+    }
+
+    /**
+     * 功能描述:查看要上传的文件夹有没重名和文件夹下的文件名有无重名
+     *
+     * @auther: homey Wong
+     * @date: 2019/1/18 0018 下午 4:45
+     * @param:
+     * @return:
+     * @describtion
+     */
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) {
+        String[] paths = null;
+        if (filePathName.contains(",")) {
+            paths = filePathName.split(",");
+        } else {
+            paths[0] = filePathName;
+        }
+        String isSameFileUploadFolderName = "OK";//代表没有重复
+        List<String> originFNames = new ArrayList<String>();
+        List<String[]> foldernameLists = new ArrayList<String[]>();
+        String afterstr = null;
+        String[] splitArray = null;
+        List<String> urlss = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
+        for (int ii = 0; ii < paths.length; ii++) {
+            if (paths[ii].contains(",")) {
+                isSameFileUploadFolderName = "文件夹或文件名不能包含,号!如:" + paths[ii];//表示上传文件夹中,存在
+                return isSameFileUploadFolderName;
+            } else {
+                String centerurl = StringUtil.subMyString(paths[ii], "/");
+                //第一步,查看上传文件夹下的文件名是否相同
+                if (originFNames.contains(subAfterString(paths[ii], "/"))) {
+                    isSameFileUploadFolderName = "文件夹内有重复文件名文件！如:" + subAfterString(paths[ii], "/");//表示上传文件夹中就有相同文件名字存在
+                    return isSameFileUploadFolderName;
+                } else {
+                    if (!subAfterString(paths[ii], "/").contains(".")) {
+                        isSameFileUploadFolderName = "文件夹内的文件必须要有扩展名，如:" + subAfterString(paths[ii], "/") + "没有扩展名";//有重复,即刻返回
+                        return isSameFileUploadFolderName;
+                    }
+                    //第二步,上传的文件夹下的文件名与数据库的文件名是否重复
+                    originFNames.add(subAfterString(paths[ii], "/"));
+                    if (urlss.contains(subAfterString(paths[ii], "/"))) {
+                        isSameFileUploadFolderName = "您订单下的文件夹内文件与系统中已存在的文件重复!如:" + subAfterString(paths[ii], "/");//有重复,即刻返回
+                        return isSameFileUploadFolderName;
+                    }
+                }
+                //第三步,查看上传的文件夹下的文件夹名是否有重复//自比较？？？？？？可以优化成不断插入子目录，循环判断
+                if (centerurl != null) {
+                    if (centerurl.contains("/")) {
+                        afterstr = centerurl.replaceAll("/", "\\\\");
+                        splitArray = afterstr.split("\\\\");
+                        foldernameLists.add(splitArray);
+                    }
+                }
+            }
+        }
+
+        //自单个路径比较
+        String[] aa = null;
+        List<String> singleFolder = new ArrayList<String>();
+        for (int a = 0; a < foldernameLists.size(); a++) {
+            aa = foldernameLists.get(a);
+            for (int b = 0; b < aa.length; b++) {
+                if (singleFolder.contains(aa[b])) {
+                    isSameFileUploadFolderName = "您的文件夹内有重复文件夹名,如:" + aa[b];
+                    return isSameFileUploadFolderName;
+                }
+                singleFolder.add(aa[b]);
+            }
+            singleFolder.clear();
+        }
+
+        //以下为文件夹交叉排除重复
+        String[] centerfolderone1 = null;
+        String[] centerfoldertwo2 = null;
+        //查找数据文件夹与上传过来的文件夹有没有重名
+        for (int i = 0; i < foldernameLists.size(); i++) {
+            centerfolderone1 = foldernameLists.get(i);
+            for (int j = 1; j < foldernameLists.size(); j++) {
+                centerfoldertwo2 = foldernameLists.get(j);
+                for (int k = 0; k < centerfolderone1.length; k++) {
+                    for (int f = 0; f < centerfoldertwo2.length; f++) {
+                        //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
+                        if (k == f && centerfolderone1[k].equals(centerfoldertwo2[f])) {
+                            for (int o = 0; o <= k; o++) {
+                                if (!centerfolderone1[o].equals(centerfoldertwo2[o])) {
+                                    isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:" + centerfolderone1[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                    return isSameFileUploadFolderName;
+                                }
+                            }
+                        } else {
+                            if (centerfolderone1[k].equals(centerfoldertwo2[f])) {
+                                {//如果不是同一层次的文件夹名字一样.即视重复
+                                    isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:" + centerfolderone1[k];//有重复,即刻返回
+                                    return isSameFileUploadFolderName;
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //第四步,查看上传的文件夹名与数据库的文件夹名是否重复
+        List<String> urls = fileUploadAndDownMapper.findAllFileUrlLogursByOrderNoandSalorUserName(userInfo.getuId(), view.getSalor(), view.getOrderNo());
+        List<String[]> mysqlcenterurls = new ArrayList<String[]>();
+        Integer pointindex = null;
+        String olderCenterstr = null;
+        String centerstr = null;
+        for (String urladdr : urls) {
+            pointindex = StringUtils.ordinalIndexOf(urladdr, "/", 5);
+            if (pointindex > 0) {
+                olderCenterstr = urladdr.substring(0, pointindex + 1);
+                centerstr = urladdr.substring(pointindex + 1, urladdr.length());
+                centerstr = subMyString(centerstr, "/");
+                if (centerstr != null && centerstr != "") {
+                    if (centerstr.contains("/")) {
+                        mysqlcenterurls.add(centerstr.split("/"));
+                    }
+                }
+            }
+        }
+
+
+        String[] centerfolderone = null;
+        String[] centerfoldertwo = null;
+        mysqlcenterurls.addAll(foldernameLists);//集合为数据库的文件夹名与上传过来的文件夹名
+        //查找数据文件夹与上传过来的文件夹有没有重名
+        for (int i = 0; i < mysqlcenterurls.size(); i++) {
+            centerfolderone = mysqlcenterurls.get(i);
+            for (int j = 1; j < mysqlcenterurls.size(); j++) {
+                centerfoldertwo = mysqlcenterurls.get(j);
+                for (int k = 0; k < centerfolderone.length; k++) {
+                    for (int f = 0; f < centerfoldertwo.length; f++) {
+                        //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
+                        if (k == f && centerfolderone[k].equals(centerfoldertwo[f])) {
+                            for (int o = 0; o <= k; o++) {
+                                if (!centerfolderone[o].equals(centerfoldertwo[o])) {
+                                    isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:" + centerfolderone[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
+                                    return isSameFileUploadFolderName;
+                                }
+                            }
+                        } else {
+                            if (centerfolderone[k].equals(centerfoldertwo[f])) {
+                                {//如果不是同一层次的文件夹名字一样.即视重复
+                                    isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:" + centerfoldertwo[f];//有重复,即刻返回
+                                    return isSameFileUploadFolderName;
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return isSameFileUploadFolderName;
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> findAllOrderNum(int currentPageTotalNum, int pageSize) throws Exception {
+        return fileUploadAndDownMapper.findAllOrderNum(currentPageTotalNum, pageSize);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllOrderNumCount() throws Exception {
+        return fileUploadAndDownMapper.findAllOrderNumCount();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<DownloadView> findAllUrlByParamManyOrNo(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamManyOrNo(view);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllUrlByParamManyOrNoCount(DownloadView view) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception {
+        String linshiId = view.getLinshiId();
+        if (linshiId == null || linshiId.trim().length() <= 0) {
+            view.setuId(0);
+        } else {
+            view.setuId(Integer.valueOf(linshiId.trim()));
+        }
+        return fileUploadAndDownMapper.findAllUrlByParamThreeNew2Count(view);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public DownloadView findMessageByOrderNoandUid(String orderNo, String linshiId) throws Exception {
+        Integer uId = 0;
+        if (linshiId == null || linshiId.trim().length() <= 0) {
+            uId = 0;
+        } else {
+            uId = Integer.valueOf(linshiId.trim());
+        }
+        return fileUploadAndDownMapper.findMessageByOrderNoandUid(orderNo, uId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<FilemanUrl> findAllUrlByOrderNoAndUid(String orderNo, String linshiId) throws Exception {
+        Integer uId = 0;
+        if (linshiId == null || linshiId.trim().length() <= 0) {
+            uId = 0;
+        } else {
+            uId = Integer.valueOf(linshiId.trim());
+        }
+        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid2(orderNo, uId);
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public DownloadView findOrderNobyOrderNo(String orderNo) throws Exception {
+        return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
+    }
+
+}

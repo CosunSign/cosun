@@ -4,7 +4,6 @@ import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.listener.MyProgressListener;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
-import com.cosun.cosunp.tool.FileUtil;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
