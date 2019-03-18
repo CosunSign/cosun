@@ -131,7 +131,7 @@ public class UploadServlet extends HttpServlet {
                     }
 
                     if (fileArray.size() > 0) {
-                            view = fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
+                           fileUploadAndDownServ.findIsExistFiles(fileArray, view, userInfo);
 
                     }
                 }

@@ -1,8 +1,10 @@
 package com.cosun.cosunp;
 
+import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -20,7 +22,6 @@ import javax.servlet.MultipartConfigElement;
 @SpringBootApplication
 @MapperScan("com.cosun.cosunp.mapper")
 @Configuration
-@ServletComponentScan("com.cosun.cosunp.servlet")
 @EnableCaching
 public class CosunpApplication extends SpringBootServletInitializer {
 
@@ -47,6 +48,16 @@ public class CosunpApplication extends SpringBootServletInitializer {
     }
 
 
+    @Bean
+    public CommandLineRunner init(final IFileUploadAndDownServ fileUploadAndDownServ) {
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... args) throws Exception {
+                fileUploadAndDownServ.deleteAll();
+                fileUploadAndDownServ.init();
+            }
+        };
+    }
 
 }
 

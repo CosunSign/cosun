@@ -4,14 +4,19 @@ import com.alibaba.fastjson.JSON;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
+import com.cosun.cosunp.tool.Constants;
 import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,11 +32,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/fileupdown")
 public class FileUploadAndDownController {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private IUserInfoServ userInfoServ;
@@ -2447,6 +2456,188 @@ public class FileUploadAndDownController {
 
     }
 
+    /**
+     * 秒传判断，断点判断
+     *
+     * @return
+     */
+    @RequestMapping(value = "/checkFileMd5", method = RequestMethod.POST)
+    @ResponseBody
+    public Object checkFileMd5(String md5) throws IOException {
+        Object processingObj = stringRedisTemplate.opsForHash().get(Constants.FILE_UPLOAD_STATUS, md5);
+        if (processingObj == null) {
+            return new ResultVo(ResultStatus.NO_HAVE);
+        }
+        String processingStr = processingObj.toString();
+        boolean processing = Boolean.parseBoolean(processingStr);
+        String value = stringRedisTemplate.opsForValue().get(Constants.FILE_MD5_KEY + md5);
+        if (processing) {
+            return new ResultVo(ResultStatus.IS_HAVE, value);
+        } else {
+            File confFile = new File(value);
+            byte[] completeList = FileUtils.readFileToByteArray(confFile);
+            List<String> missChunkList = new LinkedList<>();
+            for (int i = 0; i < completeList.length; i++) {
+                if (completeList[i] != Byte.MAX_VALUE) {
+                    missChunkList.add(i + "");
+                }
+            }
+            return new ResultVo<>(ResultStatus.ING_HAVE, missChunkList);
+        }
+    }
+
+    @RequestMapping(value = "/saveFolderMessage", method = RequestMethod.POST)
+    @ResponseBody
+    public void saveFolderMessage(DownloadView view,HttpSession session) throws Exception{
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        fileUploadAndDownServ.saveFolderMessage(view, userInfo);
+    }
+
+    @RequestMapping(value = "/saveFolderMessageUpdate", method = RequestMethod.POST)
+    @ResponseBody
+    public void saveFolderMessageUpdate(DownloadView view,HttpSession session) throws Exception{
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
+    }
+
+
+    @RequestMapping(value = "/saveFileMessage", method = RequestMethod.POST)
+    @ResponseBody
+    public void saveFileMessage(DownloadView view,HttpSession session) throws Exception{
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        fileUploadAndDownServ.saveFileMessage(view, userInfo);
+    }
+
+
+    @RequestMapping(value = "/saveFileMessageUpdate", method = RequestMethod.POST)
+    @ResponseBody
+    public void saveFileMessageUpdate(DownloadView view,HttpSession session) throws Exception{
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param param
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity uploadFile(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        DownloadView view = new DownloadView();
+        if (isMultipart) {
+            logger.info("上传文件start。");
+            try {
+                // 方法1
+                //storageService.uploadFileRandomAccessFile(param);
+                // 方法2 这个更快点
+                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer1(param,userInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("文件上传失败。{}", param.toString());
+            }
+            logger.info("上传文件end。");
+        }
+        return ResponseEntity.ok().body("上传成功。");
+    }
+
+    /**
+     * 更新文件夹
+     *
+     * @param param
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/modifyfolder1", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity modifyfolder1(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        DownloadView view = new DownloadView();
+        if (isMultipart) {
+            logger.info("更新文件start。");
+            try {
+                // 方法1
+                //storageService.uploadFileRandomAccessFile(param);
+                // 方法2 这个更快点
+                fileUploadAndDownServ.modifyFolderByMappedByteBuffer(param,userInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("文件更新失败。{}", param.toString());
+            }
+            logger.info("更新文件end。");
+        }
+        return ResponseEntity.ok().body("更新成功。");
+    }
+
+
+    /**
+     * 更新文件夹
+     *
+     * @param param
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/modifyfile1", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity modifyfile1(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        DownloadView view = new DownloadView();
+        if (isMultipart) {
+            logger.info("更新文件start。");
+            try {
+                // 方法1
+                //storageService.uploadFileRandomAccessFile(param);
+                // 方法2 这个更快点
+                fileUploadAndDownServ.modifyFileByMappedByteBuffer(param,userInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("文件更新失败。{}", param.toString());
+            }
+            logger.info("更新文件end。");
+        }
+        return ResponseEntity.ok().body("更新成功。");
+    }
+
+
+
+    /**
+     * 上传文件
+     *
+     * @param param
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        DownloadView view = new DownloadView();
+        if (isMultipart) {
+            logger.info("上传文件start。");
+            try {
+                // 方法1
+                //storageService.uploadFileRandomAccessFile(param);
+                // 方法2 这个更快点
+                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer(param,userInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.error("文件上传失败。{}", param.toString());
+            }
+            logger.info("上传文件end。");
+        }
+        return ResponseEntity.ok().body("上传成功。");
+    }
 
     /**
      * 功能描述:  文件夹上传
@@ -2458,7 +2649,7 @@ public class FileUploadAndDownController {
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadfolder2", method = RequestMethod.POST)
     public ModelAndView saveFolderFiles(HttpServletRequest
                                                 request, @ModelAttribute(value = "view") DownloadView
                                                 view, HttpSession session) throws Exception {

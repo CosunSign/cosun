@@ -37,13 +37,25 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findAllUploadFileByUserId(Integer uid) throws Exception;
 
-    DownloadView addFilesData(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception;
+    void addFilesData(DownloadView view, UserInfo userInfo) throws Exception;
 
     String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
 
     List<UserInfo> findAllUser() throws Exception;
 
+    DownloadView uploadFileByMappedByteBuffer(MultipartFileParam param,UserInfo info) throws Exception;
+
+    DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param,UserInfo info) throws Exception;
+
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
+
+    void modifyFolderByMappedByteBuffer(MultipartFileParam param,UserInfo info) throws Exception;
+
+    void modifyFileByMappedByteBuffer(MultipartFileParam param,UserInfo info) throws Exception;
+
+    void saveFolderMessageUpdate(DownloadView view,UserInfo info) throws Exception;
+
+    void saveFileMessageUpdate(DownloadView view,UserInfo info) throws Exception;
 
     void saveOrUpdateFilePrivilege(List<DownloadView> views,List<String> privilegeusers,UserInfo info) throws Exception;
 
@@ -59,11 +71,19 @@ public interface IFileUploadAndDownServ {
 
     int findAllOrderNumCount() throws Exception;
 
+    void deleteAll();
+
+    void init();
+
+    void saveFolderMessage(DownloadView view,UserInfo userInfo) throws Exception;
+
+    void saveFileMessage(DownloadView view,UserInfo userInfo) throws Exception;
+
     List<String> findAllUrlByOrderNo2(String orderNo) throws Exception;
 
     int findAllUploadFileCountByParaCondition(DownloadView view) throws Exception;
 
-    DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
+    void findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
 
     DownloadView findIsExistFilesFolder(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception;
 

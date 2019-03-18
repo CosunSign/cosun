@@ -1,18 +1,32 @@
 package com.cosun.cosunp.service.impl;
 
+import com.cosun.cosunp.controller.FileUploadAndDownController;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
-import com.cosun.cosunp.tool.FtpUtils;
-import com.cosun.cosunp.tool.MathUtil;
-import com.cosun.cosunp.tool.StringUtil;
+import com.cosun.cosunp.tool.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,12 +46,31 @@ import static com.cosun.cosunp.tool.StringUtil.*;
 @Transactional(rollbackFor = Exception.class)
 public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
+    private static Logger logger = LogManager.getLogger(FileUploadAndDownServiceImpl.class);
 
     @Autowired
     private UserInfoMapper userInfoMapper;
 
     @Autowired
     private FileUploadAndDownMapper fileUploadAndDownMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    // 保存文件的根目录
+    private Path rootPaht;
+
+    //这个必须与前端设定的值一致
+    @Value("${spring.thymeleaf.reactive.max-chunk-size}")
+    private long CHUNK_SIZE;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String finalDirPath;
+
+    @Autowired
+    public FileUploadAndDownServiceImpl(@Value("${spring.servlet.multipart.location}") String location) {
+        this.rootPaht = Paths.get(location);
+    }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -303,7 +336,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
             if (isAllExistFile) {
-                updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
+                //updateFilesData(fileManFileInfo, view, newFileArray, userInfo);
                 view.setFlag("-18");//代表文件全部更新成功
             }
 
@@ -334,6 +367,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (filePathName.contains(",")) {
             pathName = filePathName.split(",");
         } else {
+            pathName = new String[1];
             pathName[0] = filePathName;
         }
         boolean isFolderNameForEngDateOrderNoSalor = true;
@@ -380,11 +414,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (fileManFileInfo.size() > 0) {  //看四层基本层次结构存不存在
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             if (isAllNewFile) { //全为新文件
-                view = addOldOrderNoNewFilesByFolder(view, fileArray, userInfo, oldFileUrls.get(0).getLogur1(), fileManFileInfo);
+                addOldOrderNoNewFilesByFolder(view, userInfo, oldFileUrls.get(0).getLogur1(), fileManFileInfo);
                 view.setFlag("1");
             }
         } else {//如果没有文件夹,直接当成新文件全部存.
-            view = this.addFilesDatabyFolder(view, fileArray, userInfo);
+            this.addFilesDatabyFolder(view, userInfo);
             view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
 
         }
@@ -477,7 +511,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             if (isAllExistFile) {//代表文件夹与文件全是以前存在过的
-                updateFilesDataFolder(fileManFileInfo, view, newFileArray, userInfo);
+                //updateFilesDataFolder(fileManFileInfo, view, newFileArray, userInfo);
                 view.setFlag("-18");//代表文件全部更新成功
             }
 
@@ -523,37 +557,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
+    public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
+        String[] splitPathNames =  view.getFilePathNames().split(",");
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
-        String fileName = null;
-        int index;
-        String centerPath = null;
-        String filePath = null;
-        Integer pointindex = 0;
-        String oldsPath = null;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
             ffi = fileManFileInfo.get(0);
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
             ffi.setUpdateTime(new Date());
-            ffi.setUpdateUser(view.getUserName());
+            ffi.setUpdateUser(userInfo.getUserName());
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
-            for (MultipartFile file : fileArray) {
-                filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(subAfterString(file.getOriginalFilename(), "/"), fileManFileInfo.get(0).getId());
-                pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
-                oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+            for (int i = 0 ;i < splitPathNames.length;i++) {
+                filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(subAfterString(splitPathNames[i], "/"), fileManFileInfo.get(0).getId());
                 if (filemanUrl != null) {
-                    // FileUtil.modifyUpdateFileFolderByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
-
-                    fileName = file.getOriginalFilename();
-                    index = fileName.lastIndexOf("/");
-                    centerPath = fileName.substring(0, index);
-                    fileName = fileName.substring(index + 1, fileName.length());
-                    filePath = oldsPath + centerPath;
-                    FtpUtils.uploadFile(filePath, fileName, file.getInputStream());
-
-
                     //取老文件信息
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
@@ -566,19 +583,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public DownloadView addFilesDatabyFolder(DownloadView view, List<MultipartFile> files, UserInfo userInfo) throws Exception {
-        if (files == null || files.size() <= 0) { // //空文件返回 0
-            view.setFlag("0");
-        }
-        String randomNum = MathUtil.getRandom620(8);
-        String orginname = "";//原始文件名
-        String deskName = "";//程序自定义文件名
+    public void addFilesDatabyFolder(DownloadView view, UserInfo userInfo) throws Exception {
+        String splitPaths[] = view.getFilePathNames().split(",");
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
         List<FilemanRight> filemanRights = new ArrayList<FilemanRight>();
         FileManFileInfo fileManFileInfo;
         FilemanUrl filemanUrl;
         FilemanRight filemanRight;
-        String name1 = null;
         //存文件的人与文件信息
         fileManFileInfo = new FileManFileInfo();
         fileManFileInfo.setCreateTime(new Date());
@@ -588,34 +599,23 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setExtInfo1(view.getSalor());
         fileManFileInfo.setOrderNum(view.getOrderNo());
         fileManFileInfo.setProjectName(view.getProjectName());
-        fileManFileInfo.setTotalFilesNum(files.size());
+        fileManFileInfo.setTotalFilesNum(splitPaths.length);
         fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
         fileUploadAndDownMapper.addfileManFileDataByUpload(fileManFileInfo);
-
-        String ftpUrl = null;
-        String fileName = null;
-        int index;
-        String centerPath = null;
-        String filePath = null;
+        String centerUrl = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
+                + view.getRandom8() + "/" + view.getOrderNo() + "/";
+        String orginname = null;
         //文件进度长度
-        for (int i = 0; i < files.size(); i++) {
+        for (int i = 0; i < splitPaths.length; i++) {
             try {
-                fileName = files.get(i).getOriginalFilename();
-                index = fileName.lastIndexOf("/");
-                centerPath = fileName.substring(0, index);
-                fileName = fileName.substring(index + 1, fileName.length());
-                filePath = view.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/" + centerPath;
-                FtpUtils.uploadFile(filePath, fileName, files.get(i).getInputStream());
-                deskName = filePath + "/" + fileName;
-                orginname = subAfterString(deskName, "/");
+                orginname = subAfterString(splitPaths[i], "/");
                 filemanUrl = new FilemanUrl();
                 filemanUrl.setOrginName(orginname);
-                filemanUrl.setuId(view.getuId());
+                filemanUrl.setuId(userInfo.getuId());
                 filemanUrl.setUserName(userInfo.getUserName());
                 filemanUrl.setOpRight("1");
-                filemanUrl.setLogur1(deskName);
+                filemanUrl.setLogur1(centerUrl + splitPaths[i]);
                 filemanUrl.setUpTime(new Date());
                 filemanUrl.setFileInfoId(fileManFileInfo.getId());
                 filemanUrls.add(filemanUrl);
@@ -631,57 +631,43 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
                 filemanRights.add(filemanRight);
                 fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
-                view.setFlag("1");
-
             } catch (Exception e) {
-                view.setFlag("-1");
                 e.printStackTrace();
                 throw e;
             }
         }
 
-        return view;
     }
 
 
     //上传的是文件夹,根据以前的路径存文件
     @Transactional(rollbackFor = Exception.class)
-    public DownloadView addOldOrderNoNewFilesByFolder(DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception {
+    public void addOldOrderNoNewFilesByFolder(DownloadView view, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
+        String[] splitPaths = view.getFilePathNames().split(",");
         Integer pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
         String oldsPath = oldPath.substring(0, pointindex + 1);
-        String orginname = "";//原始文件名
-        String deskName = "";//程序自定义文件名
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
         List<FilemanRight> filemanRights = new ArrayList<FilemanRight>();
         FilemanUrl filemanUrl;
         FilemanRight filemanRight;
-        String name1 = null;
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
-        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + fileArray.size());
+        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitPaths.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
         String fileName = null;
-        int index;
-        String centerPath = null;
-        String filePath = null;
+        String allPathName = null;
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
-        for (MultipartFile file : fileArray) {
-            fileName = file.getOriginalFilename();
-            index = fileName.lastIndexOf("/");
-            centerPath = fileName.substring(0, index);
-            fileName = fileName.substring(index + 1, fileName.length());
-            filePath = oldsPath + centerPath;
-            FtpUtils.uploadFile(filePath, fileName, file.getInputStream());
-            deskName = filePath + "/" + fileName;
-            orginname = subAfterString(deskName, "/");
+        for (int i = 0; i < splitPaths.length; i++) {
+            fileName = StringUtil.subAfterString(splitPaths[1], "/");
+            allPathName = oldsPath + "/" + splitPaths[1];
             //存储文件路径
             filemanUrl = new FilemanUrl();
-            filemanUrl.setOrginName(orginname);
+            filemanUrl.setOrginName(fileName);
             filemanUrl.setUserName(userInfo.getUserName());
             filemanUrl.setOpRight("1");
-            filemanUrl.setLogur1(deskName);
-            filemanUrl.setuId(view.getuId());
+            filemanUrl.setLogur1(allPathName);
+            filemanUrl.setuId(userInfo.getuId());
             filemanUrl.setUpTime(new Date());
             filemanUrl.setFileInfoId(fileManFileInfo.getId());
             filemanUrls.add(filemanUrl);
@@ -691,8 +677,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight = new FilemanRight();
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
-            filemanRight.setFileName(orginname);
-            //filemanRight.setuId(userInfo.getuId());
+            filemanRight.setFileName(fileName);
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
@@ -701,15 +686,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
         }
         //为空 代表文件服务器中没有，但所填写的订单信息与数据库不匹配，此时中止行为，反回界面提示
-
-        return view;
     }
 
 
     //以下功能为文件上传功能,只对新的文件进行存储
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public DownloadView findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
+    public void findIsExistFiles(List<MultipartFile> fileArray, DownloadView view, UserInfo userInfo) throws Exception {
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
         //根据业务员订单号设计师看有没有文件夹
         List<String> urlStr = new ArrayList<String>();
@@ -734,18 +717,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if (pointFolder != null && pointFolder.length() > 0 && !view.getSaveFolderName().equals("")) {//代表为用户指定目录
                 int lia = pointFolder.indexOf(view.getSaveFolderName());
                 pointFolder = pointFolder.substring(0, lia + view.getSaveFolderName().length() + 1);
-                view = addOFilesByPointFile(view, fileArray, userInfo, pointFolder, fileManFileInfo);
-                view.setFlag("1");
+                addOFilesByPointFile(view, userInfo, pointFolder, fileManFileInfo);
             } else {
-                view = addOldOrderNoNewFiles(view, fileArray, userInfo, urlStr, fileManFileInfo);
-                view.setFlag("1");
+                addOldOrderNoNewFiles(view, userInfo, urlStr, fileManFileInfo);
             }
 
         } else {//如果没有文件夹,直接当成新文件全部存.
-            view = this.addFilesData(view, fileArray, userInfo);
-            view.setFlag("1");//代表全为新文件,且无文件夹,存储成功
+            this.addFilesData(view, userInfo);
         }
-        return view;
     }
 
     /**
@@ -758,28 +737,21 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, List<MultipartFile> fileArray, UserInfo userInfo) throws Exception {
+    public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
+        String[] splitNames = view.getFilePathNames().split(",");
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
             ffi = fileManFileInfo.get(0);
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
             ffi.setUpdateTime(new Date());
-            ffi.setUpdateUser(view.getUserName());
-            int pointindex;
-            String oldsPath = null;
+            ffi.setUpdateUser(userInfo.getUserName());
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
-            for (MultipartFile file : fileArray) {
-                filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(file.getOriginalFilename(), fileManFileInfo.get(0).getId());
+            for (int i = 0; i < splitNames.length; i++) {
+                filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(splitNames[i], fileManFileInfo.get(0).getId());
                 if (filemanUrl != null) {
-                    //FileUtil.modifyUpdateFileByUrl(file, userInfo, view, filemanUrl.getLogur1());//覆盖文件操作
-                    pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
-                    oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
-                    FtpUtils.uploadFile(oldsPath, file.getOriginalFilename(), file.getInputStream());
                     //取老文件信息
-
-
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
                     filemanUrl.setModifyReason(view.getModifyReason());
@@ -797,11 +769,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public DownloadView addOFilesByPointFile(DownloadView view, List<MultipartFile> fileArray,
-                                             UserInfo userInfo, String pointpath,
-                                             List<FileManFileInfo> fileManFileInfos) throws Exception{
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\按客户指定目录保存文件
-
+    public void addOFilesByPointFile(DownloadView view, UserInfo userInfo, String pointpath,
+                                     List<FileManFileInfo> fileManFileInfos) throws Exception {
+        String[] splitNames = view.getFilePathNames().split(",");
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
@@ -809,28 +779,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FilemanUrl filemanUrl;
         FilemanRight filemanRight;
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
-        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + fileArray.size());
+        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitNames.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
-        for (MultipartFile file : fileArray) {
-            orginname = file.getOriginalFilename();
+        for (int i = 0; i < splitNames.length; i++) {
+            orginname = splitNames[i];
             deskName = pointpath + orginname;
-            // FileUtil.uploadFileByUrl(file, userInfo, view, pointpath);
-            try {
-                FtpUtils.uploadFile(pointpath, orginname, file.getInputStream());
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
             filemanUrl.setUserName(userInfo.getUserName());
             filemanUrl.setOpRight("1");
             filemanUrl.setLogur1(deskName);
-            filemanUrl.setuId(view.getuId());
+            filemanUrl.setuId(userInfo.getuId());
             filemanUrl.setUpTime(new Date());
             filemanUrl.setFileInfoId(fileManFileInfo.getId());
             filemanUrls.add(filemanUrl);
@@ -841,22 +803,18 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
             filemanRight.setFileName(orginname);
-            // filemanRight.setuId(userInfo.getuId());
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
-
             filemanRights.add(filemanRight);
             fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
         }
-        return view;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public DownloadView addOldOrderNoNewFiles(DownloadView view, List<MultipartFile> fileArray,
-                                              UserInfo userInfo, List<String> oldPaths,
-                                              List<FileManFileInfo> fileManFileInfos) throws Exception {
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
+    public void addOldOrderNoNewFiles(DownloadView view, UserInfo userInfo, List<String> oldPaths,
+                                      List<FileManFileInfo> fileManFileInfos) throws Exception {
+        String[] splitNames = view.getFilePathNames().split(",");
         String oldPath = null;
         Integer pointindex = null;
         String oldsPath = null;
@@ -870,23 +828,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FilemanUrl filemanUrl;
         FilemanRight filemanRight;
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
-        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + fileArray.size());
+        fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitNames.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
-        for (MultipartFile file : fileArray) {
-            orginname = file.getOriginalFilename();
+        for (int i = 0; i < splitNames.length; i++) {
+            orginname = splitNames[i];
             deskName = oldsPath + orginname;
-            //FileUtil.uploadFileByUrl(file, userInfo, view, oldsPath);
-            FtpUtils.uploadFile(oldsPath, file.getOriginalFilename(), file.getInputStream());
-            deskName = oldsPath + file.getOriginalFilename();
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(orginname);
             filemanUrl.setUserName(userInfo.getUserName());
             filemanUrl.setOpRight("1");
             filemanUrl.setLogur1(deskName);
-            filemanUrl.setuId(view.getuId());
+            filemanUrl.setuId(userInfo.getuId());
             filemanUrl.setUpTime(new Date());
             filemanUrl.setFileInfoId(fileManFileInfo.getId());
             filemanUrls.add(filemanUrl);
@@ -897,28 +852,22 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             filemanRight.setCreateTime(view.getCreateTime());
             filemanRight.setCreateUser(userInfo.getUserName());
             filemanRight.setFileName(orginname);
-            // filemanRight.setuId(userInfo.getuId());
             filemanRight.setUserName(userInfo.getUserName());
             filemanRight.setFileUrlId(filemanUrl.getId());
             filemanRight.setFileInfoId(fileManFileInfo.getId());
-
             filemanRights.add(filemanRight);
             fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
         }
         //为空 代表文件服务器中没有，但所填写的订单信息与数据库不匹配，此时中止行为，反回界面提示
 
 
-        return view;
-
     }
 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public DownloadView addFilesData(DownloadView view, List<MultipartFile> files, UserInfo userInfo) throws Exception {
-        if (files == null || files.size() <= 0) { // //空文件返回 0
-            view.setFlag("0");
-        }
+    public void addFilesData(DownloadView view, UserInfo userInfo) throws Exception {
+        String[] splitNames = view.getFilePathNames().split(",");
         String randomNum = MathUtil.getRandom620(8);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
@@ -938,26 +887,21 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setExtInfo1(view.getSalor());
         fileManFileInfo.setOrderNum(view.getOrderNo());
         fileManFileInfo.setProjectName(view.getProjectName());
-        fileManFileInfo.setTotalFilesNum(files.size());
+        fileManFileInfo.setTotalFilesNum(splitNames.length);
         fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
         fileUploadAndDownMapper.addfileManFileDataByUpload(fileManFileInfo);
 
 
-        for (int i = 0; i < files.size(); i++) {
+        for (int i = 0; i < splitNames.length; i++) {
             try {
-                //deskName = FileUtil.uploadFile(files.get(i), userInfo, view, randomNum);
-                FtpUtils.uploadFile(userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/", files.get(i).getOriginalFilename(), files.get(i).getInputStream());
                 deskName = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                        + randomNum + "/" + view.getOrderNo() + "/" + files.get(i).getOriginalFilename();
-                orginname = files.get(i).getOriginalFilename();
-
-
+                        + view.getRandom8() + "/" + view.getOrderNo() + "/" + splitNames[i];
+                orginname = splitNames[i];
                 //存储文件路径
                 filemanUrl = new FilemanUrl();
                 filemanUrl.setOrginName(orginname);
-                filemanUrl.setuId(view.getuId());
+                filemanUrl.setuId(userInfo.getuId());
                 filemanUrl.setUserName(userInfo.getUserName());
                 filemanUrl.setOpRight("1");
                 filemanUrl.setLogur1(deskName);
@@ -971,22 +915,17 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 filemanRight.setCreateTime(view.getCreateTime());
                 filemanRight.setCreateUser(userInfo.getUserName());
                 filemanRight.setFileName(orginname);
-                // filemanRight.setuId(userInfo.getuId());
                 filemanRight.setUserName(userInfo.getUserName());
                 filemanRight.setFileUrlId(filemanUrl.getId());
                 filemanRight.setFileInfoId(fileManFileInfo.getId());
                 filemanRights.add(filemanRight);
                 fileUploadAndDownMapper.addFilemanRightDataByUpload(filemanRight);
-                view.setFlag("1");
-
             } catch (Exception e) {
-                view.setFlag("-1");
                 e.printStackTrace();
                 throw e;
             }
         }
 
-        return view;
     }
 
 
@@ -1195,6 +1134,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (filePathName.contains(",")) {
             paths = filePathName.split(",");
         } else {
+            paths = new String[1];
             paths[0] = filePathName;
         }
         String isSameFileUploadFolderName = "OK";//代表没有重复
@@ -1399,5 +1339,453 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public DownloadView findOrderNobyOrderNo(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findOrderNobyOrderNo(orderNo);
     }
+
+    @Transactional
+    @Override
+    public void saveFolderMessageUpdate(DownloadView view, UserInfo info) throws Exception {
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), view.getOrderNo(), view.getSalor());
+        if (fileManFileInfo.size() > 0) { //代表前四级文件夹存在
+            updateFilesDataFolder(fileManFileInfo, view, info);
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void saveFileMessageUpdate(DownloadView view, UserInfo info) throws Exception {
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), view.getOrderNo(), view.getSalor());
+        if (fileManFileInfo.size() > 0) { //代表文件夹存在
+            updateFilesData(fileManFileInfo, view, info);
+
+        }
+
+    }
+
+    @Transactional
+    public void saveFileMessage(DownloadView view, UserInfo userInfo) throws Exception {
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<String> urlStr = new ArrayList<String>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(userInfo.getUserName(), view.getOrderNo(), view.getSalor());
+        String pointFolder = null;
+        boolean f = true;
+        if (fileManFileInfo.size() > 0) {  //有文件夹
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            for (FilemanUrl fu : oldFileUrls) {
+                if (view.getSaveFolderName() != null) {
+                    if (view.getSaveFolderName() != "" && f) {
+                        if (fu.getLogur1().contains(view.getSaveFolderName())) {
+                            pointFolder = fu.getLogur1();
+                            f = false;
+                        }
+                    }
+                }
+                urlStr.add(fu.getLogur1());
+            }
+
+            if (pointFolder != null && pointFolder.length() > 0 && !view.getSaveFolderName().equals("")) {//代表为用户指定目录
+                int lia = pointFolder.indexOf(view.getSaveFolderName());
+                pointFolder = pointFolder.substring(0, lia + view.getSaveFolderName().length() + 1);
+                addOFilesByPointFile(view, userInfo, pointFolder, fileManFileInfo);
+            } else {
+                addOldOrderNoNewFiles(view, userInfo, urlStr, fileManFileInfo);
+            }
+
+        } else {//如果没有文件夹,直接当成新文件全部存.
+            this.addFilesData(view, userInfo);
+        }
+    }
+
+
+    @Transactional()
+    public void saveFolderMessage(DownloadView view, UserInfo userInfo) throws Exception {
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(), view.getOrderNo(), view.getSalor());
+        if (fileManFileInfo.size() > 0) {  //看四层基本层次结构存不存在
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            addOldOrderNoNewFilesByFolder(view, userInfo, oldFileUrls.get(0).getLogur1(), fileManFileInfo);
+        } else {//如果没有文件夹,直接当成新文件全部存.
+            try {
+                this.addFilesDatabyFolder(view, userInfo);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public DownloadView uploadFileByMappedByteBuffer(MultipartFileParam param, UserInfo userInfo) throws Exception {
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        String fileName = param.getName();
+        String filePathName;
+        File tmpDir;
+        filePathName = StringUtil.subMyString(param.getWebkitRelativePath(), "/");
+        String uploadDirPath = finalDirPath;
+        //根据业务员订单号设计师看有没有文件夹
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(userInfo.getUserName(), param.getOrderNo(), param.getSalor());
+        if (fileManFileInfo.size() > 0) {  //看四层基本层次结构存不存在
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            Integer pointindex = StringUtils.ordinalIndexOf(oldFileUrls.get(0).getLogur1(), "/", 5);
+            String oldsPath = oldFileUrls.get(0).getLogur1().substring(0, pointindex + 1);
+            tmpDir = new File(uploadDirPath + oldsPath + "/" + filePathName);
+        } else {//如果没有文件夹,直接当成新文件全部存.
+            tmpDir = new File(uploadDirPath + userInfo.getUserName() + "/" + formateString(new Date()) + "/" + param.getSalor() + "/"
+                    + param.getRandomNum() + "/" + param.getOrderNo() + "/" + filePathName);
+        }
+        File tmpFile = new File(tmpDir, fileName);
+        if (fileName != null) {
+            if (!tmpDir.exists()) {
+                tmpDir.mkdirs();
+            }
+            RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
+            FileChannel fileChannel = tempRaf.getChannel();
+            //写入该分片数据
+            long offset = CHUNK_SIZE * param.getChunk();
+            byte[] fileData = param.getFile().getBytes();
+            try {
+                MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, fileData.length);
+                mappedByteBuffer.put(fileData);
+                // 释放
+                FileMD5Util.freedMappedByteBuffer(mappedByteBuffer);
+                fileChannel.close();
+                tempRaf.close();
+                mappedByteBuffer.clear();
+
+                boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
+                if (isOk) {
+                    // boolean flag = renameFile(tmpFile, fileName);
+                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+
+                    boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            } finally {
+                boolean isdeleteconf1 = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+            }
+        }
+        return null;
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param, UserInfo userInfo) throws Exception {
+        File tmpDir = null;
+        String uploadDirPath = finalDirPath;
+        String fileName = param.getName();
+        //根据业务员订单号设计师看有没有文件夹
+        List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<String> urlStr = new ArrayList<String>();
+        //根据业务员订单号设计师看有没有文件夹
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(userInfo.getUserName(), param.getOrderNo(), param.getSalor());
+        String pointFolder = null;
+        boolean f = true;
+        if (fileManFileInfo.size() > 0) {  //有文件夹
+            oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
+            for (FilemanUrl fu : oldFileUrls) {
+                if (param.getSaveFolderName() != null) {
+                    if (param.getSaveFolderName() != "" && f) {
+                        if (fu.getLogur1().contains(param.getSaveFolderName())) {
+                            pointFolder = fu.getLogur1();
+                            f = false;
+                        }
+                    }
+                }
+                urlStr.add(fu.getLogur1());
+            }
+
+            if (pointFolder != null && pointFolder.length() > 0 && !param.getSaveFolderName().equals("")) {//代表为用户指定目录
+                int lia = pointFolder.indexOf(param.getSaveFolderName());
+                pointFolder = pointFolder.substring(0, lia + param.getSaveFolderName().length() + 1);
+                tmpDir = new File(uploadDirPath + pointFolder);
+
+            } else {
+                String oldPath = null;
+                Integer pointindex = null;
+                String oldsPath = null;
+                oldPath = urlStr.get(0);
+                pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
+                oldsPath = oldPath.substring(0, pointindex + 1);
+                tmpDir = new File(uploadDirPath + oldsPath);
+            }
+
+        } else {//如果没有文件夹,直接当成新文件全部存.
+            tmpDir = new File(uploadDirPath + userInfo.getUserName() + "/" + formateString(new Date()) + "/" + param.getSalor() + "/"
+                    + param.getRandomNum() + "/" + param.getOrderNo() + "/");
+        }
+
+        File tmpFile = new File(tmpDir, fileName);
+        if (fileName != null) {
+            if (!tmpDir.exists()) {
+                tmpDir.mkdirs();
+            }
+            RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
+            FileChannel fileChannel = tempRaf.getChannel();
+            //写入该分片数据
+            long offset = CHUNK_SIZE * param.getChunk();
+            byte[] fileData = param.getFile().getBytes();
+            try {
+                MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, fileData.length);
+                mappedByteBuffer.put(fileData);
+                // 释放
+                FileMD5Util.freedMappedByteBuffer(mappedByteBuffer);
+                fileChannel.close();
+                tempRaf.close();
+                mappedByteBuffer.clear();
+
+                boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
+                if (isOk) {
+                    // boolean flag = renameFile(tmpFile, fileName);
+                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+
+                    boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            } finally {
+                boolean isdeleteconf1 = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+            }
+        }
+        return null;
+    }
+
+
+    public void modifyFolderByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
+        String fileName = param.getName();
+        String uploadDirPath = finalDirPath;
+        String filePathName = StringUtil.subMyString(param.getWebkitRelativePath(), "/");
+        FilemanUrl filemanUrl;
+        int index;
+        String centerPath = null;
+        String filePath = null;
+        Integer pointindex = 0;
+        String oldsPath = null;
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), param.getOrderNo(), param.getSalor());
+        if (fileManFileInfo.size() > 0) { //代表前四级文件夹存在
+            filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
+            pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
+            oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+            index = filePathName.lastIndexOf("/");
+            centerPath = fileName.substring(0, index);
+            filePath = oldsPath + centerPath;
+
+            File tmpDir = new File(uploadDirPath + filePath);
+            if (tmpDir.exists()) {
+                File tmpFile = new File(tmpDir, fileName);
+                RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
+                FileChannel fileChannel = tempRaf.getChannel();
+                //写入该分片数据
+                long offset = CHUNK_SIZE * param.getChunk();
+                byte[] fileData = param.getFile().getBytes();
+                try {
+                    MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, fileData.length);
+                    mappedByteBuffer.put(fileData);
+                    // 释放
+                    FileMD5Util.freedMappedByteBuffer(mappedByteBuffer);
+                    fileChannel.close();
+                    tempRaf.close();
+                    mappedByteBuffer.clear();
+
+                    boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
+                    if (isOk) {
+                        System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                        boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                } finally {
+                    boolean isdeleteconf1 = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+                }
+
+            }
+        }
+    }
+
+    public void modifyFileByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
+        String fileName = param.getName();
+        String uploadDirPath = finalDirPath;
+        int pointindex;
+        String oldsPath = null;
+        FilemanUrl filemanUrl = null;
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), param.getOrderNo(), param.getSalor());
+        if (fileManFileInfo.size() > 0) { //代表文件夹存在
+            filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
+            if (filemanUrl != null) {
+                pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
+                oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+            }
+        }
+
+        File tmpDir = new File(uploadDirPath + oldsPath);
+        if (tmpDir.exists()) {
+            File tmpFile = new File(tmpDir, fileName);
+            RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
+            FileChannel fileChannel = tempRaf.getChannel();
+            //写入该分片数据
+            long offset = CHUNK_SIZE * param.getChunk();
+            byte[] fileData = param.getFile().getBytes();
+            try {
+                MappedByteBuffer mappedByteBuffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, offset, fileData.length);
+                mappedByteBuffer.put(fileData);
+                // 释放
+                FileMD5Util.freedMappedByteBuffer(mappedByteBuffer);
+                fileChannel.close();
+                tempRaf.close();
+                mappedByteBuffer.clear();
+
+                boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
+                if (isOk) {
+                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                    boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            } finally {
+                boolean isdeleteconf1 = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
+            }
+        }
+    }
+
+
+    @Override
+    public void deleteAll() {
+        logger.info("开发初始化清理数据，start");
+        FileSystemUtils.deleteRecursively(rootPaht.toFile());
+        stringRedisTemplate.delete(Constants.FILE_UPLOAD_STATUS);
+        stringRedisTemplate.delete(Constants.FILE_MD5_KEY);
+        logger.info("开发初始化清理数据，end");
+    }
+
+    @Override
+    public void init() {
+        try {
+            Files.createDirectory(rootPaht);
+        } catch (FileAlreadyExistsException e) {
+            logger.error("文件夹已经存在了，不用再创建。");
+        } catch (IOException e) {
+            logger.error("初始化root文件夹失败。", e);
+        }
+    }
+
+    public void uploadFileRandomAccessFile(MultipartFileParam param) throws IOException {
+        String fileName = param.getName();
+        String tempDirPath = finalDirPath + param.getMd5();
+        String tempFileName = fileName + "_tmp";
+        File tmpDir = new File(tempDirPath);
+        File tmpFile = new File(tempDirPath, tempFileName);
+        if (!tmpDir.exists()) {
+            tmpDir.mkdirs();
+        }
+
+        RandomAccessFile accessTmpFile = new RandomAccessFile(tmpFile, "rw");
+        long offset = CHUNK_SIZE * param.getChunk();
+        //定位到该分片的偏移量
+        accessTmpFile.seek(offset);
+        //写入该分片数据
+        accessTmpFile.write(param.getFile().getBytes());
+        // 释放
+        accessTmpFile.close();
+
+        boolean isOk = checkAndSetUploadProgress(param, tempDirPath);
+        if (isOk) {
+            boolean flag = renameFile(tmpFile, fileName);
+            System.out.println("upload complete !!" + flag + " name=" + fileName);
+        }
+    }
+
+
+    /**
+     * 上传完成，删除片文件
+     *
+     * @param fileName 要删除的文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    private boolean deleteFile(String fileName) throws Exception {
+        File file = new File(fileName);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                System.out.println("删除单个文件" + fileName + "成功！");
+                return true;
+            } else {
+                System.out.println("删除单个文件" + fileName + "失败！");
+                return false;
+            }
+        } else {
+            System.out.println("删除单个文件失败：" + fileName + "不存在！");
+            return false;
+        }
+    }
+
+    /**
+     * 检查并修改文件上传进度
+     *
+     * @param param
+     * @param uploadDirPath
+     * @return
+     * @throws
+     */
+    private boolean checkAndSetUploadProgress(MultipartFileParam param, String uploadDirPath) throws IOException {
+        String fileName = param.getName();
+        File confFile = new File(uploadDirPath, fileName + ".conf");
+        RandomAccessFile accessConfFile = new RandomAccessFile(confFile, "rw");
+        //把该分段标记为 true 表示完成
+        System.out.println("set part " + param.getChunk() + " complete");
+        accessConfFile.setLength(param.getChunks());
+        accessConfFile.seek(param.getChunk());
+        accessConfFile.write(Byte.MAX_VALUE);
+
+        //completeList 检查是否全部完成,如果数组里是否全部都是(全部分片都成功上传)
+        byte[] completeList = FileUtils.readFileToByteArray(confFile);
+        byte isComplete = Byte.MAX_VALUE;
+        for (int i = 0; i < completeList.length && isComplete == Byte.MAX_VALUE; i++) {
+            //与运算, 如果有部分没有完成则 isComplete 不是 Byte.MAX_VALUE
+            isComplete = (byte) (isComplete & completeList[i]);
+            System.out.println("check part " + i + " complete?:" + completeList[i]);
+        }
+
+        accessConfFile.close();
+        if (isComplete == Byte.MAX_VALUE) {
+            stringRedisTemplate.opsForHash().put(Constants.FILE_UPLOAD_STATUS, param.getMd5(), "true");
+            stringRedisTemplate.opsForValue().set(Constants.FILE_MD5_KEY + param.getMd5(), uploadDirPath + "/" + fileName);
+            return true;
+        } else {
+            if (!stringRedisTemplate.opsForHash().hasKey(Constants.FILE_UPLOAD_STATUS, param.getMd5())) {
+                stringRedisTemplate.opsForHash().put(Constants.FILE_UPLOAD_STATUS, param.getMd5(), "false");
+            }
+            if (stringRedisTemplate.hasKey(Constants.FILE_MD5_KEY + param.getMd5())) {
+                stringRedisTemplate.opsForValue().set(Constants.FILE_MD5_KEY + param.getMd5(), uploadDirPath + "/" + fileName + ".conf");
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 文件重命名
+     *
+     * @param toBeRenamed   将要修改名字的文件
+     * @param toFileNewName 新的名字
+     * @return
+     */
+    public boolean renameFile(File toBeRenamed, String toFileNewName) {
+        //检查要重命名的文件是否存在，是否是文件
+        if (!toBeRenamed.exists() || toBeRenamed.isDirectory()) {
+            logger.info("File does not exist: " + toBeRenamed.getName());
+            return false;
+        }
+        String p = toBeRenamed.getParent();
+        File newFile = new File(p + File.separatorChar + toFileNewName);
+        //修改文件名
+        return toBeRenamed.renameTo(newFile);
+    }
+
 
 }

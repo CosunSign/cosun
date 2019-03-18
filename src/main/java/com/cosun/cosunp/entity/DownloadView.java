@@ -14,6 +14,7 @@ import java.util.List;
 public class DownloadView implements Serializable {
 
     private static final long serialVersionUID = 8178603164200909341L;
+    private String random8;
     private Integer id;
     private Integer uId;
     private String userName;
@@ -67,6 +68,23 @@ public class DownloadView implements Serializable {
     private  String saveFolderName;
     private String linshiId;
     private String filePathName;
+    private String filePathNames;
+
+    public String getFilePathNames() {
+        return filePathNames;
+    }
+
+    public void setFilePathNames(String filePathNames) {
+        this.filePathNames = filePathNames;
+    }
+
+    public String getRandom8() {
+        return random8;
+    }
+
+    public void setRandom8(String random8) {
+        this.random8 = random8;
+    }
 
     public String getFullName() {
         return fullName;
