@@ -1659,7 +1659,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     public void deleteAll() {
         logger.info("开发初始化清理数据，start");
-        FileSystemUtils.deleteRecursively(rootPaht.toFile());
+        //FileSystemUtils.deleteRecursively(rootPaht.toFile());
         stringRedisTemplate.delete(Constants.FILE_UPLOAD_STATUS);
         stringRedisTemplate.delete(Constants.FILE_MD5_KEY);
         logger.info("开发初始化清理数据，end");

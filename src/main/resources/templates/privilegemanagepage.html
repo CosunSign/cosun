@@ -1708,7 +1708,7 @@
                 <li>
                     <ul class="premium-menuforfile nav nav-list collapse">
                         <li>
-                            <a th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}"><span
+                            <a th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}"><span
                                     class="fa fa-caret-right"></span> 设计文件</a></li>
                         <li><a href="#"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
                         <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
@@ -1767,20 +1767,20 @@
             <div id="tabs">
 
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/tomainpage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">上传</a>
+                   th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}">上传</a>
 
                 <a class="btn  btn-default"
-                   th:href="@{/fileupdown/tomodifypage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">更新</a>
+                   th:href="@{/fileupdown/tomodifypage(currentPage=${view.currentPage})}">更新</a>
 
 
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/download(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">
+                   th:href="@{/fileupdown/download(currentPage=${view.currentPage})}">
                     下载</a>
                 <a class="btn btn-default"
-                   th:href="@{/fileupdown/tobroserfilepage(userName=${view.userName},password=${view.password},currentPage=${view.currentPage})}">查找</a>
+                   th:href="@{/fileupdown/tobroserfilepage(currentPage=${view.currentPage})}">查找</a>
 
                 <a class="btn btn-primary"
-                   th:href="@{/fileupdown/toprivilmanagepage(userName=${view.userName},password=${view.password},pageSize=12,currentPage=${view.currentPage})}">管理</a>
+                   th:href="@{/fileupdown/toprivilmanagepage(pageSize=12,currentPage=${view.currentPage})}">管理</a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

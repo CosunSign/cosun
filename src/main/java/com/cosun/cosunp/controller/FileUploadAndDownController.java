@@ -1940,8 +1940,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage(String userName, String password, String flag,
-                                              int currentPage, HttpServletRequest
+    public ModelAndView goPrivilegeManagePage( String flag,HttpServletRequest
                                                       request, HttpServletResponse response, HttpSession session) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
@@ -1949,13 +1948,11 @@ public class FileUploadAndDownController {
         view.setFlag(flag);
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<Employee> employees = fileUploadAndDownServ.findAllSalor();
-        List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
-        modelAndView.addObject("downloadViews", downloadViews);
         modelAndView.addObject("employees", employees);
         return modelAndView;
     }
@@ -2355,7 +2352,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(HttpSession session, String userName, String password, int currentPage, String flag, HttpServletRequest
+    public ModelAndView toModifyPage(HttpSession session,  String flag, HttpServletRequest
             request) throws
             Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
@@ -2363,14 +2360,12 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<Employee> employees = fileUploadAndDownServ.findAllSalor();
-        List<DownloadView> downloadViews = fileUploadAndDownServ.findAllUploadFileByUserId(userInfo.getuId());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());
         view.setFlag(flag);
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
-        modelAndView.addObject("downloadViews", downloadViews);
         modelAndView.addObject("employees", employees);
         return modelAndView;
     }
