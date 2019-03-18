@@ -604,7 +604,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
         fileUploadAndDownMapper.addfileManFileDataByUpload(fileManFileInfo);
         String centerUrl = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                + view.getRandom8() + "/" + view.getOrderNo() + "/";
+                + view.getRandom8() + "/" + view.getOrderNo()+"/" ;
         String orginname = null;
         //文件进度长度
         for (int i = 0; i < splitPaths.length; i++) {
@@ -659,8 +659,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String allPathName = null;
         fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
         for (int i = 0; i < splitPaths.length; i++) {
-            fileName = StringUtil.subAfterString(splitPaths[1], "/");
-            allPathName = oldsPath + "/" + splitPaths[1];
+            fileName = StringUtil.subAfterString(splitPaths[i], "/");
+            allPathName = oldsPath + splitPaths[i];
             //存储文件路径
             filemanUrl = new FilemanUrl();
             filemanUrl.setOrginName(fileName);
@@ -1402,7 +1402,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public void saveFolderMessage(DownloadView view, UserInfo userInfo) throws Exception {
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
         //根据业务员订单号设计师看有没有文件夹
-        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(view.getUserName(), view.getOrderNo(), view.getSalor());
+        List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(userInfo.getUserName(), view.getOrderNo(), view.getSalor());
         if (fileManFileInfo.size() > 0) {  //看四层基本层次结构存不存在
             oldFileUrls = fileUploadAndDownMapper.findFileUrlByFileInFoData(fileManFileInfo.get(0).getId());
             addOldOrderNoNewFilesByFolder(view, userInfo, oldFileUrls.get(0).getLogur1(), fileManFileInfo);
@@ -1569,14 +1569,15 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), param.getOrderNo(), param.getSalor());
         if (fileManFileInfo.size() > 0) { //代表前四级文件夹存在
             filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
-            pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
-            oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
-            index = filePathName.lastIndexOf("/");
-            centerPath = fileName.substring(0, index);
-            filePath = oldsPath + centerPath;
+            //pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
+            filePath = StringUtil.subMyString(filemanUrl.getLogur1(),"/");
+            //oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+            //index = filePathName.lastIndexOf("/");
+            //centerPath = fileName.substring(0, index);
+           // filePath = oldsPath + centerPath;
 
             File tmpDir = new File(uploadDirPath + filePath);
-            if (tmpDir.exists()) {
+             if (tmpDir.exists()) {
                 File tmpFile = new File(tmpDir, fileName);
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();

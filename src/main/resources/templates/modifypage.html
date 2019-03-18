@@ -538,7 +538,7 @@
                     var flag = true;
                     for (var i = 0; i < missChunks.length; i++) {
                         if (blockChunk == missChunks[i]) {
-                            console.log(file.name + ":" + blockChunk + ":还没上传，现在上传去吧。");
+                            console.log(file.name + ":" + blockChunk + ":还没更新，现在更新去吧。");
                             flag = false;
                             break;
                         }
@@ -578,7 +578,7 @@
             chunked: true,
             chunkSize: chunkSize, // 字节 1M分块
             threads: 3,
-            server: '/fileupdown/uploadfolder1',
+            server: '/fileupdown/modifyfolder1',
             auto: false,
             compress: false,//不压缩图片
 
@@ -613,7 +613,7 @@
             chunked: true,
             chunkSize: chunkSize, // 字节 1M分块
             threads: 3,
-            server: '/fileupdown/uploadFile',
+            server: '/fileupdown/modifyfile1',
             auto: false,
             compress: false,//不压缩图片
 
@@ -640,7 +640,7 @@
             console.log("fileQueued");
             $thelist.append('<div id="' + file.id + '" class="item">' +
                 '<h6 class="info">' + file.name + '</h6>' +
-                '<p class="state">等待上传...</p>' +
+                '<p class="state">等待更新...</p>' +
                 '</div>');
             $("#showfiletotalnum1").html(totalFileNum1);
             $("#showtotalnumspan1").show();
@@ -662,18 +662,18 @@
         };
         // 上传中
         uploader1.on('uploadProgress', function (file, percentage) {
-            getProgressBar(file, percentage, "FILE", "上传进度");
+            getProgressBar(file, percentage, "FILE", "更新进度");
         });
         // 上传返回结果
         uploader1.on('uploadSuccess', function (file) {
-            var text = '已上传';
+            var text = '已更新';
             if (file.pass) {
-                text = "文件妙传功能，文件已上传。"
+                text = "文件妙传功能，文件已更新。"
             }
             $('#' + file.id).find('p.state').text(text);
         });
         uploader1.on('uploadError', function (file) {
-            $('#' + file.id).find('p.state').text('上传出错');
+            $('#' + file.id).find('p.state').text('更新出错');
         });
         uploader1.on('uploadComplete', function (file) {
             // 隐藏进度条
@@ -698,7 +698,7 @@
             console.log("fileQueued");
             $thelist.append('<div id="' + file.id + '" class="item">' +
                 '<h6 class="info">' + file.name + '</h6>' +
-                '<p class="state">等待上传...</p>' +
+                '<p class="state">等待更新...</p>' +
                 '</div>');
             file.source.source.webkitRelativePath
             $("#showfiletotalnum").html(totalFileNum);
@@ -720,18 +720,18 @@
 
         // 上传中
         uploader.on('uploadProgress', function (file, percentage) {
-            getProgressBar(file, percentage, "FILE", "上传进度");
+            getProgressBar(file, percentage, "FILE", "更新进度");
         });
         // 上传返回结果
         uploader.on('uploadSuccess', function (file) {
-            var text = '已上传';
+            var text = '已更新';
             if (file.pass) {
-                text = "文件妙传功能，文件已上传。"
+                text = "文件妙传功能，文件已更新。"
             }
             $('#' + file.id).find('p.state').text(text);
         });
         uploader.on('uploadError', function (file) {
-            $('#' + file.id).find('p.state').text('上传出错');
+            $('#' + file.id).find('p.state').text('更新出错');
         });
         uploader.on('uploadComplete', function (file) {
             // 隐藏进度条
@@ -849,7 +849,7 @@
             formData.append('orderNo', $("#orderno").val());
             formData.append('salor', $("#salorid").val());
             formData.append('projectName', $("#projectno").val().trim());
-            formData.append('modifyReason',$("#modifyReason").val());
+            formData.append('modifyReason',$("#modifyreason").val());
             if(totalFileNum != 0) {
                 formData.append('filePathNames',allurls);
                 $.ajax({
@@ -902,6 +902,7 @@
             $("#coverbehidepage").hide();
             $("#thelist").hide();
             clearFileData();
+            alert("更新成功")
         });
 
         uploader1.on('uploadFinished', function (file) {
@@ -909,6 +910,7 @@
             $("#coverbehidepage").hide();
             $("#thelist").hide();
             clearFileData();
+            alert("更新成功")
         });
 
         $btn.on('click', function () {
@@ -930,7 +932,7 @@
             }
 
             if(totalFileNum1==0 && totalFileNum==0) {
-                alert("上传前请选择需要上传的文件或文件夹!");
+                alert("更新前请选择需要更新的文件或文件夹!");
                 return false;
             }
 
@@ -951,7 +953,7 @@
                 } else if (totalFileNum != 0) {
                     uploader.upload();
                 }else if(totalFileNum1==0 && totalFileNum==0) {
-                    alert("上传前请选择需要上传的文件或文件夹!");
+                    alert("更新前请选择需要更新的文件或文件夹!");
                     return false;
                 }
             } else {
@@ -1747,11 +1749,11 @@
         // }
 
         if (fileInput == "" && filefolder == "") {
-            alert("请选择上传文件！")
+            alert("请选择更新文件！")
             return false;
         }
         if (fileInput != "" && filefolder != "") {
-            alert("不能同时选择两种文件方式上传！")
+            alert("不能同时选择两种文件方式更新！")
             $('#file').val("");
             $("#filefolder").val("");
             return false;
