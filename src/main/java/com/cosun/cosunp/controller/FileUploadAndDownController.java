@@ -164,149 +164,149 @@ public class FileUploadAndDownController {
         int maxPage = 0;
         //根据当前文件夹或文件名查找上一级文件夹名,如上一级文件夹名是以ORDERNO类形的,即开启limit查询
         String upFolderName = null;
-       // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
-            folderOrFiles = new ArrayList<String>();
-            views = new ArrayList<DownloadView>();
-            norepeatFoldorFile = new ArrayList<String>();
-            // urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
-            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
+        // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {
+        folderOrFiles = new ArrayList<String>();
+        views = new ArrayList<DownloadView>();
+        norepeatFoldorFile = new ArrayList<String>();
+        // urls = fileUploadAndDownServ.findAllUrlByParamThreeNew(view);
+        urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
 
-            //取上二级文件夹名 由下找下一层文件夹或文件
-            if (!foldername.contains(".")) {
-                for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
-                    lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
-                    if (lastIndex != -1) {
-                        String linshi1 = u.getLogur1().substring(0, lastIndex);
-                        upFolderName = StringUtil.subAfterString(linshi1, "/");
-                        int linshilastIndex = linshi1.lastIndexOf("/");
-                        String linshi2 = linshi1.substring(0, linshilastIndex);
-                        foldername = StringUtil.subAfterString(linshi2, "/");
+        //取上二级文件夹名 由下找下一层文件夹或文件
+        if (!foldername.contains(".")) {
+            for (FilemanUrl u : urls) {
+                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
+                lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
+                if (lastIndex != -1) {
+                    String linshi1 = u.getLogur1().substring(0, lastIndex);
+                    upFolderName = StringUtil.subAfterString(linshi1, "/");
+                    int linshilastIndex = linshi1.lastIndexOf("/");
+                    String linshi2 = linshi1.substring(0, linshilastIndex);
+                    foldername = StringUtil.subAfterString(linshi2, "/");
+                }
+                index = u.getLogur1().indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = u.getLogur1().indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                if (lastIndex == -1) {
+                    lastIndex = u.getLogur1().length();
+                }
+                if (index != -1) {
+                    String linshiId = view.getLinshiId();
+                    if (linshiId == null || linshiId.trim().length() <= 0) {
+                        view.setuId(0);
+                    } else {
+                        view.setuId(Integer.valueOf(linshiId.trim()));
                     }
-                    index = u.getLogur1().indexOf("/" + foldername + "/");//字符串第一次出现的位置
-                    lastIndex = u.getLogur1().indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
-                    if (lastIndex == -1) {
-                        lastIndex = u.getLogur1().length();
-                    }
-                    if (index != -1) {
-                        String linshiId = view.getLinshiId();
-                        if (linshiId == null || linshiId.trim().length() <= 0) {
-                            view.setuId(0);
-                        } else {
-                            view.setuId(Integer.valueOf(linshiId.trim()));
+                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
+                    // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
+                    tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
+
+                }
+
+
+                for (DownloadView v : views) {
+                    if (v.getFolderOrFileName() != null) {
+                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                            flag = false;
                         }
-                        right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
-                        // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
-                        tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
-
                     }
-
-
-                    for (DownloadView v : views) {
-                        if (v.getFolderOrFileName() != null) {
-                            if (v.getFolderOrFileName().contains(tempFolFileName)) {
-                                flag = false;
-                            }
-                        }
-                    }
-                    if (flag) {
-                        vvv = new DownloadView();
-                        vi.setFolderOrFileName(tempFolFileName);
-                        if (right != null) {
-                            if (right.getOpRight() != null) {
-                                vi.setOpRight(right.getOpRight());
-                                if (right.getuId() != null) {
-                                    vi.setOprighter(right.getuId().toString());
-                                } else {
-                                    vi.setOprighter("");
-                                }
+                }
+                if (flag) {
+                    vvv = new DownloadView();
+                    vi.setFolderOrFileName(tempFolFileName);
+                    if (right != null) {
+                        if (right.getOpRight() != null) {
+                            vi.setOpRight(right.getOpRight());
+                            if (right.getuId() != null) {
+                                vi.setOprighter(right.getuId().toString());
                             } else {
-                                vi.setOpRight("");
+                                vi.setOprighter("");
                             }
                         } else {
                             vi.setOpRight("");
                         }
-                        vvv = vi;
-                        views.add(vvv);
+                    } else {
+                        vi.setOpRight("");
                     }
-                    flag = true;
+                    vvv = vi;
+                    views.add(vvv);
                 }
+                flag = true;
+            }
 
-            } else {
+        } else {
 
-                String filefoldername = null;
-                String backFolderName = null;
-                for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
-                    if (u.getLogur1().contains(foldername)) {
-                        filefoldername = u.getLogur1();
-                    }
-                }
-
-                if (filefoldername != null) {
-                    lastIndex = filefoldername.indexOf("/" + view.getFolderName());
-                    if (lastIndex > 0) {
-                        String linshi1 = filefoldername.substring(0, lastIndex);
-                        upFolderName = StringUtil.subAfterString(linshi1, "/");
-                        int linshilastIndex = linshi1.lastIndexOf("/");
-                        String linshi2 = linshi1.substring(0, linshilastIndex);
-                        foldername = StringUtil.subAfterString(linshi2, "/");
-                    }
-                }
-
-                for (FilemanUrl u : urls) {
-                    vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
-                    if (u.getLogur1().contains(foldername)) {
-                        filefoldername = u.getLogur1();
-                    }
-                    index = u.getLogur1().indexOf("/" + foldername + "/");//字符串第一次出现的位置
-                    lastIndex = u.getLogur1().indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
-                    if (lastIndex == -1) {
-                        lastIndex = u.getLogur1().length();
-                    }
-                    if (index != -1) {
-                        String linshiId = view.getLinshiId();
-                        if (linshiId == null || linshiId.trim().length() <= 0) {
-                            view.setuId(0);
-                        } else {
-                            view.setuId(Integer.valueOf(linshiId.trim()));
-                        }
-                        folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
-                        right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
-                        // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
-                        tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
-                    }
-
-                    for (DownloadView v : views) {
-                        if (v.getFolderOrFileName() != null) {
-                            if (v.getFolderOrFileName().contains(tempFolFileName)) {
-                                flag = false;
-                            }
-                        }
-                    }
-                    if (flag) {
-                        vvv = new DownloadView();
-                        vi.setFolderOrFileName(tempFolFileName);
-                        if (right != null) {
-                            if (right.getOpRight() != null) {
-                                vi.setOpRight(right.getOpRight());
-                                if (right.getuId() != null) {
-                                    vi.setOprighter(right.getuId().toString());
-                                } else {
-                                    vi.setOprighter("");
-                                }
-                            } else {
-                                vi.setOpRight("");
-                            }
-                        } else {
-                            vi.setOpRight("");
-                        }
-                        vvv = vi;
-                        views.add(vvv);
-                    }
-                    flag = true;
+            String filefoldername = null;
+            String backFolderName = null;
+            for (FilemanUrl u : urls) {
+                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
+                if (u.getLogur1().contains(foldername)) {
+                    filefoldername = u.getLogur1();
                 }
             }
+
+            if (filefoldername != null) {
+                lastIndex = filefoldername.indexOf("/" + view.getFolderName());
+                if (lastIndex > 0) {
+                    String linshi1 = filefoldername.substring(0, lastIndex);
+                    upFolderName = StringUtil.subAfterString(linshi1, "/");
+                    int linshilastIndex = linshi1.lastIndexOf("/");
+                    String linshi2 = linshi1.substring(0, linshilastIndex);
+                    foldername = StringUtil.subAfterString(linshi2, "/");
+                }
+            }
+
+            for (FilemanUrl u : urls) {
+                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
+                if (u.getLogur1().contains(foldername)) {
+                    filefoldername = u.getLogur1();
+                }
+                index = u.getLogur1().indexOf("/" + foldername + "/");//字符串第一次出现的位置
+                lastIndex = u.getLogur1().indexOf("/", index + 2 + foldername.length());//取第一次出现的位置开始的第一个文件夹或文件位置
+                if (lastIndex == -1) {
+                    lastIndex = u.getLogur1().length();
+                }
+                if (index != -1) {
+                    String linshiId = view.getLinshiId();
+                    if (linshiId == null || linshiId.trim().length() <= 0) {
+                        view.setuId(0);
+                    } else {
+                        view.setuId(Integer.valueOf(linshiId.trim()));
+                    }
+                    folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
+                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
+                    // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
+                    tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
+                }
+
+                for (DownloadView v : views) {
+                    if (v.getFolderOrFileName() != null) {
+                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                            flag = false;
+                        }
+                    }
+                }
+                if (flag) {
+                    vvv = new DownloadView();
+                    vi.setFolderOrFileName(tempFolFileName);
+                    if (right != null) {
+                        if (right.getOpRight() != null) {
+                            vi.setOpRight(right.getOpRight());
+                            if (right.getuId() != null) {
+                                vi.setOprighter(right.getuId().toString());
+                            } else {
+                                vi.setOprighter("");
+                            }
+                        } else {
+                            vi.setOpRight("");
+                        }
+                    } else {
+                        vi.setOpRight("");
+                    }
+                    vvv = vi;
+                    views.add(vvv);
+                }
+                flag = true;
+            }
+        }
 
 
         if (views.size() > 0) {
@@ -690,74 +690,74 @@ public class FileUploadAndDownController {
         int maxPage;
         String allOprights = "";
         String tempFolOrFileName = null;
-       // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
-            views = new ArrayList<DownloadView>();
-            urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
-            norepeatFoldorFile = new ArrayList<String>();
-            folderOrFiles = new ArrayList<String>();
-            for (FilemanUrl u : urls) {
-                vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
-                index = u.getLogur1().indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
-                lastIndex = u.getLogur1().indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
-                if (lastIndex == -1) {
-                    lastIndex = u.getLogur1().length();
+        // if (userInfo.getUserActor() == 2 || userInfo.getUserActor() == 1) {//有管理权限才进行如下操作
+        views = new ArrayList<DownloadView>();
+        urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
+        norepeatFoldorFile = new ArrayList<String>();
+        folderOrFiles = new ArrayList<String>();
+        for (FilemanUrl u : urls) {
+            vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
+            index = u.getLogur1().indexOf("/" + view.getFolderName() + "/");//字符串第一次出现的位置
+            lastIndex = u.getLogur1().indexOf("/", index + 2 + view.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            if (lastIndex == -1) {
+                lastIndex = u.getLogur1().length();
+            }
+            if (index != -1) {
+                String linshiId = view.getLinshiId();
+                if (linshiId == null || linshiId.trim().length() <= 0) {
+                    view.setuId(0);
+                } else {
+                    view.setuId(Integer.valueOf(linshiId.trim()));
                 }
-                if (index != -1) {
-                    String linshiId = view.getLinshiId();
-                    if (linshiId == null || linshiId.trim().length() <= 0) {
-                        view.setuId(0);
-                    } else {
-                        view.setuId(Integer.valueOf(linshiId.trim()));
+                right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
+                tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
+                for (DownloadView v : views) {
+                    if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
+                        flag = false;
                     }
-                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
-                    tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
-                    for (DownloadView v : views) {
-                        if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
-                            flag = false;
-                        }
-                    }
-                    if (flag) {
-                        vi.setFolderOrFileName(tempFolOrFileName);
-                        if (!tempFolOrFileName.contains(".")) {
-                            for (FilemanUrl uu : urls) {
-                                if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
-                                    right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
-                                if (right1 != null && right1.getOpRight() != null) {
-                                    if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
-                                        allOprights += "2,";
-                                    }
-                                    if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
-                                        allOprights += "3,";
-                                    }
-                                    if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
-                                        allOprights += "4,";
-                                    }
-                                    if (allOprights != "") {
-                                        allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
-                                    }
+                }
+                if (flag) {
+                    vi.setFolderOrFileName(tempFolOrFileName);
+                    if (!tempFolOrFileName.contains(".")) {
+                        for (FilemanUrl uu : urls) {
+                            if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
+                                right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
+                            if (right1 != null && right1.getOpRight() != null) {
+                                if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
+                                    allOprights += "2,";
+                                }
+                                if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
+                                    allOprights += "3,";
+                                }
+                                if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
+                                    allOprights += "4,";
+                                }
+                                if (allOprights != "") {
+                                    allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
                                 }
                             }
                         }
-                        if (right != null && right.getOpRight() != null) {
-                            if (tempFolOrFileName.contains(".")) {
-                                vi.setOpRight(right.getOpRight());
-                            } else {
-                                vi.setOpRight(allOprights);
-                            }
-
-                            if (right.getuId() != null) {
-                                vi.setOprighter(right.getuId().toString());
-                            } else {
-                                vi.setOprighter("");
-                            }
-                        } else {
-                            vi.setOpRight("");
-                        }
-                        views.add(vi);
                     }
-                    flag = true;
+                    if (right != null && right.getOpRight() != null) {
+                        if (tempFolOrFileName.contains(".")) {
+                            vi.setOpRight(right.getOpRight());
+                        } else {
+                            vi.setOpRight(allOprights);
+                        }
+
+                        if (right.getuId() != null) {
+                            vi.setOprighter(right.getuId().toString());
+                        } else {
+                            vi.setOprighter("");
+                        }
+                    } else {
+                        vi.setOpRight("");
+                    }
+                    views.add(vi);
                 }
+                flag = true;
             }
+        }
         //}
         if (views.size() > 0) {
             viewss = new ArrayList<DownloadView>();
@@ -1065,10 +1065,10 @@ public class FileUploadAndDownController {
         folderOrFiles = new ArrayList<String>();
         strarray = new ArrayList<String[]>();
         norepeatFoldorFile = new ArrayList<String>();
-        if (view.getCurrentPageTotalNum() >= 0) {
-            views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
-            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
-        }
+        //if (view.getCurrentPageTotalNum() >= 0) {
+        views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(view);
+        recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+        // }
         maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         newurls = new ArrayList<String>();
         for (DownloadView v : views) {
@@ -1940,8 +1940,8 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomainpage", method = RequestMethod.GET)
-    public ModelAndView goPrivilegeManagePage( String flag,HttpServletRequest
-                                                      request, HttpServletResponse response, HttpSession session) throws Exception {
+    public ModelAndView goPrivilegeManagePage(String flag, HttpServletRequest
+            request, HttpServletResponse response, HttpSession session) throws Exception {
         ModelAndView modelAndView = new ModelAndView("uploadpage");
         DownloadView view = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -2234,7 +2234,6 @@ public class FileUploadAndDownController {
         }
 
 
-
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
@@ -2352,7 +2351,7 @@ public class FileUploadAndDownController {
      */
     @ResponseBody
     @RequestMapping(value = "/tomodifypage", method = RequestMethod.GET)
-    public ModelAndView toModifyPage(HttpSession session,  String flag, HttpServletRequest
+    public ModelAndView toModifyPage(HttpSession session, String flag, HttpServletRequest
             request) throws
             Exception {
         ModelAndView modelAndView = new ModelAndView("modifypage");
@@ -2483,14 +2482,14 @@ public class FileUploadAndDownController {
 
     @RequestMapping(value = "/saveFolderMessage", method = RequestMethod.POST)
     @ResponseBody
-    public void saveFolderMessage(DownloadView view,HttpSession session) throws Exception{
+    public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         fileUploadAndDownServ.saveFolderMessage(view, userInfo);
     }
 
     @RequestMapping(value = "/saveFolderMessageUpdate", method = RequestMethod.POST)
     @ResponseBody
-    public void saveFolderMessageUpdate(DownloadView view,HttpSession session) throws Exception{
+    public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
     }
@@ -2498,7 +2497,7 @@ public class FileUploadAndDownController {
 
     @RequestMapping(value = "/saveFileMessage", method = RequestMethod.POST)
     @ResponseBody
-    public void saveFileMessage(DownloadView view,HttpSession session) throws Exception{
+    public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         fileUploadAndDownServ.saveFileMessage(view, userInfo);
     }
@@ -2506,7 +2505,7 @@ public class FileUploadAndDownController {
 
     @RequestMapping(value = "/saveFileMessageUpdate", method = RequestMethod.POST)
     @ResponseBody
-    public void saveFileMessageUpdate(DownloadView view,HttpSession session) throws Exception{
+    public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
     }
@@ -2521,7 +2520,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadFile(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+    public ResponseEntity uploadFile(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2531,7 +2530,7 @@ public class FileUploadAndDownController {
                 // 方法1
                 //storageService.uploadFileRandomAccessFile(param);
                 // 方法2 这个更快点
-                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer1(param,userInfo);
+                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer1(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件上传失败。{}", param.toString());
@@ -2551,7 +2550,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/modifyfolder1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity modifyfolder1(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+    public ResponseEntity modifyfolder1(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2561,7 +2560,7 @@ public class FileUploadAndDownController {
                 // 方法1
                 //storageService.uploadFileRandomAccessFile(param);
                 // 方法2 这个更快点
-                fileUploadAndDownServ.modifyFolderByMappedByteBuffer(param,userInfo);
+                fileUploadAndDownServ.modifyFolderByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件更新失败。{}", param.toString());
@@ -2582,7 +2581,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/modifyfile1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity modifyfile1(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+    public ResponseEntity modifyfile1(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2592,7 +2591,7 @@ public class FileUploadAndDownController {
                 // 方法1
                 //storageService.uploadFileRandomAccessFile(param);
                 // 方法2 这个更快点
-                fileUploadAndDownServ.modifyFileByMappedByteBuffer(param,userInfo);
+                fileUploadAndDownServ.modifyFileByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件更新失败。{}", param.toString());
@@ -2601,7 +2600,6 @@ public class FileUploadAndDownController {
         }
         return ResponseEntity.ok().body("更新成功。");
     }
-
 
 
     /**
@@ -2614,7 +2612,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request,HttpSession session) {
+    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2624,7 +2622,7 @@ public class FileUploadAndDownController {
                 // 方法1
                 //storageService.uploadFileRandomAccessFile(param);
                 // 方法2 这个更快点
-                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer(param,userInfo);
+                view = fileUploadAndDownServ.uploadFileByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件上传失败。{}", param.toString());

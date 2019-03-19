@@ -12,17 +12,12 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
-    <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/webuploader.css">
     <script src="/lib/WdatePicker.js" type="text/javascript"></script>
 
 </head>
-<body class=" theme-blue">
-
-
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -31,370 +26,219 @@
 <!-- Le fav and touch icons -->
 
 
-<!--[if lt IE 7 ]>
-<body class="ie ie6"> <![endif]-->
-<!--[if IE 7 ]>
-<body class="ie ie7 "> <![endif]-->
-<!--[if IE 8 ]>
-<body class="ie ie8 "> <![endif]-->
-<!--[if IE 9 ]>
-<body class="ie ie9 "> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!-->
-
 <!--<![endif]-->
-<div class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
-    </div>
 
-    <div class="navbar-collapse collapse" style="height: 1px;">
-        <ul id="main-menu" class="nav navbar-nav navbar-right">
-            <li class="dropdown hidden-xs">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
-                          th:text="${view.fullName}"></span>
-
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a th:href="@{/account/logout}">退出登录</a></li>
-
-                </ul>
-            </li>
-        </ul>
-
-    </div>
-</div>
-
-
-<div class="sidebar-nav">
-    <ul>
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>
-            新建订单<i
-                    class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforsalor nav nav-list collapse">
-                <li><a th:href="@{/order/createsinglegoods}"><span class="fa fa-caret-right"></span> 单件商品</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 项目类</a></li>
-            </ul>
-        </li>
-
-        <!--========================文件管理===============================-->
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforfile nav nav-list collapse">
-                <li>
-                    <a th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}"><span
-                            class="fa fa-caret-right"></span> 设计文件</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
-            </ul>
-        </li>
-
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menu nav nav-list collapse">
-
-            </ul>
-        </li>
-
-        <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
-                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
-        <li>
-            <ul class="accounts-menu nav nav-list collapse">
-
-            </ul>
-        </li>
-    </ul>
-</div>
-
-<div id="coverbehidepage" style="display: none"></div>
-</div>
+<!--<div id="coverbehidepage" style="display: none"></div>-->
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
 <input type="hidden" id="foldername">
-<div id="some-element">
-    <div class="content">
-        <!--<form action="/fileupdown/uploadfolder1" method="post" id="form1" enctype="multipart/form-data"-->
-        <!--th:object="${view}">-->
-        <!--<input type="hidden" name="salor" id="salorvalue">-->
-        <input type="hidden" name="saveFolderName" id="folderselect">
-        <input type="hidden" name="filePathName" id="filePathName">
-        <div id="tabs">
+<div >
+    <input type="hidden" name="saveFolderName" id="folderselect">
+    <input type="hidden" name="filePathName" id="filePathName">
+    <div id="tabs">
 
-            <a class="btn btn-primary"
-               th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}">上传</a>
+        <a class="btn btn-primary"
+           th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}">上传</a>
 
-            <a class="btn  btn-default"
-               th:href="@{/fileupdown/tomodifypage(currentPage=${view.currentPage})}">更新</a>
+        <a class="btn  btn-default"
+           th:href="@{/fileupdown/tomodifypage(currentPage=${view.currentPage})}">更新</a>
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/download(currentPage=${view.currentPage})}">
-                下载</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/download(currentPage=${view.currentPage})}">
+            下载</a>
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/tobroserfilepage(currentPage=${view.currentPage})}">查找</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/tobroserfilepage(currentPage=${view.currentPage})}">查找</a>
 
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/toprivilmanagepage(pageSize=12,currentPage=${view.currentPage})}">管理</a>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
-                                                          size="2"><u><strong>温馨小贴士</strong></u></font></a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/toprivilmanagepage(pageSize=12,currentPage=${view.currentPage})}">管理</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                      size="2"><u><strong>温馨小贴士</strong></u></font></a>
 
 
-            <p>
-            <p>
+        <p>
+        <p>
 
-                <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
-            <div>
-                &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
-                <select id="salorid" style="width: 153px" name="salor" onchange="showFileUrl()">
-                    <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
-                    <option th:each="c:${employees}" th:value="${c.name}"
-                            th:text="${c.name}"></option>
-                </select>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <font color="#FF0000" size="2">*</font>
-                订单编号
-                <input type="text" id="orderno" name="orderNo" onblur="checkOrderNo(this)">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <font color="#FF0000" size="2">*</font>
-                项目名称
-                <input type="text" id="projectno" name="projectName" onchange="clearFileData1()">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                上传时间
-                <input type="text" style="width: 160px" readonly="readonly" class="Wdate" id="uploaddatetime"
-                       name="createTime">
-            </div>
-            <p>
-            <div>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                文件设计师 <input type="text" id="fileuploader" style="width: 89px;" readonly="readonly"
-                             th:value="${view.fullName}">
+            <!--<input type="hidden" value="1" th:field="*{currentPage}">-->
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp; <font color="#FF0000" size="2">*</font>
+            <select id="salorid" style="width: 153px" name="salor" onchange="showFileUrl()">
+                <option value="" selected="selected" disabled="disabled" hidden="hidden">请选择业务员</option>
+                <option th:each="c:${employees}" th:value="${c.name}"
+                        th:text="${c.name}"></option>
+            </select>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <font color="#FF0000" size="2">*</font>
+            订单编号
+            <input type="text" id="orderno" name="orderNo" onblur="checkOrderNo(this)">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <font color="#FF0000" size="2">*</font>
+            项目名称
+            <input type="text" id="projectno" name="projectName" onchange="clearFileData1()">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            上传时间
+            <input type="text" style="width: 175px" readonly="readonly" class="Wdate" id="uploaddatetime"
+                   name="createTime">
+        </div>
+        <p>
+        <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            文件设计师 <input type="text" id="fileuploader" style="width: 89px;" readonly="readonly"
+                         th:value="${view.fullName}">
 
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input
-                    type="text" style="width: 400px;"
-                    id="filedescribtion"
-                    name="filedescribtion">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 399px;"
-                                                              name="remark">
-                <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新增行&nbsp;&nbsp;<img src="/images/icon/Add.png" align="middle"-->
-                <!--style="width: 20px; height: 20px; vertical-align: middle"-->
-                <!--onclick="addrow('bodycss')"/>-->
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件说明<input
+                type="text" style="width: 400px;"
+                id="filedescribtion"
+                name="filedescribtion">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注:<input type="text" id="remark" style="width: 410px;"
+                                                          name="remark">
 
-            </div>
-            <p>
-            <div>
+        </div>
+        <p>
+        <div>
 
-                <table id="uploadtable" width="100%" align="">
-                    <tr id="colrcss" style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
-                        <td width="50">序号</td>
-                        <td width="250">选择文件夹</td>
-                        <td width="250" ;>选择单或多个文件</td>
-
-                    </tr>
-
-
-                    <tbody id="bodycss">
-                    <tr id="tr01">
-                        <td>1</td>
-                        <td style="text-align: left">
-                            <div id="uploader" class="wu-example">
-                                <div class="btns">
-                                    <span id="picker"></span><span id="showtotalnumspan"
-                                                                   style="display: none">您已选择<span
-                                        id="showfiletotalnum"></span>个文件</span>
-                                    <br>
-                                </div>
+            <table id="uploadtable" width="100%" align="">
+                <tr id="colrcss" style="background-color: #E0EEEE;border-style: solid; border-width: 1px;">
+                    <td width="50">序号</td>
+                    <td width="250">选择文件夹</td>
+                    <td width="250" ;>选择单或多个文件</td>
+                </tr>
+                <tbody id="bodycss">
+                <tr id="tr01">
+                    <td>1</td>
+                    <td style="text-align: left">
+                        <div id="uploader" class="wu-example">
+                            <div class="btns">
+                                <span id="picker"></span><span id="showtotalnumspan"
+                                                               style="display: none">您已选择<span
+                                    id="showfiletotalnum"></span>个文件</span>
+                                <br>
                             </div>
-                            <!--<input type="file" id="filefolder" name="fileFolder"-->
-                            <!--onchange="changeformactionfolder()"-->
-                            <!--webkitdirectory>-->
-                        </td>
-                        <td style="text-align: left">
-                            <div id="uploader1" class="wu-example">
-                                <div class="btns">
-                                    <span id="picker1"></span><span id="showtotalnumspan1"
-                                                                    style="display: none">您已选择<span
-                                        id="showfiletotalnum1"></span>个文件</span>
-                                    <br>
-                                </div>
+                        </div>
+                    </td>
+                    <td style="text-align: left">
+                        <div id="uploader1" class="wu-example">
+                            <div class="btns">
+                                <span id="picker1"></span><span id="showtotalnumspan1"
+                                                                style="display: none">您已选择<span
+                                    id="showfiletotalnum1"></span>个文件</span>
+                                <br>
                             </div>
-                            <!--<input type="file" id="file" name="file" onchange="changeformactionupload()"-->
-                            <!--multiple>-->
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
 
-                        </td>
+                <tfoot>
 
-                        <!--<td><font color="#FF0000" size="2">*</font>-->
-                        <!--<input type="text" style="width: 300px" id="filename" th:field="*{fileName}">-->
+                </tfoot>
+            </table>
+        </div>
+        <p>
+        <div id="selecradio">
 
-                        <!--</td>-->
+            <input type="radio" name="showmethod" checked value="0" id="listshow" onclick="showlistdiv()">列表展示
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="showmethod" value="1" id="foldershow" onclick="showfolderdiv()">文件夹展示
+        </div>
 
-
+        <div id="listdiv">
+            <div id="showtabledivhead">
+                <table class="grid" style="width: 100%;" id="tablecsshead">
+                    <thead style="background-color: #E0EEEE" align="center" id="urlthead">
+                    <tr>
+                        <td width="30">序号</td>
+                        <td width="50">设计师</td>
+                        <td width="150">订单编号</td>
+                        <td width="50">业务员</td>
+                        <td width="200">文件名称</td>
+                        <td width="153">上传时间</td>
+                        <td width="50">更新次数</td>
                     </tr>
-                    </tbody>
-
-                    <tfoot>
-
-                    </tfoot>
+                    </thead>
                 </table>
             </div>
-            <p>
-            <div id="selecradio">
 
-                <input type="radio" name="showmethod" checked value="0" id="listshow" onclick="showlistdiv()">列表展示
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="radio" name="showmethod" value="1" id="foldershow" onclick="showfolderdiv()">文件夹展示
+            <div id="showurldiv">
+                <table class="grid" style="width: 100%;height: 360px" id="tablecss">
+                    <tbody align="center" id="urltbody" style="height: 250px;">
+                    <tr>
+                        <td colspan="7">暂无数据</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div id="listdiv">
-                <div id="showtabledivhead">
-                    <table class="grid" style="width: 100%;" id="tablecsshead">
-                        <thead style="background-color: #E0EEEE" align="center" id="urlthead">
-                        <tr>
-                            <td width="30">序号</td>
-                            <td width="50">设计师</td>
-                            <td width="150">订单编号</td>
-                            <td width="50">业务员</td>
-                            <td width="200">文件名称</td>
-                            <td width="153">上传时间</td>
-                            <td width="50">更新次数</td>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-
-                <div id="showurldiv">
-                    <table class="grid" style="width: 100%;height: 360px" id="tablecss">
-                        <tbody align="center" id="urltbody" style="height: 250px;">
-                        <tr>
-                            <td colspan="7">暂无数据</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-
-            <!--FOLDER形式展示DIV-->
-            <div id="folderdiv" style="display: none">
-
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
-                                               onclick="backFolder();">
-
-                <div id="innerfolderdiv" style="overflow-y:scroll">
-                </div>
-            </div>
-            <div id="buttondiv">
-                <div id="innerbuttondiv" style="text-align: right">
-                    <!--<input type="button" onclick="submitalldata()" value="上传">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                    <!--<input type="button" value="全部清空" onclick="removeallbutonetr()">-->
-                    <button id="ctlBtn" class="btn btn-default">开始上传</button>
-                    <button id="" class="btn btn-default" onclick="clearFileData()">全部清空</button>
-
-                </div>
-            </div>
-
-            <!--<div id="progress">-->
-            <!--<div class="col-lg-5"-->
-            <!--style="padding-left: 0; padding-right: 0; margin-bottom: 0px;">-->
-            <!--<div class="progress progress-striped active" style="display: ">-->
-            <!--<div id="progressBar" class="progress-bar progress-bar-success"-->
-            <!--role="progressbar" aria-valuemin="0" aria-valuenow="0"-->
-            <!--aria-valuemax="100" style="width: 1%">-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--<span id="proInfo">上传进度：0%</span>-->
-            <!--</div>-->
-
-            <!--用来存放文件信息-->
-
-            <!--<div id="uploader" class="wu-example">-->
-            <!--&lt;!&ndash;用来存放文件信息&ndash;&gt;-->
-            <!--<div id="thelist" class="uploader-list"></div>-->
-            <!--<div class="btns">-->
-            <!--<div id="picker">文件选择<input type="file" id="filefolder" name="fileFolder"-->
-            <!--onchange="changeformactionfolder()"-->
-            <!--webkitdirectory></div>-->
-            <!--<button id="ctlBtn" class="btn btn-default">开始上传</button>-->
-            <!--</div>-->
-            <!--</div>-->
-
 
         </div>
-        <!--</form>-->
-    </div>
-    <!--用来存放文件信息-->
-    <div id="thelist" class="uploader-list" style="display:none;"></div>
-    <div id="showMessageDiv" style="display: none">
-        <div id="innershowMessageDiv">
-            <div id="innershowMessageDiv1">
-                <div id="innershowMessageDiv11" th:align="center">
-                    <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
-                </div>
-                <div id="innershowMessageDiv12" th:align="left">
-                    <p>
-                        <font color="#000000" size="2" th:align="center">一,上传方式:文件夹和文件二选一.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">三,文件命名:文件名必须有扩展名,并不能有","符号.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">五,同一订单下不能出现重复文件名.</font>
+        <p>
+        <div id="buttondiv">
+            <div id="innerbuttondiv" style="text-align: right">
+                <button id="ctlBtn" class="btn btn-default">开始上传</button>
+                <button id="" class="btn btn-default" onclick="clearFileData()">全部清空</button>
 
-                    <p>
-                        <font color="#000000" size="2" th:align="center">六,文件上传非初次上传可以自主选择上级目录.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">七,为方便后续操作,请尽量将信息填写完整.</font>
-
-                </div>
             </div>
-            <div id="innershowMessageDiv2" th:align="right">
-                <p>
-                    <br>
-                    <input type="button" value="关闭" onclick="closeShowMessage()">
+        </div>
+
+        <!--FOLDER形式展示DIV-->
+        <div id="folderdiv" style="display: none">
+
+            &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
+                                           onclick="backFolder();">
+
+            <div id="innerfolderdiv" style="overflow-y:scroll">
             </div>
         </div>
     </div>
-
-
+    <!--</form>-->
 </div>
-</body>
+
+<!--用来存放文件信息-->
+<div id="thelist" class="uploader-list" style="display:none;"></div>
+<div id="showMessageDiv" style="display: none">
+    <div id="innershowMessageDiv">
+        <div id="innershowMessageDiv1">
+            <div id="innershowMessageDiv11" th:align="center">
+                <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
+            </div>
+            <div id="innershowMessageDiv12" th:align="left">
+                <p>
+                    <font color="#000000" size="2" th:align="center">一,上传方式:文件夹和文件二选一.</font>
+                <p>
+                    <font color="#000000" size="2" th:align="center">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>
+                <p>
+                    <font color="#000000" size="2" th:align="center">三,文件命名:文件名必须有扩展名,并不能有","符号.</font>
+                <p>
+                    <font color="#000000" size="2" th:align="center">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>
+                <p>
+                    <font color="#000000" size="2" th:align="center">五,同一订单下不能出现重复文件名.</font>
+
+                <p>
+                    <font color="#000000" size="2" th:align="center">六,文件上传非初次上传可以自主选择上级目录.</font>
+                <p>
+                    <font color="#000000" size="2" th:align="center">七,为方便后续操作,请尽量将信息填写完整.</font>
+
+            </div>
+        </div>
+        <div id="innershowMessageDiv2" th:align="right">
+            <p>
+                <br>
+                <input type="button" value="关闭" onclick="closeShowMessage()">
+        </div>
+    </div>
+</div>
+
 
 </html>
 </html>
@@ -662,8 +506,8 @@
         data.orderNo = $("#orderno").val().trim();
         data.salor = $("#salorid").val();
         data.projectName = $("#projectno").val().trim();
-        data.fileNames =allurls1;
-        data.name =file.name;
+        data.fileNames = allurls1;
+        data.name = file.name;
         data.saveFolderName = $("#folderselect").val();
         data.randomNum = arr;
     };
@@ -685,7 +529,7 @@
     uploader1.on('uploadComplete', function (file) {
         // 隐藏进度条
         // fadeOutProgress(file, 'MD5');
-        $("#"+file.id).hide();
+        $("#" + file.id).hide();
         fadeOutProgress(file, 'FILE');
     });
 
@@ -744,14 +588,15 @@
     uploader.on('uploadComplete', function (file) {
         // 隐藏进度条
         // fadeOutProgress(file, 'MD5');
-        $("#"+file.id).hide();
-         fadeOutProgress(file, 'FILE');
+        $("#" + file.id).hide();
+        fadeOutProgress(file, 'FILE');
     });
     var flagg = true;
     var flaggg = false;
 
 
     function checkMessageBeforeUpload() {
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var salorid = $("#salorid").val();
         var orderno = $("#orderno").val().trim();
         var projecto = $("#projectno").val().trim();
@@ -772,6 +617,7 @@
                 $("#listdiv").attr("style", "display:none;")
                 $("#folderdiv").attr("style", "display:block;")
                 alert("您没有指定文件夹,系统将默认存放在以订单为名和目录下!");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
             }
         } else {
             $("#folderselect").val(filesaveselect);
@@ -781,6 +627,7 @@
         }
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
             clearFileData()
             return false;
@@ -789,10 +636,12 @@
             flagg = false;
             clearFileData()
             alert("请填写订单编号！");
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             return false;
         }
         if (projecto == "") {
             alert("请填写项目名称！");
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
             clearFileData()
             return false;
@@ -804,6 +653,7 @@
                     filePathName += allurls[i] + ",";
                 } else {
                     alert("您选择的文件名或者文件夹名含有,符号,如:" + allurls[i]);
+                    window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
                     clearFileData()
                     return false;
@@ -813,16 +663,18 @@
             formData.append('filePathName', filePathName);
         } else if (totalFileNum1 != 0) {
             for (var i = 0; i < allurls1.length; i++) {
-                if (allurls1[i].indexOf(".") != -1 ) {
+                if (allurls1[i].indexOf(".") != -1) {
                     fileName += allurls1[i] + ",";
                 } else {
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
+                    window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
                     clearFileData()
                     return false;
                 }
-                if (allurls1[i].indexOf(",") != -1 ) {
+                if (allurls1[i].indexOf(",") != -1) {
                     alert("文件名不能有,符号,如:" + allurls1[i]);
+                    window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
                     clearFileData()
                     return false;
@@ -832,12 +684,13 @@
             formData.append('filePathName', fileName);
         } else {
             alert("上传前请选择文件!")
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
             clearFileData()
             return false;
         }
         if (flagg) {
-            $("#some-element").busyLoad("show");//遮罩层开启
+            window.parent.document.getElementById('coverbehidepage').style.display="block";
             //第一步，checkmessage
             $.ajax({
                 data: formData,
@@ -848,7 +701,7 @@
                 contentType: false,
                 processData: false,
                 success: function (msg) {
-                    $("#some-element").busyLoad("hide");//遮罩层
+                    window.parent.document.getElementById('coverbehidepage').style.display="none";
                     if (msg != '"OK"') {
                         alert(msg);
                         flaggg = false;
@@ -860,7 +713,7 @@
                     }
                 },
                 error: function (msg) {
-                    $("#some-element").busyLoad("hide");
+                    window.parent.document.getElementById('coverbehidepage').style.display="none";
                     alert("查询失败");
                     flaggg = false;
                     clearFileData()
@@ -869,6 +722,7 @@
                 }
             });
         }
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
     }
 
     //url = "/fileupdown/checkmessage";
@@ -879,11 +733,11 @@
         formData.append('salor', $("#salorid").val());
         formData.append('projectName', $("#projectno").val().trim());
         formData.append('random8', arr);
-        formData.append('filedescribtion',$("#filedescribtion").val());
-        formData.append('remark',$("#remark").val());
-        formData.append('saveFolderName',$("#folderselect").val());
-        if(totalFileNum != 0) {
-            formData.append('filePathNames',allurls);
+        formData.append('filedescribtion', $("#filedescribtion").val());
+        formData.append('remark', $("#remark").val());
+        formData.append('saveFolderName', $("#folderselect").val());
+        if (totalFileNum != 0) {
+            formData.append('filePathNames', allurls);
             $.ajax({
                 data: formData,
                 type: "POST",
@@ -898,8 +752,8 @@
                 error: function (msg) {
                 }
             });
-        }else if(totalFileNum1!=0) {
-            formData.append('filePathNames',allurls1);
+        } else if (totalFileNum1 != 0) {
+            formData.append('filePathNames', allurls1);
             $.ajax({
                 data: formData,
                 type: "POST",
@@ -932,8 +786,10 @@
 
 
     uploader.on('uploadFinished', function (file) {
-         saveData();
-        $("#coverbehidepage").hide();
+        saveData();
+    window.parent.document.getElementById('coverbehidepage').style.display="none";
+
+        //$("#coverbehidepage").hide();
         $("#thelist").hide();
         clearFileData();
         alert("上传成功！")
@@ -941,7 +797,8 @@
 
     uploader1.on('uploadFinished', function (file) {
         saveData();
-        $("#coverbehidepage").hide();
+       // $("#coverbehidepage").hide();
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
         $("#thelist").hide();
         clearFileData();
         alert("上传成功！")
@@ -986,20 +843,21 @@
             clearFileData()
             return false;
         }
-        if(totalFileNum1==0 && totalFileNum==0) {
+        if (totalFileNum1 == 0 && totalFileNum == 0) {
             alert("上传前请选择需要上传的文件或文件夹!");
             return false;
         }
         $("#folderselect").val(filesaveselect);
         if (flaggg) {
-            $("#coverbehidepage").show();//遮罩层开启
+            //$("#coverbehidepage").show();//遮罩层开启
+            window.parent.document.getElementById('coverbehidepage').style.display="block";
             $("#thelist").show();
             //第二步，saveMessageandFileStore
             if (totalFileNum1 != 0) {
                 uploader1.upload();
             } else if (totalFileNum != 0) {
                 uploader.upload();
-            }else if(totalFileNum1==0 && totalFileNum==0) {
+            } else if (totalFileNum1 == 0 && totalFileNum == 0) {
                 alert("上传前请选择需要上传的文件或文件夹!");
                 return false;
             }
@@ -1107,13 +965,13 @@
     }
 
 
-    function test(){
+    function test() {
         arr = "";
         // 0-9的随机数
-        for(var i =0;i<8;i++){//循环六次
-            var num = Math.random()*9;//Math.random();每次生成(0-1)之间的数;
-            num = parseInt(num,10);
-            arr+=num;
+        for (var i = 0; i < 8; i++) {//循环六次
+            var num = Math.random() * 9;//Math.random();每次生成(0-1)之间的数;
+            num = parseInt(num, 10);
+            arr += num;
         }
     };
 
@@ -1122,34 +980,32 @@
 
     #listdiv {
         border: 1px solid #9AC0CD;
-        width: 1160px;
-        height: 250;
-        Margin: 2px;
-        padding: 3px;
+        width: 1158px;
+        height: 280px;
     }
 
     #folderdiv {
         border: 1px solid #9AC0CD;
-        width: 1148px;
+        width: 1158px;
         height: 320px;
         Margin: 2px;
         padding: 3px;
     }
 
-    #coverbehidepage {
-        display: none;
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index: 1001;
-        -moz-opacity: 0.3;
-        opacity: .30;
-        filter: alpha(opacity=30);
+    /*#coverbehidepage {*/
+        /*display: none;*/
+        /*position: absolute;*/
+        /*top: 0%;*/
+        /*left: 0%;*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*background-color: black;*/
+        /*z-index: 1001;*/
+        /*-moz-opacity: 0.3;*/
+        /*opacity: .30;*/
+        /*filter: alpha(opacity=30);*/
 
-    }
+    /*}*/
 
     #showMessageDiv {
         border: 1px solid #9AC0CD;
@@ -1171,12 +1027,12 @@
         height: 500px;
         Margin: 2px;
         padding: 3px;
-        z-index: 1007;
+        z-index: 1006;
         background-color: #E0EEEE;
         position: absolute;
         top: 19%;
-        left: 28%;
-        overflow-y:scroll;
+        left: 13%;
+        overflow-y: scroll;
     }
 
     #innershowMessageDiv {
@@ -1232,14 +1088,14 @@
 
     #innerfolderdiv {
         border: 1px solid #9AC0CD;
-        width: 1120px;
+        width: 1146px;
         height: 250px;
         Margin: 10px;
         padding: 3px;
     }
 
     #buttondiv {
-        width: 1148px;
+        width: 1158px;
         Margin: 2px;
         padding: 3px;
     }
@@ -1297,7 +1153,7 @@
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 1165px;
+        width: 1155px;
         height: 250px;
         right: 0;
 
@@ -1310,7 +1166,7 @@
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 1148px;
+        width: 1155px;
         height: 320;
         right: 0;
     }
@@ -1432,7 +1288,7 @@
         //     alert("comein")
         //     $("#backfolder").attr("disabled","disabled");
         // }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1485,12 +1341,12 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
     }
 
     function shownextfolderorfiles(foldername) {
@@ -1527,7 +1383,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1576,22 +1432,24 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
 
     }
 
     function alertMessageDiv() {
-        $("#coverbehidepage").show();
+        //$("#coverbehidepage").show();
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         $("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
-        $("#coverbehidepage").hide();
+       // $("#coverbehidepage").hide();
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
         $("#showMessageDiv").hide();
     }
 
@@ -1643,7 +1501,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1684,12 +1542,13 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
     }
 
     function checkOrderNo(str) {
@@ -1801,7 +1660,8 @@
 
 
     function showfileurldivbysaloridorderno(salorid, orderno) {
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
+
         var urltbody = $("#urltbody");
         urltbody.html("");
         var jsonarray = {
@@ -1841,12 +1701,12 @@
             },
             error: function (msg) {
                 // 隐藏loading
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("失败");
             }
 
         });
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
     }
 
     function isNull(arg1) {
@@ -1980,15 +1840,16 @@
         $("#folderselect").val(filesaveselect);
         //showSessionMessage();//定时器开启
         //document.getElementById("form1").submit();
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         if (isFilePathRight == 0) {
             alert("您要上传的文件夹或文件名不能包含,符号.");
-            $("#some-element").busyLoad("hide");//遮罩层开启
+
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             return;
         }
         if (isFilePathRight == 2) {
             alert("您要上传的文件名必须要有扩展名!");
-            $("#some-element").busyLoad("hide");//遮罩层开启
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             return;
         }
         var formData = new FormData();
@@ -2011,13 +1872,13 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                $("#some-element").busyLoad("hide");//遮罩层开启
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 var flag = msg;
                 if (flag != '"OK"') {
                     alert(flag);
                     return;
                 } else {
-                    $("#some-element").busyLoad("show");//遮罩层开启
+                    window.parent.document.getElementById('coverbehidepage').style.display="block";
                     document.getElementById("form1").submit();
                     var pro = null;
                     pro = setInterval(function () {
@@ -2056,7 +1917,7 @@
 
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
@@ -2140,7 +2001,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -2169,12 +2030,12 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
     }
 
     // function addrow() {

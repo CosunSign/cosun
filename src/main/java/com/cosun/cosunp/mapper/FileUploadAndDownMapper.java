@@ -472,7 +472,7 @@ public interface FileUploadAndDownMapper {
             }
             if (view.getEngineer() != null && view.getEngineer() != "") {
                 view.setuId(Integer.valueOf(view.getEngineer()));
-                sql.append(" and info.createuser = #{uId} ");
+                sql.append(" and info.uid = #{uId} ");
             }
             if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
                 sql.append(" and info.projectname like CONCAT('%',#{projectName},'%')");
@@ -555,7 +555,7 @@ public interface FileUploadAndDownMapper {
             }
             if (view.getEngineer() != null && view.getEngineer() != "") {
                 view.setuId(Integer.valueOf(view.getEngineer()));
-                sql.append(" and info.createuser = #{uId} ");
+                sql.append(" and info.uid = #{uId} ");
             }
             if (view.getProjectName() != null && view.getProjectName().trim().length() > 0) {
                 sql.append(" and info.projectname like CONCAT('%',#{projectName},'%')");

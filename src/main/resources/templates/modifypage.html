@@ -12,8 +12,6 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
-    <link href="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/busy-load/dist/app.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/webuploader.css">
@@ -21,112 +19,12 @@
 
 
 </head>
-<body class=" theme-blue">
-<!--[if lt IE 7 ]>
-<body class="ie ie6"> <![endif]-->
-<!--[if IE 7 ]>
-<body class="ie ie7 "> <![endif]-->
-<!--[if IE 8 ]>
-<body class="ie ie8 "> <![endif]-->
-<!--[if IE 9 ]>
-<body class="ie ie9 "> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!-->
-
-<!--<![endif]-->
-<div class="navbar navbar-default" role="navigation">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="" href="mainindex.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a>
-    </div>
-
-    <div class="navbar-collapse collapse" style="height: 1px;">
-        <ul id="main-menu" class="nav navbar-nav navbar-right">
-            <li class="dropdown hidden-xs">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
-                          th:text="${view.fullName}"></span>
-
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a th:href="@{/account/logout}">退出登录</a></li>
-
-                </ul>
-            </li>
-        </ul>
-
-    </div>
-</div>
-
-
-<div class="sidebar-nav">
-    <ul>
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforsalor"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>
-            新建订单<i
-                    class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforsalor nav nav-list collapse">
-                <li><a th:href="@{/order/createsinglegoods}"><span class="fa fa-caret-right"></span> 单件商品</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 项目类</a></li>
-            </ul>
-        </li>
-
-        <!--========================文件管理===============================-->
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforfile nav nav-list collapse">
-                <li>
-                    <a th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}"><span
-                            class="fa fa-caret-right"></span> 设计文件</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
-            </ul>
-        </li>
-
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menu nav nav-list collapse">
-            </ul>
-        </li>
-
-        <li><a href="#" data-target=".accounts-menu" class="nav-header collapsed" data-toggle="collapse"><i
-                class="fa fa-fw fa-briefcase"></i>报表 <span class="label label-info">+3</span></a></li>
-        <li>
-            <ul class="accounts-menu nav nav-list collapse">
-            </ul>
-        </li>
-    </ul>
-</div>
-
-<div id="coverbehidepage" style="display: none"></div>
-</div>
+<!--<div id="coverbehidepage" style="display: none"></div>-->
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.noExsitFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
 <input type="hidden" id="foldername">
-<div id="some-element">
-    <div class="content">
-        <!--<form action="/fileupdown/modifyPage" method="post" id="form1" enctype="multipart/form-data"-->
-              <!--th:object="${view}">-->
+<div id="">
             <input type="hidden" name="*{salor}" id="salorvalue">
             <input type="hidden" name="*{saveFolderName}" id="folderselect">
             <input type="hidden" name="filePathName" id="filePathName">
@@ -153,6 +51,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
                 <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
                                                               size="2"><u><strong>温馨小贴士</strong></u></font></a>
@@ -181,7 +80,11 @@
                     <!--<font color="#FF0000" size="2">*</font>-->
                     项目名称
                     <input type="text" id="projectno" name="projectName" onchange="clearFileData1()">
-                    &nbsp;&nbsp;&nbsp;&nbsp;更新时间
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;
+
+                更新时间
                     <input type="text" readonly="readonly" class="Wdate" id="uploaddatetime" name="createTime">
                 </div>
                 <p>
@@ -257,39 +160,6 @@
                         </tbody>
 
                         <tfoot>
-
-
-                        <!--<tr>-->
-                        <!--<td colspan="4">-->
-                        <!--<p>-->
-
-                        <!--<font color="#FF0000" size="2">注:"*"代表必填选项.</font>-->
-                        <!--<p>-->
-
-
-                        <!--<font color="#FF0000"-->
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--单次更新总文件大小不超过50M.否则服务器不接受请求。</font>-->
-                        <!--<p>-->
-
-
-                        <!--<font color="#FF0000"-->
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--更新的两种方式为文件夹与文件，二选一。</font>-->
-                        <!--<p>-->
-                        <!--<font color="#FF0000"-->
-
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本更新功能只更新您已上传过的文件。如您选择的更新文件或文件夹里有部分新文件，则服务器全不受理。</font>-->
-                        <!--<p>-->
-                        <!--<font color="#FF0000"-->
-
-                        <!--size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--本更新功能必须满足两点服务器才受理，1.文件名必须相同。2.如先前是以文件夹上传此次更新必须也要以文件夹形式更新并路径完全相同。-->
-
-
-                        <!--</td>-->
-                        <!--</tr>-->
-
                         </tfoot>
                     </table>
                 </div>
@@ -313,9 +183,6 @@
                             <td width="153">上传时间</td>
                             <td width="50">更新次数</td>
                             </thead>
-                            <!--<tbody align="center" id="urltbody">-->
-                            <!--<tr><td colspan="7">暂无数据</td></tr>-->
-                            <!--</tbody>-->
                         </table>
                     </div>
 
@@ -342,30 +209,14 @@
                 </div>
                 <div id="buttondiv">
                     <div id="innerbuttondiv" style="text-align: right">
-                        <!--<input type="button" onclick="submitalldata2()" value="更新">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        <!--<input type="button" value="全部清空" onclick="removeallbutonetr2()">-->
 
                         <button id="ctlBtn" class="btn btn-default">开始更新</button>
                         <button id="" class="btn btn-default" onclick="clearFileData()">全部清空</button>
                     </div>
                 </div>
 
-                <!--<div id="progress">-->
-                    <!--<div class="col-lg-5"-->
-                         <!--style="padding-left: 0; padding-right: 0; margin-bottom: 0px;">-->
-                        <!--<div class="progress progress-striped active" style="display: ">-->
-                            <!--<div id="progressBar" class="progress-bar progress-bar-success"-->
-                                 <!--role="progressbar" aria-valuemin="0" aria-valuenow="0"-->
-                                 <!--aria-valuemax="100" style="width: 1%">-->
-
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<span id="proInfo">更新进度：0%</span>-->
-                <!--</div>-->
             </div>
-        <!--</form>-->
-    </div>
+
 
 
     <!--用来存放文件信息-->
@@ -403,7 +254,6 @@
 </div>
 
 
-</body>
 
 </html>
 </html>
@@ -808,7 +658,8 @@
                 return false;
             }
             if (flagg) {
-                $("#some-element").busyLoad("show");//遮罩层开启
+                //$("#some-element").busyLoad("show");//遮罩层开启
+                window.parent.document.getElementById('coverbehidepage').style.display="block";
                 //第一步，checkmessage
                 $.ajax({
                     data: formData,
@@ -819,7 +670,8 @@
                     contentType: false,
                     processData: false,
                     success: function (msg) {
-                        $("#some-element").busyLoad("hide");//遮罩层
+                        //$("#some-element").busyLoad("hide");//遮罩层
+                        window.parent.document.getElementById('coverbehidepage').style.display="none";
                         if (msg != '"OK"') {
                             alert(msg);
                             flaggg = false;
@@ -831,7 +683,8 @@
                         }
                     },
                     error: function (msg) {
-                        $("#some-element").busyLoad("hide");
+                        //$("#some-element").busyLoad("hide");
+                        window.parent.document.getElementById('coverbehidepage').style.display="none";
                         alert("查询失败");
                         flaggg = false;
                         clearFileData()
@@ -899,7 +752,8 @@
 
         uploader.on('uploadFinished', function (file) {
             saveData();
-            $("#coverbehidepage").hide();
+            //$("#coverbehidepage").hide();
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
             $("#thelist").hide();
             clearFileData();
             alert("更新成功")
@@ -907,7 +761,8 @@
 
         uploader1.on('uploadFinished', function (file) {
             saveData();
-            $("#coverbehidepage").hide();
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            // $("#coverbehidepage").hide();
             $("#thelist").hide();
             clearFileData();
             alert("更新成功")
@@ -945,7 +800,8 @@
             }
 
             if (flaggg) {
-                $("#coverbehidepage").show();//遮罩层开启
+                //$("#coverbehidepage").show();//遮罩层开启
+                window.parent.document.getElementById('coverbehidepage').style.display="block";
                 $("#thelist").show();
                 //第二步，saveMessageandFileStore
                 if (totalFileNum1 != 0) {
@@ -1068,8 +924,6 @@
     #listdiv {
         border: 1px solid #9AC0CD;
         width: 1160px;
-        Margin: 2px;
-        padding: 3px;
     }
 
     #thelist {
@@ -1082,7 +936,7 @@
         background-color: #E0EEEE;
         position: absolute;
         top: 19%;
-        left: 28%;
+        left: 13%;
         overflow-y:scroll;
     }
 
@@ -1173,7 +1027,7 @@
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 1165px;
+        width: 1158px;
         height: 280px;
         right: 0;
 
@@ -1185,7 +1039,7 @@
         margin-right: 1px;
         top: 0;
         bottom: 0;
-        width: 1148px;
+        width: 1158px;
         right: 0;
     }
 
@@ -1318,20 +1172,7 @@
 
     }
 
-    #coverbehidepage {
-        display: none;
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index: 1006;
-        -moz-opacity: 0.3;
-        opacity: .30;
-        filter: alpha(opacity=30);
 
-    }
 </style>
 
 <script type="text/javascript">
@@ -1384,7 +1225,8 @@
             return false;
         }
 
-        $("#some-element").busyLoad("show");//遮罩层开启
+       // $("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1420,12 +1262,15 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+               // $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+       // $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
     }
 
     function shownextfolderorfiles(foldername) {
@@ -1462,7 +1307,9 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        //$("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
+
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1495,12 +1342,16 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                //$("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
+
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        //$("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
 
     }
 
@@ -1540,7 +1391,9 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        //$("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
+
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1570,12 +1423,16 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                //$("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
+
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+       // $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
     }
 
 
@@ -1654,12 +1511,15 @@
     }
 
     function alertMessageDiv() {
-        $("#coverbehidepage").show();
+       // $("#coverbehidepage").show();
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         $("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
-        $("#coverbehidepage").hide();
+        //$("#coverbehidepage").hide();
+        window.parent.document.getElementById('coverbehidepage').style.display="hide";
+
         $("#showMessageDiv").hide();
     }
 
@@ -1668,7 +1528,9 @@
     }
 
     function showfileurldivbysaloridorderno(salorid, orderno) {
-        $("#some-element").busyLoad("show");//遮罩层开启
+        //$("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
+
         var urltbody = $("#urltbody");
         urltbody.html("");
         var jsonarray = {
@@ -1708,12 +1570,16 @@
             },
             error: function (msg) {
                 // 隐藏loading
-                $("#some-element").busyLoad("hide");
+                //$("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
+
                 alert("失败");
             }
 
         });
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        //$("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
     }
 
 
@@ -1758,10 +1624,13 @@
             $("#filefolder").val("");
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        //$("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         if(isFilePathRight==0) {
             alert("您要更新的的文件夹或文件名不能包含,符号.");
-            $("#some-element").busyLoad("hide");//遮罩层开启
+            //$("#some-element").busyLoad("hide");//遮罩层开启
+            window.parent.document.getElementById('coverbehidepage').style.display="none";
+
             return;
         }
         var formData = new FormData();
@@ -1783,13 +1652,15 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                $("#some-element").busyLoad("hide");//遮罩层开启
+               // $("#some-element").busyLoad("hide");//遮罩层开启
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 var flag = msg;
                 if(flag!='"OK"') {
                     alert(flag);
                     return;
                 } else{
-                    $("#some-element").busyLoad("show");//遮罩层开启
+                    //$("#some-element").busyLoad("show");//遮罩层开启
+                    window.parent.document.getElementById('coverbehidepage').style.display="block";
                     document.getElementById("form1").submit();
                     var pro = null;
                     pro = setInterval(function () {
@@ -1828,7 +1699,9 @@
 
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+               // $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
+
                 alert("查询失败");
             }
         });
@@ -1912,7 +1785,8 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        $("#some-element").busyLoad("show");//遮罩层开启
+        //$("#some-element").busyLoad("show");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1941,12 +1815,15 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                $("#some-element").busyLoad("hide");
+                //$("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 alert("查询失败");
             }
         });
 
-        $("#some-element").busyLoad("hide");//遮罩层开启
+        //$("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+
     }
 
 </script>

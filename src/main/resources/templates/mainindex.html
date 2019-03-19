@@ -28,7 +28,6 @@
 <body class=" theme-blue">
 
 <!-- Demo page code -->
-
 <script type="text/javascript">
     $(function () {
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
@@ -50,6 +49,38 @@
         width: 800px;
         margin: 0px auto;
         margin-top: 1em;
+    }
+
+    #coverbehidepage {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 100%;
+        filter: alpha(opacity=60);
+        background-color: black;
+        z-index: 1001;
+        left: 0px;
+        display: none;
+        opacity: 0.3;
+        -moz-opacity: 0.3;
+        padding-top: 250px;
+        display: none;
+        filter: alpha(opacity=30);
+        text-align:center;
+        color: #000000
+    }
+
+
+    .iframecontent {
+        height: 800px;
+        width: 1163px;
+        background: #fff;
+        border-left: 1px solid #cccccc;
+        border-right: 1px solid #cccccc;
+        border-top: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
     }
 
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
@@ -98,21 +129,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="" href="index.html"><span class="navbar-brand"><span class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a></div>
+        <a class="" href="index.html"><span class="navbar-brand"><span
+                class="fa fa-paper-plane"></span> 深圳柯赛标识工程有限公司</span></a></div>
 
     <div class="navbar-collapse collapse" style="height: 1px;">
         <ul id="main-menu" class="nav navbar-nav navbar-right">
             <li class="dropdown hidden-xs">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"  th:text="${view.fullName}"></span>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-user padding-right-small" style="position:relative;top: 3px;"
+                          th:text="${view.fullName}"></span>
 
-                <i class="fa fa-caret-down"></i>
-            </a>
+                    <i class="fa fa-caret-down"></i>
+                </a>
 
-            <ul class="dropdown-menu">
-                <li><a th:href="@{/account/logout}">退出登录</a></li>
+                <ul class="dropdown-menu">
+                    <li><a th:href="@{/account/logout}">退出登录</a></li>
 
-            </ul>
+                </ul>
             </li>
         </ul>
 
@@ -122,36 +155,36 @@
 
 <div class="sidebar-nav">
     <ul>
-<!--===============================业务订单===================================-->
+        <!--===============================业务订单===================================-->
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-             data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 新建订单<i
+            data-placement="right"><a href="#" data-target=".premium-menuforsalor" class="nav-header collapsed"
+                                      data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 订单<i
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforsalor nav nav-list collapse">
-                <li><a th:href="@{/order/createsinglegoods}"><span class="fa fa-caret-right"></span> 单件商品</a></li>
+                <li><a th:href="@{/order/createsinglegoods}" target="targetText"><span class="fa fa-caret-right"></span>
+                    单件商品</a></li>
                 <li><a href="#"><span class="fa fa-caret-right"></span> 项目类</a></li>
             </ul>
         </li>
 
-<!--========================文件管理===============================-->
+        <!--========================文件管理==================-=============-->
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile" class="nav-header collapsed"
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfile"
+                                                    class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 文件<i
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforfile nav nav-list collapse">
                 <li>
-                    <a th:href="@{/fileupdown/tomainpage}"><span
+                    <a th:href="@{/fileupdown/tomainpage}" target="targetText"><span
                             class="fa fa-caret-right"></span> 设计文件</a></li>
                 <li><a href="#"><span class="fa fa-caret-right"></span> 规范性文件</a></li>
                 <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
             </ul>
         </li>
-
-
 
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
@@ -160,23 +193,7 @@
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menu nav nav-list collapse">
-                <!--<li class="visible-xs visible-sm"><a href="#"><span>- Premium features require a license -</span></a>-->
-                <!--</li>-->
-                <!--<li><a href="premium-profile.html"><span class="fa fa-caret-right"></span> Enhanced Profile</a></li>-->
-                <!--<li><a href="premium-blog.html"><span class="fa fa-caret-right"></span> Blog</a></li>-->
-                <!--<li><a href="premium-blog-item.html"><span class="fa fa-caret-right"></span> Blog Page</a></li>-->
-                <!--<li><a href="premium-pricing-tables.html"><span class="fa fa-caret-right"></span> Pricing Tables</a>-->
-                <!--</li>-->
-                <!--<li><a href="premium-upgrade-account.html"><span class="fa fa-caret-right"></span> Upgrade Account</a>-->
-                <!--</li>-->
-                <!--<li><a href="premium-widgets.html"><span class="fa fa-caret-right"></span> Widgets</a></li>-->
-                <!--<li><a href="premium-timeline.html"><span class="fa fa-caret-right"></span> Activity Timeline</a></li>-->
-                <!--<li><a href="premium-users.html"><span class="fa fa-caret-right"></span> Enhanced Users List</a></li>-->
-                <!--<li><a href="premium-media.html"><span class="fa fa-caret-right"></span> Enhanced Media</a></li>-->
-                <!--<li><a href="premium-invoice.html"><span class="fa fa-caret-right"></span> Invoice</a></li>-->
-                <!--<li><a href="premium-build.html"><span class="fa fa-caret-right"></span> Advanced Tools</a></li>-->
-                <!--<li><a href="premium-colors.html"><span class="fa fa-caret-right"></span> Additional Color Themes</a>-->
-                <!--</li>-->
+
             </ul>
         </li>
 
@@ -184,34 +201,20 @@
                 class="fa fa-fw fa-briefcase"></i> 报表 <span class="label label-info">+3</span></a></li>
         <li>
             <ul class="accounts-menu nav nav-list collapse">
-                <!--<li><a href="index.html"><span class="fa fa-caret-right"></span> Sign In</a></li>-->
-                <!--<li><a href="sign-up.html"><span class="fa fa-caret-right"></span> Sign Up</a></li>-->
-                <!--<li><a href="reset-password.html"><span class="fa fa-caret-right"></span> Reset Password</a></li>-->
-            <!---->
+
             </ul>
         </li>
-
-        <!--<li><a href="#" data-target=".legal-menu" class="nav-header collapsed" data-toggle="collapse"><i-->
-        <!--class="fa fa-fw fa-legal"></i> Legal<i class="fa fa-collapse"></i></a></li>-->
-        <!--<li>-->
-        <!--<ul class="legal-menu nav nav-list collapse">-->
-        <!--<li><a href="privacy-policy.html"><span class="fa fa-caret-right"></span> Privacy Policy</a></li>-->
-        <!--<li><a href="terms-and-conditions.html"><span class="fa fa-caret-right"></span> Terms and Conditions</a>-->
-        <!--</li>-->
-        <!--</ul>-->
-        <!--</li>-->
-
-        <!--<li><a href="help.html" class="nav-header"><i class="fa fa-fw fa-question-circle"></i> Help</a></li>-->
-        <!--<li><a href="faq.html" class="nav-header"><i class="fa fa-fw fa-comment"></i> Faq</a></li>-->
-        <!--<li><a href="http://portnine.com/bootstrap-themes/aircraft" class="nav-header" target="blank"><i-->
-        <!--class="fa fa-fw fa-heart"></i> Get Premium</a></li>-->
     </ul>
 </div>
 
-<div class="content">
 
-
+<div id="coverbehidepage" style="display: none"  align="center"><img src="/images/loading2.gif" width="700" height="200" />加载中...</div>
+<div id="some-element">
+    <div class="content">
+        <iframe class="iframecontent" src="" style="float: left" name="targetText"></iframe>
+    </div>
 </div>
+
 </body>
 </html>
 
