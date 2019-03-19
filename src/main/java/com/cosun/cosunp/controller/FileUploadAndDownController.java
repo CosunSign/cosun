@@ -1858,7 +1858,7 @@ public class FileUploadAndDownController {
      * @describtion
      */
     @ResponseBody
-    @RequestMapping(value = "toprivilmanagepage", method = RequestMethod.GET)
+    @RequestMapping(value = "/toprivilmanagepage", method = RequestMethod.GET)
     public ModelAndView toPrivilManagePage(HttpSession session, int currentPage, int pageSize) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView modelAndView = new ModelAndView("privilegemanagepage");
