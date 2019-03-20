@@ -23,4 +23,9 @@ public class UserInfoServiceImpl implements IUserInfoServ {
          userInfoMapper.setNewPasswordByuId(uId,newPassword);
     }
 
+    public String getMobileNumByUserName(String userName) throws Exception {
+        return userInfoMapper.getMobileNumByUserName(userName);
+    }
+
+
 }

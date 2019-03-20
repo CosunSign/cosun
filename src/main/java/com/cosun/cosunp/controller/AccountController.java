@@ -3,17 +3,18 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IUserInfoServ;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/account")
@@ -29,39 +30,49 @@ public class AccountController {
 
     private static final String INDEX = "index";
     private static Logger logger = LogManager.getLogger(AccountController.class);
+
     @ResponseBody
     @RequestMapping(value = "/tologin")
     public ModelAndView toLoginPage() throws Exception {
         ModelAndView mav = new ModelAndView(INDEX);
         DownloadView downloadView = new DownloadView();
         downloadView.setFlag("true");
-        mav.addObject("view",downloadView);
+        mav.addObject("view", downloadView);
         return mav;
     }
 
 
     @ResponseBody
-    @RequestMapping("/toforgetpasswordpage")
-    public ModelAndView toForgetPassword(HttpSession session) throws Exception {
+    @RequestMapping("/toResetPassword")
+    public ModelAndView toResetPassword(HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("reset-password");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        mav.addObject("userInfo",userInfo);
+        mav.addObject("userInfo", userInfo);
+        return mav;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toforgetpasswordpage")
+    public ModelAndView toForgetPassword(HttpSession session) throws Exception {
+        ModelAndView mav = new ModelAndView("forget-password");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        mav.addObject("userInfo", userInfo);
         return mav;
     }
 
     @ResponseBody
     @RequestMapping(value = "/login")
-    public ModelAndView login(@ModelAttribute(value="view") DownloadView view, HttpSession session) throws Exception{
+    public ModelAndView login(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
         ModelAndView mav;
-        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(),view.getPassword());
+        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(), view.getPassword());
         if (userInfo != null && userInfo.getUserName() != null) {
-            session.setAttribute("account",userInfo);
+            session.setAttribute("account", userInfo);
             view.setFullName(userInfo.getFullName());
-            session.setAttribute("view",view);
+            session.setAttribute("view", view);
             mav = new ModelAndView("mainindex");
             session.setAttribute("username", userInfo.getUserName());
             session.setAttribute("password", userInfo.getUserPwd());
-            mav.addObject("view",view);
+            mav.addObject("view", view);
             return mav;
         }
         mav = new ModelAndView(INDEX);
@@ -81,7 +92,7 @@ public class AccountController {
         session.removeAttribute("account");
         DownloadView downloadView = new DownloadView();
         downloadView.setFlag("true");
-        view.addObject("view",downloadView);
+        view.addObject("view", downloadView);
         return view;
     }
 
@@ -91,28 +102,47 @@ public class AccountController {
         DownloadView v = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         v.setFullName(userInfo.getFullName());
-        if(userInfo==null) {
+        if (userInfo == null) {
             view = new ModelAndView(INDEX);
         }
-        view.addObject("view",v);
+        view.addObject("view", v);
         return view;
 
     }
 
     @GetMapping("/saveNewPassword")
-    public ModelAndView saveNewPassword(String newPassword,HttpSession session) throws Exception {
+    public ModelAndView saveNewPassword(String newPassword, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView(INDEX);
         DownloadView v = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         session.removeAttribute("account");
         v.setFullName(userInfo.getFullName());
-        userInfoServ.setNewPasswordByuId(userInfo.getuId(),newPassword);
+        userInfoServ.setNewPasswordByuId(userInfo.getuId(), newPassword);
         userInfo.setUserPwd(newPassword);
-        session.setAttribute("account",userInfo);
-        view.addObject("view",v);
+        session.setAttribute("account", userInfo);
+        view.addObject("view", v);
         return view;
+    }
 
+    @RequestMapping(value = "/getMobileNumByUserName", method = RequestMethod.POST)
+    @ResponseBody
+    public void getMobileNumByUserName(String userName, HttpServletResponse response) throws Exception {
+        String mobileNum = userInfoServ.getMobileNumByUserName(userName);
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(mobileNum);
 
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+        }
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+        }
     }
 
 }

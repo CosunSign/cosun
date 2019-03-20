@@ -17,6 +17,8 @@ public interface UserInfoMapper {
         @Select("SELECT * FROM userinfo WHERE username = #{userName} and userpwd=#{userPwd}")
         UserInfo findUserByUserNameandPassword(@Param("userName") String userName,@Param("userPwd") String userPwd);
 
+        @Select("SELECT mobilenum FROM userinfo WHERE username = #{userName}")
+        String getMobileNumByUserName(String userName);
 
         @Select("SELECT * FROM userinfo ")
         List<UserInfo> findAllUser();
