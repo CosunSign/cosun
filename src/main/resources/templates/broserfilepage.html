@@ -633,12 +633,13 @@
                             <tr>
                                 <td>编号</td>
                                 <td>最近设计者</td>
-                                <td>最近更新时间</td>
+                                <td>最近上传/更新时间</td>
                                 <td>订单编码</td>
                                 <td>顶目名称</td>
                                 <td>文件名称</td>
                                 <td>业务员</td>
                                 <td>更新次数</td>
+                                <td>更新原因</td>
                                 <td>文件说明</td>
                                 <td>备注</td>
                                 <td>路径</td>
@@ -655,6 +656,7 @@
                                     <td align="left" th:text="${downloadView.fileName}"></td>
                                     <td th:text="${downloadView.salor}"></td>
                                     <td th:text="${downloadView.singleFileUpdateNum}"></td>
+                                    <td th:text="${downloadView.modifyReason}"></td>
                                     <td th:text="${downloadView.filedescribtion}"></td>
                                     <td th:text="${downloadView.remark}"></td>
                                     <td align="left" th:text="${downloadView.urlAddr}"></td>
@@ -662,7 +664,7 @@
                             </div>
                             <div th:if="${#lists.isEmpty(downloadViewList)}">
                                 <tr>
-                                    <td colspan="11" align="center">暂无文件清单信息</td>
+                                    <td colspan="12" align="center">暂无文件清单信息</td>
                                 </tr>
                             </div>
                             </tbody>
@@ -671,7 +673,7 @@
 
                             <tr id="showdiv">
 
-                                <td colspan="11" align="center">
+                                <td colspan="12" align="center">
                                     <span>第</span>
                                     <span th:text="${view.currentPage}" id="currentpagespan"> </span>
                                     <span>页|共</span>
@@ -727,7 +729,7 @@
 
 
                             <tr style="display:none;" id="nodatadiv">
-                                <td colspan="11" align="center">
+                                <td colspan="12" align="center">
                                     查无数据
                                 </td>
                             </tr>
@@ -828,15 +830,16 @@
                     inputpage.val(currentPage);
                     $.each(data, function (num) {
                         tr = $("<tr id='" + data[num].id + "'></tr>");
-                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
-                        tr.append("<td>" + isNull(data[num].lastUpdator) + "</td>");
+                        tr.append("<td align='center'>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td align='center'>" + isNull(data[num].lastUpdator) + "</td>");
                         tr.append("<td>" + isNull(data[num].lastUpdateTime) + "</td>");
                         tr.append("<td>" + isNull(data[num].orderNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].projectName) + "</td>");
                         tr.append("<td>" + isNull(data[num].fileName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].salor) + "</td>");
-                        tr.append("<td>" + isNull(data[num].singleFileUpdateNum) + "</td>");
-                        tr.append("<td>" + isNull(data[num].filedescribtion) + "</td>");
+                        tr.append("<td align='center'>" + isNull(data[num].salor) + "</td>");
+                        tr.append("<td align='center'>" + isNull(data[num].singleFileUpdateNum) + "</td>");
+                        tr.append("<td>" + isNull(data[num].modifyReason) + "</td>");
+                        tr.append("<td align='center'>" + isNull(data[num].filedescribtion) + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         tr.append("<td>" + isNull(data[num].urlAddr) + "</td>");
                         tr.appendTo(tbody);

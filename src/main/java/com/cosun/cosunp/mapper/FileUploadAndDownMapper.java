@@ -45,11 +45,12 @@ public interface FileUploadAndDownMapper {
     void addfileManFileDataByUpload(FileManFileInfo fileManFile);
 
     @Select("SELECT ffi.id, " +
-            "                      IFNULL(fmu.username,fmu.updateuser) as lastUpdator, " +
-            "                     IFNULL(fmu.uptime,fmu.updateTime) as lastUpdateTime, " +
+            "                      IFNULL(fmu.updateuser,fmu.username) as lastUpdator, " +
+            "                     IFNULL(fmu.updateTime,fmu.uptime) as lastUpdateTime, " +
             "                      fmu.orginname AS fileName, " +
             "                      ffi.extinfo1 AS salor, " +
             "                     ffi.ordernum AS orderNo, " +
+            "                     fmu.modifyReason AS modifyReason, " +
             "                    ffi.projectname AS projectName, " +
             "                      fmu.singlefileupdatenum AS singleFileUpdateNum, " +
             "                    fmu.logur1 AS urlAddr, " +
@@ -1154,11 +1155,12 @@ public interface FileUploadAndDownMapper {
 
         public String findAllByParaCondition(DownloadView view) {
             StringBuilder sql = new StringBuilder(" SELECT \tffi.id,\n" +
-                    "  IFNULL(fmu.username,fmu.updateuser) as lastUpdator,\n" +
-                    "  IFNULL(fmu.uptime,fmu.updateTime) as lastUpdateTime,\n" +
+                    "  IFNULL(fmu.updateuser,fmu.username) as lastUpdator,\n" +
+                    "  IFNULL(fmu.updateTime,fmu.uptime) as lastUpdateTime,\n" +
                     "\tfmu.orginname AS fileName,\n" +
                     "\tffi.extinfo1 AS salor,\n" +
                     "\tffi.ordernum AS orderNo,\n" +
+                    "\tfmu.modifyReason AS modifyReason,\n" +
                     "\tffi.projectname AS projectName,\n" +
                     "  fmu.singlefileupdatenum AS singleFileUpdateNum,\n" +
                     "\tfmu.logur1 AS urlAddr,\n" +
