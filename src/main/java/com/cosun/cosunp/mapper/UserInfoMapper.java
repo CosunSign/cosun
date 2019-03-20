@@ -4,6 +4,7 @@ import com.cosun.cosunp.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface UserInfoMapper {
 
         @Select("SELECT * FROM userinfo ")
         List<UserInfo> findAllUser();
+
+        @Update("update userinfo set userpwd = #{newPassword} where uid = #{uId} ")
+        void setNewPasswordByuId(Integer uId,String newPassword);
 }

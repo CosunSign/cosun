@@ -18,4 +18,9 @@ public class UserInfoServiceImpl implements IUserInfoServ {
     public UserInfo findUserByUserNameandPassword(String userName, String userPwd) throws Exception {
         return userInfoMapper.findUserByUserNameandPassword(userName,userPwd);
     }
+
+    public void setNewPasswordByuId(Integer uId,String newPassword) throws Exception {
+         userInfoMapper.setNewPasswordByuId(uId,newPassword);
+    }
+
 }

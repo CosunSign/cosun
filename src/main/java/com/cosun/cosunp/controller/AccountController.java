@@ -42,8 +42,10 @@ public class AccountController {
 
     @ResponseBody
     @RequestMapping("/toforgetpasswordpage")
-    public ModelAndView toForgetPassword() throws Exception {
+    public ModelAndView toForgetPassword(HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("reset-password");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        mav.addObject("userInfo",userInfo);
         return mav;
     }
 
@@ -81,6 +83,36 @@ public class AccountController {
         downloadView.setFlag("true");
         view.addObject("view",downloadView);
         return view;
+    }
+
+    @GetMapping("/toMainPage")
+    public ModelAndView toMainPage(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("mainindex");
+        DownloadView v = new DownloadView();
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        v.setFullName(userInfo.getFullName());
+        if(userInfo==null) {
+            view = new ModelAndView(INDEX);
+        }
+        view.addObject("view",v);
+        return view;
+
+    }
+
+    @GetMapping("/saveNewPassword")
+    public ModelAndView saveNewPassword(String newPassword,HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView(INDEX);
+        DownloadView v = new DownloadView();
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        session.removeAttribute("account");
+        v.setFullName(userInfo.getFullName());
+        userInfoServ.setNewPasswordByuId(userInfo.getuId(),newPassword);
+        userInfo.setUserPwd(newPassword);
+        session.setAttribute("account",userInfo);
+        view.addObject("view",v);
+        return view;
+
+
     }
 
 }
