@@ -580,33 +580,33 @@
         var formData = new FormData();
         formData.append('orderNo', $("#orderno").val());
         formData.append('salor', $("#salorid").val());
-        if (typeof (filesaveselect) == "undefined") {
-            if (totalFileNum1 != 0) {
-                $("#folderselect").val("");
-                showfolderdiv();
-                $("#listshow").removeAttr("checked");
-                $("#foldershow").prop("checked", 'checked');
-                $("#listdiv").attr("style", "display:none;")
-                $("#folderdiv").attr("style", "display:block;")
-                alert("您没有指定文件夹,系统将默认存放在以订单为名和目录下!");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
-            }
-        } else {
-            $("#folderselect").val(filesaveselect);
-            if (reg.test(filesaveselect)) {
-                $("#folderselect").val("");
-            }
-        }
+        // if (typeof (filesaveselect) == "undefined") {
+        //     if (totalFileNum1 != 0) {
+        //         $("#folderselect").val("");
+        //         showfolderdiv();
+        //         $("#listshow").removeAttr("checked");
+        //         $("#foldershow").prop("checked", 'checked');
+        //         $("#listdiv").attr("style", "display:none;")
+        //         $("#folderdiv").attr("style", "display:block;")
+        //         alert("您没有指定文件夹,系统将默认存放在以订单为名和目录下!");
+        //         window.parent.document.getElementById('coverbehidepage').style.display="none";
+        //     }
+        // } else {
+        //     $("#folderselect").val(filesaveselect);
+        //     if (reg.test(filesaveselect)) {
+        //         $("#folderselect").val("");
+        //     }
+        // }
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
             window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
-            clearFileData()
+            clearUploder()
             return false;
         }
         if (orderno == "") {
             flagg = false;
-            clearFileData()
+            clearUploder()
             alert("请填写订单编号！");
             window.parent.document.getElementById('coverbehidepage').style.display="none";
             return false;
@@ -615,7 +615,7 @@
             alert("请填写项目名称！");
             window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
-            clearFileData()
+            clearUploder()
             return false;
         }
         $("#folderselect").val(filesaveselect);
@@ -627,7 +627,7 @@
                     alert("您选择的文件名或者文件夹名含有,符号,如:" + allurls[i]);
                     window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
-                    clearFileData()
+                    clearUploder()
                     return false;
                 }
             }
@@ -641,14 +641,14 @@
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
                     window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
-                    clearFileData()
+                    clearUploder()
                     return false;
                 }
                 if (allurls1[i].indexOf(",") != -1) {
                     alert("文件名不能有,符号,如:" + allurls1[i]);
                     window.parent.document.getElementById('coverbehidepage').style.display="none";
                     flagg = false;
-                    clearFileData()
+                    clearUploder()
                     return false;
                 }
             }
@@ -658,7 +658,7 @@
             alert("上传前请选择文件!")
             window.parent.document.getElementById('coverbehidepage').style.display="none";
             flagg = false;
-            clearFileData()
+            clearUploder()
             return false;
         }
         if (flagg) {
@@ -677,7 +677,7 @@
                     if (msg != '"OK"') {
                         alert(msg);
                         flaggg = false;
-                        clearFileData()
+                        clearUploder()
                         return flaggg;
                     } else {
                         flaggg = true;
@@ -688,7 +688,7 @@
                     window.parent.document.getElementById('coverbehidepage').style.display="none";
                     alert("查询失败");
                     flaggg = false;
-                    clearFileData()
+                    clearUploder()
                     return flaggg;
 
                 }
@@ -873,6 +873,30 @@
     }
 
     function clearUploder() {
+        $("#innerfolderdiv").html("");
+        $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
+        $("#foldershow").removeAttr("checked");
+        $("#listshow").prop("checked", 'checked');
+        $("#listdiv").attr("style", "display:block;")
+        $("#folderdiv").attr("style", "display:none;")
+        allurls = new Array();
+        allurls1 = new Array();
+        arr = "";
+        $("#uploaddatetime").val(today());
+        flagg = true;
+        flaggg = false;
+        goOne1 = true;
+        goOne = true;
+        $("#uploader1").show();
+        $("#uploader").show();
+        totalFileNum = 0;
+        totalFileNum1 = 0;
+        $("#thelist").html("");
+        $("#showfiletotalnum").html("");
+        $("#showtotalnumspan").hide();
+        $("#thelist1").html("");
+        $("#showfiletotalnum1").html("");
+        $("#showtotalnumspan1").hide();
         uploader.reset();
         uploader1.reset();
     }
