@@ -258,15 +258,20 @@
 
     function alertMessageDiv() {
        // $("#coverbehidepage").show();
+        var ojb = window.parent.document.getElementById('innershowMessageDiv12');
+        ojb.innerHTML="<p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">一,您得需要有您准备下载的文件(夹)的下载权限.</font>\n" +
+            "\n";
         window.parent.document.getElementById('coverbehidepage').style.display="block";
-        $("#showMessageDiv").show();
+        window.parent.document.getElementById('showMessageDiv').style.display="block";
+        //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
         //$("#coverbehidepage").hide();
         window.parent.document.getElementById('coverbehidepage').style.display="none";
 
-        $("#showMessageDiv").hide();
+       // $("#showMessageDiv").hide();
     }
 
     // 定义一个函数，用来读取特定的cookie值。
@@ -961,7 +966,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
                                                           size="2"><u><strong>温馨小贴士</strong></u></font></a>
 
@@ -1189,11 +1194,6 @@
                 <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
             </div>
             <div id="innershowMessageDiv12" th:align="left">
-                <p>
-                    <font color="#000000" size="2" th:align="center">一,您得需要有您准备下载的文件(夹)的下载权限.</font>
-
-
-
             </div>
         </div>
         <div id="innershowMessageDiv2" th:align="right">

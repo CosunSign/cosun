@@ -207,38 +207,8 @@
 
 <!--用来存放文件信息-->
 <div id="thelist" class="uploader-list" style="display:none;"></div>
-<div id="showMessageDiv" style="display: none">
-    <div id="innershowMessageDiv">
-        <div id="innershowMessageDiv1">
-            <div id="innershowMessageDiv11" th:align="center">
-                <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
-            </div>
-            <div id="innershowMessageDiv12" th:align="left">
-                <p>
-                    <font color="#000000" size="2" th:align="center">一,上传方式:文件夹和文件二选一.</font>
-                <p>
-                    <font color="#000000" size="2" th:align="center">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>
-                <p>
-                    <font color="#000000" size="2" th:align="center">三,文件命名:文件名必须有扩展名,并不能有","符号.</font>
-                <p>
-                    <font color="#000000" size="2" th:align="center">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>
-                <p>
-                    <font color="#000000" size="2" th:align="center">五,同一订单下不能出现重复文件名.</font>
 
-                <p>
-                    <font color="#000000" size="2" th:align="center">六,文件上传非初次上传可以自主选择上级目录.</font>
-                <p>
-                    <font color="#000000" size="2" th:align="center">七,为方便后续操作,请尽量将信息填写完整.</font>
 
-            </div>
-        </div>
-        <div id="innershowMessageDiv2" th:align="right">
-            <p>
-                <br>
-                <input type="button" value="关闭" onclick="closeShowMessage()">
-        </div>
-    </div>
-</div>
 
 
 </html>
@@ -334,6 +304,7 @@
 
 
     var $btn = $('#ctlBtn');
+    //var $thelist = window.parent.document.getElementById('thelist');
     var $thelist = $('#thelist');
     var chunkSize = 5 * 1024 * 1024;
 
@@ -1443,15 +1414,34 @@
     }
 
     function alertMessageDiv() {
-        //$("#coverbehidepage").show();
+        //$("#coverbehidepage").show();innershowMessageDiv12
+       var ojb = window.parent.document.getElementById('innershowMessageDiv12');
+       ojb.innerHTML=" <p><font color=\"#000000\" size=\"2\" th:align=\"center\">一,上传方式:文件夹和文件二选一.</font>\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">三,文件命名:文件名必须有扩展名,并不能有\",\"符号.</font>\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">五,同一订单下不能出现重复文件名.</font>\n" +
+           "\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">六,文件上传非初次上传可以自主选择上级目录.</font>\n" +
+           "                <p>\n" +
+           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">七,为方便后续操作,请尽量将信息填写完整.</font>"
+
         window.parent.document.getElementById('coverbehidepage').style.display="block";
-        $("#showMessageDiv").show();
+        window.parent.document.getElementById('showMessageDiv').style.display="block";
+        //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
        // $("#coverbehidepage").hide();
         window.parent.document.getElementById('coverbehidepage').style.display="none";
-        $("#showMessageDiv").hide();
+        window.parent.document.getElementById('showMessageDiv').style.display="none";
+
+        //$("#showMessageDiv").hide();
     }
 
 

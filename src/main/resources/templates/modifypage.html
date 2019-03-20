@@ -230,15 +230,6 @@
                     <font color="#FF0000" size="3" th:align="center"><strong>温馨小贴士</strong></font>
                 </div>
                 <div id="innershowMessageDiv12" th:align="left">
-                    <p>
-                        <font color="#000000" size="2" th:align="center">一,更新方式:文件夹和文件二选一.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">二,接收种类:文件更新功能只接收您要更新的文件全部已上传过.</font>
-                    <p>
-                        <font color="#000000" size="2" th:align="center">三,您得需要有您准备更新的文件的更新权限..</font>
-
-                    <p>
-                        <font color="#000000" size="2" th:align="center">四,为方便后续操作,请尽量将信息填写完整.</font>
 
                 </div>
             </div>
@@ -1512,15 +1503,28 @@
 
     function alertMessageDiv() {
        // $("#coverbehidepage").show();
+        var ojb = window.parent.document.getElementById('innershowMessageDiv12');
+        ojb.innerHTML = " <p>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">一,更新方式:文件夹和文件二选一.</font>\n" +
+            "                    <p>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">二,接收种类:文件更新功能只接收您要更新的文件全部已上传过.</font>\n" +
+            "                    <p>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">三,您得需要有您准备更新的文件的更新权限..</font>\n" +
+            "\n" +
+            "                    <p>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">四,为方便后续操作,请尽量将信息填写完整.</font>";
         window.parent.document.getElementById('coverbehidepage').style.display="block";
-        $("#showMessageDiv").show();
+        window.parent.document.getElementById('showMessageDiv').style.display="block";
+
+        //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
         //$("#coverbehidepage").hide();
-        window.parent.document.getElementById('coverbehidepage').style.display="hide";
+        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('showMessageDiv').style.display="none";
 
-        $("#showMessageDiv").hide();
+       // $("#showMessageDiv").hide();
     }
 
     function setsalorvalue() {
