@@ -11,6 +11,10 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.css">
+    <!--<script-->
+            <!--src="http://code.jquery.com/jquery-1.9.0.js"-->
+            <!--integrity="sha256-TXsBwvYEO87oOjPQ9ifcb7wn3IrrW91dhj6EMEtRLvM="-->
+            <!--crossorigin="anonymous"></script>-->
     <script src="/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/theme.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/premium.css">
@@ -26,14 +30,13 @@
         $(function () {
             var flag = $("#flag").val();
             $('.SlectBox').SumoSelect({
-                placeholder: 'This is a placeholder',
-                csvDispCount: 2,
-                csvSepChar: ","
-                // captionFormat: '已选择：{0}(个)',
-                // selectAll:true,
-                // captionFormatAllSelected: "全选",
-                // okCancelInMulti: true,
-                // locale : ['确定', '取消', '']
+                csvSepChar: ",",
+                csvDispCount: 3,
+                captionFormat: '已选择：{0}(个)',
+                selectAll:true,
+                captionFormatAllSelected: "全选",
+                okCancelInMulti: true,
+                locale : ['确定', '取消', '全选']
             });
             // var flag = $("#type").val();
             //
@@ -301,6 +304,8 @@
             })
 
         });
+
+
 
         function goPageone() {
             $("#n_currentPage").val(1);

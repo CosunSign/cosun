@@ -1,304 +1,322 @@
 ﻿/*!
- * jquery.sumoselect - v1.0.0
+ * jquery.sumoselect - v3.0.3
  * http://hemantnegi.github.io/jquery.sumoselect
- * 2014-04-08
- *
- * Copyright 2014 Hemant Negi
- * Email : hemant.frnz@gmail.com
- * Compressor http://refresh-sf.com/yui/
  */
 
-(function ($) {
-            'namespace sumo';
-            $.fn.SumoSelect = function (options) {
-
-                // var is_visible_default = false;
-                //$(document).click(function () { is_visible_default = false; });
-
-                // This is the easiest way to have default options.
-                var settings = $.extend({
-                    placeholder: 'Select Here',  // Dont change it here.
-                    csvDispCount: 3,             // display no. of items in multiselect. 0 to display all.
-                    floatWidth: 400,             // Screen width of device at which the list is rendered in floating popup fashion.
-                    forceCustomRendering: false, // force the custom modal on all devices below floatWidth resolution.
-                    nativeOnDevice: ['Android', 'BlackBerry', 'iPhone', 'iPad', 'iPod', 'Opera Mini', 'IEMobile', 'Silk'], //'Windows'
-                    outputAsCSV : true,          //true to POST data as csv ( false for Html control array ie. deafault select )
-                    csvSepChar : ',',            // seperation char in csv mode
-                    okCancelInMulti: false,      //display ok cancel buttons in desktop mode multiselect also. 
-                    triggerChangeCombined : true // im multi select mode wether to trigger change event on individual selection or combined selection.
-
-                }, options);
-
-                return this.each(function () {
-                    var self = this;
-                    this.E = $(this);                    //the original select element
-                    this.is_multi = self.E.attr('multiple');  //if its a mmultiple select
-                    this.select, this.caption, this.placeholder, this.optDiv, this.CaptionCont,this.is_floating = this.is_opened = false, this.backdrop, this.Pstate=[];
-
-                    this.createElems = function () {
-                        self.E.wrap('<div class="SumoSelect">');
-                        self.select = self.E.parent();
-                        self.caption = $('<span></span>');
-                        self.CaptionCont = $('<p class="CaptionCont"><label><i></i></label></p>').addClass('SlectBox').attr('style', self.E.attr('style')).prepend(self.caption);
-                        self.select.append(self.CaptionCont);
-
-                        //if output as csv and is a multiselect.
-                        if (settings.outputAsCSV && self.is_multi && self.E.attr('name')) {
-                            //create a hidden field to store csv value.
-                            self.select.append($('<input class="HEMANT123" type="hidden" />').attr('name', self.E.attr('name')).val(self.getSelStr()));
-
-                            // so it can not post the original select.
-                            self.E.removeAttr('name'); 
+!function (e) {
+    "use strict";
+    "function" == typeof define && define.amd ? define(["jquery"], e) : "undefined" != typeof exports ? module.exports = e(require("jquery")) : e(jQuery)
+}(function (e) {
+    "namespace sumo";
+    e.fn.SumoSelect = function (t) {
+        var l = e.extend({
+            placeholder: "Select Here",
+            csvDispCount: 3,
+            captionFormat: "{0} Selected",
+            captionFormatAllSelected: "{0} all selected!",
+            floatWidth: 400,
+            forceCustomRendering: !1,
+            nativeOnDevice: ["Android", "BlackBerry", "iPhone", "iPad", "iPod", "Opera Mini", "IEMobile", "Silk"],
+            outputAsCSV: !1,
+            csvSepChar: ",",
+            okCancelInMulti: !1,
+            isClickAwayOk: !1,
+            triggerChangeCombined: !0,
+            selectAll: !1,
+            search: !1,
+            searchText: "Search...",
+            noMatch: 'No matches for "{0}"',
+            prefix: "",
+            locale: ["OK", "Cancel", "Select All"],
+            up: !1,
+            showTitle: !0
+        }, t), s = this.each(function () {
+            var t = this;
+            !this.sumo && e(this).is("select") && (this.sumo = {
+                E: e(t),
+                is_multi: e(t).attr("multiple"),
+                select: "",
+                caption: "",
+                placeholder: "",
+                optDiv: "",
+                CaptionCont: "",
+                ul: "",
+                is_floating: !1,
+                is_opened: !1,
+                mob: !1,
+                Pstate: [],
+                createElems: function () {
+                    var t = this;
+                    return t.E.wrap('<div class="SumoSelect" tabindex="0" role="button" aria-expanded="false">'), t.select = t.E.parent(), t.caption = e("<span>"), t.CaptionCont = e('<p class="CaptionCont SelectBox" ><label><i></i></label></p>').attr("style", t.E.attr("style")).prepend(t.caption), t.select.append(t.CaptionCont), t.is_multi || (l.okCancelInMulti = !1), t.E.attr("disabled") && t.select.addClass("disabled").removeAttr("tabindex"), l.outputAsCSV && t.is_multi && t.E.attr("name") && (t.select.append(e('<input class="HEMANT123" type="hidden" />').attr("name", t.E.attr("name")).val(t.getSelStr())), t.E.removeAttr("name")), t.isMobile() && !l.forceCustomRendering ? void t.setNativeMobile() : (t.E.attr("name") && t.select.addClass("sumo_" + t.E.attr("name").replace(/\[\]/, "")), t.E.addClass("SumoUnder").attr("tabindex", "-1"), t.optDiv = e('<div class="optWrapper ' + (l.up ? "up" : "") + '">'), t.floatingList(), t.ul = e('<ul class="options">'), t.optDiv.append(t.ul), l.selectAll && t.is_multi && t.SelAll(), l.search && t.Search(), t.ul.append(t.prepItems(t.E.children())), t.is_multi && t.multiSelelect(), t.select.append(t.optDiv), t.basicEvents(), void t.selAllState())
+                },
+                prepItems: function (t, l) {
+                    var i = [], s = this;
+                    return e(t).each(function (t, n) {
+                        n = e(n), i.push(n.is("optgroup") ? e('<li class="group ' + (n[0].disabled ? "disabled" : "") + '"><label>' + n.attr("label") + "</label><ul></ul></li>").find("ul").append(s.prepItems(n.children(), n[0].disabled)).end() : s.createLi(n, l))
+                    }), i
+                },
+                createLi: function (t, l) {
+                    var i = this;
+                    t.attr("value") || t.attr("value", t.val());
+                    var s = e('<li class="opt"><label>' + t.text() + "</label></li>");
+                    return s.data("opt", t), t.data("li", s), i.is_multi && s.prepend("<span><i></i></span>"), (t[0].disabled || l) && (s = s.addClass("disabled")), i.onOptClick(s), t[0].selected && s.addClass("selected"), t.attr("class") && s.addClass(t.attr("class")), t.attr("title") && s.attr("title", t.attr("title")), s
+                },
+                getSelStr: function () {
+                    return sopt = [], this.E.find("option:selected").each(function () {
+                        sopt.push(e(this).val())
+                    }), sopt.join(l.csvSepChar)
+                },
+                multiSelelect: function () {
+                    var t = this;
+                    t.optDiv.addClass("multiple"), t.okbtn = e('<p tabindex="0" class="btnOk">' + l.locale[0] + "</p>").click(function () {
+                        t._okbtn(), t.hideOpts()
+                    }), t.cancelBtn = e('<p tabindex="0" class="btnCancel">' + l.locale[1] + "</p>").click(function () {
+                        t._cnbtn(), t.hideOpts()
+                    });
+                    var i = t.okbtn.add(t.cancelBtn);
+                    t.optDiv.append(e('<div class="MultiControls">').append(i)), i.on("keydown.sumo", function (l) {
+                        var i = e(this);
+                        switch (l.which) {
+                            case 32:
+                            case 13:
+                                i.trigger("click");
+                                break;
+                            case 9:
+                                if (i.hasClass("btnOk")) return;
+                            case 27:
+                                return t._cnbtn(), void t.hideOpts()
                         }
-
-                        //break for mobile rendring.. if forceCustomRendering is false
-                        if (self.isMobile() && !settings.forceCustomRendering) {                 
-                            self.setNativeMobile();
-                            return;
+                        l.stopPropagation(), l.preventDefault()
+                    })
+                },
+                _okbtn: function () {
+                    var e = this, t = 0;
+                    l.triggerChangeCombined && (e.E.find("option:selected").length != e.Pstate.length ? t = 1 : e.E.find("option").each(function (l, i) {
+                        i.selected && e.Pstate.indexOf(l) < 0 && (t = 1)
+                    }), t && (e.callChange(), e.setText()))
+                },
+                _cnbtn: function () {
+                    var e = this;
+                    e.E.find("option:selected").each(function () {
+                        this.selected = !1
+                    }), e.optDiv.find("li.selected").removeClass("selected");
+                    for (var t = 0; t < e.Pstate.length; t++) e.E.find("option")[e.Pstate[t]].selected = !0, e.ul.find("li.opt").eq(e.Pstate[t]).addClass("selected");
+                    e.selAllState()
+                },
+                SelAll: function () {
+                    var t = this;
+                    t.is_multi && (t.selAll = e('<p class="select-all"><span><i></i></span><label>' + l.locale[2] + "</label></p>"), t.optDiv.addClass("selall"), t.selAll.on("click", function () {
+                        t.selAll.toggleClass("selected"), t.toggSelAll(t.selAll.hasClass("selected"), 1)
+                    }), t.optDiv.prepend(t.selAll))
+                },
+                Search: function () {
+                    var t = this, i = t.CaptionCont.addClass("search"), s = e('<p class="no-match">');
+                    t.ftxt = e('<input type="text" class="search-txt" value="" placeholder="' + l.searchText + '">').on("click", function (e) {
+                        e.stopPropagation()
+                    }), i.append(t.ftxt), t.optDiv.children("ul").after(s), t.ftxt.on("keyup.sumo", function () {
+                        var i = t.optDiv.find("ul.options li.opt").each(function (l, i) {
+                            var i = e(i), s = i.data("opt")[0];
+                            s.hidden = i.text().toLowerCase().indexOf(t.ftxt.val().toLowerCase()) < 0, i.toggleClass("hidden", s.hidden)
+                        }).not(".hidden");
+                        s.html(l.noMatch.replace(/\{0\}/g, "<em></em>")).toggle(!i.length), s.find("em").text(t.ftxt.val()), t.selAllState()
+                    })
+                },
+                selAllState: function () {
+                    var t = this;
+                    if (l.selectAll && t.is_multi) {
+                        var i = 0, s = 0;
+                        t.optDiv.find("li.opt").not(".hidden").each(function (t, l) {
+                            e(l).hasClass("selected") && i++, e(l).hasClass("disabled") || s++
+                        }), i == s ? t.selAll.removeClass("partial").addClass("selected") : 0 == i ? t.selAll.removeClass("selected partial") : t.selAll.addClass("partial")
+                    }
+                },
+                showOpts: function () {
+                    var t = this;
+                    t.E.attr("disabled") || (t.E.trigger("sumo:opening", t), t.is_opened = !0, t.select.addClass("open").attr("aria-expanded", "true"), t.E.trigger("sumo:opened", t), t.ftxt ? t.ftxt.focus() : t.select.focus(), e(document).on("click.sumo", function (e) {
+                        if (!t.select.is(e.target) && 0 === t.select.has(e.target).length) {
+                            if (!t.is_opened) return;
+                            t.hideOpts(), l.okCancelInMulti && (l.isClickAwayOk ? t._okbtn() : t._cnbtn())
                         }
-
-                        //hide original select
-                        self.E.hide();
-
-                        //## Creating the list...
-                        self.optDiv = $('<div class="optWrapper">');
-
-                        //barnch for floating list in low res devices.
-                        self.floatingList();
-
-                        //Creating the markup for the available options
-                        ul = $('<ul class="options">');
-                        self.optDiv.append(ul);
-
-                        $(self.E.children('option')).each(function (i, opt) {       // parsing options to li
-                            opt = $(opt);
-                            li = $('<li data-val="' + opt.val() + '"><label>' + opt.text() + '</label></li>');
-                            if (self.is_multi) li.prepend('<span><i></i></span>');
-                            ul.append(li);
-
-                            if (opt.attr('disabled'))
-                                li.addClass('disabled');
-                            else
-                                self.onOptClick(li);
-
-                            if (opt.attr('selected'))
-                                li.addClass('selected');
-                        });
-
-                        //if multiple then add the class multiple and add OK / CANCEL button
-                        if (self.is_multi) self.multiSelelect();
-
-                        //creating the backdrop element for clickoutside support.
-                        if (!$('.BackdropSelect').length) $('body').append('<div class="BackdropSelect">');
-                        self.backdrop = $('.BackdropSelect');
-
-                        self.select.append(self.optDiv);
-                        self.basicEvents();
-                    }
-
-                    //## Returns the selected items as string in a Multiselect.
-                    this.getSelStr = function () {
-                        // get the pre selected items.
-                        sopt = [];
-                        self.E.children('option:selected').each(function () { sopt.push($(this).val()); });
-                        return sopt.join(settings.csvSepChar);
-                    }
-
-                    //## THOSE OK/CANCEL BUTTONS ON MULTIPLE SELECT.
-                    this.multiSelelect = function () {
-                        self.optDiv.addClass('multiple');
-                        okbtn = $('<p class="btnOk">OK</p>').click(function () {
-
-                            //if combined change event is set.
-                            if (settings.triggerChangeCombined) {
-
-                                //check for a change in the selection.
-                                changed = false;
-                                if (self.E.children('option:selected').length != self.Pstate.length) {
-                                    changed = true;
+                    }), t.is_floating && (H = t.optDiv.children("ul").outerHeight() + 2, t.is_multi && (H += parseInt(t.optDiv.css("padding-bottom"))), t.optDiv.css("height", H), e("body").addClass("sumoStopScroll")), t.setPstate())
+                },
+                setPstate: function () {
+                    var e = this;
+                    e.is_multi && (e.is_floating || l.okCancelInMulti) && (e.Pstate = [], e.E.find("option").each(function (t, l) {
+                        l.selected && e.Pstate.push(t)
+                    }))
+                },
+                callChange: function () {
+                    this.E.trigger("change").trigger("click")
+                },
+                hideOpts: function () {
+                    var t = this;
+                    t.is_opened && (t.E.trigger("sumo:closing", t), t.is_opened = !1, t.select.removeClass("open").attr("aria-expanded", "true").find("ul li.sel").removeClass("sel"), t.E.trigger("sumo:closed", t), e(document).off("click.sumo"), t.select.focus(), e("body").removeClass("sumoStopScroll"), l.search && (t.ftxt.val(""), t.ftxt.trigger("keyup.sumo")))
+                },
+                setOnOpen: function () {
+                    var e = this, t = e.optDiv.find("li.opt:not(.hidden)").eq(l.search ? 0 : e.E[0].selectedIndex);
+                    t.hasClass("disabled") && (t = t.next(":not(disabled)"), !t.length) || (e.optDiv.find("li.sel").removeClass("sel"), t.addClass("sel"), e.showOpts())
+                },
+                nav: function (e) {
+                    var t, l = this, i = l.ul.find("li.opt:not(.disabled, .hidden)"),
+                        s = l.ul.find("li.opt.sel:not(.hidden)"), n = i.index(s);
+                    if (l.is_opened && s.length) {
+                        if (e && n > 0) t = i.eq(n - 1); else {
+                            if (!(!e && n < i.length - 1 && n > -1)) return;
+                            t = i.eq(n + 1)
+                        }
+                        s.removeClass("sel"), s = t.addClass("sel");
+                        var a = l.ul, o = a.scrollTop(), c = s.position().top + o;
+                        c >= o + a.height() - s.outerHeight() && a.scrollTop(c - a.height() + s.outerHeight()), o > c && a.scrollTop(c)
+                    } else l.setOnOpen()
+                },
+                basicEvents: function () {
+                    var t = this;
+                    t.CaptionCont.click(function (e) {
+                        t.E.trigger("click"), t.is_opened ? t.hideOpts() : t.showOpts(), e.stopPropagation()
+                    }), t.select.on("keydown.sumo", function (e) {
+                        switch (e.which) {
+                            case 38:
+                                t.nav(!0);
+                                break;
+                            case 40:
+                                t.nav(!1);
+                                break;
+                            case 65:
+                                if (t.is_multi && e.ctrlKey) {
+                                    t.toggSelAll(!e.shiftKey, 1);
+                                    break
                                 }
-                                else {
-                                    self.E.children('option:selected').each(function () {
-                                        if (self.Pstate.indexOf($(this).val()) < 0) changed = true;
-                                    });
-                                }
-
-                                if (changed) {
-                                    self.E.trigger('change');
-                                    self.setText();
-                                }
-                            }
-                            self.hideOpts();
-                        });
-                        cancelBtn = $('<p class="btnCancel">Cancel</p>').click(function () {
-                            //remove all selections
-                            self.E.children('option:selected').each(function () { this.selected = false; });
-                            self.optDiv.find('li.selected').removeClass('selected')
-
-                            //restore selections from saved state.
-                            for (i = 0; i < self.Pstate.length; i++) {
-                                self.E.children('option[value="' + self.Pstate[i] + '"]')[0].selected = true;
-                                self.optDiv.find('li[data-val="' + self.Pstate[i] + '"]').addClass('selected');
-                            }
-                            self.setText();
-                            self.hideOpts();
-                        });
-                        self.optDiv.append($('<div class="MultiControls">').append(okbtn).append(cancelBtn));
-                    }
-
-                    this.showOpts = function () {
-                        self.is_opened = true;
-                        self.backdrop.show();
-                        self.optDiv.addClass('open');
-
-                        if (self.is_floating) {
-                            H = self.optDiv.children('ul').outerHeight() + 2 ;  // +2 is clear fix
-                            if (self.is_multi) H = H + parseInt(self.optDiv.css('padding-bottom'));
-                            self.optDiv.css('height', H);
+                                return;
+                            case 32:
+                                if (l.search && t.ftxt.is(e.target)) return;
+                            case 13:
+                                t.is_opened ? t.optDiv.find("ul li.sel").trigger("click") : t.setOnOpen();
+                                break;
+                            case 9:
+                                return void (l.okCancelInMulti || t.hideOpts());
+                            case 27:
+                                return l.okCancelInMulti && t._cnbtn(), void t.hideOpts();
+                            default:
+                                return
                         }
-
-                        //maintain state when ok/cancel buttons are available.
-                        if (self.is_multi && (self.is_floating || settings.okCancelInMulti)) {
-                            self.Pstate = [];
-                            self.E.children('option:selected').each(function () { self.Pstate.push($(this).val()); });
+                        e.preventDefault()
+                    }), e(window).on("resize.sumo", function () {
+                        t.floatingList()
+                    })
+                },
+                onOptClick: function (t) {
+                    var i = this;
+                    t.click(function () {
+                        var t = e(this);
+                        if (!t.hasClass("disabled")) {
+                            i.is_multi ? (t.toggleClass("selected"), t.data("opt")[0].selected = t.hasClass("selected"), i.selAllState()) : (t.parent().find("li.selected").removeClass("selected"), t.toggleClass("selected"), t.data("opt")[0].selected = !0), i.is_multi && l.triggerChangeCombined && (i.is_floating || l.okCancelInMulti) || (i.setText(), i.callChange()), i.is_multi || i.hideOpts()
                         }
-                    }
-                    this.hideOpts = function () {
-                        self.is_opened = false;
-                        self.backdrop.hide();
-                        self.optDiv.removeClass('open');
-                    }
-
-                    this.basicEvents = function () {
-                        self.CaptionCont.click(function (evt) {
-                            if (self.is_opened) self.hideOpts(); else self.showOpts();
-                            // self.E.focus();
-
-                            self.E.trigger('click');
-                        });
-
-                        self.backdrop.click(function () { self.hideOpts(); });
-
-                        self.E.on('blur', function () {
-                            //setTimeout(function () {
-                            self.optDiv.removeClass('open');
-                            // }, 200);
-                        });
-
-                        $(window).on('resize.sumo', function () { self.floatingList(); });
-                    }
-
-                    this.onOptClick = function (li) {
-                        li.click(function () {
-                            var li = $(this);
-                            txt = "";
-                            if (self.is_multi) {
-                                li.toggleClass('selected');
-                                self.E.children('option[value="' + li.attr('data-val') + '"]')[0].selected = li.hasClass('selected');
+                    })
+                },
+                setText: function () {
+                    var t = this;
+                    if (t.placeholder = "", t.is_multi) {
+                        for (sels = t.E.find(":selected").not(":disabled"), i = 0; i < sels.length; i++) {
+                            if (i + 1 >= l.csvDispCount && l.csvDispCount) {
+                                sels.length == t.E.find("option").length && l.captionFormatAllSelected ? t.placeholder = l.captionFormatAllSelected.replace(/\{0\}/g, sels.length) + "," : t.placeholder = l.captionFormat.replace(/\{0\}/g, sels.length) + ",";
+                                break
                             }
-                            else {
-                                li.parent().find('li.selected').removeClass('selected'); //if not multiselect then remove all selections from this list
-                                li.toggleClass('selected');
-                                self.E.val(li.attr('data-val'));   //set the value of select element
-                            }
-
-                            //branch for combined change event.
-                            if (!(self.is_multi && settings.triggerChangeCombined && (self.is_floating || settings.okCancelInMulti))) {
-                                self.setText();
-                                self.E.trigger('change');
-                            }
-
-                            if(!self.is_multi)self.hideOpts(); //if its not a multiselect then hide on single select.
-                        });
-                    }
-
-                    this.setText = function () {
-                        self.placeholder = "";
-                        if (self.is_multi) {
-                            sels = self.E.children(':selected').not(':disabled'); //selected options.
-                           
-                            for (i = 0; i < sels.length; i++) {
-                                if (i >= settings.csvDispCount && settings.csvDispCount) {
-                                    self.placeholder = i + '+ Selected';
-                                    break;
-                                }
-                                else self.placeholder += $(sels[i]).text() + ", ";
-                            }
-                            self.placeholder = self.placeholder.replace(/,([^,]*)$/, '$1'); //remove unexpected "," from last.
+                            t.placeholder += e(sels[i]).text() + ", "
                         }
-                        else {
-                            self.placeholder = self.E.children(':selected').not(':disabled').text();
-                        }
-
-                        is_placeholder = false;
-
-                        if (!self.placeholder) {
-
-                            is_placeholder = true;
-
-                            self.placeholder = self.E.attr('placeholder');
-                            if (!self.placeholder)                  //if placeholder is there then set it
-                            {
-                                self.placeholder = self.E.children('option:disabled:selected').text();
-                                //if (!self.placeholder && settings.placeholder === 'Select Here')
-                                //    self.placeholder = self.E.val();
-                            }
-                        }
-
-                        self.placeholder = self.placeholder ? self.placeholder : settings.placeholder
-
-                        //set display text
-                        self.caption.text(self.placeholder);
-
-                        //set the hidden field if post as csv is true.
-                        csvField = self.select.find('input.HEMANT123');
-                        if (csvField.length) csvField.val(self.getSelStr());
-                       
-                        //add class placeholder if its a placeholder text.
-                        if (is_placeholder) self.caption.addClass('placeholder'); else self.caption.removeClass('placeholder');
-                        return self.placeholder;
-                    }
-
-                    this.isMobile = function () {
-
-                        // Adapted from http://www.detectmobilebrowsers.com
-                        var ua = navigator.userAgent || navigator.vendor || window.opera;
-
-                        // Checks for iOs, Android, Blackberry, Opera Mini, and Windows mobile devices
-                        for (var i in settings.nativeOnDevice) if (ua.toLowerCase().indexOf(settings.nativeOnDevice[i].toLowerCase()) > 0) return settings.nativeOnDevice[i];
-                        return false;
-                    };
-
-                    this.setNativeMobile = function () {
-                        self.E.addClass('SelectClass').css('height', self.select.outerHeight());
-
-                        self.E.change(function () {
-                            self.setText();
-                        });
-                    }
-
-                    this.floatingList = function () {
-                        //called on init and also on resize.
-                        //self.is_floating = true if window width is < specified float width
-                        self.is_floating = $(window).width() <= settings.floatWidth;
-
-                        //set class isFloating
-                        self.optDiv.toggleClass('isFloating', self.is_floating);
-                        
-                        //remove height if not floating
-                        if (!self.is_floating)self.optDiv.css('height', '');
-                        
-                        //toggle class according to okCancelInMulti flag only when it is not floating
-                        self.optDiv.toggleClass('okCancelInMulti', settings.okCancelInMulti && !self.is_floating);
-                    }
-
-                    this.init = function () {
-                        self.createElems();
-                        self.setText();
-                    }
-
-                    self.init();
-                });
-            };
-
-        }(jQuery));
+                        t.placeholder = t.placeholder.replace(/,([^,]*)$/, "$1")
+                    } else t.placeholder = t.E.find(":selected").not(":disabled").text();
+                    var s = !1;
+                    t.placeholder || (s = !0, t.placeholder = t.E.attr("placeholder"), t.placeholder || (t.placeholder = t.E.find("option:disabled:selected").text())), t.placeholder = t.placeholder ? l.prefix + " " + t.placeholder : l.placeholder, t.caption.html(t.placeholder), l.showTitle && t.CaptionCont.attr("title", t.placeholder);
+                    var n = t.select.find("input.HEMANT123");
+                    return n.length && n.val(t.getSelStr()), s ? t.caption.addClass("placeholder") : t.caption.removeClass("placeholder"), t.placeholder
+                },
+                isMobile: function () {
+                    for (var e = navigator.userAgent || navigator.vendor || window.opera, t = 0; t < l.nativeOnDevice.length; t++) if (e.toString().toLowerCase().indexOf(l.nativeOnDevice[t].toLowerCase()) > 0) return l.nativeOnDevice[t];
+                    return !1
+                },
+                setNativeMobile: function () {
+                    var e = this;
+                    e.E.addClass("SelectClass"), e.mob = !0, e.E.change(function () {
+                        e.setText()
+                    })
+                },
+                floatingList: function () {
+                    var t = this;
+                    t.is_floating = e(window).width() <= l.floatWidth, t.optDiv.toggleClass("isFloating", t.is_floating), t.is_floating || t.optDiv.css("height", ""), t.optDiv.toggleClass("okCancelInMulti", l.okCancelInMulti && !t.is_floating)
+                },
+                vRange: function (e) {
+                    var t = this, l = t.E.find("option");
+                    if (l.length <= e || 0 > e) throw"index out of bounds";
+                    return t
+                },
+                toggSel: function (t, l) {
+                    var i, s = this;
+                    "number" == typeof l ? (s.vRange(l), i = s.E.find("option")[l]) : i = s.E.find('option[value="' + l + '"]')[0] || 0, i && !i.disabled && i.selected != t && (i.selected = t, s.mob || e(i).data("li").toggleClass("selected", t), s.callChange(), s.setPstate(), s.setText(), s.selAllState())
+                },
+                toggDis: function (e, t) {
+                    var l = this.vRange(t);
+                    l.E.find("option")[t].disabled = e, e && (l.E.find("option")[t].selected = !1), l.mob || l.optDiv.find("ul.options li").eq(t).toggleClass("disabled", e).removeClass("selected"), l.setText()
+                },
+                toggSumo: function (e) {
+                    var t = this;
+                    return t.enabled = e, t.select.toggleClass("disabled", e), e ? (t.E.attr("disabled", "disabled"), t.select.removeAttr("tabindex")) : (t.E.removeAttr("disabled"), t.select.attr("tabindex", "0")), t
+                },
+                toggSelAll: function (t, l) {
+                    var i = this;
+                    i.E.find("option:not(:disabled,:hidden)").each(function (l, i) {
+                        var s = i.selected, i = e(i).data("li");
+                        i.hasClass("hidden") || (t ? s || i.trigger("click") : s && i.trigger("click"))
+                    }), l || (!i.mob && i.selAll && i.selAll.removeClass("partial").toggleClass("selected", !!t), i.callChange(), i.setText(), i.setPstate())
+                },
+                reload: function () {
+                    var t = this.unload();
+                    return e(t).SumoSelect(l)
+                },
+                unload: function () {
+                    var e = this;
+                    return e.select.before(e.E), e.E.show(), l.outputAsCSV && e.is_multi && e.select.find("input.HEMANT123").length && e.E.attr("name", e.select.find("input.HEMANT123").attr("name")), e.select.remove(), delete t.sumo, t
+                },
+                add: function (l, i, s) {
+                    if ("undefined" == typeof l) throw"No value to add";
+                    var n = this;
+                    if (opts = n.E.find("option"), "number" == typeof i && (s = i, i = l), "undefined" == typeof i && (i = l), opt = e("<option></option>").val(l).html(i), opts.length < s) throw"index out of bounds";
+                    return "undefined" == typeof s || opts.length == s ? (n.E.append(opt), n.mob || n.ul.append(n.createLi(opt))) : (opts.eq(s).before(opt), n.mob || n.ul.find("li.opt").eq(s).before(n.createLi(opt))), t
+                },
+                remove: function (e) {
+                    var t = this.vRange(e);
+                    t.E.find("option").eq(e).remove(), t.mob || t.optDiv.find("ul.options li").eq(e).remove(), t.setText()
+                },
+                selectItem: function (e) {
+                    this.toggSel(!0, e)
+                },
+                unSelectItem: function (e) {
+                    this.toggSel(!1, e)
+                },
+                selectAll: function () {
+                    this.toggSelAll(!0)
+                },
+                unSelectAll: function () {
+                    this.toggSelAll(!1)
+                },
+                disableItem: function (e) {
+                    this.toggDis(!0, e)
+                },
+                enableItem: function (e) {
+                    this.toggDis(!1, e)
+                },
+                enabled: !0,
+                enable: function () {
+                    return this.toggSumo(!1)
+                },
+                disable: function () {
+                    return this.toggSumo(!0)
+                },
+                init: function () {
+                    var e = this;
+                    return e.createElems(), e.setText(), e
+                }
+            }, t.sumo.init())
+        });
+        return 1 == s.length ? s[0] : s
+    }
+});
