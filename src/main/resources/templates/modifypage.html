@@ -19,7 +19,7 @@
 
 
 </head>
-<!--<div id="coverbehidepage" style="display: none"></div>-->
+<div id="coverbehidepage1" style="display: none"></div>
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.noExsitFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
@@ -743,7 +743,7 @@
 
         uploader.on('uploadFinished', function (file) {
             saveData();
-            //$("#coverbehidepage").hide();
+            $("#coverbehidepage1").hide();
             window.parent.document.getElementById('coverbehidepage').style.display="none";
             $("#thelist").hide();
             clearFileData();
@@ -753,7 +753,7 @@
         uploader1.on('uploadFinished', function (file) {
             saveData();
             window.parent.document.getElementById('coverbehidepage').style.display="none";
-            // $("#coverbehidepage").hide();
+             $("#coverbehidepage1").hide();
             $("#thelist").hide();
             clearFileData();
             alert("更新成功")
@@ -792,8 +792,10 @@
 
             if (flaggg) {
                 //$("#coverbehidepage").show();//遮罩层开启
-                window.parent.document.getElementById('coverbehidepage').style.display="block";
+               // window.parent.document.getElementById('coverbehidepage').style.display="block";
                 $("#thelist").show();
+                $("#coverbehidepage1").show();
+
                 //第二步，saveMessageandFileStore
                 if (totalFileNum1 != 0) {
                     uploader1.upload();
@@ -998,6 +1000,27 @@
         border-width: 1px;
         padding: 8px;
         border-style: solid;
+    }
+
+    #coverbehidepage1 {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 100%;
+        filter: alpha(opacity=60);
+        background-color: black;
+        z-index: 1002;
+        left: 0px;
+        display: none;
+        opacity: 0.3;
+        -moz-opacity: 0.3;
+        padding-top: 250px;
+        display: none;
+        filter: alpha(opacity=30);
+        text-align:center;
+        color: #000000
     }
 
     table.grid td {

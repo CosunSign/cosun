@@ -28,7 +28,7 @@
 
 <!--<![endif]-->
 
-<!--<div id="coverbehidepage" style="display: none"></div>-->
+<div id="coverbehidepage1" style="display: none"></div>
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
@@ -761,7 +761,7 @@
         saveData();
     window.parent.document.getElementById('coverbehidepage').style.display="none";
 
-        //$("#coverbehidepage").hide();
+        $("#coverbehidepage1").hide();
         $("#thelist").hide();
         clearFileData();
         alert("上传成功！")
@@ -769,7 +769,7 @@
 
     uploader1.on('uploadFinished', function (file) {
         saveData();
-       // $("#coverbehidepage").hide();
+        $("#coverbehidepage1").hide();
         window.parent.document.getElementById('coverbehidepage').style.display="none";
         $("#thelist").hide();
         clearFileData();
@@ -821,8 +821,8 @@
         }
         $("#folderselect").val(filesaveselect);
         if (flaggg) {
-            //$("#coverbehidepage").show();//遮罩层开启
-            window.parent.document.getElementById('coverbehidepage').style.display="block";
+            $("#coverbehidepage1").show();//遮罩层开启
+            //window.parent.document.getElementById('coverbehidepage').style.display="block";
             $("#thelist").show();
             //第二步，saveMessageandFileStore
             if (totalFileNum1 != 0) {
@@ -973,6 +973,27 @@
 
 </script>
 <style type="text/css">
+
+    #coverbehidepage1 {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        width: 100%;
+        height: 100%;
+        filter: alpha(opacity=60);
+        background-color: black;
+        z-index: 1002;
+        left: 0px;
+        display: none;
+        opacity: 0.3;
+        -moz-opacity: 0.3;
+        padding-top: 250px;
+        display: none;
+        filter: alpha(opacity=30);
+        text-align:center;
+        color: #000000
+    }
 
     #listdiv {
         border: 1px solid #9AC0CD;
