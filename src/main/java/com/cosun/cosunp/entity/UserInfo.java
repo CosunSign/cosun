@@ -13,15 +13,7 @@ public class UserInfo implements Serializable {
     private Integer type; //type是不同的权限配置
     private String fullName;//中文全名
     private Integer useruploadright;//上传权限  0代表没有  默认1代表有
-    private String mobileNum;
 
-    public String getMobileNum() {
-        return mobileNum;
-    }
-
-    public void setMobileNum(String mobileNum) {
-        this.mobileNum = mobileNum;
-    }
 
     public Integer getUseruploadright() {
         return useruploadright;
