@@ -318,7 +318,7 @@ public class DownloadView implements Serializable {
     }
 
     public int getCurrentPageTotalNum() {
-        if(this.currentPageTotalNum!=0)
+        if(this.currentPage!=0)
         return (currentPage - 1) * pageSize;
         return 0;
     }
