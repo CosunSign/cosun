@@ -214,10 +214,10 @@ public class FileUtil {
     public static String uploadFileFolder(MultipartFile file, DownloadView view, String randomnum) {
         String fileName = file.getOriginalFilename().replaceAll("/", "\\\\");
         int index = fileName.lastIndexOf("\\");
-        String centerPath = fileName.substring(0,index);
-        fileName = fileName.substring(index+1,fileName.length());
+        String centerPath = fileName.substring(0, index);
+        fileName = fileName.substring(index + 1, fileName.length());
         String filePath = "F:\\" + view.getUserName() + "\\" + formateString(new Date()) + "\\" + view.getSalor() + "\\"
-                + randomnum + "\\" + view.getOrderNo() + "\\"+centerPath+"\\";
+                + randomnum + "\\" + view.getOrderNo() + "\\" + centerPath + "\\";
         File targetFile = new File(filePath);
         //：判断目录是否存在   不存在：创建目录
         if (!targetFile.exists()) {
@@ -277,7 +277,7 @@ public class FileUtil {
      * 判断上传的文件大小
      *
      * @param :multipartFile:上传的文件
-     * @param :                限制大小
+     * @param :                    限制大小
      * @param unit:限制单位（B,K,M,G)
      * @return boolean:是否大于
      */
@@ -299,7 +299,7 @@ public class FileUtil {
         }
         //如果上传文件大于限定的容量
 
-       return fileSize;
+        return fileSize;
     }
 
 
@@ -364,7 +364,7 @@ public class FileUtil {
      */
     public static boolean checkDownloadFileSize(File file, int size, String unit) {
         long len = file.length();
-       //上传文件的大小, 单位为字节.
+        //上传文件的大小, 单位为字节.
 
         //准备接收换算后文件大小的容器
         double fileSize = 0;
@@ -384,11 +384,76 @@ public class FileUtil {
         return true;
     }
 
-    public static Cookie addCookie(String cookieName,String cookieValue) {
-        Cookie cookie = new Cookie(cookieName,cookieValue);
+    public static Cookie addCookie(String cookieName, String cookieValue) {
+        Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath("/");
         cookie.setMaxAge(3600 * 24);
-       return cookie;
+        return cookie;
+    }
+
+
+    public static void delFolderIFNoFiles(String folderPath) {
+        File file = new File(folderPath);//
+        File[] list = file.listFiles();
+        if(list==null || list.length==0) {
+            delFolder(folderPath);
+        }
+    }
+
+    /**
+     * 删除文件夹
+     * @param folderPath 文件夹完整绝对路径 ,"Z:/xuyun/save"
+     */
+    public static void delFolder(String folderPath) {
+        try {
+            delAllFile(folderPath); //删除完里面所有内容
+            File myFilePath = new File(folderPath);
+            myFilePath.delete(); //删除空文件夹
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 删除指定文件夹下所有文件
+     * @param path 文件夹完整绝对路径 ,"Z:/xuyun/save"
+     */
+    public static boolean delAllFile(String path) {
+        boolean flag = false;
+        File file = new File(path);
+        if (!file.exists()) {
+            return flag;
+        }
+        if (!file.isDirectory()) {
+            return flag;
+        }
+        String[] tempList = file.list();
+        File temp = null;
+        for (int i = 0; i < tempList.length; i++) {
+            if (path.endsWith(File.separator)) {
+                temp = new File(path + tempList[i]);
+            } else {
+                temp = new File(path + File.separator + tempList[i]);
+            }
+            if (temp.isFile()) {
+                temp.delete();
+            }
+            if (temp.isDirectory()) {
+                delAllFile(path + "/" + tempList[i]);//先删除文件夹里面的文件
+                delFolder(path + "/" + tempList[i]);//再删除空文件夹
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
+    /**************删除文件夹delFolder / 删除文件夹中的所有文件delAllFile *over*******/
+
+
+    public static void delFile(String filePath){
+        File file=new File(filePath);
+        if(file.exists()&&file.isFile())
+            file.delete();
     }
 
 }

@@ -18,6 +18,39 @@ import java.util.List;
 @Mapper
 public interface FileUploadAndDownMapper {
 
+    @Delete({
+            "<script>",
+            "delete",
+            "from filemanurl",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteUrlByHeadIdAndItemIds(@Param("ids") List<Integer> ids);
+
+    @Delete({
+            "<script>",
+            "delete",
+            "from filemanright",
+            "where fileurlid in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteRightItemIds(@Param("ids") List<Integer> ids);
+
+    @Select("select count(*) from filemanurl where fileInfoId = #{id}")
+    int getItemCountByHeadId(Integer id);
+
+    @Delete("delete from filemanfileinfo where id = #{id}")
+    void deleteFileManFileInfo(Integer id);
+
+    @Update("update filemanfileinfo set totalfilesnum = #{totalfilesnum} where id = #{id}")
+    void updateFileInfoTotalFilesNum(Integer id, int totalfilesnum);
+
     @Select("select fio.username,fio.ordernum as orderNo,fio.extinfo1 as salor,fu.orginname as fileName,fu.uptime as lastUpdateTime,fu.singlefileupdatenum as singleFileUpdateNum from filemanurl fu " +
             "left join filemanfileinfo fio on fu.fileInfoId = fio.id " +
             "where " +
@@ -248,7 +281,7 @@ public interface FileUploadAndDownMapper {
     FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByOrderNoAndUid2")
-    List<FilemanUrl> findAllUrlByOrderNoAndUid2(String orderNo,Integer uId);
+    List<FilemanUrl> findAllUrlByOrderNoAndUid2(String orderNo, Integer uId);
 
 
     @Select("select * from filemanright where id = #{id}")
@@ -329,7 +362,8 @@ public interface FileUploadAndDownMapper {
             "\tmax(b.uid) AS oprighter,\n" +
             "\tb.opright AS opRight,\n" +
             "\td.logur1 AS urlAddr,\n" +
-            "\ta.id AS id\n" +
+            "\ta.id AS id, " +
+            "  d.id as fileUrlId  \n" +
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
@@ -350,7 +384,7 @@ public interface FileUploadAndDownMapper {
             "GROUP BY\n" +
             "\ta.ordernum,\n" +
             "\tb.fileurlid")
-    List<DownloadView> findAllUrlByOrderNoAndUid(String orderNum, Integer uId);
+    List<DownloadView> findAllUrlByOrderNoAndUid1(String orderNum, Integer uId);
 
     /**
      * 功能描述: 多条件查询 建内部类拼SQL
@@ -1204,6 +1238,24 @@ public interface FileUploadAndDownMapper {
 
         }
 
+        public String deleteRightItemIds(List<DownloadView> views) {
+            StringBuilder sql = new StringBuilder(" delete from filemanright where fileurlid in( ");
+            for (int i = 0; i < views.size() - 1; i++) {
+                sql.append(views.get(i).getFileUrlId() + ",");
+            }
+            sql.append(views.get(views.size()).getFileUrlId() + ")");
+            return sql.toString();
+        }
+
+        public String deleteUrlByHeadIdAndItemIds(List<DownloadView> views) {
+            StringBuilder sql = new StringBuilder(" delete from filemanurl where id in( ");
+            for (int i = 0; i < views.size() - 1; i++) {
+                sql.append(views.get(i).getFileUrlId() + ",");
+            }
+            sql.append(views.get(views.size()).getFileUrlId() + ")");
+            return sql.toString();
+        }
+
         public String findMessageByOrderNoandUid(String orderNo, Integer uId) {
             StringBuilder sql = new StringBuilder("SELECT\n" +
                     "\ta.extinfo1 as salor,\n" +
@@ -1227,25 +1279,92 @@ public interface FileUploadAndDownMapper {
             return sql.toString();
         }
 
-        public String findAllUrlByOrderNoAndUid2(String orderNo,Integer uId) {
-            StringBuilder sql = new StringBuilder("SELECT fu.*    \n" +
+        public String findAllUrlByOrderNoAndUid2(String orderNo, Integer uId) {
+            StringBuilder sql = new StringBuilder(" select * from (SELECT\n" +
+                    "\tinfo.createuser AS engineer,\n" +
+                    "\tinfo.extinfo1 AS salor,\n" +
+                    "\tinfo.ordernum AS orderNo,\n" +
+                    "\tIFNULL(info.updatetime, info.createtime) AS createTime,\n" +
+                    "\tfr.uid AS oprighter,\n" +
+                    "\tfr.opright AS opRight,\n" +
+                    "\tfu.logur1 AS logur1,\n" +
+                    "\tinfo.id AS fileInfoId,u.fullname as fullName,fu.id as id \n" +
+                    "\n" +
                     "FROM\n" +
-                    "\tfilemanfileinfo a\n" +
-                    "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
-                    "left join filemanurl fu on b.fileurlid = fu.id   "+
-                    "left join userinfo c on c.uid = b.uid\n" +
-                    " where a.ordernum = #{orderNo} ");
-            if (uId != 0) {
-                sql.append(" and b.uId = #{uId} ");
+                    "\tfilemanfileinfo info\n" +
+                    "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on fr.uid = u.uid  \n" +
+                    "where fr.uid is null  ");
+            if (orderNo != null && orderNo != "" && orderNo.trim().length() > 0) {
+                sql.append(" and  info.ordernum  = #{orderNo} ");
+            }
+            sql.append(" group by fr.uid,fr.fileurlid HAVING id not in(\n" +
+                    "SELECT\n" +
+                    "\tfr.fileurlid\n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo info\n" +
+                    "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id\n" +
+                    "where");
+            if (uId != null && uId != 0) {
+                sql.append("   fr.uid = #{uId}  ");
             } else {
-                sql.append(" and b.uId is null ");
+                sql.append("   fr.uid is not null  ");
+            }
+            sql.append("group by fr.uid,fr.fileurlid\n" +
+                    ") \n" +
+                    "UNION ALL\n" +
+                    "\n" +
+                    "SELECT\n" +
+                    "\tinfo.createuser AS engineer,\n" +
+                    "\tinfo.extinfo1 AS salor,\n" +
+                    "\tinfo.ordernum AS orderNo,\n" +
+                    "\tIFNULL(info.updatetime, info.createtime) AS createTime,\n" +
+                    "\tfr.uid AS oprighter,\n" +
+                    "\tCONCAT(\n" +
+                    "\t\tmax(\n" +
+                    "\n" +
+                    "\t\t\tIF (\n" +
+                    "\t\t\t\tLOCATE('2', fr.opright) <> 0,\n" +
+                    "\t\t\t\t'2',\n" +
+                    "\t\t\t\t''\n" +
+                    "\t\t\t)\n" +
+                    "\t\t),\n" +
+                    "\t\tmax(\n" +
+                    "\n" +
+                    "\t\t\tIF (\n" +
+                    "\t\t\t\tLOCATE('3', fr.opright) <> 0,\n" +
+                    "\t\t\t\t'3',\n" +
+                    "\t\t\t\t''\n" +
+                    "\t\t\t)\n" +
+                    "\t\t),\n" +
+                    "\t\tmax(\n" +
+                    "\n" +
+                    "\t\t\tIF (\n" +
+                    "\t\t\t\tLOCATE('4', fr.opright) <> 0,\n" +
+                    "\t\t\t\t'4',\n" +
+                    "\t\t\t\t''\n" +
+                    "\t\t\t)\n" +
+                    "\t\t)\n" +
+                    "\t) AS opRight,\n" +
+                    "\tfu.logur1 AS logur1,\n" +
+                    "\tinfo.id AS fileInfoId,u.fullname as fullName,fu.id as id   \n" +
+                    "FROM\n" +
+                    "\tfilemanfileinfo info\n" +
+                    "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on u.uid = fr.uid \n" +
+                    "where 1=1 ");
+            if (orderNo != null && orderNo != "" && orderNo.trim().length() > 0) {
+                sql.append(" and  info.ordernum  = #{orderNo} ");
             }
 
-            sql.append("ORDER BY a.createtime DESC   ");
+            if (uId != null && uId != 0) {
+                sql.append("  AND fr.uid = #{uId}  ");
+            } else {
+                sql.append("  and fr.uid is not null  ");
+            }
+            sql.append("group by fr.uid,fr.fileurlid) as aa   ");
             return sql.toString();
         }
-
     }
-
-
 }

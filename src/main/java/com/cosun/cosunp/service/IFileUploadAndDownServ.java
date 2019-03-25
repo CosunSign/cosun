@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -55,6 +56,8 @@ public interface IFileUploadAndDownServ {
 
     void saveFolderMessageUpdate(DownloadView view,UserInfo info) throws Exception;
 
+    void deleteByHeadIdAndItemId(List<DownloadView> deleteViews,List<File> files) throws Exception;
+
     void saveFileMessageUpdate(DownloadView view,UserInfo info) throws Exception;
 
     void saveOrUpdateFilePrivilege(List<DownloadView> views,List<String> privilegeusers,UserInfo info) throws Exception;
@@ -99,7 +102,7 @@ public interface IFileUploadAndDownServ {
 
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;
 
-    List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo,Integer uId) throws Exception;
+    List<DownloadView> findAllUrlByOrderNoAndUid1(String orderNo,Integer uId) throws Exception;
 
     List<DownloadView> findAllFilesByCondParam(DownloadView view) throws Exception;
 

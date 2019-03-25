@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -44,6 +45,9 @@ public class FileUploadAndDownController {
 
     @Autowired
     private IUserInfoServ userInfoServ;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String finalDirPath;
 
     @Autowired
     private IFileUploadAndDownServ fileUploadAndDownServ;
@@ -720,6 +724,7 @@ public class FileUploadAndDownController {
                     vi.setFolderOrFileName(tempFolOrFileName);
                     if (!tempFolOrFileName.contains(".")) {
                         for (FilemanUrl uu : urls) {
+                            allOprights = "";
                             if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
                                 right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
                             if (right1 != null && right1.getOpRight() != null) {
@@ -737,6 +742,27 @@ public class FileUploadAndDownController {
                                 }
                             }
                         }
+                    }else{
+                        for (FilemanUrl uu : urls) {
+                            allOprights = "";
+                            if (uu.getLogur1().contains(tempFolOrFileName)) {
+                                right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
+                                if (right1 != null && right1.getOpRight() != null) {
+                                    if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
+                                        allOprights += "2,";
+                                    }
+                                    if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
+                                        allOprights += "3,";
+                                    }
+                                    if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
+                                        allOprights += "4,";
+                                    }
+                                    if (allOprights != "") {
+                                        allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
+                                    }
+                                }
+                            }
+                        }
                     }
                     if (right != null && right.getOpRight() != null) {
                         if (tempFolOrFileName.contains(".")) {
@@ -751,7 +777,7 @@ public class FileUploadAndDownController {
                             vi.setOprighter("");
                         }
                     } else {
-                        vi.setOpRight("");
+                        vi.setOpRight(allOprights);
                     }
                     views.add(vi);
                 }
@@ -1218,10 +1244,110 @@ public class FileUploadAndDownController {
     }
 
     /**
+     * 功能描述:删除
+     *
+     * @auther: homey Wong
+     * @date: 2019/3/22  上午 9:39
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/deleteFileBySelect")
+    public void deleteFileBySelect(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+        List<DownloadView> vs = JSON.parseArray(checkval, DownloadView.class);
+        UserInfo info = (UserInfo) session.getAttribute("account");
+        List<DownloadView> views = new ArrayList<DownloadView>();
+        List<DownloadView> deleteViews = new ArrayList<DownloadView>();
+        File file = null;
+        List<File> files = new ArrayList<File>();
+        String flag = "OK";
+
+        //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
+        boolean isDeleteRight = true;
+        int index = 0;
+        a:
+        for (DownloadView view : vs) {
+            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
+            for (DownloadView vi : views) {
+                if (view.getFolderOrFileName().contains(".")) {//代表是文件
+                    index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
+                    if (index > 0) {
+                        if (!vi.getOpRight().contains("4")) {
+                            isDeleteRight = false;
+                            break a;
+                        }
+                        file = new File(vi.getUrlAddr());
+                        files.add(file);
+                        deleteViews.add(vi);
+                    }
+                } else {//代表是文件夹
+                    index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
+                    if (index > 0) {
+                        if (vi.getOpRight() == null) {
+                            isDeleteRight = false;
+                            break a;
+                        } else {
+                            if (!vi.getOpRight().contains("4")) {
+                                isDeleteRight = false;
+                                break a;
+                            }
+                        }
+                        file = new File(vi.getUrlAddr());
+                        files.add(file);
+                        deleteViews.add(vi);
+                    }
+                }
+            }
+            if (views == null || views.size() == 0) {
+                flag = "-258";
+            }
+
+        }
+        //返回
+
+        if (isDeleteRight) {
+            boolean isLarge = FileUtil.checkDownloadFileSize(files, 2, "G");
+            if (!isLarge) {
+                flag = "-1";
+            }
+            if (deleteViews.size() > 200) {//代表文件超过200个
+                flag = "-369";
+            }
+            if (flag.equals("OK")) {
+                fileUploadAndDownServ.deleteByHeadIdAndItemId(deleteViews,files);
+            }
+
+        } else {
+            flag = "-258";
+        }
+
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(flag);
+
+        } catch (JsonProcessingException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 功能描述:文件下载批量ZIP
      *
      * @auther: homey Wong
-     * @date: 2019/1/23 0023 下午 3:33
+     * @date: 2019/1/23  下午 3:33
      * @param:
      * @return:
      * @describtion
@@ -1243,9 +1369,9 @@ public class FileUploadAndDownController {
         int index = 0;
         a:
         for (DownloadView view : vs) {
-            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), info.getuId());
+            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
             for (DownloadView vi : views) {
-                if (view.getFolderOrFileName().contains(",")) {//代表是文件
+                if (view.getFolderOrFileName().contains(".")) {//代表是文件
                     index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
                     if (index > 0) {
                         if (!vi.getOpRight().contains("3")) {
@@ -2024,6 +2150,41 @@ public class FileUploadAndDownController {
         mav.addObject("userInfos", userInfos);
         return mav;
     }
+
+
+    /**
+     * 功能描述:删除主页面
+     *
+     * @auther: homey Wong
+     * @date: 2019/3/22  上午 8:59
+     * @param:
+     * @return:
+     * @describtion
+     */
+    //默认下载清单(所有文件夹)
+    @ResponseBody
+    @RequestMapping(value = "/todeletepage", method = RequestMethod.GET)
+    public ModelAndView toDeletePage(int currentPage, HttpSession session) throws Exception {
+        ModelAndView mav = new ModelAndView("deletepage");
+        DownloadView view = new DownloadView();
+        view.setCurrentPage(currentPage);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
+        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
+        int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        view.setMaxPage(maxPage);
+        view.setRecordCount(recordCount);
+        mav.addObject("orderNumFolders", orderNumFolders);
+        view.setUserName(userInfo.getUserName());
+        view.setPassword(userInfo.getUserPwd());
+        view.setFullName(userInfo.getFullName());
+        mav.addObject("view", view);
+        mav.addObject("employees", employees);
+        mav.addObject("userInfos", userInfos);
+        return mav;
+    }
 //    @ResponseBody
 //    @RequestMapping(value = "/download", method = RequestMethod.GET)
 //    public ModelAndView toFileDownPage(String userName, String password, int currentPage, HttpServletResponse response) throws Exception {
@@ -2257,6 +2418,55 @@ public class FileUploadAndDownController {
     @ResponseBody
     @RequestMapping(value = "/downloadbyquerycondition", method = RequestMethod.POST)
     public void downloadByQueryCondition(@RequestBody DownloadView view, HttpSession
+            session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<DownloadView> views = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+        int recordCount = fileUploadAndDownServ.findAllUrlByParamManyOrNoCount(view);
+        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+        if (views != null && views.size() > 0) {
+            views.get(0).setMaxPage(maxPage);
+            views.get(0).setRecordCount(recordCount);
+            views.get(0).setUserName(userInfo.getUserName());
+            views.get(0).setPassword(userInfo.getUserPwd());
+            views.get(0).setCurrentPage(view.getCurrentPage());
+            views.get(0).setPassword(userInfo.getUserPwd());
+            views.get(0).setCurrentPage(view.getCurrentPage());
+        }
+
+        String str = null;
+        if (views.size() > 0) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(views);
+            } catch (JsonProcessingException e) {
+                logger.debug(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        try {
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            logger.debug(e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * 功能描述:
+     *
+     * @auther: homey Wong
+     * @date: 2019/3/22  上午 11:30
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/deletebyquerycondition", method = RequestMethod.POST)
+    public void deletebyquerycondition(@RequestBody DownloadView view, HttpSession
             session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<DownloadView> views = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);

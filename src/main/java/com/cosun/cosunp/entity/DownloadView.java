@@ -45,6 +45,7 @@ public class DownloadView implements Serializable {
     private Integer isExistNum;
     private String modifyReason;
     private Integer fileRightId;
+    private Integer fileUrlId;
     private String folderOrFileName;
     private Date upTime;
     // 分页属性
@@ -69,6 +70,14 @@ public class DownloadView implements Serializable {
     private String linshiId;
     private String filePathName;
     private String filePathNames;
+
+    public Integer getFileUrlId() {
+        return fileUrlId;
+    }
+
+    public void setFileUrlId(Integer fileUrlId) {
+        this.fileUrlId = fileUrlId;
+    }
 
     public String getFilePathNames() {
         return filePathNames;

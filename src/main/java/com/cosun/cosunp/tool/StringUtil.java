@@ -107,6 +107,15 @@ public class StringUtil {
         return null;
     }
 
+    public static String subMyString1(String str, String a) {
+        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
+        int index = str.lastIndexOf(a);
+        if(index>=1) {
+            return str.substring(0, index);
+        }
+        return null;
+    }
+
 
     public static String subAfterString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名

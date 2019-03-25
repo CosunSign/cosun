@@ -27,9 +27,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -243,8 +241,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
     @Transactional
-    public List<DownloadView> findAllUrlByOrderNoAndUid(String orderNo, Integer uId) throws Exception {
-        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid(orderNo, uId);
+    public List<DownloadView> findAllUrlByOrderNoAndUid1(String orderNo, Integer uId) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid1(orderNo, uId);
     }
 
 
@@ -558,7 +556,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
-        String[] splitPathNames =  view.getFilePathNames().split(",");
+        String[] splitPathNames = view.getFilePathNames().split(",");
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
@@ -568,7 +566,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             ffi.setUpdateUser(userInfo.getUserName());
             //修改头信息
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
-            for (int i = 0 ;i < splitPathNames.length;i++) {
+            for (int i = 0; i < splitPathNames.length; i++) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(subAfterString(splitPathNames[i], "/"), fileManFileInfo.get(0).getId());
                 if (filemanUrl != null) {
                     //取老文件信息
@@ -604,7 +602,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
         fileUploadAndDownMapper.addfileManFileDataByUpload(fileManFileInfo);
         String centerUrl = userInfo.getUserName() + "/" + formateString(new Date()) + "/" + view.getSalor() + "/"
-                + view.getRandom8() + "/" + view.getOrderNo()+"/" ;
+                + view.getRandom8() + "/" + view.getOrderNo() + "/";
         String orginname = null;
         //文件进度长度
         for (int i = 0; i < splitPaths.length; i++) {
@@ -1570,14 +1568,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (fileManFileInfo.size() > 0) { //代表前四级文件夹存在
             filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
             //pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
-            filePath = StringUtil.subMyString(filemanUrl.getLogur1(),"/");
+            filePath = StringUtil.subMyString(filemanUrl.getLogur1(), "/");
             //oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
             //index = filePathName.lastIndexOf("/");
             //centerPath = fileName.substring(0, index);
-           // filePath = oldsPath + centerPath;
+            // filePath = oldsPath + centerPath;
 
             File tmpDir = new File(uploadDirPath + filePath);
-             if (tmpDir.exists()) {
+            if (tmpDir.exists()) {
                 File tmpFile = new File(tmpDir, fileName);
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();
@@ -1786,6 +1784,76 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         File newFile = new File(p + File.separatorChar + toFileNewName);
         //修改文件名
         return toBeRenamed.renameTo(newFile);
+    }
+
+    /**
+     * 功能描述:删除业务
+     *
+     * @auther: homey Wong
+     * @date: 2019/3/22  上午 10:06
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @Override
+    @Transactional
+    public void deleteByHeadIdAndItemId(List<DownloadView> deleteViews, List<File> files) throws Exception {
+        List<Integer> singleHeadIds = new ArrayList<Integer>();
+        int pointindex = 0;
+        int uppointindex = 0;
+        String fourleverPath = "";
+        String upfourleverPath = "";
+        List<String> deleteUrls = new ArrayList<String>();
+        List<Integer> itemIds = new ArrayList<Integer>();
+        boolean isIn = false;
+        List<DownloadView> singleHeadIdList = new ArrayList<DownloadView>();
+        for (DownloadView view : deleteViews) {
+            itemIds.add(view.getFileUrlId());
+            deleteUrls.add(view.getUrlAddr());
+            if (!singleHeadIds.contains(view.getId())) {
+                singleHeadIds.add(view.getId());
+                singleHeadIdList.add(view);
+            }
+        }
+        fileUploadAndDownMapper.deleteUrlByHeadIdAndItemIds(itemIds);
+        fileUploadAndDownMapper.deleteRightItemIds(itemIds);
+
+        for (DownloadView vi : singleHeadIdList) {
+            int itemCount = fileUploadAndDownMapper.getItemCountByHeadId(vi.getId());
+            if (itemCount == 0) {
+                pointindex = StringUtils.ordinalIndexOf(vi.getUrlAddr(), "/", 5);
+                uppointindex = StringUtils.ordinalIndexOf(vi.getUrlAddr(), "/", 4);
+                fourleverPath = vi.getUrlAddr().substring(0, pointindex);
+                upfourleverPath = vi.getUrlAddr().substring(0, uppointindex);
+                FileUtil.delFolder(finalDirPath + fourleverPath);
+                FileUtil.delFolderIFNoFiles(finalDirPath + upfourleverPath);
+                fileUploadAndDownMapper.deleteFileManFileInfo(vi.getId());
+            } else {
+                fileUploadAndDownMapper.updateFileInfoTotalFilesNum(vi.getId(), itemCount);
+                isIn = true;
+            }
+        }
+        File file = null;
+        boolean flag = true;
+        String deleteFileDirectory = "";
+        if (isIn) {
+            for (String url : deleteUrls) {
+                FileUtil.delFile(finalDirPath + url);
+                //deleteFileDirectory = StringUtil.subMyString(url, "/");
+               // System.out.println(deleteFileDirectory+"===============1================");
+//                do {
+//                    file = new File(finalDirPath +  StringUtil.subMyString(deleteFileDirectory, "/"));
+//                    File[] list = file.listFiles();
+//                    if (list != null || list.length != 0) {
+//                        flag = false;
+//                        break;
+//                    }
+//                    FileUtil.delFolderIFNoFiles(finalDirPath + deleteFileDirectory);
+//                    deleteFileDirectory = StringUtil.subMyString(deleteFileDirectory, "/");
+//                    System.out.println(deleteFileDirectory+"===============2================");
+//                } while (flag);
+            }
+        }
     }
 
 
