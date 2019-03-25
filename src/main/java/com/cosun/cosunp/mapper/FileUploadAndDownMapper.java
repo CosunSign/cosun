@@ -88,7 +88,7 @@ public interface FileUploadAndDownMapper {
             "                      fmu.singlefileupdatenum AS singleFileUpdateNum, " +
             "                    fmu.logur1 AS urlAddr, " +
             "                      ffi.filedescribtion as filedescribtion, " +
-            "                      ffi.remark as remark " +
+            "                      ffi.remark as remark,fmu.id as fileUrlId " +
             "                     FROM  " +
             "                     filemanfileinfo ffi " +
             "                     LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId " +
@@ -144,6 +144,10 @@ public interface FileUploadAndDownMapper {
             "    LEFT JOIN filemanurl fmu on ffi.id = fmu.fileInfoId" +
             "    and ffi.uid = #{uId}  order by ffi.createtime desc ")
     List<DownloadView> findAllUploadFileByUserId(Integer uId);
+
+
+    @Select("select a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.fileurlid = #{urlId}")
+    List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId);
 
     @Select("select count(ffi.id) as recordCount " +
             " FROM\n" +
@@ -270,6 +274,9 @@ public interface FileUploadAndDownMapper {
 
     @Update("update filemanurl set singleFileUpdateNum= #{singleFileUpdateNum},updateTime = #{updateTime},modifyReason= #{modifyReason},updateUser= #{updateUser} where id = #{id}")
     void updateFileUrlById(Date updateTime, Integer singleFileUpdateNum, String modifyReason, Integer id, String updateUser);
+
+    @Insert("INSERT INTO filemanupdaterecord (ordernum,projectname,filename,updateuid,updatereason,updatedate,fileurlid) VALUES  (#{orderNum},#{projectName},#{fileName},#{updateUid},#{updateReason},#{updateDate},#{fileurlid}) ")
+    void saveFilemanUpdateRecord(FilemanUpdateRecord record);
 
     @Update("update filemanfileinfo set  updatecount = #{updateCount} , updatetime = #{updateTime},updateUser = #{updateUser}  where id= #{id} ")
     void updateFileManFileInfo2(@Param("updateCount") Integer updateCount, @Param("updateTime") Date updateTime, @Param("updateUser") String updateUser, @Param("id") Integer id);
@@ -1199,7 +1206,7 @@ public interface FileUploadAndDownMapper {
                     "  fmu.singlefileupdatenum AS singleFileUpdateNum,\n" +
                     "\tfmu.logur1 AS urlAddr,\n" +
                     "  ffi.filedescribtion as filedescribtion,\n" +
-                    "  ffi.remark as remark " +
+                    "  ffi.remark as remark,fmu.id as fileUrlId " +
                     " FROM " +
                     " filemanfileinfo ffi" +
                     " LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId" +

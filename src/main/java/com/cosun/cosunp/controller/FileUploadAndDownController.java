@@ -138,6 +138,31 @@ public class FileUploadAndDownController {
         return mav;
     }
 
+    /**
+     * 功能描述:双击查询文件更新下载记录
+     *
+     * @auther: homey Wong
+     * @date: 2019/2/20 0020 下午 2:40
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/showUpdateDownItem")
+    public void showUpdateDownItem(@RequestBody(required = true)DownloadView view,HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<FilemanUpdateRecord> records = fileUploadAndDownServ.getFileModifyRecordByUrlId(view.getFileUrlId());
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(records);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        }catch (IOException e) {
+            logger.debug(e.getMessage());
+        }
+    }
 
     /**
      * 功能描述:文件返回上一级
@@ -742,7 +767,7 @@ public class FileUploadAndDownController {
                                 }
                             }
                         }
-                    }else{
+                    } else {
                         for (FilemanUrl uu : urls) {
                             allOprights = "";
                             if (uu.getLogur1().contains(tempFolOrFileName)) {
@@ -1315,7 +1340,7 @@ public class FileUploadAndDownController {
                 flag = "-369";
             }
             if (flag.equals("OK")) {
-                fileUploadAndDownServ.deleteByHeadIdAndItemId(deleteViews,files);
+                fileUploadAndDownServ.deleteByHeadIdAndItemId(deleteViews, files);
             }
 
         } else {

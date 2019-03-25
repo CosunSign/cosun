@@ -98,6 +98,8 @@ public interface IFileUploadAndDownServ {
 
     FileManFileInfo getFileInfoByOrderNo(String orderNo) throws Exception;
 
+    List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception;
+
     List<Employee> findAllSalor() throws Exception;
 
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;

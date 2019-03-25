@@ -559,6 +559,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String[] splitPathNames = view.getFilePathNames().split(",");
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
+        FilemanUpdateRecord record = null;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
             ffi = fileManFileInfo.get(0);
             ffi.setUpdateCount(ffi.getUpdateCount() + 1);
@@ -568,8 +569,16 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (int i = 0; i < splitPathNames.length; i++) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(subAfterString(splitPathNames[i], "/"), fileManFileInfo.get(0).getId());
-                if (filemanUrl != null) {
-                    //取老文件信息
+                if (filemanUrl != null) {//取老文件信息
+                    record = new FilemanUpdateRecord();
+                    record.setFileName(filemanUrl.getOrginName());
+                    record.setOrderNum(ffi.getOrderNum());
+                    record.setProjectName(ffi.getProjectName());
+                    record.setUpdateDate(new Date());
+                    record.setUpdateReason(view.getModifyReason());
+                    record.setUpdateUid(userInfo.getuId());
+                    record.setFileurlid(filemanUrl.getId());
+                    fileUploadAndDownMapper.saveFilemanUpdateRecord(record);
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
                     filemanUrl.setModifyReason(view.getModifyReason());
@@ -738,6 +747,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
         String[] splitNames = view.getFilePathNames().split(",");
+        FilemanUpdateRecord record = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
             ffi = fileManFileInfo.get(0);
@@ -748,8 +758,16 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (int i = 0; i < splitNames.length; i++) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(splitNames[i], fileManFileInfo.get(0).getId());
-                if (filemanUrl != null) {
-                    //取老文件信息
+                if (filemanUrl != null) { //取老文件信息
+                    record = new FilemanUpdateRecord();
+                    record.setFileName(filemanUrl.getOrginName());
+                    record.setOrderNum(ffi.getOrderNum());
+                    record.setProjectName(ffi.getProjectName());
+                    record.setUpdateDate(new Date());
+                    record.setUpdateReason(view.getModifyReason());
+                    record.setUpdateUid(userInfo.getuId());
+                    record.setFileurlid(filemanUrl.getId());
+                    fileUploadAndDownMapper.saveFilemanUpdateRecord(record);
                     filemanUrl.setSingleFileUpdateNum(filemanUrl.getSingleFileUpdateNum() + 1);
                     filemanUrl.setUpdateuser(userInfo.getUserName());
                     filemanUrl.setModifyReason(view.getModifyReason());
@@ -1855,6 +1873,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
         }
     }
+
+    public List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception {
+        return fileUploadAndDownMapper.getFileModifyRecordByUrlId(urlId);
+    }
+
 
 
 }
