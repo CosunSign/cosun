@@ -1835,6 +1835,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
         fileUploadAndDownMapper.deleteUrlByHeadIdAndItemIds(itemIds);
         fileUploadAndDownMapper.deleteRightItemIds(itemIds);
+        fileUploadAndDownMapper.deleteRecordByUrIds(itemIds);
 
         for (DownloadView vi : singleHeadIdList) {
             int itemCount = fileUploadAndDownMapper.getItemCountByHeadId(vi.getId());

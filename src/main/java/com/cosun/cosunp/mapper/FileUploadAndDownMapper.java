@@ -33,6 +33,18 @@ public interface FileUploadAndDownMapper {
     @Delete({
             "<script>",
             "delete",
+            "from filemanupdaterecord",
+            "where fileurlid in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteRecordByUrIds(@Param("ids") List<Integer> ids);
+
+    @Delete({
+            "<script>",
+            "delete",
             "from filemanright",
             "where fileurlid in",
             "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
