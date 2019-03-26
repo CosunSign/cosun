@@ -139,8 +139,33 @@ public class FileUploadAndDownController {
     }
 
     /**
+     * 功能描述:双击图标出现清单更改记录
+     * @auther: homey Wong
+     * @date: 2019/3/26 0026 上午 9:37
+     * @param:
+     * @return:
+     * @describtion
+     */
+    @ResponseBody
+    @RequestMapping(value = "/showUpdateDownItemByIcon")
+    public void showUpdateDownItemByIcon(@RequestBody(required = true)DownloadView view,HttpServletRequest request,
+                                         HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<FilemanUpdateRecord> records = fileUploadAndDownServ.getFileModifyRecordByFolOrFilAndOrderNo(view);
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(records);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        }catch (IOException e) {
+            logger.debug(e.getMessage());
+        }
+    }
+
+    /**
      * 功能描述:双击查询文件更新下载记录
-     *
      * @auther: homey Wong
      * @date: 2019/2/20 0020 下午 2:40
      * @param:

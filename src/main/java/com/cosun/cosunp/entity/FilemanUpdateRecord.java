@@ -1,6 +1,7 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -98,7 +99,8 @@ public class FilemanUpdateRecord implements Serializable {
     }
 
     public String getUpdateDateStr() {
-        return updateDateStr;
+        SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(this.updateDate);
     }
 
     public void setUpdateDateStr(String updateDateStr) {

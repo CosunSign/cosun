@@ -238,12 +238,16 @@
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
                             }
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            fileshtml += "<li><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone2 == 0) {//代表没有文件夹
                                 $("#foldername").val(data[num]);
                             }
@@ -255,12 +259,16 @@
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
                             }
-                            folderhtml += "<li style='display: none'><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            fileshtml += "<li style='display: none'><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone2 == 0) {//代表没有文件夹
                                 $("#foldername").val(data[num]);
                             }
@@ -293,6 +301,49 @@
         //$("#some-element").busyLoad("hide");//遮罩层开启
         window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
+    }
+
+    function showupdaterecode(foldOrFileName) {
+        var jsonarray = {
+            "orderNo":$("#orderno").val(),
+            "folderOrFileName":foldOrFileName
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/fileupdown/showUpdateDownItemByIcon",
+            success: function (msg) {
+                $("#tablecontent").html("");
+                var tbody =  $("#tablecontent");
+                var tr = "";
+                var data = eval(msg);//将msg化为数;
+                var len = data.length;
+                console.log(len)
+                if(len>0) {
+                    $.each(data, function (num) {
+                        tr += "<tr>";
+                        tr += ("<td align='center'>" + (num + 1) + "</td>");
+                        tr += ("<td align='center'>" + isNull(data[num].fileName) + "</td>");
+                        tr += ("<td align='center'>" + isNull(data[num].updateFullName) + "</td>");
+                        tr += ("<td align='center'>" + isNull(data[num].updateDateStr) + "</td>");
+                        tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
+                        tr +="</tr>";
+                    });
+                }else{
+                    tr +="<tr>";
+                    tr += ("<td align='center' colspan='5'>无更新记录</td>");
+                    tr += ("</tr>");
+                }
+                window.parent.document.getElementById('tablecontent').innerHTML = tr;
+                window.parent.document.getElementById('coverbehidepage').style.display = "block";
+                window.parent.document.getElementById('updateDiv').style.display = "block";
+            },
+            error: function (msg) {
+
+            }
+        });
     }
 
     function showfolderdiv3() {
@@ -362,21 +413,29 @@
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             topfolder = data[num];
                             $("#foldername").val(data[num]);
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         } else {//代表为文件
-                            fileshtml += "<li><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
                     } else {
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             topfolder = data[num];
                             $("#foldername").val(data[num]);
-                            folderhtml += "<li style='display: none'><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         } else {//代表为文件
-                            fileshtml += "<li style='display: none'><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
                     }
                 });
@@ -476,12 +535,16 @@
                     if (num < 15) {
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             $("#foldername").val(data[num]);
-                            folderhtml += "<li><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            fileshtml += "<li><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone == 0) {
                                 $("#foldername").val(data[num]);
                             }
@@ -489,12 +552,16 @@
                     } else {
                         if (data[num].indexOf(".") <= 0) {//代表为文件夹
                             $("#foldername").val(data[num]);
-                            folderhtml += "<li style=\"display:none\"><img src=\"/images/icon/Folder.png\" " +
+                            folderhtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/Folder.png\" " +
                                 " align=\"middle\" border=\"0\" ondblclick=\"shownextfolderorfiles('" + data[num] + "')\"\n" +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            fileshtml += "<li style=\"display:none\"><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone == 0) {
                                 $("#foldername").val(data[num]);
                             }
@@ -824,7 +891,7 @@
                         tr += ("<td align='center'>" + (num + 1) + "</td>");
                         tr += ("<td align='center'>" + isNull(data[num].fileName) + "</td>");
                         tr += ("<td align='center'>" + isNull(data[num].updateFullName) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].updateDate) + "</td>");
+                        tr += ("<td align='center'>" + isNull(data[num].updateDateStr) + "</td>");
                         tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
                         tr +="</tr>";
                     });

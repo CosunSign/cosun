@@ -42,6 +42,18 @@ public interface FileUploadAndDownMapper {
     })
     void deleteRightItemIds(@Param("ids") List<Integer> ids);
 
+    @Select({
+            "<script>",
+            "SELECT a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason " +
+                    " from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.fileurlid in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "ORDER BY a.filename,a.updatedate ",
+            "</script>"
+    })
+    List<FilemanUpdateRecord> getFileModifyRecordByUrlIds(@Param("ids") List<Integer> ids);
+
     @Select("select count(*) from filemanurl where fileInfoId = #{id}")
     int getItemCountByHeadId(Integer id);
 
@@ -160,6 +172,16 @@ public interface FileUploadAndDownMapper {
     @Select("select * from  filemanurl where orginname = #{orginName} and fileInfoId = #{fileInfoId} ")
     FilemanUrl findFileUrlByFileInFoDataAndFileName(String orginName, Integer fileInfoId);
 
+
+    @Select("SELECT\n" +
+            "\ta.*\n" +
+            "FROM\n" +
+            "\tfilemanurl a\n" +
+            "LEFT JOIN filemanfileinfo b ON a.fileInfoId = b.id\n" +
+            "WHERE\n" +
+            "\tb.ordernum = #{orderNo}")
+    List<FilemanUrl> getFileUrlByOrderNo(String orderNo);
+
     @Select("select * from  filemanurl where fileInfoId = #{id}")
     List<FilemanUrl> findFileUrlByFileInFoData(Integer id);
 
@@ -191,6 +213,19 @@ public interface FileUploadAndDownMapper {
             "and a.filename= #{fileName} \n" +
             "and a.uid = #{uId} \n")
     FilemanRight getFileRightByOrderNoUidfileName(String orderNo, String fileName, Integer uId);
+
+    @Select("SELECT\n" +
+            "a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason" +
+            " from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where" +
+            "\t a.ordernum = #{orderNo}\n" +
+            "AND a.filename = #{fileName} order by a.filename,a.updatedate")
+    List<FilemanUpdateRecord> getFileModifyRecordByOrderNoAndFileName(String orderNo, String fileName);
+
+    @Select("SELECT\n" +
+            " a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason " +
+            "from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.ordernum " +
+            "= #{orderNo} order by a.filename,a.updatedate")
+    List<FilemanUpdateRecord> getFileModifyRecordByOrderNo(String orderNo);
 
     @Select("SELECT\n" +
             "\tb.orginname AS orginName\n" +

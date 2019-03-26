@@ -100,6 +100,8 @@ public interface IFileUploadAndDownServ {
 
     List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception;
 
+    List<FilemanUpdateRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception;
+
     List<Employee> findAllSalor() throws Exception;
 
     List<DownloadView> findFileUrlDatabyOrderNoandSalorandUserName(DownloadView view) throws Exception;

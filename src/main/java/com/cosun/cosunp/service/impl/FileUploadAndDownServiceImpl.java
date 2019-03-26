@@ -1115,7 +1115,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 isSameFileUpload = "您要上传的文件文件名有重复,如:" + names[i];//有，即刻返回
                 return isSameFileUpload;
             } else {
-                originNames.add(names[0]);
+                originNames.add(names[i]);
             }
 
         }
@@ -1858,7 +1858,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             for (String url : deleteUrls) {
                 FileUtil.delFile(finalDirPath + url);
                 //deleteFileDirectory = StringUtil.subMyString(url, "/");
-               // System.out.println(deleteFileDirectory+"===============1================");
+                // System.out.println(deleteFileDirectory+"===============1================");
 //                do {
 //                    file = new File(finalDirPath +  StringUtil.subMyString(deleteFileDirectory, "/"));
 //                    File[] list = file.listFiles();
@@ -1878,6 +1878,28 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.getFileModifyRecordByUrlId(urlId);
     }
 
-
-
+    public List<FilemanUpdateRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception {
+        Pattern orderNoRegex = Pattern.compile("^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$");
+        List<FilemanUrl> urls = null;
+        List<Integer> urlIds = null;
+        Matcher match = orderNoRegex.matcher(view.getFolderOrFileName());
+        if (view.getFolderOrFileName().contains(".")) {//点击的是文件
+            return fileUploadAndDownMapper.getFileModifyRecordByOrderNoAndFileName(view.getOrderNo(), view.getFolderOrFileName());
+        } else {//点击的是文件夹
+            if (match.matches()) {//以订单为名的文件夹
+                return fileUploadAndDownMapper.getFileModifyRecordByOrderNo(view.getFolderOrFileName());
+            } else {//其它文件夹
+                urls = fileUploadAndDownMapper.getFileUrlByOrderNo(view.getOrderNo());
+                urlIds = new ArrayList<Integer>();
+                if(urls!=null && urls.size()>0) {
+                    for(FilemanUrl url : urls) {
+                        if(url.getLogur1().indexOf("/"+view.getFolderOrFileName()+"/")>0) {
+                            urlIds.add(url.getId());
+                        }
+                    }
+                }
+                return fileUploadAndDownMapper.getFileModifyRecordByUrlIds(urlIds);
+            }
+        }
+    }
 }
