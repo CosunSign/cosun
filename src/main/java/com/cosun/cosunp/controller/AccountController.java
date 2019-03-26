@@ -47,6 +47,13 @@ public class AccountController {
     public ModelAndView toResetPassword(HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("reset-password");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        if(userInfo==null) {
+            mav = new ModelAndView(INDEX);
+            DownloadView downloadView = new DownloadView();
+            downloadView.setFlag("true");
+            mav.addObject("view", downloadView);
+            return mav;
+        }
         mav.addObject("userInfo", userInfo);
         return mav;
     }
@@ -115,12 +122,14 @@ public class AccountController {
         ModelAndView view = new ModelAndView(INDEX);
         DownloadView v = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        session.removeAttribute("account");
-        v.setFullName(userInfo.getFullName());
-        userInfoServ.setNewPasswordByuId(userInfo.getuId(), newPassword);
-        userInfo.setUserPwd(newPassword);
-        session.setAttribute("account", userInfo);
-        view.addObject("view", v);
+        if(userInfo!=null) {
+            session.removeAttribute("account");
+            v.setFullName(userInfo.getFullName());
+            userInfoServ.setNewPasswordByuId(userInfo.getuId(), newPassword);
+            userInfo.setUserPwd(newPassword);
+            session.setAttribute("account", userInfo);
+            view.addObject("view", v);
+        }
         return view;
     }
 

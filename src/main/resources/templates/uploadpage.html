@@ -761,7 +761,8 @@
     uploader.on('uploadFinished', function (file) {
         saveData();
     window.parent.document.getElementById('coverbehidepage').style.display="none";
-
+        window.parent.document.getElementById('coverbehidepageLeft').style.display="none";
+        window.parent.document.getElementById('coverbehidepageTop').style.display="none";
         $("#coverbehidepage1").hide();
         $("#thelist").hide();
         clearFileData();
@@ -771,6 +772,8 @@
     uploader1.on('uploadFinished', function (file) {
         saveData();
         $("#coverbehidepage1").hide();
+        window.parent.document.getElementById('coverbehidepageLeft').style.display="none";
+        window.parent.document.getElementById('coverbehidepageTop').style.display="none";
         window.parent.document.getElementById('coverbehidepage').style.display="none";
         $("#thelist").hide();
         clearFileData();
@@ -823,7 +826,8 @@
         $("#folderselect").val(filesaveselect);
         if (flaggg) {
             $("#coverbehidepage1").show();//遮罩层开启
-            //window.parent.document.getElementById('coverbehidepage').style.display="block";
+            window.parent.document.getElementById('coverbehidepageLeft').style.display="block";
+            window.parent.document.getElementById('coverbehidepageTop').style.display="block";
             $("#thelist").show();
             //第二步，saveMessageandFileStore
             if (totalFileNum1 != 0) {
@@ -1049,7 +1053,7 @@
         background-color: #E0EEEE;
         position: absolute;
         top: 15%;
-        left: 13%;
+        left: 12%;
         overflow-y: scroll;
     }
 

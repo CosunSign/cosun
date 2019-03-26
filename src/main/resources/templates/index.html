@@ -64,6 +64,9 @@
     var passwordflag = false;
     var uidflag = false;
     $(function () {
+        if (window.top != window.self) {
+            window.top.location.href = window.self.location.href;
+        }
         var flag=$("#flagstatus").val();
         var showerrmessage = document.getElementById("showerrmessage");
         if(flag=="false"){

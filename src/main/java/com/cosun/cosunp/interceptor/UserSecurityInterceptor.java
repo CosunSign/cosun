@@ -37,6 +37,8 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
         addInterceptor.excludePathPatterns("/");
         addInterceptor.excludePathPatterns("/account/**");
         //拦截配置
+        addInterceptor.addPathPatterns("/account/toMainPage");
+        addInterceptor.addPathPatterns("/order/createsinglegoods");
         addInterceptor.addPathPatterns("/fileupdown/**");
     }
 
@@ -52,8 +54,8 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
             //跳转到登录页
             String url = "/account/tologin";
             response.sendRedirect(url);
-           // return false;
-            return true;
+            return false;
+           // return true;
         }
     }
 
