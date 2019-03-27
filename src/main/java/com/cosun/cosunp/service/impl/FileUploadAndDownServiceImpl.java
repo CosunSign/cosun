@@ -686,9 +686,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitPaths.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
         fileManFileInfo.setUpdateTime(new Date());
+        fileManFileInfo.setRemark(view.getRemark());
+        fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
+        fileManFileInfo.setProjectName(view.getProjectName());
         String fileName = null;
         String allPathName = null;
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
         for (int i = 0; i < splitPaths.length; i++) {
             fileName = StringUtil.subAfterString(splitPaths[i], "/");
             allPathName = oldsPath + splitPaths[i];
@@ -821,8 +824,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
         fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitNames.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
+        fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
+        fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setUpdateTime(new Date());
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
+        fileManFileInfo.setProjectName(view.getProjectName());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
         for (int i = 0; i < splitNames.length; i++) {
             orginname = splitNames[i];
             deskName = pointpath + orginname;
@@ -870,8 +876,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         FileManFileInfo fileManFileInfo = fileManFileInfos.get(0);
         fileManFileInfo.setTotalFilesNum(fileManFileInfo.getTotalFilesNum() + splitNames.length);
         fileManFileInfo.setUpdateCount(fileManFileInfo.getUpdateCount() + 1);
+        fileManFileInfo.setFiledescribtion(view.getFiledescribtion());
+        fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setUpdateTime(new Date());
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId());
+        fileManFileInfo.setProjectName(view.getProjectName());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
         for (int i = 0; i < splitNames.length; i++) {
             orginname = splitNames[i];
             deskName = oldsPath + orginname;

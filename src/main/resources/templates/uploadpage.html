@@ -1734,6 +1734,9 @@
                 var tr = "";
                 if (data != null && data != "") {
                     $.each(data, function (num) {
+                        $("#filedescribtion").val(data[num].filedescribtion);
+                        $("#remark").val(data[num].remark);
+                        $("#projectno").val(data[num].projectName)
                         tr = $("<tr></tr>");
                         tr.append("<td width='30'>" + (num + 1) + "</td>");
                         tr.append("<td width='50'>" + isNull(data[num].userName) + "</td>");
@@ -1750,6 +1753,9 @@
                     tr.append("<td colspan='7'>查询为空</td>");
                     tr.append(td);
                     tr.appendTo(urltbody);
+                    $("#filedescribtion").val("");
+                    $("#remark").val("");
+                    $("#projectno").val("")
                 }
 
             },

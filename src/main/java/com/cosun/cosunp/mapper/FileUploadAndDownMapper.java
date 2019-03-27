@@ -75,7 +75,8 @@ public interface FileUploadAndDownMapper {
     @Update("update filemanfileinfo set totalfilesnum = #{totalfilesnum} where id = #{id}")
     void updateFileInfoTotalFilesNum(Integer id, int totalfilesnum);
 
-    @Select("select fio.username,fio.ordernum as orderNo,fio.extinfo1 as salor,fu.orginname as fileName,fu.uptime as lastUpdateTime,fu.singlefileupdatenum as singleFileUpdateNum from filemanurl fu " +
+    @Select("select fio.username,fio.ordernum as orderNo,fio.extinfo1 as salor,fu.orginname as fileName,fu.uptime as lastUpdateTime,fu.singlefileupdatenum as singleFileUpdateNum,  fio.filedescribtion as filedescribtion,\n" +
+            "  fio.remark as remark,fio.projectname as projectName from filemanurl fu " +
             "left join filemanfileinfo fio on fu.fileInfoId = fio.id " +
             "where " +
             " fu.username= #{userName}  " +
@@ -320,8 +321,11 @@ public interface FileUploadAndDownMapper {
     @Insert("INSERT INTO filemanright (uid,fileurlid,createuser,createtime,opright,fileInfoId,filename) VALUES (#{uid},#{fileurlid},#{userName},#{date},#{privileflag},#{fileInfoId},#{fileName}) ")
     void saveFileRightPrivileg(Integer uid, Integer fileurlid, String privileflag, String userName, Date date, Integer fileInfoId, String fileName);
 
-    @Update("update filemanfileinfo set totalFilesNum = #{totalFilesNum} , updatecount = #{updateCount} , updatetime = #{updateTime}  where id= #{id} ")
-    int updateFileManFileInfo(@Param("totalFilesNum") Integer totalFilesNum, @Param("updateCount") Integer updateCount, @Param("updateTime") Date updateTime, @Param("id") Integer id);
+    @Update("update filemanfileinfo set totalFilesNum = #{totalFilesNum} , updatecount = #{updateCount} , updatetime = #{updateTime},filedescribtion = #{filedescribtion},remark=#{remark},projectname=#{projectname}  where id= #{id} ")
+    int updateFileManFileInfo(@Param("totalFilesNum") Integer totalFilesNum, @Param("updateCount")
+            Integer updateCount, @Param("updateTime") Date updateTime, @Param("id") Integer id,
+                              @Param("filedescribtion") String filedescribtion,
+                              @Param("remark") String remark,@Param("projectname") String projectname);
 
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);

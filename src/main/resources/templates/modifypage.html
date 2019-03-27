@@ -79,7 +79,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <!--<font color="#FF0000" size="2">*</font>-->
             项目名称
-            <input type="text" id="projectno" name="projectName" onchange="clearFileDataM1()">
+            <input type="text" id="projectno" name="projectName" onchange="clearFileDataM1()" disabled>
             &nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -1610,6 +1610,7 @@
                 var tr = "";
                 if (data != null && data != "") {
                     $.each(data, function (num) {
+                        $("#projectno").val(data[num].projectName);
                         tr = $("<tr></tr>");
                         tr.append("<td width='30'>" + (num + 1) + "</td>");
                         tr.append("<td width='50'>" + isNull(data[num].userName) + "</td>");
@@ -1625,6 +1626,7 @@
                     tr = $("<tr></tr>");
                     tr.append("<td colspan='7'>查询为空</td>");
                     tr.append(td);
+                    $("#projectno").val("")
                     tr.appendTo(urltbody);
                 }
 
