@@ -33,7 +33,7 @@
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
 <input type="hidden" id="foldername">
-<div >
+<div>
     <input type="hidden" name="saveFolderName" id="folderselect">
     <input type="hidden" name="filePathName" id="filePathName">
     <div id="tabs">
@@ -61,7 +61,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
                                                       size="2"><u><strong>温馨小贴士</strong></u></font></a>
@@ -185,7 +185,7 @@
         </div>
         <p>
 
-        <!--FOLDER形式展示DIV-->
+            <!--FOLDER形式展示DIV-->
         <div id="folderdiv" style="display: none">
 
             &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
@@ -208,8 +208,6 @@
 
 <!--用来存放文件信息-->
 <div id="thelist" class="uploader-list" style="display:none;"></div>
-
-
 
 
 </html>
@@ -569,7 +567,7 @@
 
 
     function checkMessageBeforeUpload() {
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var salorid = $("#salorid").val();
         var orderno = $("#orderno").val().trim();
         var projecto = $("#projectno").val().trim();
@@ -600,7 +598,7 @@
         // }
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             flagg = false;
             clearUploder()
             return false;
@@ -609,12 +607,12 @@
             flagg = false;
             clearUploder()
             alert("请填写订单编号！");
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             return false;
         }
         if (projecto == "") {
             alert("请填写项目名称！");
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             flagg = false;
             clearUploder()
             return false;
@@ -622,14 +620,24 @@
         $("#folderselect").val(filesaveselect);
         if (totalFileNum != 0) {
             for (var i = 0; i < allurls.length; i++) {
-                if (allurls[i].indexOf(",") == -1) {
+                var index = allurls[i].lastIndexOf('/');
+                var centerurl = allurls[i].substr(0, index);
+                if (allurls[i].indexOf(",") == -1 && centerurl.indexOf(".") == -1) {
                     filePathName += allurls[i] + ",";
                 } else {
-                    alert("您选择的文件名或者文件夹名含有,符号,如:" + allurls[i]);
-                    window.parent.document.getElementById('coverbehidepage').style.display="none";
-                    flagg = false;
-                    clearUploder()
-                    return false;
+                    if (allurls[i].indexOf(",") != -1) {
+                        alert("您选择的文件夹名含有,符号,如:" + allurls[i]);
+                        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                        flagg = false;
+                        clearUploder()
+                        return false;
+                    } else if (centerurl.indexOf(".") != -1) {
+                        alert("您选择的文件夹名含有.符号,如:" + allurls[i]);
+                        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                        flagg = false;
+                        clearUploder()
+                        return false;
+                    }
                 }
             }
             url = "/fileupdown/checkmessagefolder";
@@ -640,14 +648,14 @@
                     fileName += allurls1[i] + ",";
                 } else {
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
-                    window.parent.document.getElementById('coverbehidepage').style.display="none";
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     flagg = false;
                     clearUploder()
                     return false;
                 }
                 if (allurls1[i].indexOf(",") != -1) {
                     alert("文件名不能有,符号,如:" + allurls1[i]);
-                    window.parent.document.getElementById('coverbehidepage').style.display="none";
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     flagg = false;
                     clearUploder()
                     return false;
@@ -657,13 +665,13 @@
             formData.append('filePathName', fileName);
         } else {
             alert("上传前请选择文件!")
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             flagg = false;
             clearUploder()
             return false;
         }
         if (flagg) {
-            window.parent.document.getElementById('coverbehidepage').style.display="block";
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
             //第一步，checkmessage
             $.ajax({
                 data: formData,
@@ -674,7 +682,7 @@
                 contentType: false,
                 processData: false,
                 success: function (msg) {
-                    window.parent.document.getElementById('coverbehidepage').style.display="none";
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     if (msg != '"OK"') {
                         alert(msg);
                         flaggg = false;
@@ -686,7 +694,7 @@
                     }
                 },
                 error: function (msg) {
-                    window.parent.document.getElementById('coverbehidepage').style.display="none";
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     alert("查询失败");
                     flaggg = false;
                     clearUploder()
@@ -695,7 +703,7 @@
                 }
             });
         }
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
 
     //url = "/fileupdown/checkmessage";
@@ -760,9 +768,9 @@
 
     uploader.on('uploadFinished', function (file) {
         saveData();
-    window.parent.document.getElementById('coverbehidepage').style.display="none";
-        window.parent.document.getElementById('coverbehidepageLeft').style.display="none";
-        window.parent.document.getElementById('coverbehidepageTop').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+        window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+        window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
         $("#coverbehidepage1").hide();
         $("#thelist").hide();
         clearFileData();
@@ -772,9 +780,9 @@
     uploader1.on('uploadFinished', function (file) {
         saveData();
         $("#coverbehidepage1").hide();
-        window.parent.document.getElementById('coverbehidepageLeft').style.display="none";
-        window.parent.document.getElementById('coverbehidepageTop').style.display="none";
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+        window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
         $("#thelist").hide();
         clearFileData();
         alert("上传成功！")
@@ -826,8 +834,8 @@
         $("#folderselect").val(filesaveselect);
         if (flaggg) {
             $("#coverbehidepage1").show();//遮罩层开启
-            window.parent.document.getElementById('coverbehidepageLeft').style.display="block";
-            window.parent.document.getElementById('coverbehidepageTop').style.display="block";
+            window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
+            window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
             $("#thelist").show();
             //第二步，saveMessageandFileStore
             if (totalFileNum1 != 0) {
@@ -879,11 +887,14 @@
 
     function clearUploder() {
         $("#innerfolderdiv").html("");
-        $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
-        $("#foldershow").removeAttr("checked");
-        $("#listshow").prop("checked", 'checked');
-        $("#listdiv").attr("style", "display:block;")
-        $("#folderdiv").attr("style", "display:none;")
+        if($("#salorid").val()=="" || $("#orderno").val()=="") {
+            $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
+            $("#foldershow").removeAttr("checked");
+            $("#listshow").prop("checked", 'checked');
+            $("#listdiv").attr("style", "display:block;")
+            $("#folderdiv").attr("style", "display:none;")
+        }
+
         allurls = new Array();
         allurls1 = new Array();
         arr = "";
@@ -996,7 +1007,7 @@
         padding-top: 250px;
         display: none;
         filter: alpha(opacity=30);
-        text-align:center;
+        text-align: center;
         color: #000000
     }
 
@@ -1015,17 +1026,17 @@
     }
 
     /*#coverbehidepage {*/
-        /*display: none;*/
-        /*position: absolute;*/
-        /*top: 0%;*/
-        /*left: 0%;*/
-        /*width: 100%;*/
-        /*height: 100%;*/
-        /*background-color: black;*/
-        /*z-index: 1001;*/
-        /*-moz-opacity: 0.3;*/
-        /*opacity: .30;*/
-        /*filter: alpha(opacity=30);*/
+    /*display: none;*/
+    /*position: absolute;*/
+    /*top: 0%;*/
+    /*left: 0%;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*background-color: black;*/
+    /*z-index: 1001;*/
+    /*-moz-opacity: 0.3;*/
+    /*opacity: .30;*/
+    /*filter: alpha(opacity=30);*/
 
     /*}*/
 
@@ -1310,7 +1321,7 @@
         //     alert("comein")
         //     $("#backfolder").attr("disabled","disabled");
         // }
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1363,12 +1374,12 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("查询失败");
             }
         });
 
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
 
     function shownextfolderorfiles(foldername) {
@@ -1405,7 +1416,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1454,42 +1465,43 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("查询失败");
             }
         });
 
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
     }
 
     function alertMessageDiv() {
         //$("#coverbehidepage").show();innershowMessageDiv12
-       var ojb = window.parent.document.getElementById('innershowMessageDiv12');
-       ojb.innerHTML=" <p><font color=\"#000000\" size=\"2\" th:align=\"center\">一,上传方式:文件夹和文件二选一.</font>\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,文件夹命名:不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">三,文件命名:文件名必须有扩展名,并不能有\",\"符号.</font>\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">五,同一订单下不能出现重复文件名.</font>\n" +
-           "\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">六,文件上传非初次上传可以自主选择上级目录.</font>\n" +
-           "                <p>\n" +
-           "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">七,为方便后续操作,请尽量将信息填写完整.</font>"
+        var ojb = window.parent.document.getElementById('innershowMessageDiv12');
+        ojb.innerHTML = " <p><font color=\"#000000\" size=\"2\" th:align=\"center\">一,上传方式:文件夹和文件二选一.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,文件夹命名:同一订单下不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">三,文件(夹)命名:文件名必须有扩展名,并不能有\",\"符号.文件夹命名不能含有.符号和,符号。</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">四,接收种类:文件上传功能只接收从未在服务器上存储过的文件或文件夹,如订单COSUN20190108WW01第一次上传的文件为A.xml,B.xml两个文件,则在此订单下不能再次上传两文件,如需上传则是更新需要,请去更新页面.若在此订单下上传C.xml则可行,若在此订单下上传,A.xml和C.xml则不可行,因A.xml存储过.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">五,同一订单下不能出现重复文件名.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">六,订单是根据业务员，设计师，订单编号来存储，如某订单下第一次存储是以A设计师,B业务员存储，则第二次或以后同一订单下存储只能带上相同设计师和业务员，若因工作变动，人员离职影响找程序员.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">七,文件上传非初次上传可以自主选择上级目录.</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">八,为方便后续操作,请尽量将信息填写完整.</font>"
 
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
-        window.parent.document.getElementById('showMessageDiv').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        window.parent.document.getElementById('showMessageDiv').style.display = "block";
         //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
-       // $("#coverbehidepage").hide();
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
-        window.parent.document.getElementById('showMessageDiv').style.display="none";
+        // $("#coverbehidepage").hide();
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+        window.parent.document.getElementById('showMessageDiv').style.display = "none";
 
         //$("#showMessageDiv").hide();
     }
@@ -1542,7 +1554,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -1583,12 +1595,12 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("查询失败");
             }
         });
 
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
     }
 
@@ -1600,6 +1612,7 @@
             if (!reg.test(str.value)) {
                 alert("订单编号不符合规定格式，示范如：COSUN20190112WW01");
                 $("#orderno").val("");
+                clearUploder();
                 return false;
             }
             // var jsonarray = {
@@ -1626,7 +1639,7 @@
             // });
         }
         showFileUrl();
-        clearFileData1();
+        clearUploder();
     }
 
     // function checkOrderNo(str) {
@@ -1701,7 +1714,7 @@
 
 
     function showfileurldivbysaloridorderno(salorid, orderno) {
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
 
         var urltbody = $("#urltbody");
         urltbody.html("");
@@ -1742,12 +1755,12 @@
             },
             error: function (msg) {
                 // 隐藏loading
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("失败");
             }
 
         });
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
 
     function isNull(arg1) {
@@ -1881,16 +1894,16 @@
         $("#folderselect").val(filesaveselect);
         //showSessionMessage();//定时器开启
         //document.getElementById("form1").submit();
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         if (isFilePathRight == 0) {
             alert("您要上传的文件夹或文件名不能包含,符号.");
 
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             return;
         }
         if (isFilePathRight == 2) {
             alert("您要上传的文件名必须要有扩展名!");
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
             return;
         }
         var formData = new FormData();
@@ -1913,13 +1926,13 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 var flag = msg;
                 if (flag != '"OK"') {
                     alert(flag);
                     return;
                 } else {
-                    window.parent.document.getElementById('coverbehidepage').style.display="block";
+                    window.parent.document.getElementById('coverbehidepage').style.display = "block";
                     document.getElementById("form1").submit();
                     var pro = null;
                     pro = setInterval(function () {
@@ -1958,7 +1971,7 @@
 
             },
             error: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("查询失败");
             }
         });
@@ -2042,7 +2055,7 @@
             $("#listdiv").attr("style", "display:block;")
             return false;
         }
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var jsonarray = {
             "salor": salor, //业务员
             "engineer": engineer, //设计师
@@ -2071,12 +2084,12 @@
                 $("#innerfolderdiv").html(folderhtml + fileshtml)
             },
             error: function (msg) {
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
                 alert("查询失败");
             }
         });
 
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
 
     // function addrow() {

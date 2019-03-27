@@ -539,12 +539,36 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if (right == null) {//如果是空代表没有权限，接着往下查URL里有没有文此文件
                 url = fileUploadAndDownMapper.getFileUrlByOrderNoSo(view.getOrderNo(), view.getSalor(), userInfo.getuId(), fileName);
                 if (url == null) {
-                    returnMessage = "您本次要更新的文件里有新文件，应去上传区进行上传，如:" + fileName + "系统里就不存在";
+                    List<FilemanUrl> urls = fileUploadAndDownMapper.getFileUrlByOrderNo(view.getOrderNo());
+                    if (urls.size() == 0) {
+                        returnMessage = "您本次要更新的订单信息不存在.";
+                    } else {
+                        urls = fileUploadAndDownMapper.getFileUrlByOrderNoSalorDisgner(view.getOrderNo(), view.getSalor(), userInfo.getuId());
+                        if (urls.size() == 0) {
+                            returnMessage = "您本次要更新的订单信息与已存在的订单信息不匹配!请检查设计师或业务员。";
+                        }else{
+                            returnMessage = "您本次要更新的文件不存在，应去上传区进行上传，如:" + fileName + "系统里就不存在";
+                        }
+                    }
                 } else {
                     returnMessage = "您没有权限，如:" + fileName + "就没有权限!";
                 }
 
             } else {
+                url = fileUploadAndDownMapper.getFileUrlByOrderNoSo(view.getOrderNo(), view.getSalor(), userInfo.getuId(), fileName);
+                if (url == null) {
+                    List<FilemanUrl> urls = fileUploadAndDownMapper.getFileUrlByOrderNo(view.getOrderNo());
+                    if (urls.size() == 0) {
+                        returnMessage = "您本次要更新的订单信息不存在.";
+                    } else {
+                        urls = fileUploadAndDownMapper.getFileUrlByOrderNoSalorDisgner(view.getOrderNo(), view.getSalor(), userInfo.getuId());
+                        if (urls.size() == 0) {
+                            returnMessage = "您本次要更新的订单信息与已存在的订单信息不匹配!请检查设计师或业务员。";
+                        }else{
+                            returnMessage = "您本次要更新的文件不存在，应去上传区进行上传，如:" + fileName + "系统里就不存在";
+                        }
+                    }
+                }
                 if (!right.getOpRight().contains("2")) {
                     returnMessage = "您没有权限，如:" + fileName + "就没有权限!";
                 }
@@ -1391,7 +1415,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             for (FilemanUrl fu : oldFileUrls) {
                 if (view.getSaveFolderName() != null) {
                     if (view.getSaveFolderName() != "" && f) {
-                        if (fu.getLogur1().contains(view.getSaveFolderName())) {
+                        if (fu.getLogur1().contains("/" + view.getSaveFolderName() + "/")) {
                             pointFolder = fu.getLogur1();
                             f = false;
                         }
@@ -1401,8 +1425,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             if (pointFolder != null && pointFolder.length() > 0 && !view.getSaveFolderName().equals("")) {//代表为用户指定目录
-                int lia = pointFolder.indexOf(view.getSaveFolderName());
-                pointFolder = pointFolder.substring(0, lia + view.getSaveFolderName().length() + 1);
+                int lia = pointFolder.indexOf("/" + view.getSaveFolderName() + "/");
+                pointFolder = pointFolder.substring(0, lia + view.getSaveFolderName().length() + 2);
                 addOFilesByPointFile(view, userInfo, pointFolder, fileManFileInfo);
             } else {
                 addOldOrderNoNewFiles(view, userInfo, urlStr, fileManFileInfo);
@@ -1506,7 +1530,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             for (FilemanUrl fu : oldFileUrls) {
                 if (param.getSaveFolderName() != null) {
                     if (param.getSaveFolderName() != "" && f) {
-                        if (fu.getLogur1().contains(param.getSaveFolderName())) {
+                        if (fu.getLogur1().contains("/" + param.getSaveFolderName() + "/")) {
                             pointFolder = fu.getLogur1();
                             f = false;
                         }
@@ -1516,7 +1540,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
 
             if (pointFolder != null && pointFolder.length() > 0 && !param.getSaveFolderName().equals("")) {//代表为用户指定目录
-                int lia = pointFolder.indexOf(param.getSaveFolderName());
+                int lia = pointFolder.indexOf("/" + param.getSaveFolderName() + "/");
                 pointFolder = pointFolder.substring(0, lia + param.getSaveFolderName().length() + 1);
                 tmpDir = new File(uploadDirPath + pointFolder);
 
@@ -1892,9 +1916,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             } else {//其它文件夹
                 urls = fileUploadAndDownMapper.getFileUrlByOrderNo(view.getOrderNo());
                 urlIds = new ArrayList<Integer>();
-                if(urls!=null && urls.size()>0) {
-                    for(FilemanUrl url : urls) {
-                        if(url.getLogur1().indexOf("/"+view.getFolderOrFileName()+"/")>0) {
+                if (urls != null && urls.size() > 0) {
+                    for (FilemanUrl url : urls) {
+                        if (url.getLogur1().indexOf("/" + view.getFolderOrFileName() + "/") > 0) {
                             urlIds.add(url.getId());
                         }
                     }

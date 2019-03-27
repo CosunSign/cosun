@@ -850,7 +850,6 @@
 
     function clearUploder() {
         $("#innerfolderdiv").html("");
-        $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
         $("#foldershow").removeAttr("checked");
         $("#listshow").prop("checked", 'checked');
         $("#listdiv").attr("style", "display:block;")
@@ -881,7 +880,7 @@
 
     function clearFileData() {
         $("#innerfolderdiv").html("");
-        $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
+        $("#urltbody").html("<tr><td colspan='7'>暂无数据</td></tr>");
         $("#foldershow").removeAttr("checked");
         $("#listshow").prop("checked", 'checked');
         $("#listdiv").attr("style", "display:block;")
@@ -1533,6 +1532,7 @@
             $("#listdiv").attr("style", "display:block;")
             $("#folderdiv").attr("style", "display:none;")
             showFileUrl();
+            clearUploder();
         }
 
     }
@@ -1562,10 +1562,14 @@
             "                    <p>\n" +
             "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">二,接收种类:文件更新功能只接收您要更新的文件全部已上传过.</font>\n" +
             "                    <p>\n" +
-            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">三,您得需要有您准备更新的文件的更新权限..</font>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">三,更新条件:同一订单下您要更新的文件里业务员，设计师必须与上传时的的业务员，设计师相同。.</font>\n" +
+
+
+            "                    <p>\n" +
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">四,您得需要有您准备更新的文件的更新权限..</font>\n" +
             "\n" +
             "                    <p>\n" +
-            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">四,为方便后续操作,请尽量将信息填写完整.</font>";
+            "                        <font color=\"#000000\" size=\"2\" th:align=\"center\">五,为方便后续操作,请尽量将信息填写完整.</font>";
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         window.parent.document.getElementById('showMessageDiv').style.display = "block";
 
@@ -1770,7 +1774,6 @@
     function removeallbutonetr2() {
         $("#urltbody").html("");
         $("#innerfolderdiv").html("");
-        $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
         $("#foldershow").removeAttr("checked");
         $("#listshow").prop("checked", 'checked');
         $("#listdiv").attr("style", "display:block;")

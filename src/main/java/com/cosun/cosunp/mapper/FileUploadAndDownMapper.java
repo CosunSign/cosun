@@ -252,6 +252,17 @@ public interface FileUploadAndDownMapper {
     FilemanUrl getFileUrlByOrderNoSo(String orderNo, String salor, Integer uId, String fileName);
 
     @Select("SELECT\n" +
+            "\tb.orginname AS orginName\n" +
+            "FROM\n" +
+            "\tfilemanfileinfo a\n" +
+            "LEFT JOIN filemanurl b ON a.id = b.fileInfoId\n" +
+            "WHERE\n" +
+            "\ta.ordernum = #{orderNo}\n" +
+            "AND a.extinfo1 = #{salor}\n" +
+            "AND a.uid = #{uId} ")
+    List<FilemanUrl> getFileUrlByOrderNoSalorDisgner(String orderNo, String salor, Integer uId);
+
+    @Select("SELECT\n" +
             "\tfr.uid,fr.id as fileRightId,fr.filename,fi.extinfo1,fi.ordernum\n" +
             "FROM\n" +
             "\tfilemanright fr\n" +

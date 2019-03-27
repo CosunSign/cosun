@@ -2373,10 +2373,10 @@ public class FileUploadAndDownController {
             if (isFolderNameForEngDateOrderNoSalor) {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
-                    if (!info.getExtInfo1().equals(view.getSalor())) {//查看订单编号有没有被占用
-                        returnmessage = "您输入的订单编号系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
-                    } else {
+                    if (info.getExtInfo1().equals(view.getSalor()) && info.getuId().equals(view.getuId())) {//查看订单编号有没有被占用  原始设计师与现设计师相同，原业务员与现业务员相同，则可存储，否则不可存储
                         returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
+                    } else {
+                        returnmessage = "您输入的订单编号系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
                     }
                 } else {
                     returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
