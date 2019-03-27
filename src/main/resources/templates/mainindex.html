@@ -130,9 +130,11 @@
         </li>
     </ul>
 </div>
-<div id="coverbehidepageTop" style="display: none" ></div>
-<div id="coverbehidepageLeft" style="display: none" ></div>
-<div id="coverbehidepage" style="display: none"  align="center"><img src="/images/loading2.gif" width="700" height="200" />加载中...</div>
+<div id="coverbehidepageTop" style="display: none"></div>
+<div id="coverbehidepageLeft" style="display: none"></div>
+<div id="coverbehidepage" style="display: none" align="center"><img src="/images/loading2.gif" width="700"
+                                                                    height="200"/>加载中...
+</div>
 <div id="some-element">
     <div class="content">
         <iframe class="iframecontent" src="" style="float: left" name="targetText"></iframe>
@@ -158,16 +160,22 @@
 </div>
 
 <!--文件更新记录 下载记录DIV-->
-<div id="updateDiv" style="display: none" >
-    <div id="updateDivInner" style="text-align: center">
-        <table style="align: center" class="grid" width="100%" >
-            <thead>
-            <th width="10px" style="text-align: center">序号</th>
-            <th width="180px" style="text-align: center">文件名</th>
-            <th width="50px" style="text-align: center">更新人</th>
-            <th width="120px" style="text-align: center">更新时间</th>
-            <th style="text-align: center" >更新原因</th>
+<div id="updateDiv" style="display: none">
+    <div id="updateDivTop" style="text-align: center">
+        <table style="align: center" class="grid" width="100%">
+            <thead id="tablethead">
+            <tr>
+                <td width="32px" style="text-align: center">序号</td>
+                <td width="180px" style="text-align: center">文件名</td>
+                <td width="50px" style="text-align: center">更新人</td>
+                <td width="150px" style="text-align: center">更新时间</td>
+                <td style="text-align: center">更新原因</td>
+            </tr>
             </thead>
+        </table>
+    </div>
+    <div id="updateDivInner" style="text-align: center">
+        <table style="font-size: 12px;word-wrap:break-word; word-break:break-all;" class="grid" width="100%" id="contentTable" >
             <tbody id="tablecontent">
 
             </tbody>
@@ -194,17 +202,16 @@
     });
 
 
-
     function closeShowMessage() {
         $("#coverbehidepage").hide();
         //window.parent.document.getElementById('coverbehidepage').style.display="none";
-       // window.parent.document.getElementById('showMessageDiv').style.display="none";
+        // window.parent.document.getElementById('showMessageDiv').style.display="none";
 
         $("#showMessageDiv").hide();
     }
 
     function closeUpdateMessage() {
-       // window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        // window.parent.document.getElementById('coverbehidepage').style.display = "block";
         //window.parent.document.getElementById('updateDiv').style.display = "block";
         $("#coverbehidepage").hide();
         $("#updateDiv").hide();
@@ -227,6 +234,23 @@
 </script>
 <style type="text/css">
 
+    #contentTable {
+        display: block;
+        height: 365px;
+        overflow-y: scroll;
+    }
+
+    #contentTable tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    #contentTable tr td {
+        font-size: 12px;
+
+    }
+
     #showMessageDiv {
         border: 1px solid #9AC0CD;
         width: 800px;
@@ -239,12 +263,24 @@
         top: 19%;
         left: 28%;;
     }
+
     #line-chart {
         height: 300px;
         width: 800px;
         margin: 0px auto;
         margin-top: 1em;
     }
+
+
+    #tablethead tr td {
+        table-layout: fixed;
+        text-align: center;
+    }
+
+    #tablethead {
+        width: calc(100% - 1em)
+    }
+
     #updateDiv {
         top: 22%;
         left: 25%;
@@ -260,12 +296,20 @@
     #updateDivInner {
         border: 1px solid #9AC0CD;
         width: 760px;
-        height: 400px;
+        height: 370px;
+        margin-left: 5px;
+        margin-right: 5px;
+        background-color: #E0EEEE;
+    }
+
+    #updateDivTop {
+        border: 1px solid #9AC0CD;
+        width: 760px;
+        height: 25px;
         margin-left: 5px;
         margin-right: 5px;
         margin-top: 5px;
         background-color: #E0EEEE;
-        overflow-y: scroll;
     }
 
     #innershowMessageDiv25 {
@@ -291,14 +335,12 @@
         border-width: 1px;
         padding: 3px;
         border-style: solid;
-        white-space: nowrap;
     }
 
     table.grid td {
         border-width: 1px;
         padding: 3px;
         border-style: solid;
-        white-space: nowrap;
     }
 
     #coverbehidepageTop {
@@ -316,7 +358,8 @@
         filter: alpha(opacity=30);
         color: #000000
     }
-    #coverbehidepageLeft{
+
+    #coverbehidepageLeft {
         position: absolute;
         top: 66px;
         left: 0px;
@@ -331,6 +374,7 @@
         filter: alpha(opacity=30);
         color: #000000
     }
+
     #coverbehidepage {
         position: absolute;
         top: 0px;
@@ -348,9 +392,10 @@
         padding-top: 250px;
         display: none;
         filter: alpha(opacity=30);
-        text-align:center;
+        text-align: center;
         color: #000000
     }
+
     #innershowMessageDiv {
         border: 1px solid #9AC0CD;
         width: 787px;
@@ -378,6 +423,7 @@
         background-color: #E0EEEE;
         position: absolute;
     }
+
     #innershowMessageDiv1 {
         border: 1px solid #9AC0CD;
         width: 750px;
@@ -394,6 +440,7 @@
         height: 30px;
         background-color: #E0EEEE;
     }
+
     #innershowMessageDiv2 {
         border: 1px solid #9AC0CD;
         width: 750px;

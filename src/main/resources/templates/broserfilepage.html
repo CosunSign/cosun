@@ -324,10 +324,10 @@
                 if(len>0) {
                     $.each(data, function (num) {
                         tr += "<tr>";
-                        tr += ("<td align='center'>" + (num + 1) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].fileName) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].updateFullName) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].updateDateStr) + "</td>");
+                        tr += ("<td align='center' width=\"32px\">" + (num + 1) + "</td>");
+                        tr += ("<td align='center' width=\"180px\">" + isNull(data[num].fileName) + "</td>");
+                        tr += ("<td align='center' width=\"50px\">" + isNull(data[num].updateFullName) + "</td>");
+                        tr += ("<td align='center' width=\"150px\">" + isNull(data[num].updateDateStr) + "</td>");
                         tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
                         tr +="</tr>";
                     });
@@ -888,10 +888,10 @@
                 if(len>0) {
                     $.each(data, function (num) {
                         tr += "<tr>";
-                        tr += ("<td align='center'>" + (num + 1) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].fileName) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].updateFullName) + "</td>");
-                        tr += ("<td align='center'>" + isNull(data[num].updateDateStr) + "</td>");
+                        tr += ("<td align='center' width='10px'>" + (num + 1) + "</td>");
+                        tr += ("<td align='center' width='180px'>" + isNull(data[num].fileName) + "</td>");
+                        tr += ("<td align='center' width='50px'>" + isNull(data[num].updateFullName) + "</td>");
+                        tr += ("<td align='center' width='150px'>" + isNull(data[num].updateDateStr) + "</td>");
                         tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
                         tr +="</tr>";
                     });
