@@ -832,53 +832,59 @@
             alert("请先勾选您要删除的文件或文件夹!");
             return false;
         }
-        var orderno = $("#orderno").val();
-        //$("#coverbehidepage").show();
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
-        //第二步,向后台发送消息
-        //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
-        var jsonarray = {
-            "orderNo": orderno, //订单编号
-            "check_val": checkval
-        };
-        var data = JSON.stringify(checkval);
-        var urlstrArr = [];
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
-        $.ajax({
-            data: data,
-            type: "POST",
-            contentType: "application/json",//上传内容格式为json结构
-            url: "/fileupdown/deleteFileBySelect",
-            success: function (msg) {
-                if (msg == '"-1"') {
-                    alert("您要删除的文件已超过2G！严禁删除。");
-                    return false;
-                }
-                if (msg == '"-369"') {
-                    alert("您要删除的文件已超过200个，请重新选择!");
-                    return false;
-                }
-                if (msg == '"-258"') {
-                    alert("您要删除的文件没有删除权限，请向上级申请!")
-                    return false;
-                }
-                if(msg=='"OK"') {
-                    alert("删除成功！")
-                    submitQueryByCondition();
-                }
-            },
-            error: function (msg) {
-               // $("#some-element").busyLoad("hide");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
-                alert("删除失败");
-            }
-        });
-        //第三步,下载完成
-        //$("#coverbehidepage").hide();
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
 
-        //$("#some-element").busyLoad("hide");
-        blockUIForDownload();
+        var isDeleteConfirm = confirm("确定要删除?删除后将无法撤销!");
+        if(isDeleteConfirm) {
+            var orderno = $("#orderno").val();
+            //$("#coverbehidepage").show();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+            //第二步,向后台发送消息
+            //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
+            var jsonarray = {
+                "orderNo": orderno, //订单编号
+                "check_val": checkval
+            };
+            var data = JSON.stringify(checkval);
+            var urlstrArr = [];
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+            $.ajax({
+                data: data,
+                type: "POST",
+                contentType: "application/json",//上传内容格式为json结构
+                url: "/fileupdown/deleteFileBySelect",
+                success: function (msg) {
+                    if (msg == '"-1"') {
+                        alert("您要删除的文件已超过2G！严禁删除。");
+                        return false;
+                    }
+                    if (msg == '"-369"') {
+                        alert("您要删除的文件已超过200个，请重新选择!");
+                        return false;
+                    }
+                    if (msg == '"-258"') {
+                        alert("您要删除的文件没有删除权限，请向上级申请!")
+                        return false;
+                    }
+                    if (msg == '"OK"') {
+                        alert("删除成功！")
+                        submitQueryByCondition();
+                    }
+                },
+                error: function (msg) {
+                    // $("#some-element").busyLoad("hide");
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                    alert("删除失败");
+                }
+            });
+            //第三步,下载完成
+            //$("#coverbehidepage").hide();
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
+
+            //$("#some-element").busyLoad("hide");
+            blockUIForDownload();
+        }else{
+            return false;
+        }
     }
 </script>
 

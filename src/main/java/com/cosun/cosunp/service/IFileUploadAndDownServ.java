@@ -68,6 +68,8 @@ public interface IFileUploadAndDownServ {
 
     FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception;
 
+    FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId,Integer fileInfoId,Integer uId) throws Exception;
+
     List<DownloadView> findAllUploadFileByParaCondition(DownloadView view) throws Exception;
 
     List<String> findAllOrderNum(int currentPageTotalNum,int pageSize) throws Exception;

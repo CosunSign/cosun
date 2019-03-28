@@ -325,7 +325,7 @@ public interface FileUploadAndDownMapper {
     int updateFileManFileInfo(@Param("totalFilesNum") Integer totalFilesNum, @Param("updateCount")
             Integer updateCount, @Param("updateTime") Date updateTime, @Param("id") Integer id,
                               @Param("filedescribtion") String filedescribtion,
-                              @Param("remark") String remark,@Param("projectname") String projectname);
+                              @Param("remark") String remark, @Param("projectname") String projectname);
 
     @Update("update filemanurl set opRight= #{privileflag} where fileInfoId = #{filesId}  ")
     void saveOrUpdateFileUrlPrivilege(Integer filesId, String privileflag);
@@ -348,6 +348,9 @@ public interface FileUploadAndDownMapper {
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "getFileRightByUrlIdAndFileInfoIdAnaUid")
     FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId);
+
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "getFileRightByUrlIdAndFileInfoIdAnaUidBack")
+    FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId, Integer fileInfoId);
 
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByOrderNoAndUid2")
     List<FilemanUrl> findAllUrlByOrderNoAndUid2(String orderNo, Integer uId);
@@ -428,31 +431,54 @@ public interface FileUploadAndDownMapper {
             "\ta.extinfo1 AS salor,\n" +
             "\ta.ordernum AS orderNo,\n" +
             "\tIFNULL(a.updatetime, a.createtime) AS createTime,\n" +
-            "\tmax(b.uid) AS oprighter,\n" +
+            "\tb.uid AS oprighter,\n" +
             "\tb.opright AS opRight,\n" +
             "\td.logur1 AS urlAddr,\n" +
-            "\ta.id AS id, " +
-            "  d.id as fileUrlId  \n" +
+            "\ta.id AS id,\n" +
+            "\td.id AS fileUrlId\n" +
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
             "LEFT JOIN filemanurl d ON b.fileurlid = d.id\n" +
             "LEFT JOIN userinfo c ON c.uid = b.uid\n" +
             "WHERE\n" +
-            "\tb.uid = #{uId} \n" +
-            "AND a.ordernum = #{orderNum} \n" +
-//            "OR b.id IN (\n" +
-//            "\tSELECT\n" +
-//            "\t\tid\n" +
-//            "\tFROM\n" +
-//            "\t\tfilemanright\n" +
-//            "\tWHERE\n" +
-//            "\t\tuid IS NULL\n" +
-//            "\tAND a.ordernum = #{orderNum} \n" +
-//            ")\n" +
+            "\tb.uid = #{uId} and a.ordernum = #{orderNum}\n" +
             "GROUP BY\n" +
-            "\ta.ordernum,\n" +
-            "\tb.fileurlid")
+            "\t a.ordernum ,b.fileurlid\n" +
+            "\n" +
+            "union all \n" +
+            "\n" +
+            "\n" +
+            "SELECT\n" +
+            "\ta.createuser AS engineer,\n" +
+            "\ta.extinfo1 AS salor,\n" +
+            "\ta.ordernum AS orderNo,\n" +
+            "\tIFNULL(a.updatetime, a.createtime) AS createTime,\n" +
+            "\tb.uid AS oprighter,\n" +
+            "\tb.opright AS opRight,\n" +
+            "\td.logur1 AS urlAddr,\n" +
+            "\ta.id AS id,\n" +
+            "\td.id AS fileUrlId\n" +
+            "FROM\n" +
+            "\tfilemanfileinfo a\n" +
+            "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+            "LEFT JOIN filemanurl d ON b.fileurlid = d.id\n" +
+            "LEFT JOIN userinfo c ON c.uid = b.uid\n" +
+            "WHERE\n" +
+            "\tb.uid is null and a.ordernum = #{orderNum}\n" +
+            "and d.id not in(SELECT\n" +
+            "\td.id AS fileUrlId\n" +
+            "FROM\n" +
+            "\tfilemanfileinfo a\n" +
+            "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
+            "LEFT JOIN filemanurl d ON b.fileurlid = d.id\n" +
+            "LEFT JOIN userinfo c ON c.uid = b.uid\n" +
+            "WHERE\n" +
+            "\tb.uid = #{uId} and a.ordernum = #{orderNum}\n" +
+            "GROUP BY\n" +
+            "\t a.ordernum ,b.fileurlid)\n" +
+            "GROUP BY\n" +
+            "\t a.ordernum ,b.fileurlid")
     List<DownloadView> findAllUrlByOrderNoAndUid1(String orderNum, Integer uId);
 
     /**
@@ -465,6 +491,20 @@ public interface FileUploadAndDownMapper {
      * @describtion
      */
     class DownloadViewDaoProvider {
+
+
+        public String getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId, Integer fileInfoId) {
+            StringBuilder sql = new StringBuilder(" SELECT\n" +
+                    "\t*\n" +
+                    "FROM\n" +
+                    "\tfilemanright\n" +
+                    "where fileInfoId = #{fileInfoId} \n" +
+                    "and fileurlid = #{urlId} \n");
+
+            sql.append(" and uid is null ");
+
+            return sql.toString();
+        }
 
 
         public String getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId, Integer fileInfoId, Integer uId) {

@@ -1070,6 +1070,16 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
+    @Transactional
+    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId, Integer fileInfoId, Integer uId) throws Exception{
+        FilemanRight right = fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId, fileInfoId, uId);
+        if(right==null) {
+            right = fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUidBack(urlId, fileInfoId);
+        }
+        return right;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<String> findAllUrlByOrderNo2(String orderNo) throws Exception {
         return fileUploadAndDownMapper.findAllUrlByOrderNo2(orderNo);

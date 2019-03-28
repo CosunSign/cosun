@@ -251,7 +251,7 @@ public class FileUploadAndDownController {
                     } else {
                         view.setuId(Integer.valueOf(linshiId.trim()));
                     }
-                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
+                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUidBack(u.getId(), u.getFileInfoId(), view.getuId());
                     // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
                     tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
 
@@ -1437,7 +1437,7 @@ public class FileUploadAndDownController {
                 } else {//代表是文件夹
                     index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
                     if (index > 0) {
-                        if (vi.getOpRight() == null) {
+                        if (vi.getOpRight() == null || vi.getOpRight()=="") {
                             isDownRight = false;
                             break a;
                         } else {
@@ -1454,6 +1454,8 @@ public class FileUploadAndDownController {
             }
             if (views == null || views.size() == 0) {
                 vie.setFlag("-258");
+                isDownRight = false;
+                break a;
             }
 
         }
