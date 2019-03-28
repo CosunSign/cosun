@@ -654,6 +654,9 @@
                         $("#showdatatable").html(folderhtml + fileshtml)
                         $("#showdiv").show();
                         $("#pagetfoottr").hide();
+                        $("#currentpagespan").val(currentPage);
+                        $("#recordcountspan").html(totaldata)
+                        $("#maxpagespan").html(totalPage);
                     } else {
                         $("#showdatatable").html("<tr><td colspan=\"9\" width='1200px' align='center'>查无数据</td></tr>");
                     }

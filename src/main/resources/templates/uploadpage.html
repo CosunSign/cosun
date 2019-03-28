@@ -393,7 +393,7 @@
         //dnd: '#dndArea',
         //paste: '#uploader',
         //fileVal: 'fileFolder',
-
+        accept:null,
         swf: 'js/Uploader.swf',
         chunked: true,
         chunkSize: chunkSize, // 字节 1M分块
@@ -437,7 +437,7 @@
         auto: false,
         compress: false,//不压缩图片
 
-
+        accept:null,
         // 禁掉全局的拖拽功能。这样不会出现图片拖进页面的时候，把图片打开。
         disableGlobalDnd: true,
         fileNumLimit: 1024,
@@ -1489,9 +1489,11 @@
             "                <p>\n" +
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">六,订单是根据业务员，设计师，订单编号来存储，如某订单下第一次存储是以A设计师,B业务员存储，则第二次或以后同一订单下存储只能带上相同设计师和业务员，若因工作变动，人员离职影响找程序员.</font>\n" +
             "                <p>\n" +
-            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">七,文件上传非初次上传可以自主选择上级目录.</font>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">七,文件上传非初次上传可以自主选择根目录.</font>\n" +
             "                <p>\n" +
-            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">八,为方便后续操作,请尽量将信息填写完整.</font>"
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">八,文件(夹)上传不接收任何类型的空文件(0字节文件).</font>\n" +
+            "                <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">九,为方便后续操作,请尽量将信息填写完整.</font>"
 
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         window.parent.document.getElementById('showMessageDiv').style.display = "block";

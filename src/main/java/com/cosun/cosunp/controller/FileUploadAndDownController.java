@@ -1234,7 +1234,7 @@ public class FileUploadAndDownController {
                 fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
 
             views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(viewHtml);
-            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(view);
+            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(viewHtml);
             maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
             List<DownloadView> viewsNew = new ArrayList<DownloadView>();
             int pointindex;

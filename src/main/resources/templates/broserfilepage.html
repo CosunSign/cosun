@@ -733,14 +733,14 @@
                         <div th:unless="${#lists.isEmpty(downloadViewList)}">
                             <div th:each="downloadView ,iterStat: ${downloadViewList}" align="center">
                                 <tr th:ondblclick="'javascript:showUpdateDownRecordItem(\''+${downloadView.fileUrlId}+'\');'">
-                                    <td th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
-                                    <td th:text="${downloadView.lastUpdator}"></td>
-                                    <td th:text="${downloadView.lastUpdateTime}"></td>
-                                    <td th:text="${downloadView.orderNo}"></td>
-                                    <td th:text="${downloadView.projectName}"></td>
+                                    <td align="center" th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
+                                    <td align="center" th:text="${downloadView.lastUpdator}"></td>
+                                    <td align="center" th:text="${downloadView.lastUpdateTime}"></td>
+                                    <td align="center" th:text="${downloadView.orderNo}"></td>
+                                    <td align="center" th:text="${downloadView.projectName}"></td>
                                     <td align="left" th:text="${downloadView.fileName}"></td>
-                                    <td th:text="${downloadView.salor}"></td>
-                                    <td th:text="${downloadView.singleFileUpdateNum}"></td>
+                                    <td align="center" th:text="${downloadView.salor}"></td>
+                                    <td align="center" th:text="${downloadView.singleFileUpdateNum}"></td>
                                     <td th:text="${downloadView.modifyReason}"></td>
                                     <td th:text="${downloadView.filedescribtion}"></td>
                                     <td th:text="${downloadView.remark}"></td>
@@ -888,7 +888,7 @@
                 if(len>0) {
                     $.each(data, function (num) {
                         tr += "<tr>";
-                        tr += ("<td align='center' width='10px'>" + (num + 1) + "</td>");
+                        tr += ("<td align='center' width='32px'>" + (num + 1) + "</td>");
                         tr += ("<td align='center' width='180px'>" + isNull(data[num].fileName) + "</td>");
                         tr += ("<td align='center' width='50px'>" + isNull(data[num].updateFullName) + "</td>");
                         tr += ("<td align='center' width='150px'>" + isNull(data[num].updateDateStr) + "</td>");

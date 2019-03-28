@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1627,6 +1628,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
             File tmpDir = new File(uploadDirPath + filePath);
             if (tmpDir.exists()) {
+                FileUtil.delFile(tmpDir+"/"+fileName);
+                Charset charset = Charset.forName("UTF-8");//Java.nio.charset.Charset处理了字符转换问题。它通过构造CharsetEncoder和CharsetDecoder将字符序列转换成字节和逆转换。
                 File tmpFile = new File(tmpDir, fileName);
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();
@@ -1661,20 +1664,19 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public void modifyFileByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
         String fileName = param.getName();
         String uploadDirPath = finalDirPath;
-        int pointindex;
         String oldsPath = null;
         FilemanUrl filemanUrl = null;
         List<FileManFileInfo> fileManFileInfo = fileUploadAndDownMapper.isSameOrderNoandOtherMessage(info.getUserName(), param.getOrderNo(), param.getSalor());
         if (fileManFileInfo.size() > 0) { //代表文件夹存在
             filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
             if (filemanUrl != null) {
-                pointindex = StringUtils.ordinalIndexOf(filemanUrl.getLogur1(), "/", 5);
-                oldsPath = filemanUrl.getLogur1().substring(0, pointindex + 1);
+                oldsPath = StringUtil.subMyString(filemanUrl.getLogur1(),"/");
             }
         }
 
         File tmpDir = new File(uploadDirPath + oldsPath);
         if (tmpDir.exists()) {
+            FileUtil.delFile(tmpDir+"/"+fileName);
             File tmpFile = new File(tmpDir, fileName);
             RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
             FileChannel fileChannel = tempRaf.getChannel();
