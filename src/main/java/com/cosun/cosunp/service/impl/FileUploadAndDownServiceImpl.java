@@ -21,9 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1629,7 +1631,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             File tmpDir = new File(uploadDirPath + filePath);
             if (tmpDir.exists()) {
                 FileUtil.delFile(tmpDir+"/"+fileName);
-                Charset charset = Charset.forName("UTF-8");//Java.nio.charset.Charset处理了字符转换问题。它通过构造CharsetEncoder和CharsetDecoder将字符序列转换成字节和逆转换。
                 File tmpFile = new File(tmpDir, fileName);
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();
@@ -1644,7 +1645,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     fileChannel.close();
                     tempRaf.close();
                     mappedByteBuffer.clear();
-
                     boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
                     if (isOk) {
                         System.out.println("upload complete !! 可以删掉CONF文件 fileName");
