@@ -830,8 +830,8 @@ public class FileUploadAndDownController {
                 if (flag) {
                     vi.setFolderOrFileName(tempFolOrFileName);
                     if (!tempFolOrFileName.contains(".")) {
+                        allOprights = "";
                         for (FilemanUrl uu : urls) {
-                            allOprights = "";
                             if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
                                 right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
                             if (right1 != null && right1.getOpRight() != null) {
@@ -850,8 +850,8 @@ public class FileUploadAndDownController {
                             }
                         }
                     } else {
+                        allOprights = "";
                         for (FilemanUrl uu : urls) {
-                            allOprights = "";
                             if (uu.getLogur1().contains(tempFolOrFileName)) {
                                 right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
                                 if (right1 != null && right1.getOpRight() != null) {
