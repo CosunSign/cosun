@@ -216,7 +216,9 @@ public class FileUploadAndDownController {
         List<DownloadView> viewss = null;
         DownloadView vvv = null;
         boolean flag = true;
+        String allOprights = "";
         String tempFolFileName = null;
+        FilemanRight right1 = null;
         int maxPage = 0;
         //根据当前文件夹或文件名查找上一级文件夹名,如上一级文件夹名是以ORDERNO类形的,即开启limit查询
         String upFolderName = null;
@@ -265,23 +267,51 @@ public class FileUploadAndDownController {
                         }
                     }
                 }
-                if (flag) {
+                if (flag && tempFolFileName != null) {
                     vvv = new DownloadView();
                     vi.setFolderOrFileName(tempFolFileName);
-                    if (right != null) {
-                        if (right.getOpRight() != null) {
+                    allOprights = "";
+
+                    for (FilemanUrl uu : urls) {
+                        if (uu.getLogur1().contains(tempFolFileName)) {
+                            right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
+                            if (right1 != null && right1.getOpRight() != null) {
+                                if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
+                                    allOprights += "2,";
+                                }
+                                if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
+                                    allOprights += "3,";
+                                }
+                                if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
+                                    allOprights += "4,";
+                                }
+                                if (allOprights != "") {
+                                    allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
+                                }
+                            }
+                        }
+                    }
+                    if (right != null && right.getOpRight() != null) {
+                        if (tempFolFileName.contains(".")) {
                             vi.setOpRight(right.getOpRight());
-                            if (right.getuId() != null) {
-                                vi.setOprighter(right.getuId().toString());
+                        } else {
+                            vi.setOpRight(allOprights);
+                        }
+
+                        if (right.getuId() != null) {
+                            vi.setOprighter(right.getuId().toString());
+                        } else {
+                            if (view.getLinshiId() != null && view.getLinshiId().trim().length() > 0) {
+                                vi.setOprighter(view.getLinshiId());
+                                vi.setOpRight(allOprights);
                             } else {
                                 vi.setOprighter("");
                             }
-                        } else {
-                            vi.setOpRight("");
                         }
                     } else {
-                        vi.setOpRight("");
+                        vi.setOpRight(allOprights);
                     }
+
                     vvv = vi;
                     views.add(vvv);
                 }
@@ -289,7 +319,6 @@ public class FileUploadAndDownController {
             }
 
         } else {
-
             String filefoldername = null;
             String backFolderName = null;
             for (FilemanUrl u : urls) {
@@ -328,7 +357,7 @@ public class FileUploadAndDownController {
                         view.setuId(Integer.valueOf(linshiId.trim()));
                     }
                     folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
-                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
+                    right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUidBack(u.getId(), u.getFileInfoId(), view.getuId());
                     // folderOrFiles.add(u.getLogur1().substring(index + 2 + foldername.length(), lastIndex));
                     tempFolFileName = u.getLogur1().substring(index + 2 + foldername.length(), lastIndex);
                 }
@@ -340,22 +369,48 @@ public class FileUploadAndDownController {
                         }
                     }
                 }
-                if (flag) {
+                if (flag && tempFolFileName != null) {
                     vvv = new DownloadView();
                     vi.setFolderOrFileName(tempFolFileName);
-                    if (right != null) {
-                        if (right.getOpRight() != null) {
+                    allOprights = "";
+                    for (FilemanUrl uu : urls) {
+                        if (uu.getLogur1().contains(tempFolFileName)) {
+                            right1 = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(uu.getId(), uu.getFileInfoId(), view.getuId());
+                            if (right1 != null && right1.getOpRight() != null) {
+                                if (right1.getOpRight().contains("2") && !allOprights.contains("2")) {
+                                    allOprights += "2,";
+                                }
+                                if (right1.getOpRight().contains("3") && !allOprights.contains("3")) {
+                                    allOprights += "3,";
+                                }
+                                if (right1.getOpRight().contains("4") && !allOprights.contains("4")) {
+                                    allOprights += "4,";
+                                }
+                                if (allOprights != "") {
+                                    allOprights = allOprights.substring(0, allOprights.length());//去掉最后一个,
+                                }
+                            }
+                        }
+                    }
+                    if (right != null && right.getOpRight() != null) {
+                        if (tempFolFileName.contains(".")) {
                             vi.setOpRight(right.getOpRight());
-                            if (right.getuId() != null) {
-                                vi.setOprighter(right.getuId().toString());
+                        } else {
+                            vi.setOpRight(allOprights);
+                        }
+
+                        if (right.getuId() != null) {
+                            vi.setOprighter(right.getuId().toString());
+                        } else {
+                            if (view.getLinshiId() != null && view.getLinshiId().trim().length() > 0) {
+                                vi.setOprighter(view.getLinshiId());
+                                vi.setOpRight(allOprights);
                             } else {
                                 vi.setOprighter("");
                             }
-                        } else {
-                            vi.setOpRight("");
                         }
                     } else {
-                        vi.setOpRight("");
+                        vi.setOpRight(allOprights);
                     }
                     vvv = vi;
                     views.add(vvv);
@@ -1437,7 +1492,7 @@ public class FileUploadAndDownController {
                 } else {//代表是文件夹
                     index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
                     if (index > 0) {
-                        if (vi.getOpRight() == null || vi.getOpRight()=="") {
+                        if (vi.getOpRight() == null || vi.getOpRight() == "") {
                             isDownRight = false;
                             break a;
                         } else {
