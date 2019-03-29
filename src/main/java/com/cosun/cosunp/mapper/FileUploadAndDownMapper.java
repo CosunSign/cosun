@@ -56,7 +56,7 @@ public interface FileUploadAndDownMapper {
 
     @Select({
             "<script>",
-            "SELECT a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason " +
+            "SELECT a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as typeK " +
                     " from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.fileurlid in",
             "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
             "#{id}",
@@ -64,7 +64,19 @@ public interface FileUploadAndDownMapper {
             "ORDER BY a.filename,a.updatedate ",
             "</script>"
     })
-    List<FilemanUpdateRecord> getFileModifyRecordByUrlIds(@Param("ids") List<Integer> ids);
+    List<ShowUpdateDownRecord> getFileModifyRecordByUrlIds(@Param("ids") List<Integer> ids);
+
+    @Select({
+            "<script>",
+            "SELECT a.filename AS filename,a.downdate AS downdate,b.fullname AS downFullName,a.ipAddr AS ipAddr,a.ipName AS ipName,1 AS typeK " +
+                    " from filemandownrecord a left join userinfo b on a.downuid = b.uid where a.fileurlid in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "ORDER BY a.filename,a.downdate ",
+            "</script>"
+    })
+    List<ShowUpdateDownRecord> getFileDownRecordByUrlIds(@Param("ids") List<Integer> ids);
 
     @Select("select count(*) from filemanurl where fileInfoId = #{id}")
     int getItemCountByHeadId(Integer id);
@@ -87,6 +99,27 @@ public interface FileUploadAndDownMapper {
     @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId,fileUrlId,opRight)" +
             " values (#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
     void addFilemanRightDataByUpload(FilemanRight filemanRight);
+
+    @Insert("INSERT INTO filemandownrecord (\n" +
+            "\tipAddr,\n" +
+            "\tipName,\n" +
+            "\tfilename,\n" +
+            "\tordernum,\n" +
+            "\tdownuid,\n" +
+            "\tdowndate,\n" +
+            "\tfileurlid\n" +
+            ")\n" +
+            "VALUES\n" +
+            "\t(\n" +
+            "\t\t #{ipAddr},\n" +
+            "\t\t #{ipName},\n" +
+            "\t\t#{fileName},\n" +
+            "\t\t#{orderNum},\n" +
+            "\t\t#{downUid},\n" +
+            "\t\t #{downDate},\n" +
+            "\t\t#{fileurlid}\n" +
+            "\t)")
+    void saveFilemanDownRecord(FilemanDownRecord record);
 
     @Insert("insert into FilemanRight(uId,userName,fileName,createUser,createTime,fileInfoId,fileUrlId,opRight)" +
             " values (#{uId},#{userName},#{fileName},#{createUser},#{createTime},#{fileInfoId},#{fileUrlId},#{opRight})")
@@ -171,8 +204,20 @@ public interface FileUploadAndDownMapper {
     List<DownloadView> findAllUploadFileByUserId(Integer uId);
 
 
-    @Select("select a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.fileurlid = #{urlId}")
-    List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId);
+    @Select("select a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as typeK from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.fileurlid = #{urlId}")
+    List<ShowUpdateDownRecord> getFileModifyRecordByUrlId(Integer urlId);
+
+    @Select("SELECT\n" +
+            "\ta.filename AS filename,a.downdate AS downdate,b.fullname AS downFullName,a.ipAddr AS ipAddr,a.ipName AS ipName,1 AS typeK\n" +
+            "FROM\n" +
+            "\tfilemandownrecord a\n" +
+            "LEFT JOIN userinfo b ON a.downuid = b.uid\n" +
+            "WHERE\n" +
+            "\ta.fileurlid =#{urlId}\n" +
+            "ORDER BY\n" +
+            "\ta.filename,\n" +
+            "\ta.downdate")
+    List<ShowUpdateDownRecord> getFileDownRecordByUrlId(Integer urlId);
 
     @Select("select count(ffi.id) as recordCount " +
             " FROM\n" +
@@ -228,17 +273,54 @@ public interface FileUploadAndDownMapper {
     FilemanRight getFileRightByOrderNoUidfileName(String orderNo, String fileName, Integer uId);
 
     @Select("SELECT\n" +
-            "a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason" +
+            "a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as type" +
             " from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where" +
             "\t a.ordernum = #{orderNo}\n" +
             "AND a.filename = #{fileName} order by a.filename,a.updatedate")
-    List<FilemanUpdateRecord> getFileModifyRecordByOrderNoAndFileName(String orderNo, String fileName);
+    List<ShowUpdateDownRecord> getFileModifyRecordByOrderNoAndFileName(String orderNo, String fileName);
 
     @Select("SELECT\n" +
-            " a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason " +
+            "\ta.filename AS filename,\n" +
+            "\ta.downdate AS downdate,\n" +
+            "\tb.fullname AS downFullName,\n" +
+            "\ta.ipAddr AS ipAddr,\n" +
+            "\ta.ipName AS ipName,\n" +
+            "\t1 AS typeK\n" +
+            "FROM\n" +
+            "\tfilemandownrecord a\n" +
+            "LEFT JOIN userinfo b ON a.downuid = b.uid\n" +
+            "WHERE\n" +
+            "\ta.ordernum = #{orderNo}\n" +
+            "AND a.filename = #{fileName}\n" +
+            "ORDER BY\n" +
+            "\ta.filename,\n" +
+            "\ta.downdate")
+    List<ShowUpdateDownRecord> getFileDownRecordByOrderNoAndFileName(String orderNo, String fileName);
+
+    @Select("SELECT\n" +
+            " a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as typeK " +
             "from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where a.ordernum " +
             "= #{orderNo} order by a.filename,a.updatedate")
-    List<FilemanUpdateRecord> getFileModifyRecordByOrderNo(String orderNo);
+    List<ShowUpdateDownRecord> getFileModifyRecordByOrderNo(String orderNo);
+
+
+    @Select("SELECT\n" +
+            "\ta.filename AS filename,\n" +
+            "\ta.downdate AS downdate,\n" +
+            "\tb.fullname AS downFullName,\n" +
+            "\ta.ipAddr AS ipAddr,\n" +
+            "\ta.ipName AS ipName,\n" +
+            "\t1 AS typeK" +
+            "\n" +
+            "FROM\n" +
+            "\tfilemandownrecord a\n" +
+            "LEFT JOIN userinfo b ON a.downuid = b.uid\n" +
+            "WHERE\n" +
+            "\ta.ordernum = #{orderNo}\n" +
+            "ORDER BY\n" +
+            "\ta.filename,\n" +
+            "\ta.downdate")
+    List<ShowUpdateDownRecord> getFileDownRecordByOrderNo(String orderNo);
 
     @Select("SELECT\n" +
             "\tb.orginname AS orginName\n" +
@@ -435,7 +517,7 @@ public interface FileUploadAndDownMapper {
             "\tb.opright AS opRight,\n" +
             "\td.logur1 AS urlAddr,\n" +
             "\ta.id AS id,\n" +
-            "\td.id AS fileUrlId\n" +
+            "\td.id AS fileUrlId, b.filename as fileName \n" +
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
@@ -458,7 +540,7 @@ public interface FileUploadAndDownMapper {
             "\tb.opright AS opRight,\n" +
             "\td.logur1 AS urlAddr,\n" +
             "\ta.id AS id,\n" +
-            "\td.id AS fileUrlId\n" +
+            "\td.id AS fileUrlId, b.filename as fileName \n" +
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +

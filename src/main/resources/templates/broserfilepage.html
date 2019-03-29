@@ -33,6 +33,7 @@
     .clear {
         zoom: 1;
     }
+
     .clear:after {
         content: "";
         display: block;
@@ -305,45 +306,69 @@
 
     function showupdaterecode(foldOrFileName) {
         var jsonarray = {
-            "orderNo":$("#orderno").val(),
-            "folderOrFileName":foldOrFileName
+            "orderNo": $("#orderno").val(),
+            "folderOrFileName": foldOrFileName
         };
         var data = JSON.stringify(jsonarray);
         $.ajax({
-            data: data,
-            type: "POST",
-            contentType: "application/json",//上传内容格式为json结构
-            url: "/fileupdown/showUpdateDownItemByIcon",
-            success: function (msg) {
-                $("#tablecontent").html("");
-                var tbody =  $("#tablecontent");
-                var tr = "";
-                var data = eval(msg);//将msg化为数;
-                var len = data.length;
-                console.log(len)
-                if(len>0) {
+                data: data,
+                type: "POST",
+                contentType: "application/json",//上传内容格式为json结构
+                url: "/fileupdown/showUpdateDownItemByIcon",
+                success: function (msg) {
+                    $("#tablecontent").html("");
+                    $("#tablecontent2").html("");
+                    var tbody = $("#tablecontent");
+                    var tbody2 = $("#tablecontent2");
+                    var tr = "";
+                    var tr2 = "";
+                    var trnum = 0;
+                    var trnum2 = 0;
+                    var data = eval(msg);//将msg化为数;
                     $.each(data, function (num) {
-                        tr += "<tr>";
-                        tr += ("<td align='center' width=\"32px\">" + (num + 1) + "</td>");
-                        tr += ("<td align='center' width=\"180px\">" + isNull(data[num].fileName) + "</td>");
-                        tr += ("<td align='center' width=\"50px\">" + isNull(data[num].updateFullName) + "</td>");
-                        tr += ("<td align='center' width=\"150px\">" + isNull(data[num].updateDateStr) + "</td>");
-                        tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
-                        tr +="</tr>";
+                        if (data[num].typeK==0) {
+                            trnum = trnum + 1;
+                            tr += "<tr>";
+                            tr += ("<td align='center' width=\"32px\">" + (trnum) + "</td>");
+                            tr += ("<td align='center' width=\"180px\">" + isNull(data[num].fileName) + "</td>");
+                            tr += ("<td align='center' width=\"50px\">" + isNull(data[num].updateFullName) + "</td>");
+                            tr += ("<td align='center' width=\"150px\">" + isNull(data[num].updateDateStr) + "</td>");
+                            tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
+                            tr += "</tr>";
+                        } else {
+                            trnum2 = trnum2 + 1;
+                            tr2 += "<tr>";
+                            tr2 += ("<td align='center' width=\"32px\">" + (trnum2) + "</td>");
+                            tr2 += ("<td align='center' width=\"170px\">" + isNull(data[num].fileName) + "</td>");
+                            tr2 += ("<td align='center' width=\"78px\">" + isNull(data[num].downFullName) + "</td>");
+                            tr2 += ("<td align='center' width=\"150px\">" + isNull(data[num].downDateStr)+ "</td>");
+                            tr2 += ("<td width=\"175px\" align='center'>" + isNull(data[num].ipAddr) + "</td>");
+                            tr2 += ("<td align='center'  width=\"128px\">" + isNull(data[num].ipName) + "</td>");
+                            tr2 += "</tr>";
+                        }
                     });
-                }else{
-                    tr +="<tr>";
-                    tr += ("<td align='center' colspan='5'>无更新记录</td>");
-                    tr += ("</tr>");
-                }
-                window.parent.document.getElementById('tablecontent').innerHTML = tr;
-                window.parent.document.getElementById('coverbehidepage').style.display = "block";
-                window.parent.document.getElementById('updateDiv').style.display = "block";
-            },
-            error: function (msg) {
 
+                    if (trnum == 0) {
+                        tr += "<tr>";
+                        tr += ("<td align='center' colspan='5'>无更新记录</td>");
+                        tr += ("</tr>");
+                    }
+                    if (trnum2 == 0) {
+                        tr2 += "<tr>";
+                        tr2 += ("<td align='center' colspan='5' width=\"760px\">无下载记录</td>");
+                        tr2 += ("</tr>");
+                    }
+                    window.parent.document.getElementById('tablecontent').innerHTML = tr;
+                    window.parent.document.getElementById('tablecontent2').innerHTML = tr2;
+                    window.parent.document.getElementById('coverbehidepage').style.display = "block";
+                    window.parent.document.getElementById('updateDiv').style.display = "block";
+                },
+                error: function (msg) {
+
+                }
             }
-        });
+        )
+        ;
     }
 
     function showfolderdiv3() {
@@ -733,7 +758,8 @@
                         <div th:unless="${#lists.isEmpty(downloadViewList)}">
                             <div th:each="downloadView ,iterStat: ${downloadViewList}" align="center">
                                 <tr th:ondblclick="'javascript:showUpdateDownRecordItem(\''+${downloadView.fileUrlId}+'\');'">
-                                    <td align="center" th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
+                                    <td align="center"
+                                        th:text="${(iterStat.index+1)+(view.currentPage-1)*(view.pageSize)}"></td>
                                     <td align="center" th:text="${downloadView.lastUpdator}"></td>
                                     <td align="center" th:text="${downloadView.lastUpdateTime}"></td>
                                     <td align="center" th:text="${downloadView.orderNo}"></td>
@@ -852,9 +878,6 @@
     </div>
 
 
-
-
-
 </div>
 
 
@@ -870,7 +893,7 @@
 
     function showUpdateDownRecordItem(fileurlid) {
         var jsonarray = {
-            "fileUrlId":fileurlid
+            "fileUrlId": fileurlid
         };
         var data = JSON.stringify(jsonarray);
         $.ajax({
@@ -880,27 +903,49 @@
             url: "/fileupdown/showUpdateDownItem",
             success: function (msg) {
                 $("#tablecontent").html("");
-                var tbody =  $("#tablecontent");
+                $("#tablecontent2").html("");
+                var tbody = $("#tablecontent");
+                var tbody2 = $("#tablecontent2");
                 var tr = "";
+                var tr2 = "";
+                var trnum = 0;
+                var trnum2 = 0;
                 var data = eval(msg);//将msg化为数;
-                var len = data.length;
-                console.log(len)
-                if(len>0) {
-                    $.each(data, function (num) {
+                $.each(data, function (num) {
+                    if (data[num].typeK==0) {
+                        trnum = trnum + 1;
                         tr += "<tr>";
-                        tr += ("<td align='center' width='32px'>" + (num + 1) + "</td>");
-                        tr += ("<td align='center' width='180px'>" + isNull(data[num].fileName) + "</td>");
-                        tr += ("<td align='center' width='50px'>" + isNull(data[num].updateFullName) + "</td>");
-                        tr += ("<td align='center' width='150px'>" + isNull(data[num].updateDateStr) + "</td>");
+                        tr += ("<td align='center' width=\"32px\">" + (trnum) + "</td>");
+                        tr += ("<td align='center' width=\"180px\">" + isNull(data[num].fileName) + "</td>");
+                        tr += ("<td align='center' width=\"50px\">" + isNull(data[num].updateFullName) + "</td>");
+                        tr += ("<td align='center' width=\"150px\">" + isNull(data[num].updateDateStr) + "</td>");
                         tr += ("<td align='left'>" + isNull(data[num].updateReason) + "</td>");
-                        tr +="</tr>";
-                    });
-                }else{
-                    tr +="<tr>";
+                        tr += "</tr>";
+                    } else {
+                        trnum2 = trnum2 + 1;
+                        tr2 += "<tr>";
+                        tr2 += ("<td align='center' width=\"32px\">" + (trnum2) + "</td>");
+                        tr2 += ("<td align='center' width=\"170px\">" + isNull(data[num].fileName) + "</td>");
+                        tr2 += ("<td align='center' width=\"78px\">" + isNull(data[num].downFullName) + "</td>");
+                        tr2 += ("<td align='center' width=\"150px\">" + isNull(data[num].downDateStr)+ "</td>");
+                        tr2 += ("<td width=\"175px\" align='center'>" + isNull(data[num].ipAddr) + "</td>");
+                        tr2 += ("<td align='center'  width=\"128px\">" + isNull(data[num].ipName) + "</td>");
+                        tr2 += "</tr>";
+                    }
+                });
+
+                if (trnum == 0) {
+                    tr += "<tr>";
                     tr += ("<td align='center' colspan='5'>无更新记录</td>");
                     tr += ("</tr>");
                 }
+                if (trnum2 == 0) {
+                    tr2 += "<tr>";
+                    tr2 += ("<td align='center' colspan='5' width=\"760px\">无下载记录</td>");
+                    tr2 += ("</tr>");
+                }
                 window.parent.document.getElementById('tablecontent').innerHTML = tr;
+                window.parent.document.getElementById('tablecontent2').innerHTML = tr2;
                 window.parent.document.getElementById('coverbehidepage').style.display = "block";
                 window.parent.document.getElementById('updateDiv').style.display = "block";
             },

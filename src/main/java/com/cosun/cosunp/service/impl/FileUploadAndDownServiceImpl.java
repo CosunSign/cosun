@@ -248,6 +248,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.findAllUrlByOrderNoAndUid1(orderNo, uId);
     }
 
+    @Transactional
+    public void saveFileDownRecords(List<FilemanDownRecord> records) throws Exception {
+        for(FilemanDownRecord record : records) {
+            fileUploadAndDownMapper.saveFilemanDownRecord(record);
+        }
+    }
+
+
 
     @Transactional
     @Override
@@ -1920,11 +1928,41 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
     }
 
-    public List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception {
+    public List<ShowUpdateDownRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception {
         return fileUploadAndDownMapper.getFileModifyRecordByUrlId(urlId);
     }
 
-    public List<FilemanUpdateRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception {
+    public List<ShowUpdateDownRecord> getFileDownRecordByUrlId(Integer urlId) throws Exception {
+        return fileUploadAndDownMapper.getFileDownRecordByUrlId(urlId);
+    }
+
+    public List<ShowUpdateDownRecord> getFileDownRecordByFolOrdilAndOrderNo(DownloadView view) throws Exception {
+        Pattern orderNoRegex = Pattern.compile("^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$");
+        List<FilemanUrl> urls = null;
+        List<Integer> urlIds = null;
+        Matcher match = orderNoRegex.matcher(view.getFolderOrFileName());
+        if (view.getFolderOrFileName().contains(".")) {//点击的是文件
+            return fileUploadAndDownMapper.getFileDownRecordByOrderNoAndFileName(view.getOrderNo(), view.getFolderOrFileName());
+        } else {//点击的是文件夹
+            if (match.matches()) {//以订单为名的文件夹
+                return fileUploadAndDownMapper.getFileDownRecordByOrderNo(view.getFolderOrFileName());
+            } else {//其它文件夹
+                urls = fileUploadAndDownMapper.getFileUrlByOrderNo(view.getOrderNo());
+                urlIds = new ArrayList<Integer>();
+                if (urls != null && urls.size() > 0) {
+                    for (FilemanUrl url : urls) {
+                        if (url.getLogur1().indexOf("/" + view.getFolderOrFileName() + "/") > 0) {
+                            urlIds.add(url.getId());
+                        }
+                    }
+                }
+                return fileUploadAndDownMapper.getFileDownRecordByUrlIds(urlIds);
+            }
+        }
+    }
+
+
+    public List<ShowUpdateDownRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception {
         Pattern orderNoRegex = Pattern.compile("^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$");
         List<FilemanUrl> urls = null;
         List<Integer> urlIds = null;

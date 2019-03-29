@@ -161,25 +161,56 @@
 
 <!--文件更新记录 下载记录DIV-->
 <div id="updateDiv" style="display: none">
-    <div id="updateDivTop" style="text-align: center">
-        <table style="align: center" class="grid" width="100%">
-            <thead id="tablethead">
-            <tr>
-                <td width="32px" style="text-align: center">序号</td>
-                <td width="180px" style="text-align: center">文件名</td>
-                <td width="50px" style="text-align: center">更新人</td>
-                <td width="150px" style="text-align: center">更新时间</td>
-                <td style="text-align: center">更新原因</td>
-            </tr>
-            </thead>
-        </table>
-    </div>
-    <div id="updateDivInner" style="text-align: center">
-        <table style="font-size: 12px;word-wrap:break-word; word-break:break-all;" class="grid" width="100%" id="contentTable" >
-            <tbody id="tablecontent">
+    <input type="radio" name="showtype" checked value="0" id="listshow" onclick="showUpdatediv()">更新记录
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="radio" name="showtype" value="1" id="foldershow" onclick="showDowndiv()">下载记录
+    <div id="updateDivIn" style="display: block">
+        <div id="updateDivTop" style="text-align: center">
+            <table style="align: center" class="grid" width="100%">
+                <thead id="tablethead">
+                <tr>
+                    <td width="32px" style="text-align: center">序号</td>
+                    <td width="180px" style="text-align: center">文件名</td>
+                    <td width="50px" style="text-align: center">更新人</td>
+                    <td width="150px" style="text-align: center">更新时间</td>
+                    <td style="text-align: center">更新原因</td>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="updateDivInner" style="text-align: center">
+            <table style="font-size: 12px;word-wrap:break-word; word-break:break-all;" class="grid" width="100%"
+                   id="contentTable">
+                <tbody id="tablecontent">
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="downDivIn" style="display: none;">
+        <div id="downDivTop" style="text-align: center">
+            <table style="align: center" class="grid" width="100%">
+                <thead id="tablethead2">
+                <tr>
+                    <td width="32px" style="text-align: center">序号</td>
+                    <td width="168px" style="text-align: center">文件名</td>
+                    <td width="70px" style="text-align: center">下载用户</td>
+                    <td width="150px" style="text-align: center">下载时间</td>
+                    <td width="180px" style="text-align: center">下载IP地址</td>
+                    <td width="150px" style="text-align: center">下载电脑用户名</td>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="downDivInner" style="text-align: center">
+            <table style="font-size: 12px;word-wrap:break-word; word-break:break-all;" class="grid" width="100%"
+                   id="contentTable2">
+                <tbody id="tablecontent2">
+
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="innershowMessageDiv25" th:align="right">
         <p>
@@ -201,6 +232,15 @@
         });
     });
 
+    function showUpdatediv() {
+       $("#downDivIn").hide();
+       $("#updateDivIn").show();
+    }
+
+    function showDowndiv() {
+        $("#downDivIn").show();
+        $("#updateDivIn").hide();
+    }
 
     function closeShowMessage() {
         $("#coverbehidepage").hide();
@@ -239,6 +279,11 @@
         height: 365px;
         overflow-y: scroll;
     }
+    #contentTable2 {
+        display: block;
+        height: 365px;
+        overflow-y: scroll;
+    }
 
     #contentTable tr {
         display: table;
@@ -271,7 +316,14 @@
         margin-top: 1em;
     }
 
+    #tablethead2 tr td {
+        table-layout: fixed;
+        text-align: center;
+    }
 
+    #tablethead2 {
+        width: calc(100% - 1em)
+    }
     #tablethead tr td {
         table-layout: fixed;
         text-align: center;
@@ -302,7 +354,26 @@
         background-color: #E0EEEE;
     }
 
+    #downDivInner {
+        border: 1px solid #9AC0CD;
+        width: 760px;
+        height: 370px;
+        margin-left: 5px;
+        margin-right: 5px;
+        background-color: #E0EEEE;
+    }
+
     #updateDivTop {
+        border: 1px solid #9AC0CD;
+        width: 760px;
+        height: 25px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 5px;
+        background-color: #E0EEEE;
+    }
+
+    #downDivTop {
         border: 1px solid #9AC0CD;
         width: 760px;
         height: 25px;

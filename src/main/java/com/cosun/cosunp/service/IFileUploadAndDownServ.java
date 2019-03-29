@@ -64,6 +64,8 @@ public interface IFileUploadAndDownServ {
 
     int findAllUploadFileCountByUserId(Integer uId) throws Exception;
 
+    void saveFileDownRecords(List<FilemanDownRecord> records) throws Exception;
+
     List<FilemanUrl> findAllUrlByOrderNo(String orderNo) throws Exception;
 
     FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUid(Integer urlId,Integer fileInfoId,Integer uId) throws Exception;
@@ -100,9 +102,14 @@ public interface IFileUploadAndDownServ {
 
     FileManFileInfo getFileInfoByOrderNo(String orderNo) throws Exception;
 
-    List<FilemanUpdateRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception;
+    List<ShowUpdateDownRecord> getFileModifyRecordByUrlId(Integer urlId) throws Exception;
 
-    List<FilemanUpdateRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception;
+    List<ShowUpdateDownRecord> getFileDownRecordByUrlId(Integer urlId) throws Exception;
+
+
+    List<ShowUpdateDownRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception;
+
+    List<ShowUpdateDownRecord> getFileDownRecordByFolOrdilAndOrderNo(DownloadView view) throws Exception;
 
     List<Employee> findAllSalor() throws Exception;
 

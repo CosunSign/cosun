@@ -32,7 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -152,11 +154,15 @@ public class FileUploadAndDownController {
     public void showUpdateDownItemByIcon(@RequestBody(required = true) DownloadView view, HttpServletRequest request,
                                          HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        List<FilemanUpdateRecord> records = fileUploadAndDownServ.getFileModifyRecordByFolOrFilAndOrderNo(view);
+        List<ShowUpdateDownRecord> recordsAll = new ArrayList<ShowUpdateDownRecord>();
+        List<ShowUpdateDownRecord> recordsUpdate = fileUploadAndDownServ.getFileModifyRecordByFolOrFilAndOrderNo(view);
+        List<ShowUpdateDownRecord> recordsDown = fileUploadAndDownServ.getFileDownRecordByFolOrdilAndOrderNo(view);
+        recordsAll.addAll(recordsUpdate);
+        recordsAll.addAll(recordsDown);
         String str = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str = x.writeValueAsString(records);
+            str = x.writeValueAsString(recordsAll);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
@@ -178,11 +184,15 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/showUpdateDownItem")
     public void showUpdateDownItem(@RequestBody(required = true) DownloadView view, HttpServletRequest request, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        List<FilemanUpdateRecord> records = fileUploadAndDownServ.getFileModifyRecordByUrlId(view.getFileUrlId());
+        List<ShowUpdateDownRecord> recordsAll = new ArrayList<ShowUpdateDownRecord>();
+        List<ShowUpdateDownRecord> records = fileUploadAndDownServ.getFileModifyRecordByUrlId(view.getFileUrlId());
+        List<ShowUpdateDownRecord> records2 = fileUploadAndDownServ.getFileDownRecordByUrlId(view.getFileUrlId());
+        recordsAll.addAll(records);
+        recordsAll.addAll(records2);
         String str = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str = x.writeValueAsString(records);
+            str = x.writeValueAsString(recordsAll);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
@@ -1470,10 +1480,12 @@ public class FileUploadAndDownController {
         DownloadView vie = new DownloadView();
         File file = null;
         List<File> files = new ArrayList<File>();
-
+        List<FilemanDownRecord> records = new ArrayList<FilemanDownRecord>();
+        FilemanDownRecord record = null;
         //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
         boolean isDownRight = true;
         int index = 0;
+        InetAddress inetAddress = InetAddress.getLocalHost();
         a:
         for (DownloadView view : vs) {
             views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
@@ -1486,7 +1498,18 @@ public class FileUploadAndDownController {
                             break a;
                         }
                         urls.add(vi.getUrlAddr());
+                        record = new FilemanDownRecord();
+                        record.setDownDate(new Date());
+                        record.setDownFullName(info.getUserName());
+                        record.setDownUid(info.getuId());
+                        record.setFileName(vi.getFileName());
+                        record.setFileurlid(vi.getFileUrlId());
+                        record.setOrderNum(vi.getOrderNo());
+                        record.setProjectName(vi.getProjectName());
+                        record.setIpAddr(inetAddress.getHostAddress().toString());
+                        record.setIpName(inetAddress.getHostName().toString());
                         file = new File(vi.getUrlAddr());
+                        records.add(record);
                         files.add(file);
                     }
                 } else {//代表是文件夹
@@ -1503,6 +1526,18 @@ public class FileUploadAndDownController {
                         }
                         urls.add(vi.getUrlAddr());
                         file = new File(vi.getUrlAddr());
+                        record = new FilemanDownRecord();
+                        record.setDownDate(new Date());
+                        record.setDownFullName(info.getUserName());
+                        record.setDownUid(info.getuId());
+                        record.setFileName(vi.getFileName());
+                        record.setFileurlid(vi.getFileUrlId());
+                        record.setOrderNum(vi.getOrderNo());
+                        record.setProjectName(vi.getProjectName());
+                        record.setIpAddr(inetAddress.getHostAddress().toString());
+                        record.setIpName(inetAddress.getHostName().toString());
+                        file = new File(vi.getUrlAddr());
+                        records.add(record);
                         files.add(file);
                     }
                 }
@@ -1512,7 +1547,6 @@ public class FileUploadAndDownController {
                 isDownRight = false;
                 break a;
             }
-
         }
         //返回
 
@@ -1523,6 +1557,9 @@ public class FileUploadAndDownController {
             }
             if (urls.size() > 200) {//代表文件超过200个
                 vie.setFlag("-369");
+            }
+            if(isLarge && urls.size() <= 200) {
+                fileUploadAndDownServ.saveFileDownRecords(records);
             }
 
         } else {
