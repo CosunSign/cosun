@@ -5,6 +5,7 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.Constants;
+import com.cosun.cosunp.tool.CusAccessObjectUtil;
 import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -1485,7 +1486,7 @@ public class FileUploadAndDownController {
         //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
         boolean isDownRight = true;
         int index = 0;
-        InetAddress inetAddress = InetAddress.getLocalHost();
+        //InetAddress inetAddress = InetAddress.getLocalHost();
         a:
         for (DownloadView view : vs) {
             views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
@@ -1506,8 +1507,8 @@ public class FileUploadAndDownController {
                         record.setFileurlid(vi.getFileUrlId());
                         record.setOrderNum(vi.getOrderNo());
                         record.setProjectName(vi.getProjectName());
-                        record.setIpAddr(inetAddress.getHostAddress().toString());
-                        record.setIpName(inetAddress.getHostName().toString());
+                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+                        record.setIpName("");
                         file = new File(vi.getUrlAddr());
                         records.add(record);
                         files.add(file);
@@ -1534,8 +1535,8 @@ public class FileUploadAndDownController {
                         record.setFileurlid(vi.getFileUrlId());
                         record.setOrderNum(vi.getOrderNo());
                         record.setProjectName(vi.getProjectName());
-                        record.setIpAddr(inetAddress.getHostAddress().toString());
-                        record.setIpName(inetAddress.getHostName().toString());
+                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+                        record.setIpName("");
                         file = new File(vi.getUrlAddr());
                         records.add(record);
                         files.add(file);
