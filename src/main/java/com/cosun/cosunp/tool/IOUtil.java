@@ -115,7 +115,7 @@ public class IOUtil {
         }
     }
 
-    public static void downloadFile(File file, HttpServletResponse response, boolean isDelete) {
+    public static void downloadFile(File file, HttpServletResponse response, boolean isDelete) throws Exception{
         try { // 以流的形式下载文件。
 
 //            //使用多线程分段下载文件 19-02-15  10:43
@@ -156,16 +156,18 @@ public class IOUtil {
             }
        } catch (Exception ex) {
             ex.printStackTrace();
+            throw ex;
         }
     }
 
-    public static void downloadFileByCut(File file, boolean isDelete) {
+    public static void downloadFileByCut(File file, boolean isDelete) throws Exception{
         try {
             if (isDelete) {
                 file.delete();        //是否将生成的服务器端文件删除
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            throw ex;
         }
     }
 

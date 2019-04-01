@@ -24,7 +24,7 @@ public class FileMD5Util {
 
     private final static Logger logger = LoggerFactory.getLogger(FileMD5Util.class);
 
-    public static String getFileMD5(File file) throws FileNotFoundException {
+    public static String getFileMD5(File file) throws Exception {
         String value = null;
         FileInputStream in = new FileInputStream(file);
         MappedByteBuffer byteBuffer = null;
@@ -39,6 +39,7 @@ public class FileMD5Util {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
             if (null != in) {
                 try {
@@ -46,6 +47,7 @@ public class FileMD5Util {
                     in.close();
                 } catch (IOException e) {
                     logger.error("get file md5 error!!!", e);
+                    throw e;
                 }
             }
             if (null != byteBuffer) {
@@ -61,7 +63,7 @@ public class FileMD5Util {
      *
      * @param mappedByteBuffer
      */
-    public static void freedMappedByteBuffer(final MappedByteBuffer mappedByteBuffer) {
+    public static void freedMappedByteBuffer(final MappedByteBuffer mappedByteBuffer) throws Exception{
         try {
             if (mappedByteBuffer == null) {
                 return;
@@ -79,6 +81,7 @@ public class FileMD5Util {
                         cleaner.clean();
                     } catch (Exception e) {
                         logger.error("clean MappedByteBuffer error!!!", e);
+                        e.printStackTrace();
                     }
                     logger.info("clean MappedByteBuffer completed!!!");
                     return null;
@@ -87,6 +90,7 @@ public class FileMD5Util {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 }

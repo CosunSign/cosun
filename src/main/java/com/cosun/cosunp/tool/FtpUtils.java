@@ -36,7 +36,7 @@ public class FtpUtils {
     /**
      * 初始化ftp服务器
      */
-    public static void initFtpClient() {
+    public static void initFtpClient() throws Exception{
         ftpClient = new FTPClient();
         ftpClient.setControlEncoding("GBK");
         FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
@@ -53,10 +53,13 @@ public class FtpUtils {
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
 
     }
@@ -69,11 +72,12 @@ public class FtpUtils {
      * @param inputStream 输入文件流
      * @return
      */
-    public static boolean uploadFile(String pathname, String fileName, InputStream inputStream) {
+    public static boolean uploadFile(String pathname, String fileName, InputStream inputStream) throws Exception{
         boolean flag = false;
         try {
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         try {
             System.out.println("开始上传文件");
@@ -91,12 +95,14 @@ public class FtpUtils {
         } catch (Exception e) {
             System.out.println("上传文件失败");
             e.printStackTrace();
+            throw e;
         } finally {
             if (ftpClient.isConnected()) {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
             if (null != inputStream) {
@@ -104,6 +110,7 @@ public class FtpUtils {
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
         }
@@ -113,7 +120,7 @@ public class FtpUtils {
 
 
     //改变目录路径
-    public static boolean changeWorkingDirectory(String directory) {
+    public static boolean changeWorkingDirectory(String directory) throws Exception{
         boolean flag = true;
         try {
             flag = ftpClient.changeWorkingDirectory(directory);
@@ -125,12 +132,13 @@ public class FtpUtils {
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            throw ioe;
         }
         return flag;
     }
 
     //创建多层目录文件，如果有ftp服务器已存在该文件，则不创建，如果无，则创建
-    public static boolean CreateDirecroty(String remote) throws IOException {
+    public static boolean CreateDirecroty(String remote) throws Exception {
         boolean success = true;
         String directory = remote + "/";
         // 如果远程目录不存在，则递归创建远程服务器目录
@@ -184,7 +192,7 @@ public class FtpUtils {
 
 
     //创建目录
-    public static boolean makeDirectory(String dir) {
+    public static boolean makeDirectory(String dir) throws Exception{
         boolean flag = true;
         try {
             flag = ftpClient.makeDirectory(dir);
@@ -196,6 +204,7 @@ public class FtpUtils {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         return flag;
     }
@@ -208,7 +217,7 @@ public class FtpUtils {
      * @param localpath 下载后的文件路径 *
      * @return
      */
-    public static boolean downloadFile(String pathname, String filename, String localpath) {
+    public static boolean downloadFile(String pathname, String filename, String localpath) throws Exception{
         boolean flag = false;
         OutputStream os = null;
         try {
@@ -231,12 +240,14 @@ public class FtpUtils {
         } catch (Exception e) {
             System.out.println("下载文件失败");
             e.printStackTrace();
+            throw e;
         } finally {
             if (ftpClient.isConnected()) {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
             if (null != os) {
@@ -244,6 +255,7 @@ public class FtpUtils {
                     os.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
         }
@@ -257,7 +269,7 @@ public class FtpUtils {
      * @param filename 要删除的文件名称 *
      * @return
      */
-    public static boolean deleteFile(String pathname, String filename) {
+    public static boolean deleteFile(String pathname, String filename) throws Exception{
         boolean flag = false;
         try {
             System.out.println("开始删除文件");
@@ -271,12 +283,14 @@ public class FtpUtils {
         } catch (Exception e) {
             System.out.println("删除文件失败");
             e.printStackTrace();
+            throw e;
         } finally {
             if (ftpClient.isConnected()) {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
         }
@@ -292,7 +306,7 @@ public class FtpUtils {
      * @param originfilename 待上传文件的名称（绝对地址） *
      * @return
      */
-    public static boolean uploadFile(String pathname, String fileName, String originfilename) {
+    public static boolean uploadFile(String pathname, String fileName, String originfilename) throws Exception{
         boolean flag = false;
         InputStream inputStream = null;
         try {
@@ -312,12 +326,14 @@ public class FtpUtils {
         } catch (Exception e) {
             System.out.println("上传文件失败");
             e.printStackTrace();
+            throw e;
         } finally {
             if (ftpClient.isConnected()) {
                 try {
                     ftpClient.disconnect();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
             if (null != inputStream) {
@@ -325,13 +341,14 @@ public class FtpUtils {
                     inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    throw e;
                 }
             }
         }
         return true;
     }
 
-    public void sendFile(String pathname, String fileName, String originfilename) throws IOException {
+    public void sendFile(String pathname, String fileName, String originfilename) throws Exception {
         initFtpClient();
         ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
         File _file = new File(originfilename);

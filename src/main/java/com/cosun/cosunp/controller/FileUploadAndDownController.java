@@ -96,6 +96,7 @@ public class FileUploadAndDownController {
 
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
+                throw e;
             }
         }
         try {
@@ -104,6 +105,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str1); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            throw e;
         }
 
     }
@@ -169,6 +171,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            throw e;
         }
     }
 
@@ -199,6 +202,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            throw e;
         }
     }
 
@@ -466,6 +470,7 @@ public class FileUploadAndDownController {
 
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
+                throw e;
             }
         }
         try {
@@ -474,6 +479,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            throw e;
         }
     }
 
@@ -581,6 +587,7 @@ public class FileUploadAndDownController {
 
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
+                throw e;
             }
         }
 
@@ -590,6 +597,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            throw e;
         }
     }
 
@@ -696,6 +704,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
                 logger.debug(e.getMessage());
+                throw e;
             }
         }
 
@@ -706,6 +715,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             e.printStackTrace();
             logger.debug(e.getMessage());
+            throw e;
         }
     }
 
@@ -769,6 +779,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -779,6 +790,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -929,6 +941,7 @@ public class FileUploadAndDownController {
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -939,6 +952,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -993,6 +1007,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -1003,6 +1018,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1063,6 +1079,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -1073,6 +1090,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1126,6 +1144,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -1136,6 +1155,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1166,6 +1186,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
         try {
@@ -1175,6 +1196,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1239,6 +1261,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -1249,6 +1272,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1331,6 +1355,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
         try {
@@ -1340,12 +1365,13 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
     }
 
     @RequestMapping(value = "/showcookies")
-    public ModelAndView showcookies(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView showcookies(HttpServletRequest request, HttpServletResponse response) throws Exception{
         Cookie[] cookies = request.getCookies();
         String cookievalue = null;
         if (cookies != null) {
@@ -1448,6 +1474,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
 
@@ -1458,6 +1485,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -1577,6 +1605,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
 
@@ -1587,6 +1616,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -2192,6 +2222,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
         try {
@@ -2201,6 +2232,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
 
@@ -2381,6 +2413,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
     }
@@ -2407,6 +2440,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
         try {
@@ -2416,6 +2450,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -2442,6 +2477,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
         try {
@@ -2451,6 +2487,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -2492,6 +2529,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
         try {
@@ -2501,6 +2539,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 
@@ -2538,6 +2577,7 @@ public class FileUploadAndDownController {
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
 
@@ -2548,6 +2588,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
     }
@@ -2587,6 +2628,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
         try {
@@ -2596,6 +2638,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
     }
@@ -2636,6 +2679,7 @@ public class FileUploadAndDownController {
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
+                throw e;
             }
         }
         try {
@@ -2645,6 +2689,7 @@ public class FileUploadAndDownController {
         } catch (IOException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            throw e;
         }
 
     }
@@ -2761,6 +2806,7 @@ public class FileUploadAndDownController {
 //            }
         } catch (Exception e) {
             logger.debug(e.getMessage());
+            throw e;
         }
         return new ModelAndView("modifypage");
 
@@ -2876,7 +2922,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity uploadFile(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity uploadFile(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2890,6 +2936,7 @@ public class FileUploadAndDownController {
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件上传失败。{}", param.toString());
+                throw e;
             }
             logger.info("上传文件end。");
         }
@@ -2906,7 +2953,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/modifyfolder1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity modifyfolder1(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity modifyfolder1(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2920,6 +2967,7 @@ public class FileUploadAndDownController {
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件更新失败。{}", param.toString());
+                throw e;
             }
             logger.info("更新文件end。");
         }
@@ -2937,7 +2985,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/modifyfile1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity modifyfile1(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity modifyfile1(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2951,6 +2999,7 @@ public class FileUploadAndDownController {
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件更新失败。{}", param.toString());
+                throw e;
             }
             logger.info("更新文件end。");
         }
@@ -2968,7 +3017,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request, HttpSession session) {
+    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception{
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
@@ -2982,6 +3031,7 @@ public class FileUploadAndDownController {
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("文件上传失败。{}", param.toString());
+                throw e;
             }
             logger.info("上传文件end。");
         }

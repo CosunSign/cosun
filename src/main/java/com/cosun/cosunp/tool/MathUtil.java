@@ -43,7 +43,7 @@ public class MathUtil {
      * @return
      * @throws Exception
      */
-    public static String  getMD5(String str) {
+    public static String  getMD5(String str) throws Exception {
         MessageDigest messageDigest = null;
         try {
             messageDigest = MessageDigest.getInstance("MD5");
@@ -51,6 +51,7 @@ public class MathUtil {
             messageDigest.update(str.getBytes("UTF-8"));
         } catch (Exception e) {
             //LoggerUtils.fmtError(MathUtil.class,e, "MD5转换异常！message：%s", e.getMessage());
+            throw e;
         }
 
         byte[] byteArray = messageDigest.digest();

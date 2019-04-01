@@ -28,7 +28,7 @@ public class CusAccessObjectUtil {
      * 25      * @return
      * 26
      */
-    public static String getIpAddress(HttpServletRequest request) {
+    public static String getIpAddress(HttpServletRequest request) throws Exception{
         String ipAddress = null;
         try {
             ipAddress = request.getHeader("x-forwarded-for");
@@ -47,6 +47,7 @@ public class CusAccessObjectUtil {
                         inet = InetAddress.getLocalHost();
                     } catch (UnknownHostException e) {
                         e.printStackTrace();
+                        throw e;
                     }
                     ipAddress = inet.getHostAddress();
                 }
@@ -60,6 +61,7 @@ public class CusAccessObjectUtil {
             }
         } catch (Exception e) {
             ipAddress="";
+            throw e;
         }
         // ipAddress = this.getRequest().getRemoteAddr();
 

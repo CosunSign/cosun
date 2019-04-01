@@ -78,9 +78,9 @@ public interface IFileUploadAndDownServ {
 
     int findAllOrderNumCount() throws Exception;
 
-    void deleteAll();
+    void deleteAll() throws Exception;
 
-    void init();
+    void init() throws Exception;
 
     void saveFolderMessage(DownloadView view,UserInfo userInfo) throws Exception;
 
@@ -106,7 +106,7 @@ public interface IFileUploadAndDownServ {
 
     List<ShowUpdateDownRecord> getFileDownRecordByUrlId(Integer urlId) throws Exception;
 
-    String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName);
+    String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
 
 
     List<ShowUpdateDownRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception;

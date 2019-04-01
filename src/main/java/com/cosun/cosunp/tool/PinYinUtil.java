@@ -22,7 +22,7 @@ public class PinYinUtil {
      * @return
      * @author homey
      */
-    public static String toFirstCharUpCase(String chinese) {
+    public static String toFirstCharUpCase(String chinese) throws Exception{
         if (null == chinese) {
             return null;
         }
@@ -39,6 +39,7 @@ public class PinYinUtil {
                     pinyinStr += PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat)[0].charAt(0);
                 } catch (BadHanyuPinyinOutputFormatCombination e) {
                     e.printStackTrace();
+                    throw e;
                 }
             } else {
                 pinyinStr += newChar[i];
@@ -55,7 +56,7 @@ public class PinYinUtil {
      * @return
      * @homey
      */
-    public static String toPinyin(String chinese) {
+    public static String toPinyin(String chinese) throws Exception{
         String pinyinStr = "";
         char[] newChar = chinese.toCharArray();
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
@@ -67,6 +68,7 @@ public class PinYinUtil {
                     pinyinStr += PinyinHelper.toHanyuPinyinStringArray(newChar[i], defaultFormat)[0];
                 } catch (BadHanyuPinyinOutputFormatCombination e) {
                     e.printStackTrace();
+                    throw e;
                 }
             } else {
                 pinyinStr += newChar[i];

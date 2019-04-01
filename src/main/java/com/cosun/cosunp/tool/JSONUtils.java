@@ -209,7 +209,7 @@ public class JSONUtils {
      * @return
      */
     public static <T, D> T toBean(String jsonString, Class<T> mainClass,
-                                  String detailName, Class<D> detailClass) {
+                                  String detailName, Class<D> detailClass) throws Exception {
         JSONObject jsonObject = JSONObject.fromObject(jsonString);
         JSONArray jsonArray = (JSONArray) jsonObject.get(detailName);
 
@@ -240,7 +240,7 @@ public class JSONUtils {
      */
     public static <T, D1, D2> T toBean(String jsonString, Class<T> mainClass,
                                        String detailName1, Class<D1> detailClass1, String detailName2,
-                                       Class<D2> detailClass2) {
+                                       Class<D2> detailClass2) throws Exception{
         JSONObject jsonObject = JSONObject.fromObject(jsonString);
         JSONArray jsonArray1 = (JSONArray) jsonObject.get(detailName1);
         JSONArray jsonArray2 = (JSONArray) jsonObject.get(detailName2);
@@ -308,7 +308,7 @@ public class JSONUtils {
      * @return
      */
     public static <T> T toBean(String jsonString, Class<T> mainClass,
-                               HashMap<String, Class> detailClass) {
+                               HashMap<String, Class> detailClass) throws Exception{
         JSONObject jsonObject = JSONObject.fromObject(jsonString);
         T mainEntity = JSONUtils.toBean(jsonObject, mainClass);
         for (Object key : detailClass.keySet()) {

@@ -43,10 +43,11 @@ public class GZipThreadUtil extends Thread {
         }
     }
 
-    private void awaitThread() {
+    private void awaitThread(){
         try {
             c.await();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -59,7 +60,7 @@ public class GZipThreadUtil extends Thread {
         return false;
     }
 
-    private void compress(File input) {
+    private void compress(File input){
         InputStream in = null;
         OutputStream out = null;
         try {
@@ -83,7 +84,7 @@ public class GZipThreadUtil extends Thread {
         }
     }
 
-    private void close(Closeable c) {
+    private void close(Closeable c)  {
         if (c != null) {
             try {
                 c.close();

@@ -1,6 +1,5 @@
 package com.cosun.cosunp.service.impl;
 
-import com.cosun.cosunp.controller.FileUploadAndDownController;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
@@ -15,22 +14,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1153,7 +1150,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) {
+    public String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception{
         //第一步，查看上传文件们的是否有重复
         String[] names = null;
         if (filePathName.contains(",")) {
@@ -1188,7 +1185,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName) {
+    public String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName) throws Exception{
         //第一步，查看上传文件们的是否有重复
         String[] names = null;
         if (filePathName.contains(",")) {
@@ -1222,7 +1219,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) {
+    public String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception {
         String[] paths = null;
         if (filePathName.contains(",")) {
             paths = filePathName.split(",");
@@ -1749,7 +1746,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     @Override
-    public void deleteAll() {
+    public void deleteAll() throws Exception{
         logger.info("开发初始化清理数据，start");
         //FileSystemUtils.deleteRecursively(rootPaht.toFile());
         stringRedisTemplate.delete(Constants.FILE_UPLOAD_STATUS);
@@ -1758,17 +1755,19 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     @Override
-    public void init() {
+    public void init() throws Exception{
         try {
             Files.createDirectory(rootPaht);
         } catch (FileAlreadyExistsException e) {
             logger.error("文件夹已经存在了，不用再创建。");
+            throw e;
         } catch (IOException e) {
             logger.error("初始化root文件夹失败。", e);
+            throw e;
         }
     }
 
-    public void uploadFileRandomAccessFile(MultipartFileParam param) throws IOException {
+    public void uploadFileRandomAccessFile(MultipartFileParam param) throws Exception {
         String fileName = param.getName();
         String tempDirPath = finalDirPath + param.getMd5();
         String tempFileName = fileName + "_tmp";
@@ -1868,7 +1867,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @param toFileNewName 新的名字
      * @return
      */
-    public boolean renameFile(File toBeRenamed, String toFileNewName) {
+    public boolean renameFile(File toBeRenamed, String toFileNewName) throws Exception{
         //检查要重命名的文件是否存在，是否是文件
         if (!toBeRenamed.exists() || toBeRenamed.isDirectory()) {
             logger.info("File does not exist: " + toBeRenamed.getName());
