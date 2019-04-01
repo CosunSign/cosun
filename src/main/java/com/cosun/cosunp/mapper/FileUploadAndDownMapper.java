@@ -273,7 +273,7 @@ public interface FileUploadAndDownMapper {
     FilemanRight getFileRightByOrderNoUidfileName(String orderNo, String fileName, Integer uId);
 
     @Select("SELECT\n" +
-            "a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as type" +
+            "a.filename,a.updatedate,a.updatereason,b.fullname as updateFullName,a.updatereason,0 as typeK" +
             " from filemanupdaterecord a left join userinfo b on a.updateuid = b.uid where" +
             "\t a.ordernum = #{orderNo}\n" +
             "AND a.filename = #{fileName} order by a.filename,a.updatedate")

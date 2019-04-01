@@ -1559,7 +1559,7 @@ public class FileUploadAndDownController {
             if (urls.size() > 200) {//代表文件超过200个
                 vie.setFlag("-369");
             }
-            if(isLarge && urls.size() <= 200) {
+            if (isLarge && urls.size() <= 200) {
                 fileUploadAndDownServ.saveFileDownRecords(records);
             }
 
@@ -2393,7 +2393,10 @@ public class FileUploadAndDownController {
         String returnMessage = "OK";
         returnMessage = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
         if (returnMessage.equals("OK")) {//有权限进行下一步操作
-            returnMessage = fileUploadAndDownServ.checkIsExistFilesFolderforUpdate(view.getFilePathName(), view, userInfo);
+            returnMessage = fileUploadAndDownServ.checkFileisSame1(view, userInfo, view.getFilePathName());
+            if (returnMessage.equals("OK")) {
+                returnMessage = fileUploadAndDownServ.checkIsExistFilesFolderforUpdate(view.getFilePathName(), view, userInfo);
+            }
         }
 
         String str1 = null;
@@ -2425,7 +2428,10 @@ public class FileUploadAndDownController {
         String returnMessage = "OK";
         returnMessage = fileUploadAndDownServ.checkFileUpdateRight(view.getFilePathName(), view, userInfo);
         if (returnMessage.equals("OK")) {
-            returnMessage = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
+            returnMessage = fileUploadAndDownServ.checkFileisSame1(view, userInfo, view.getFilePathName());
+            if (returnMessage.equals("OK")) {
+                returnMessage = fileUploadAndDownServ.checkIsExistFilesforUpdate(view.getFilePathName(), view, userInfo);
+            }
         }
 
         String str1 = null;

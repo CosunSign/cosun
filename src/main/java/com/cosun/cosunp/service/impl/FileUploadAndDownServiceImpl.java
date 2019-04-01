@@ -250,11 +250,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional
     public void saveFileDownRecords(List<FilemanDownRecord> records) throws Exception {
-        for(FilemanDownRecord record : records) {
+        for (FilemanDownRecord record : records) {
             fileUploadAndDownMapper.saveFilemanDownRecord(record);
         }
     }
-
 
 
     @Transactional
@@ -557,7 +556,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                         urls = fileUploadAndDownMapper.getFileUrlByOrderNoSalorDisgner(view.getOrderNo(), view.getSalor(), userInfo.getuId());
                         if (urls.size() == 0) {
                             returnMessage = "您本次要更新的订单信息与已存在的订单信息不匹配!请检查设计师或业务员。";
-                        }else{
+                        } else {
                             returnMessage = "您本次要更新的文件不存在，应去上传区进行上传，如:" + fileName + "系统里就不存在";
                         }
                     }
@@ -575,7 +574,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                         urls = fileUploadAndDownMapper.getFileUrlByOrderNoSalorDisgner(view.getOrderNo(), view.getSalor(), userInfo.getuId());
                         if (urls.size() == 0) {
                             returnMessage = "您本次要更新的订单信息与已存在的订单信息不匹配!请检查设计师或业务员。";
-                        }else{
+                        } else {
                             returnMessage = "您本次要更新的文件不存在，应去上传区进行上传，如:" + fileName + "系统里就不存在";
                         }
                     }
@@ -702,7 +701,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setProjectName(view.getProjectName());
         String fileName = null;
         String allPathName = null;
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(), fileManFileInfo.getFiledescribtion(), fileManFileInfo.getRemark(), fileManFileInfo.getProjectName());
         for (int i = 0; i < splitPaths.length; i++) {
             fileName = StringUtil.subAfterString(splitPaths[i], "/");
             allPathName = oldsPath + splitPaths[i];
@@ -839,7 +838,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setUpdateTime(new Date());
         fileManFileInfo.setProjectName(view.getProjectName());
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(), fileManFileInfo.getFiledescribtion(), fileManFileInfo.getRemark(), fileManFileInfo.getProjectName());
         for (int i = 0; i < splitNames.length; i++) {
             orginname = splitNames[i];
             deskName = pointpath + orginname;
@@ -891,7 +890,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         fileManFileInfo.setRemark(view.getRemark());
         fileManFileInfo.setUpdateTime(new Date());
         fileManFileInfo.setProjectName(view.getProjectName());
-        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(),fileManFileInfo.getFiledescribtion(),fileManFileInfo.getRemark(),fileManFileInfo.getProjectName());
+        fileUploadAndDownMapper.updateFileManFileInfo(fileManFileInfo.getTotalFilesNum(), fileManFileInfo.getUpdateCount(), fileManFileInfo.getUpdateTime(), fileManFileInfo.getId(), fileManFileInfo.getFiledescribtion(), fileManFileInfo.getRemark(), fileManFileInfo.getProjectName());
         for (int i = 0; i < splitNames.length; i++) {
             orginname = splitNames[i];
             deskName = oldsPath + orginname;
@@ -1079,9 +1078,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional
-    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId, Integer fileInfoId, Integer uId) throws Exception{
+    public FilemanRight getFileRightByUrlIdAndFileInfoIdAnaUidBack(Integer urlId, Integer fileInfoId, Integer uId) throws Exception {
         FilemanRight right = fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUid(urlId, fileInfoId, uId);
-        if(right==null) {
+        if (right == null) {
             right = fileUploadAndDownMapper.getFileRightByUrlIdAndFileInfoIdAnaUidBack(urlId, fileInfoId);
         }
         return right;
@@ -1185,6 +1184,30 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
         return isSameFileUpload;
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName) {
+        //第一步，查看上传文件们的是否有重复
+        String[] names = null;
+        if (filePathName.contains(",")) {
+            names = filePathName.split(",");
+        } else {
+            names[0] = filePathName;
+        }
+        List<String> originNames = new ArrayList<String>();
+        String isSameFileUpload = "OK";//代表没有
+        for (int i = 0; i < names.length; i++) {
+            if (originNames.contains(names[i])) {
+                isSameFileUpload = "您要更新的文件名有重复,如:" + names[i];//有，即刻返回
+                return isSameFileUpload;
+            } else {
+                originNames.add(names[i]);
+            }
+
+        }
+        return isSameFileUpload;
     }
 
     /**
@@ -1648,7 +1671,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
             File tmpDir = new File(uploadDirPath + filePath);
             if (tmpDir.exists()) {
-                FileUtil.delFile(tmpDir+"/"+fileName);
+                FileUtil.delFile(tmpDir + "/" + fileName);
                 File tmpFile = new File(tmpDir, fileName);
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();
@@ -1688,13 +1711,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (fileManFileInfo.size() > 0) { //代表文件夹存在
             filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(fileName, fileManFileInfo.get(0).getId());
             if (filemanUrl != null) {
-                oldsPath = StringUtil.subMyString(filemanUrl.getLogur1(),"/");
+                oldsPath = StringUtil.subMyString(filemanUrl.getLogur1(), "/");
             }
         }
 
         File tmpDir = new File(uploadDirPath + oldsPath);
         if (tmpDir.exists()) {
-            FileUtil.delFile(tmpDir+"/"+fileName);
+            FileUtil.delFile(tmpDir + "/" + fileName);
             File tmpFile = new File(tmpDir, fileName);
             RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
             FileChannel fileChannel = tempRaf.getChannel();
@@ -1943,7 +1966,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         Matcher match = orderNoRegex.matcher(view.getFolderOrFileName());
         if (view.getFolderOrFileName().contains(".")) {//点击的是文件
             return fileUploadAndDownMapper.getFileDownRecordByOrderNoAndFileName(view.getOrderNo(), view.getFolderOrFileName());
-        } else {//点击的是文件夹
+        } else {//点击的是文件         夹
             if (match.matches()) {//以订单为名的文件夹
                 return fileUploadAndDownMapper.getFileDownRecordByOrderNo(view.getFolderOrFileName());
             } else {//其它文件夹

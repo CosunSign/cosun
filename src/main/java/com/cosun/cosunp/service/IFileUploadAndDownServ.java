@@ -106,6 +106,8 @@ public interface IFileUploadAndDownServ {
 
     List<ShowUpdateDownRecord> getFileDownRecordByUrlId(Integer urlId) throws Exception;
 
+    String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName);
+
 
     List<ShowUpdateDownRecord> getFileModifyRecordByFolOrFilAndOrderNo(DownloadView view) throws Exception;
 
