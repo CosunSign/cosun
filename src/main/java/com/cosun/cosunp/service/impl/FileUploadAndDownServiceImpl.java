@@ -1760,10 +1760,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             Files.createDirectory(rootPaht);
         } catch (FileAlreadyExistsException e) {
             logger.error("文件夹已经存在了，不用再创建。");
-            throw e;
         } catch (IOException e) {
             logger.error("初始化root文件夹失败。", e);
-            throw e;
         }
     }
 

@@ -589,8 +589,8 @@ function opensmallartsfordealdiv(w, h) {
     var poptwo = document.getElementById("smallshowdivforartdeal");
     document.getElementById("coverbehidepagetwo").style.display = "block";
     document.getElementById("smallshowdivforartdeal").style.display = "block";
-    poptwo.style.top = "150px";
-    poptwo.style.left = "500px";
+    poptwo.style.top = "100px";
+    poptwo.style.left = "300px";
     poptwo.style.width = w + "px";
     poptwo.style.height = h + "px";
     poptwo.style.overflowY = "visible";
@@ -601,6 +601,8 @@ function opensmallartsfordealdiv(w, h) {
 function shutdownpackingdiv() {
     var popfive = document.getElementById("safttransandpacking");
     document.getElementById("coverbehidepage").style.display = "none";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
     document.getElementById("safttransandpacking").style.display = "none";
     popfive.style.visibility = "hidden";
 }
@@ -608,8 +610,10 @@ function shutdownpackingdiv() {
 function opensafttransandpackingdiv(w, h) {
     var poptwo = document.getElementById("safttransandpacking");
     document.getElementById("coverbehidepage").style.display = "block";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
     document.getElementById("safttransandpacking").style.display = "block";
-    poptwo.style.top = "60px";
+    poptwo.style.top = "20px";
     poptwo.style.left = "250px";
     poptwo.style.width = w + "px";
     poptwo.style.height = h + "px";
@@ -622,6 +626,8 @@ function opensafttransandpackingdiv(w, h) {
 function shudownelectmaterialneedsdiv() {
     var popfive = document.getElementById("showelectmaterialneeds");
     document.getElementById("coverbehidepage").style.display = "none";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
     document.getElementById("showelectmaterialneeds").style.display = "none";
     popfive.style.visibility = "hidden";
 }
@@ -629,6 +635,8 @@ function shudownelectmaterialneedsdiv() {
 function shutdownbigdiv() {
     var popfive = document.getElementById("showmainmaterialandarts");
     document.getElementById("coverbehidepage").style.display = "none";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
     document.getElementById("showmainmaterialandarts").style.display = "none";
     popfive.style.visibility = "hidden";
 }
@@ -636,8 +644,10 @@ function shutdownbigdiv() {
 function showelectmaterialneeds(w, h) {
     var poptwo = document.getElementById("showelectmaterialneeds");
     document.getElementById("coverbehidepage").style.display = "block";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
     document.getElementById("showelectmaterialneeds").style.display = "block";
-    poptwo.style.top = "250px";
+    poptwo.style.top = "80px";
     poptwo.style.left = "250px";
     poptwo.style.width = w + "px";
     poptwo.style.height = h + "px";
@@ -649,9 +659,11 @@ function showelectmaterialneeds(w, h) {
 function showmainmaterialandarts(w, h) {
     var popUp = document.getElementById("showmainmaterialandarts");
     document.getElementById("coverbehidepage").style.display = "block";
+    window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
+    window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
     document.getElementById("showmainmaterialandarts").style.display = "block";
-    popUp.style.top = "10px";
-    popUp.style.left = "260px";
+    popUp.style.top = "0px";
+    popUp.style.left = "65px";
     popUp.style.width = w + "px";
     popUp.style.height = h + "px";
     popUp.style.overflowY = "visible";
