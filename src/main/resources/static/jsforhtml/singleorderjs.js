@@ -599,7 +599,7 @@ function opensmallartsfordealdiv(w, h) {
 }
 
 function shutdownpackingdiv() {
-    var popfive = doc ument.getElementById("safttransandpacking");
+    var popfive = document.getElementById("safttransandpacking");
     document.getElementById("coverbehidepage").style.display = "none";
     window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
     window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
