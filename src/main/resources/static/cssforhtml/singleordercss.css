@@ -205,17 +205,17 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    margin: 5px;
-    left: 345px;
-    height: 705px;
+    margin: 3px;
+    left: 346px;
+    height: 690px;
     right: 0;
-    border: 1px solid #9AC0CD;
+    /*border: 1px solid #9AC0CD;*/
 }
 
 
 .rightdiv {
     width: 345px;
-    height: 705px;
+    height: 698px;
     border: 1px solid #9AC0CD;
 }
 
@@ -238,7 +238,7 @@
 }
 
 .updiv {
-    width: 630px;
+    width: 623px;
     height: 345px;
     margin: 5px;
     border: 1px solid #9AC0CD;
@@ -258,13 +258,13 @@
 
 
 .updivright {
-    width: 450px;
+    width: 448px;
     height: 345px;
     border: 1px solid #9AC0CD;
 }
 
 .downdivone {
-    width: 420px;
+    width: 419px;
     height: 347px;
     border: 1px solid #9AC0CD;
 }
@@ -283,7 +283,7 @@
 
 
 .downdiv {
-    width: 630px;
+    width: 623px;
     height: 347px;
     margin: 5px;
     border: 1px solid #9AC0CD;
