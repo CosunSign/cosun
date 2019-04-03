@@ -893,7 +893,7 @@
                         urlstrArr.push(value);
                     }
                 });
-                // urlstrArr = [{name:'IntelliJIDEA2018.5.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.5.zip',dir:''},{name:'IntelliJIDEA2018.4.zip',url:'http://localhost:8080/lib/IntelliJIDEA2018.4.zip',dir:''}];
+                 var uuuuu1 = [{name:'WdatePicker.js',url:'http://localhost:8080/lib/WdatePicker.js',dir:''}];
                 thunderLink.newTask({
                     minVersion: '10.0.1.0', // 指定响应批量任务的迅雷最低版本；格式匹配：/^\d+\.\d+\.\d+(?:\.\d+)?$/ 【一般不必填写】
                     downloadDir: '', // 指定当前任务的下载目录，迅雷会在用户剩余空间最大的磁盘根目录中创建这个目录。【若不填此项，会下载到用户默认下载目录】
@@ -903,20 +903,14 @@
                     excludePath: '', // 如果您希望批量下载的文件在用户本地保持与服务器上相同的文件目录结构，可以指定排除URL的前缀，迅雷会根据被排除前缀后的URL路径，创建文件夹保存对应的文件。【若不填此项，将把所有文件都放置于同一层下载目录中】
                     threadCount: 5, // 指定原始地址线程数【10.1.3及后续版本支持此功能。一般不必填写，但某些下载地址的服务器会限制单个IP的最大同时连接数，例如部分“网盘、在线视频”网站等，此时可将此项数值设为1，从而避免被服务器断开连接】
                     //E:\ftpserver\admin/201903/梁国程/47526013/COSUN20190108WW09/empty/软件开发2月份周报.docx
-                    tasks: [{
-                        name: "121212.docx", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
-                        url: "ftp://192.168.1.31/admin/201903/liangguocheng/47526013/COSUN20190108WW09/empty/121212.docx",
-                        //url: "ftp://root:123@192.168.1.31:21/liusm/201902/王世珺/30174652/COSUN20190108WW01/12121/12/22/软件开发2月份周报2.docx",
-
-                        dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
-                    }]
+                    tasks: uuuuu1
                     // {
                     //     name: "IntelliJIDEA2018.4.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
-                    //     url: "http://localhost:8080/lib/IntelliJIDEA2018.4.zip",
+                    //     url: "http://localhost:8080/lib/IntelliJIDEA2018.1.zip",
                     //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
                     // },
                     // {
-                    //     name: "IntelliJIDEA2018.5.zip", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
+                    //     name: "", // 指定下载文件名（含扩展名）。【若不填此项，将根据下载 URL 自动获取文件名】
                     //     url: "http://localhost:8080/lib/IntelliJIDEA2018.5.zip",
                     //     dir: '' //指定文件的下载目录,相对于当前的downloadDir目录【10.1.3及后续版本支持此功能。一般不必填写，除非某些文件的下载地址的路径不符合你的需求】
                     // }
