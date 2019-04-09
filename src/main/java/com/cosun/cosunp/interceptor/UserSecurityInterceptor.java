@@ -15,21 +15,20 @@ import java.io.IOException;
 /**
  * @author:homey Wong
  * @date:2018/12/28 0028 下午 4:50
- * @Description:  每用某个功能前查验是否登录状态
+ * @Description: 每用某个功能前查验是否登录状态
  * @Modified By:
  * @Modified-date:
  */
 
 @Configuration
 public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
-
     @Bean
-    public SecurityInterceptor getSecurityInterceptor(){
-        return  new SecurityInterceptor();
+    public SecurityInterceptor getSecurityInterceptor() {
+        return new SecurityInterceptor();
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry){
+    public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
 
         //排除配置
@@ -44,18 +43,19 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {
         @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws IOException {
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
             HttpSession session = request.getSession();
-
+            int interval = session.getMaxInactiveInterval();
+            System.out.println("=============session time================"+interval);
             //判断是否已有该用户登录的session
-            if(session.getAttribute("account") !=null){
-                return  true;
+            if (session.getAttribute("account") != null) {
+                return true;
             }
             //跳转到登录页
             String url = "/account/tologin";
             response.sendRedirect(url);
             return false;
-           // return true;
+            // return true;
         }
     }
 

@@ -10,7 +10,6 @@
     -moz-opacity: 0.3;
     opacity: .30;
     filter: alpha(opacity=30);
-
 }
 
 #coverbehidepagetwo {
@@ -25,7 +24,6 @@
     -moz-opacity: 0.1;
     opacity: .10;
     filter: alpha(opacity=10);
-
 }
 
 #lastsmalldivtable {
@@ -43,7 +41,6 @@
     background-color: white;
     z-index: 1007;
     border: 8px solid #E8E9F7;
-
 }
 
 
@@ -233,8 +230,6 @@
     width: 650px;
     height: 300px;
     border: 1px solid #9AC0CD;
-
-
 }
 
 .updiv {

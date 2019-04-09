@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.HttpSession;
 
 @EnableTransactionManagement
 @SpringBootApplication
@@ -29,7 +30,7 @@ public class CosunpApplication extends SpringBootServletInitializer {
     public final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application){
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(CosunpApplication.class);
     }
 
@@ -58,6 +59,7 @@ public class CosunpApplication extends SpringBootServletInitializer {
             }
         };
     }
+
 
 }
 

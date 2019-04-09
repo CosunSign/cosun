@@ -37,6 +37,7 @@ public class MybatisConfig {
         sessionFactory.setMapperLocations(resources);
         }catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         return sessionFactory;
     }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -33,7 +34,10 @@ public class AccountController {
 
     @ResponseBody
     @RequestMapping(value = "/tologin")
-    public ModelAndView toLoginPage() throws Exception {
+    public ModelAndView toLoginPage(HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession();
+        int interval = session.getMaxInactiveInterval();
+        System.out.println("=============session time================"+interval);
         ModelAndView mav = new ModelAndView(INDEX);
         DownloadView downloadView = new DownloadView();
         downloadView.setFlag("true");
