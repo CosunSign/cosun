@@ -110,6 +110,32 @@
             </ul>
         </li>
 
+
+        <li data-popover="false"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfilea"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>人事<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforfilea nav nav-list collapse">
+                <li>
+                    <a th:href="@{/person/tomainpage}" target="targetText"><span
+                            class="fa fa-caret-right"></span>员工信息</a></li>
+                <li>
+                    <a th:href="@{/person/tomainpage}" target="targetText"><span
+                            class="fa fa-caret-right"></span>考勤设置</a></li>
+                <li>
+                    <a th:href="@{/person/tomainpage}" target="targetText"><span
+                            class="fa fa-caret-right"></span>请假单</a></li>
+                <li><a href="#"><span class="fa fa-caret-right"></span>考勤计算</a></li>
+                <li>
+                    <a th:href="@{/person/topositanddeptpage(flaga=0)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>职位/部门</a></li>
+            </ul>
+        </li>
+
+
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menu" class="nav-header collapsed"
@@ -158,6 +184,43 @@
         </div>
     </div>
 </div>
+
+
+<!--新增员工功能DIV面板-->
+<!--<div id="adddiv" style="display: none">-->
+    <!--<div id="inneradddiv">-->
+        <!--<table width="100%">-->
+            <!--<tr>-->
+                <!--<td><label>姓名：</label></td>-->
+                <!--<td><input type="text" class="form-control" style="width:180px"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td><label>工号：</label></td>-->
+                <!--<td><input type="text" class="form-control" style="width:180px"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td><label>职位：</label></td>-->
+                <!--<td><input type="text" class="form-control" style="width:180px"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td><label>部门：</label></td>-->
+                <!--<td><input type="text" class="form-control" style="width:180px"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td><label>入厂日期：</label></td>-->
+                <!--<td><input type="text" class="form-control" style="width:180px"></td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>-->
+                    <!--<input type="button" value="取消" class="btn btn-primary">-->
+                    <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                    <!--<input type="button" value="新增" class="btn btn-primary"">-->
+                <!--</td>-->
+            <!--</tr>-->
+
+        <!--</table>-->
+    <!--</div>-->
+<!--</div>-->
 
 <!--文件更新记录 下载记录DIV-->
 <div id="updateDiv" style="display: none">
@@ -233,8 +296,8 @@
     });
 
     function showUpdatediv() {
-       $("#downDivIn").hide();
-       $("#updateDivIn").show();
+        $("#downDivIn").hide();
+        $("#updateDivIn").show();
     }
 
     function showDowndiv() {
@@ -279,6 +342,7 @@
         height: 365px;
         overflow-y: scroll;
     }
+
     #contentTable2 {
         display: block;
         height: 365px;
@@ -324,6 +388,7 @@
     #tablethead2 {
         width: calc(100% - 1em)
     }
+
     #tablethead tr td {
         table-layout: fixed;
         text-align: center;
@@ -344,6 +409,27 @@
         z-index: 1008;
         position: absolute;
     }
+
+    /*#inneradddiv {*/
+        /*border: 1px solid #9AC0CD;*/
+        /*width: 453px;*/
+        /*height: 553px;*/
+        /*margin-left: 5px;*/
+        /*margin-right: 5px;*/
+        /*margin-top: 5px;*/
+    /*}*/
+
+    /*#adddiv {*/
+        /*top: 13%;*/
+        /*left: 35%;*/
+        /*width: 500px;*/
+        /*height: 600px;*/
+        /*padding: 10px;*/
+        /*border: 8px solid lightsteelblue;*/
+        /*background-color: #E0EEEE;*/
+        /*z-index: 1008;*/
+        /*position: absolute;*/
+    /*}*/
 
     #updateDivInner {
         border: 1px solid #9AC0CD;

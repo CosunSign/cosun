@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>品牌管理</title>
+  <link rel="stylesheet" type="text/css" href="./static/bootstrap.css">
+</head>
+<body>
+<div id='app'>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">添加品牌</h3>
+    </div>
+    <div class="panel-body form-inline">
+      <label>品牌Id：<input type="text" class="form-control" ></label>
+      <label>品牌名称：<input type="text" class="form-control" ></label>
+      <input type="button" value="添加" class="btn btn-primary" >
+      <label>关键字搜索：
+      <input type="text" class="form-control"></label>
+    </div>
+  </div>
+  <table class="table table-bordered table-hover table-striped">
+    <thead>
+    <tr>
+      <th>Id</th>
+      <th>BrandName</th>
+      <th>UpdateTime</th>
+      <th>Operation</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
+    <tr v-for="(brand,index) in search(keywords)" :key="brand.id">
+      <td>{{brand.id}}</td>
+      <td>{{brand.brandName}}</td>
+      <td>{{brand.updateTime | dateFormat('yyyy-mm-dd hh:mm:ss')}}</td>
+      <td><a href="#">删除</a></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
