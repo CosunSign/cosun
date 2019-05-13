@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>员工信息</title>
+    <title>请假信息</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -69,7 +69,6 @@
             return "";
         }
         return arg1;
-        //return !arg1 && arg1!==0 && typeof arg1!=="boolean"?true:false;
     }
 
     function goPage2() {
@@ -306,20 +305,20 @@
                     </tr>
                     <tr>
                         <td>
-                            <label>入职时间起：</label>
+                            <label>请假时间起：</label>
                         </td>
                         <td>
-                            <input type="text" id="startIncomDateStr"
+                            <input type="text"
                                    style="width:130px;height: 34px;text-align: center"
                                    class="Wdate"
                                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
 
                         </td>
                         <td>
-                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>
+                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请假时间止：</label>
                         </td>
                         <td>
-                            <input type="text" id="endIncomDateStr"
+                            <input type="text"
                                    style="width:140px;height: 34px;text-align: center" class="Wdate"
                                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
 

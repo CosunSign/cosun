@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
-    <title>员工-新增</title>
+    <title>员工-编辑</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -16,7 +16,6 @@
 <script>
     $(window).on('load', function () {
         $('.selectpicker').selectpicker();
-        $("#incompDate").val(today());
     });
 
     function addPersonToMysql() {
@@ -27,7 +26,7 @@
         $("#deptIdId").val($("#deptId").val());
         var sexV = $('input[name="sex"]:checked').val();
         $("#sexId").val(sexV);
-         $("#incompDateId").val($("#incompDate").val());//$("#incompDate").val()
+        $("#incompDateId").val($("#incompDate").val());//$("#incompDate").val()
         if (employeeName.trim().length > 0 && employeeNo.trim().length > 0) {
             // $("#addEmployee").submit();
             document.forms[0].submit();
@@ -136,6 +135,13 @@
         d = d < 10 ? "0" + d : d;
         return h + "-" + m + "-" + d;
     }
+
+    function updatePersonToMysql() {
+        var employeeId = $("#employeeId").val();
+        var positionId = $("#positionId").val();
+        var deptId = $("#deptId").val();
+        window.location.href = "/person/updatePersonToMysql?id=" + employeeId + "&deptId=" + deptId + "&positionId=" + positionId;
+    }
 </script>
 <style type="text/css">
     #innerdiv {
@@ -156,21 +162,23 @@
 <div id='app'>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">员工添加</h3>
+            <h3 class="panel-title">员工修改</h3>
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
                 <form id="addEmployee" th:action="@{/person/addEmployee}" th:method="post" th:object="${employee}">
+                    <input type="hidden" id="flag" th:value="${flag}">
+                    <input type="hidden" id="employeeId" th:field="*{id}">
                     <input type="hidden" id="positionIdId" th:field="*{positionId}">
                     <input type="hidden" id="deptIdId" th:field="*{deptId}">
-                    <input type="hidden" id="sexId"  th:field="*{sex}">
+                    <input type="hidden" id="sexId" th:field="*{sex}">
                     <input type="hidden" id="incompDateId" th:field="*{incomdateStr}">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: auto">
                         <tr>
                             <td><label>姓名：</label></td>
                             <td>
                                 <input type="text" class="form-control" id="employeeName" th:field="*{name}"
-                                       onblur="checkNameisChineseOrRepeat(this.value)">
+                                       disabled>
                             </td>
                             <td style="text-align: left">
                                 <div style="display: none;" id="errormessagename">
@@ -188,15 +196,18 @@
                         <tr>
                             <td><label>性别：</label></td>
                             <td align="center">
-                                <label><input type="radio" th:value="1" name="sex" checked>男</label>
+
+                                <label><input type="radio" th:attr="checked=*{sex ==1}" th:value="1" name="sex"
+                                              disabled>男</label>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label><input type="radio" th:value="0" name="sex">女</label>
+                                <label><input type="radio" th:attr="checked=*{sex == 0}" th:value="0" name="sex"
+                                              disabled>女</label>
                             </td>
                         </tr>
                         <tr>
                             <td><label>工号：</label></td>
                             <td><input type="text" class="form-control" th:field="*{empNo}" id="employeeNo"
-                                       onblur="checkemployno(this.value)"></td>
+                                       disabled></td>
                             <td style="text-align: left">
                                 <div style="display: none;" id="errormessageempNo">
                                     <img src="../static/images/icon/error.jpg"
@@ -217,6 +228,7 @@
                                         data-live-search="true">
                                     　　
                                     <option th:each="c:${positionList}" th:value="${c.id}"
+                                            th:selected="${c.id eq employee.positionId}"
                                             th:text="${c.positionName}"></option>
                                 </select>
 
@@ -230,6 +242,7 @@
                                         data-live-search="true">
                                     　　
                                     <option th:each="c:${deptList}" th:value="${c.id}"
+                                            th:selected="${c.id eq employee.deptId}"
                                             th:text="${c.deptname}"></option>
                                 </select>
 
@@ -241,8 +254,8 @@
                             <td><label>入职时间：</label></td>
                             <td>
                                 <input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"
-                                       readOnly="true" class="Wdate"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
+                                       readOnly="true" class="Wdate" th:value="*{incomdateStr}"
+                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>
                             </td>
                         </tr>
                         <tr>
@@ -257,7 +270,7 @@
             </div>
             <div id="bottomdiv">
                 <input type="button" value="返回" class="btn btn-primary" onclick="javascript:history.back(-1);">
-                <input type="button" value="添加" class="btn btn-primary" onclick="addPersonToMysql()">
+                <input type="button" value="修改" class="btn btn-primary" onclick="updatePersonToMysql()">
             </div>
         </div>
     </div>

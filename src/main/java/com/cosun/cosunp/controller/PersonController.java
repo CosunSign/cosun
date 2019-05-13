@@ -1,17 +1,16 @@
 package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.Dept;
+import com.cosun.cosunp.entity.Employee;
 import com.cosun.cosunp.entity.Position;
 import com.cosun.cosunp.service.IPersonServ;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +39,38 @@ public class PersonController {
     @RequestMapping("/tomainpage")
     public ModelAndView toUploadPage() throws Exception {
         ModelAndView view = new ModelAndView("person");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toleavepage")
+    public ModelAndView toleavepage() throws Exception {
+        ModelAndView view = new ModelAndView("leave");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
         return view;
     }
 
@@ -47,12 +78,17 @@ public class PersonController {
     @RequestMapping("/toaddpersonpage")
     public ModelAndView toaddpersonpage() throws Exception {
         ModelAndView view = new ModelAndView("addpersonpage");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("employee", new Employee());
         return view;
     }
 
     @ResponseBody
     @RequestMapping("/topositanddeptpage")
-    public ModelAndView topositanddeptpage(Position positiona,Dept depta, Integer flaga, Integer flagb) throws Exception {
+    public ModelAndView topositanddeptpage(Position positiona, Dept depta, Integer flaga, Integer flagb) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Position position = new Position();
         List<Position> positionList = personServ.findAllPosition(positiona);
@@ -62,7 +98,7 @@ public class PersonController {
         position.setRecordCount(recordCount);
         view.addObject("position", position);
         view.addObject("positionList", positionList);
-        if (flaga!=null && flaga != 0) {
+        if (flaga != null && flaga != 0) {
             view.addObject("flag", flaga);
         }
         //部门
@@ -75,7 +111,7 @@ public class PersonController {
         view.addObject("dept", dept);
         view.addObject("deptList", deptList);
 
-        if (flagb!=null && flagb != 0) {
+        if (flagb != null && flagb != 0) {
             view.addObject("flagb", flagb);
         }
 
@@ -117,6 +153,40 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/checkEmployNoIsExsit", method = RequestMethod.POST)
+    public void checkEmployNoIsExsit(@RequestBody String empoyeeNo, HttpServletResponse response) throws Exception {
+        int isSave = personServ.checkEmployNoIsExsit(empoyeeNo);
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/checkEmployIsExsit", method = RequestMethod.POST)
+    public void checkEmployIsExsit(@RequestBody String name, HttpServletResponse response) throws Exception {
+        int isSave = personServ.checkEmployIsExsit(name);
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/deletePosition", method = RequestMethod.GET)
     public ModelAndView deletePosition(Integer id, Position position) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
@@ -130,7 +200,7 @@ public class PersonController {
         position.setMaxPage(maxPage);
         position.setRecordCount(recordCount);
         view.addObject("positionList", positionList);
-        view.addObject("position",position);
+        view.addObject("position", position);
 
 
         List<Dept> deptList = personServ.queryDeptByNameA(dept);
@@ -141,7 +211,7 @@ public class PersonController {
 
         view.addObject("flag", 4);
         view.addObject("deptList", deptList);
-        view.addObject("dept",dept);
+        view.addObject("dept", dept);
         return view;
     }
 
@@ -151,13 +221,13 @@ public class PersonController {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Position position = new Position();
         personServ.deleteDeptById(id);
-        List<Dept> deptList  = personServ.findAllDept(dept);
+        List<Dept> deptList = personServ.findAllDept(dept);
         int recordCount = personServ.queryDeptCountByNameA(dept);
         int maxPage = recordCount % dept.getPageSize() == 0 ? recordCount / dept.getPageSize() : recordCount / dept.getPageSize() + 1;
         dept.setMaxPage(maxPage);
         dept.setRecordCount(recordCount);
         view.addObject("deptList", deptList);
-        view.addObject("dept",dept);
+        view.addObject("dept", dept);
 
 
         List<Position> positionList = new ArrayList<Position>();
@@ -167,7 +237,7 @@ public class PersonController {
         position.setMaxPage(maxPage1);
         position.setRecordCount(recordCount1);
         view.addObject("positionList", positionList);
-        view.addObject("position",position);
+        view.addObject("position", position);
 
         view.addObject("flag", 41);
         return view;
@@ -175,11 +245,11 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryPositionByName", method = RequestMethod.GET)
-    public ModelAndView queryPositionByName(String positionName,Integer currentpage) throws Exception {
+    public ModelAndView queryPositionByName(String positionName, Integer currentpage) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Position position = new Position();
         Dept dept = new Dept();
-        if(currentpage==null)
+        if (currentpage == null)
             currentpage = 1;
         position.setCurrentPage(currentpage);
         position.setPositionName(positionName);
@@ -200,19 +270,18 @@ public class PersonController {
         view.addObject("deptList", deptList);
         view.addObject("position", position);
         view.addObject("flag", 3);
-        view.addObject("dept",dept);
+        view.addObject("dept", dept);
         return view;
     }
 
 
-
     @ResponseBody
     @RequestMapping(value = "/queryDeptByName", method = RequestMethod.GET)
-    public ModelAndView queryDeptByName(String deptName,Integer currentpage) throws Exception {
+    public ModelAndView queryDeptByName(String deptName, Integer currentpage) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Dept dept = new Dept();
         Position position = new Position();
-        if(currentpage==null)
+        if (currentpage == null)
             currentpage = 1;
         dept.setCurrentPage(currentpage);
         dept.setDeptname(deptName);
@@ -238,9 +307,6 @@ public class PersonController {
     }
 
 
-
-
-
     @ResponseBody
     @RequestMapping(value = "/saveUpdateData", method = RequestMethod.GET)
     public ModelAndView saveUpdateData(Integer id, String positionName) throws Exception {
@@ -248,10 +314,10 @@ public class PersonController {
         Dept dept = new Dept();
         Position position = new Position();
         int isExsit = personServ.checkIfExsit(positionName);
-        if(isExsit==0) {
+        if (isExsit == 0) {
             personServ.saveUpdateData(id, positionName);
             view.addObject("flag", 1);
-        }else{
+        } else {
             view.addObject("flag", 5);//新名字已存在，保存失败
         }
         List<Position> positionList = personServ.findAllPosition(position);
@@ -269,7 +335,7 @@ public class PersonController {
         dept.setMaxPage(maxPage1);
         dept.setRecordCount(recordCount1);
 
-        view.addObject("dept",dept);
+        view.addObject("dept", dept);
         view.addObject("deptList", deptList);
         return view;
     }
@@ -282,10 +348,10 @@ public class PersonController {
         Position position = new Position();
         Dept dept = new Dept();
         int isExsit = personServ.checkIfExsit2(deptname);
-        if(isExsit==0) {
+        if (isExsit == 0) {
             personServ.saveUpdateData2(id, deptname);
             view.addObject("flag", 11);
-        }else{
+        } else {
             view.addObject("flag", 51);//新名字已存在，保存失败
         }
         List<Dept> deptList = personServ.findAllDept(dept);
@@ -308,4 +374,106 @@ public class PersonController {
         return view;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
+    public ModelAndView addEmployee(Employee employee1) throws Exception {
+        ModelAndView view = new ModelAndView("person");
+        personServ.addEmployeeData(employee1);
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("flag", 1);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toupdateEmployeeById", method = RequestMethod.GET)
+    public ModelAndView toupdateEmployeeById(Employee employee) throws Exception {
+        ModelAndView view = new ModelAndView("updatepersonpage");
+        employee = personServ.getEmployeeById(employee.getId());
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("employee", employee);
+        return view;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updatePersonToMysql", method = RequestMethod.GET)
+    public ModelAndView updatePersonToMysql(Employee employee1) throws Exception {
+        ModelAndView view = new ModelAndView("person");
+        personServ.updateEmployeeData(employee1);
+
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("flag", 3);
+        return view;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryEmployeeByCondition", method = RequestMethod.POST)
+    public void queryEmployeeByCondition(Employee employee, HttpServletResponse response) throws Exception {
+        List<Employee> employeeList = personServ.queryEmployeeByCondition(employee);
+        int recordCount = personServ.queryEmployeeByConditionCount(employee);
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        if (employeeList.size() > 0) {
+            employeeList.get(0).setMaxPage(maxPage);
+            employeeList.get(0).setRecordCount(recordCount);
+            employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteEmployeeById", method = RequestMethod.GET)
+    public ModelAndView deleteEmployeeById(Integer id) throws Exception {
+        ModelAndView view = new ModelAndView("person");
+        personServ.deleteEmployeetById(id);
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("flag", 2);
+        return view;
+    }
 }

@@ -80,7 +80,7 @@
         var flag = $("#flag").val();
         var aflag = eval(flag)
         var flagb = $("#flagb").val();
-        var flagb = eval(flagb)
+        var bflag = eval(flagb)
         if (aflag == 1) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
@@ -135,12 +135,15 @@
             errormessagediv.style.color = "red";
         }
 
-        if (flagb == 22) {
+        if (aflag == 22) {
             $('#myTab li:eq(1) a').tab('show');
             $("#errormessage2").show();
             var errormessagediva = document.getElementById("errormessage2");
             errormessagediva.innerHTML = "&nbsp;&nbsp;&nbsp;已更新成功!";
             errormessagediva.style.color = "green";
+        }
+        if (aflag == 66) {
+            $('#myTab li:eq(1) a').tab('show');
         }
 
     });
@@ -186,7 +189,7 @@
                         $("#errormessage2").show();
                         errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;添加成功!";
                         errormessagediv.style.color = "green";
-                        window.location.href = "/person/topositanddeptpage?flagb=" + 22;
+                        window.location.href = "/person/topositanddeptpage?flaga=" + 22;
                     }
                 },
                 error: function (msg) {
@@ -276,7 +279,7 @@
 
     function goMaxPage2() {
         $("#n_currentPage2").val($("#maxPage2").val());
-        queryposition();
+        querydept();
     }
 
     function goPage22() {
@@ -301,6 +304,24 @@
             // document.forms["form0"].submit();
             querydept();
         }
+    }
+
+
+    function goPriAftPage2() {
+        var currentpage = $("#_tp2").val();
+        $("#n_currentPage2").val(currentpage * 1 + 1 * 1);
+        querydept();
+    }
+
+    function goPriMaxPage2() {
+        $("#n_currentPage2").val($("#maxPage2").val());
+        querydept();
+    }
+
+    function goPriPrePage2() {
+        var currentpage = $("#_tp2").val();
+        $("#n_currentPage2").val(currentpage * 1 - 1 * 1);
+        querydept();
     }
 
 
@@ -468,6 +489,22 @@
         }
     }
 
+    function goPriAftPage() {
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 + 1 * 1);
+        queryposition();
+    }
+
+    function goPriMaxPage() {
+        $("#n_currentPage").val($("#maxPage").val());
+        queryposition();
+    }
+
+    function goPriPrePage2() {
+        var currentpage = $("#_tp").val();
+        $("#n_currentPage").val(currentpage * 1 - 1 * 1);
+        queryposition();
+    }
 
 
 </script>

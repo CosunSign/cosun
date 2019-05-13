@@ -1,6 +1,7 @@
 package com.cosun.cosunp.service.impl;
 
 import com.cosun.cosunp.entity.Dept;
+import com.cosun.cosunp.entity.Employee;
 import com.cosun.cosunp.entity.Position;
 import com.cosun.cosunp.mapper.PersonMapper;
 import com.cosun.cosunp.service.IPersonServ;
@@ -125,5 +126,56 @@ public class PersonServiceImpl implements IPersonServ {
             return personMapper.findAllPositionByConditionCount(position);
         }
     }
+
+    public List<Position> findAllPositionAll() throws Exception {
+        return personMapper.findAllPositionAll();
+    }
+
+    public List<Dept> findAllDeptAll() throws Exception {
+        return personMapper.findAllDeptAll();
+    }
+
+    public void addEmployeeData(Employee employee) throws Exception {
+        personMapper.addEmployeeData(employee);
+    }
+
+    public List<Employee> findAllEmployee(Employee employee) throws Exception {
+        return personMapper.findAllEmployee(employee);
+    }
+
+    public int findAllEmployeeCount() throws Exception {
+        return personMapper.findAllEmployeeCount();
+    }
+
+    public int checkEmployIsExsit(String name) throws Exception {
+        return personMapper.checkEmployIsExsit(name);
+    }
+
+    public int checkEmployNoIsExsit(String empoyeeNo) throws Exception {
+        return personMapper.checkEmployNoIsExsit(empoyeeNo);
+    }
+
+    public List<Employee> queryEmployeeByCondition(Employee employee) throws Exception {
+        return personMapper.queryEmployeeByCondition(employee);
+    }
+
+    public int queryEmployeeByConditionCount(Employee employee) throws Exception {
+        return personMapper.queryEmployeeByConditionCount(employee);
+
+    }
+
+    public void deleteEmployeetById(Integer id) throws Exception {
+        personMapper.deleteEmployeetById(id);
+    }
+
+    public Employee getEmployeeById(Integer id) throws Exception {
+       return personMapper.getEmployeeById(id);
+    }
+
+    public void updateEmployeeData(Employee employee) throws Exception {
+        personMapper.updateEmployeeData(employee);
+    }
+
+
 
 }
