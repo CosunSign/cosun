@@ -27,6 +27,9 @@ public class Employee implements Serializable {
     private String deptName;
     private String positionName;
 
+    private String endLeaveStr;
+    private String beginLeaveStr;
+
     private List<Integer> deptIds;
 
     private List<Integer> positionIds;
@@ -42,6 +45,22 @@ public class Employee implements Serializable {
 
     private String deptIdsstr;
     private String positionIdsstr;
+
+    public String getEndLeaveStr() {
+        return endLeaveStr;
+    }
+
+    public void setEndLeaveStr(String endLeaveStr) {
+        this.endLeaveStr = endLeaveStr;
+    }
+
+    public String getBeginLeaveStr() {
+        return beginLeaveStr;
+    }
+
+    public void setBeginLeaveStr(String beginLeaveStr) {
+        this.beginLeaveStr = beginLeaveStr;
+    }
 
     public String getDeptIdsstr() {
         return deptIdsstr;

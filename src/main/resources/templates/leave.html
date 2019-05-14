@@ -44,24 +44,24 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function isNull(arg1) {
@@ -91,32 +91,32 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryEmployeeByCondition();
+            queryLeaveByCondition();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition();
+        queryLeaveByCondition();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryEmployeeByCondition() {
+    function queryLeaveByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -125,13 +125,13 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        formData.append('beginLeaveStr', $("#startLeaveId").val());
+        formData.append('endLeaveStr', $("#endLeaveId").val());
         formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryEmployeeByCondition",
+            url: "/person/queryLeaveByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -171,16 +171,19 @@
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
-                        tr.append("<td>" + isNull(data[num].sexStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].endLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].leaveLong) + "</td>");
+                        tr.append("<td>" + isNull(data[num].leaveDescrip) + "</td>");
+                        tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
                         td += " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                            "onclick=\"updateLeave(" + data[num].id + ");\">编辑</a>\n" +
                             "  <a href=\"javascript:void(0);\"\n" +
-                            " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                            " onclick=\"deleteLeave(" + data[num].id + ");\">删除</a>\n" +
                             "  </td>";
                         tr.append(td);
                         tr.appendTo(tbody);
@@ -228,18 +231,21 @@
             },
             error: function (msg) {
                 window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
             }
 
         });
     }
 
-    function updateEmployee(employeeId) {
-        window.location.href = "/person/toupdateEmployeeById?Id=" + employeeId;
 
+    function deleteLeave(leaveId) {
+        window.location.href = "/person/deleteLeaveById?id=" + leaveId;
     }
 
-    function deleteEmployee(employeeId) {
-        window.location.href = "/person/deleteEmployeeById?id=" + employeeId;
+    function updateLeave(leaveId) {
+        window.location.href = "/person/toUpdateLeaveById?id=" + leaveId;
     }
 
 </script>
@@ -248,8 +254,8 @@
 <div id='app'>
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
-        <input type="hidden" id="maxPage" th:value="${employee.maxPage}">
-        <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${employee.currentPage}"/>
+        <input type="hidden" id="maxPage" th:value="${leave.maxPage}">
+        <input type="hidden" id="n_currentPage" th:value="${leave.currentPage}"/>
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
                 <table>
@@ -308,7 +314,7 @@
                             <label>请假时间起：</label>
                         </td>
                         <td>
-                            <input type="text"
+                            <input type="text" id="startLeaveId"
                                    style="width:130px;height: 34px;text-align: center"
                                    class="Wdate"
                                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
@@ -318,18 +324,18 @@
                             <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请假时间止：</label>
                         </td>
                         <td>
-                            <input type="text"
+                            <input type="text" id="endLeaveId"
                                    style="width:140px;height: 34px;text-align: center" class="Wdate"
                                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
 
                         </td>
                         <td colspan="2" style="text-align: right">
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryEmployeeByCondition()">查找</a>
+                               href="javascript:void(0);" onclick="queryLeaveByCondition()">查找</a>
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="/person/toaddpersonpage">新增</a>
+                               href="/person/toaddleavepage">新增</a>
                             <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
                         </td>
                         <td>
@@ -347,32 +353,38 @@
         <tr>
             <th style="text-align: center">序号</th>
             <th style="text-align: center">姓名</th>
-            <th style="text-align: center">性别</th>
             <th style="text-align: center">工号</th>
             <th style="text-align: center">部门</th>
             <th style="text-align: center">职位</th>
-            <th style="text-align: center">入职时间</th>
+            <th style="text-align: center">请假时间始</th>
+            <th style="text-align: center">请假时间止</th>
+            <th style="text-align: center">请假工时(H)</th>
+            <th style="text-align: center">请假原因</th>
+            <th style="text-align: center">备注</th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody id="tabletblody">
         <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
-        <div th:unless="${#lists.isEmpty(employeeList)}">
-            <div th:each="employ ,iterStat: ${employeeList}" align="center">
+        <div th:unless="${#lists.isEmpty(leaveList)}">
+            <div th:each="leavea ,iterStat: ${leaveList}" align="center">
                 <tr>
                     <td align="center"
-                        th:text="${(iterStat.index+1)}+${employee.currentPage-1}*${employee.pageSize}"></td>
-                    <td align="center" th:text="${employ.name}"></td>
-                    <td align="center" th:text="${employ.sexStr}"></td>
-                    <td align="center" th:text="${employ.empNo}"></td>
-                    <td align="center" th:text="${employ.deptName}"></td>
-                    <td align="center" th:text="${employ.positionName}"></td>
-                    <td align="center" th:text="${employ.incomdateStr}"></td>
+                        th:text="${(iterStat.index+1)}+${leave.currentPage-1}*${leave.pageSize}"></td>
+                    <td align="center" th:text="${leavea.name}"></td>
+                    <td align="center" th:text="${leavea.empNo}"></td>
+                    <td align="center" th:text="${leavea.deptName}"></td>
+                    <td align="center" th:text="${leavea.positionName}"></td>
+                    <td align="center" th:text="${leavea.beginLeaveStr}"></td>
+                    <td align="center" th:text="${leavea.endLeaveStr}"></td>
+                    <td align="center" th:text="${leavea.leaveLong}"></td>
+                    <td align="center" th:text="${leavea.leaveDescrip}"></td>
+                    <td align="center" th:text="${leavea.remark}"></td>
                     <td align="center">
                         <a href="javascript:void(0);"
-                           th:onclick="updateEmployee([[${employ.id}]]);">编辑</a>
+                           th:onclick="updateLeave([[${leavea.id}]]);">编辑</a>
                         <a href="javascript:void(0);"
-                           th:onclick="deleteEmployee([[${employ.id}]]);">删除</a>
+                           th:onclick="deleteLeave([[${leavea.id}]]);">删除</a>
                     </td>
                 </tr>
             </div>
@@ -382,16 +394,16 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="8" align="center">
+            <td colspan="11" align="center">
                 <span>第</span>
-                <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
+                <span th:text="${leave.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${employee.maxPage}" id="maxpagespan"> </span>
+                <span th:text="${leave.maxPage}" id="maxpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${employee.recordCount}" id="recordcountspan"> </span>
+                <span th:text="${leave.recordCount}" id="recordcountspan"> </span>
                 <span>条记录 </span>
                 <span id="image01">
-                            <span th:if="${employee.currentPage gt 1}">
+                            <span th:if="${leave.currentPage gt 1}">
                                     <img src="/images/page/sy-2.jpg" align="middle" border="0"
                                          style="width: 20px; height: 20px; vertical-align: middle"
                                          onClick="goPageone()"/>
@@ -401,7 +413,7 @@
                                 </span>
                                 </span>
                 <span id="image02">
-                            <span th:if="${employee.currentPage le 1}">
+                            <span th:if="${leave.currentPage le 1}">
                                 <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
@@ -409,7 +421,7 @@
                             </span>
                             </span>
                 <span id="image03">
-                            <span th:if="${employee.currentPage lt employee.maxPage}">
+                            <span th:if="${leave.currentPage lt leave.maxPage}">
                                     <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>
                                     <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
@@ -417,7 +429,7 @@
                             </span>
                                 </span>
                 <span id="image04">
-                            <span th:if="${employee.currentPage ge employee.maxPage}">
+                            <span th:if="${leave.currentPage ge leave.maxPage}">
                                 <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
@@ -428,7 +440,7 @@
                 |&nbsp;到第
                 <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
                        style="width: 50px"
-                       id="_tp" th:name="currentPage" type="text" th:value="${employee.currentPage}"/>
+                       id="_tp" th:name="currentPage" type="text" th:value="${leave.currentPage}"/>
                 页&nbsp;
                 <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
                      style="width:20px;height:20px;vertical-align:middle">

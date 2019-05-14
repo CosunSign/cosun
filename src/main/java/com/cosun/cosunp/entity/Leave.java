@@ -2,6 +2,7 @@ package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -26,11 +27,96 @@ public class Leave implements Serializable {
     private String positionName;
     private String deptName;
     private String name;
-    private String sex;
+    private Integer sex;
     private String empNo;
     private String incomdateStr;
     private String endLeaveStr;
     private String beginLeaveStr;
+    private Integer positionId;
+    private Integer deptId;
+    private List<Integer> deptIds;
+
+    private List<Integer> positionIds;
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 10;
+    private int currentPageTotalNum;
+
+
+    public Integer getPositionId() {
+        return positionId;
+    }
+
+    public void setPositionId(Integer positionId) {
+        this.positionId = positionId;
+    }
+
+    public Integer getDeptId() {
+        return deptId;
+    }
+
+    public List<Integer> getDeptIds() {
+        return deptIds;
+    }
+
+    public void setDeptIds(List<Integer> deptIds) {
+        this.deptIds = deptIds;
+    }
+
+    public List<Integer> getPositionIds() {
+        return positionIds;
+    }
+
+    public void setPositionIds(List<Integer> positionIds) {
+        this.positionIds = positionIds;
+    }
+
+    public void setDeptId(Integer deptId) {
+        this.deptId = deptId;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPageTotalNum() {
+        return currentPageTotalNum;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
 
     public String getPositionName() {
         return positionName;
@@ -56,11 +142,11 @@ public class Leave implements Serializable {
         this.name = name;
     }
 
-    public String getSex() {
+    public Integer getSex() {
         return sex;
     }
 
-    public void setSex(String sex) {
+    public void setSex(Integer sex) {
         this.sex = sex;
     }
 

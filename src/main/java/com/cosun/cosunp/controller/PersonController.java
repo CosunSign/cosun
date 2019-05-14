@@ -2,15 +2,18 @@ package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.Dept;
 import com.cosun.cosunp.entity.Employee;
+import com.cosun.cosunp.entity.Leave;
 import com.cosun.cosunp.entity.Position;
 import com.cosun.cosunp.service.IPersonServ;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -59,16 +62,77 @@ public class PersonController {
     @RequestMapping("/toleavepage")
     public ModelAndView toleavepage() throws Exception {
         ModelAndView view = new ModelAndView("leave");
-        Employee employee = new Employee();
+        Leave leave = new Leave();
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
-        List<Employee> employeeList = personServ.findAllEmployee(employee);
-        int recordCount = personServ.findAllEmployeeCount();
-        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
-        employee.setMaxPage(maxPage);
-        employee.setRecordCount(recordCount);
+        List<Leave> leaveList = personServ.findAllLeave(leave);
+        int recordCount = personServ.findAllLeaveCount();
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        leave.setMaxPage(maxPage);
+        leave.setRecordCount(recordCount);
+        view.addObject("leaveList", leaveList);
+        view.addObject("leave", leave);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toaddleavepage")
+    public ModelAndView toaddleavepage() throws Exception {
+        ModelAndView view = new ModelAndView("addleavepage");
+        List<Employee> employeeList = personServ.findAllEmployees();
+        view.addObject("leave", new Leave());
         view.addObject("employeeList", employeeList);
-        view.addObject("employee", employee);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toUpdateLeaveById")
+    public ModelAndView toUpdateLeaveById(Integer id) throws Exception {
+        ModelAndView view = new ModelAndView("updateleavepage");
+        List<Employee> employeeList = personServ.findAllEmployees();
+        Leave leave = personServ.getLeaveById(id);
+        view.addObject("leave", leave);
+        view.addObject("employeeList", employeeList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/updateLeaveToMysql")
+    public ModelAndView updateLeaveToMysql(Leave leavea) throws Exception {
+        personServ.updateLeaveToMysql(leavea);
+        ModelAndView view = new ModelAndView("leave");
+        Leave leave = new Leave();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Leave> leaveList = personServ.findAllLeave(leave);
+        int recordCount = personServ.findAllLeaveCount();
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        leave.setMaxPage(maxPage);
+        leave.setRecordCount(recordCount);
+        view.addObject("leaveList", leaveList);
+        view.addObject("leave", leave);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteLeaveById")
+    public ModelAndView deleteLeaveById(Integer id) throws Exception {
+        personServ.deleteLeaveById(id);
+        ModelAndView view = new ModelAndView("leave");
+        Leave leave = new Leave();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Leave> leaveList = personServ.findAllLeave(leave);
+        int recordCount = personServ.findAllLeaveCount();
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        leave.setMaxPage(maxPage);
+        leave.setRecordCount(recordCount);
+        view.addObject("leaveList", leaveList);
+        view.addObject("leave", leave);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
         return view;
@@ -133,6 +197,44 @@ public class PersonController {
             logger.debug(e.getMessage());
             throw e;
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getemployeebyId", method = RequestMethod.POST)
+    public void getemployeebyId(@RequestBody Integer employeeId, HttpServletResponse response) throws Exception {
+        List<Employee> employees = personServ.getEmployeeById(employeeId);
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(employees);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addLeaveToMysql", method = RequestMethod.GET)
+    public ModelAndView addLeaveToMysql( Leave leavea) throws Exception {
+        ModelAndView view = new ModelAndView("leave");
+        personServ.addLeaveData(leavea);
+        Leave leave = new Leave();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Leave> leaveList = personServ.findAllLeave(leave);
+        int recordCount = personServ.findAllLeaveCount();
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        leave.setMaxPage(maxPage);
+        leave.setRecordCount(recordCount);
+        view.addObject("leaveList", leaveList);
+        view.addObject("leave", leave);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        return view;
+
     }
 
     @ResponseBody
@@ -399,12 +501,12 @@ public class PersonController {
     @RequestMapping(value = "/toupdateEmployeeById", method = RequestMethod.GET)
     public ModelAndView toupdateEmployeeById(Employee employee) throws Exception {
         ModelAndView view = new ModelAndView("updatepersonpage");
-        employee = personServ.getEmployeeById(employee.getId());
+        List<Employee> employees = personServ.getEmployeeById(employee.getId());
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
-        view.addObject("employee", employee);
+        view.addObject("employee", employees.get(0));
         return view;
 
     }
@@ -447,6 +549,47 @@ public class PersonController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/checkBeginLeaveRight", method = RequestMethod.POST)
+    public void checkBeginLeaveRight(Leave leave,HttpServletResponse response) throws Exception {
+        int isright = personServ.checkBeginLeaveRight(leave);
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(isright);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryLeaveByCondition", method = RequestMethod.POST)
+    public void queryLeaveByCondition(Leave leave, HttpServletResponse response) throws Exception {
+        List<Leave> leaveList = personServ.queryLeaveByCondition(leave);
+        int recordCount = personServ.queryLeaveByConditionCount(leave);
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        if (leaveList.size() > 0) {
+            leaveList.get(0).setMaxPage(maxPage);
+            leaveList.get(0).setRecordCount(recordCount);
+            leaveList.get(0).setCurrentPage(leave.getCurrentPage());
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax

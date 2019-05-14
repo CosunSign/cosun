@@ -2,6 +2,7 @@ package com.cosun.cosunp.service.impl;
 
 import com.cosun.cosunp.entity.Dept;
 import com.cosun.cosunp.entity.Employee;
+import com.cosun.cosunp.entity.Leave;
 import com.cosun.cosunp.entity.Position;
 import com.cosun.cosunp.mapper.PersonMapper;
 import com.cosun.cosunp.service.IPersonServ;
@@ -168,14 +169,55 @@ public class PersonServiceImpl implements IPersonServ {
         personMapper.deleteEmployeetById(id);
     }
 
-    public Employee getEmployeeById(Integer id) throws Exception {
-       return personMapper.getEmployeeById(id);
+    public List<Employee> getEmployeeById(Integer id) throws Exception {
+        return personMapper.getEmployeeById(id);
     }
+
+    public void addLeaveData(Leave leave) throws Exception {
+        personMapper.addLeaveData(leave);
+    }
+
+    public void deleteLeaveById(Integer id) throws Exception {
+        personMapper.deleteLeaveById(id);
+    }
+
+    public Leave getLeaveById(Integer id) throws Exception {
+        return personMapper.getLeaveById(id);
+    }
+
 
     public void updateEmployeeData(Employee employee) throws Exception {
         personMapper.updateEmployeeData(employee);
     }
 
+    public void updateLeaveToMysql(Leave leave) throws Exception {
+        personMapper.updateLeaveToMysql(leave);
+    }
+    public List<Leave> queryLeaveByCondition(Leave leave) throws Exception {
+        return personMapper.queryLeaveByCondition(leave);
+        //queryEmployeeByCondition()
+    }
+
+    public int checkBeginLeaveRight(Leave leave) throws Exception {
+        return personMapper.checkBeginLeaveRight(leave);
+    }
+
+
+    public int queryLeaveByConditionCount(Leave leave) throws Exception {
+        return personMapper.queryLeaveByConditionCount(leave);
+    }
+
+    public List<Leave> findAllLeave(Leave leave ) throws Exception {
+        return personMapper.findAllLeave(leave);
+    }
+
+    public int findAllLeaveCount() throws Exception {
+        return personMapper.findAllLeaveCount();
+    }
+
+    public List<Employee> findAllEmployees() throws Exception {
+        return personMapper.findAllEmployees();
+    }
 
 
 }

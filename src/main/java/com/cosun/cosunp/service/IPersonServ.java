@@ -2,6 +2,7 @@ package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.Dept;
 import com.cosun.cosunp.entity.Employee;
+import com.cosun.cosunp.entity.Leave;
 import com.cosun.cosunp.entity.Position;
 
 import java.util.List;
@@ -18,7 +19,15 @@ public interface IPersonServ {
 
     List<Position> findAllPositionAll() throws Exception;
 
+    void updateLeaveToMysql(Leave leave) throws Exception;
+
+    List<Employee> findAllEmployees() throws Exception;
+
+    Leave getLeaveById(Integer id) throws Exception;
+
     List<Dept> findAllDeptAll() throws Exception;
+
+    void deleteLeaveById(Integer id) throws Exception;
 
     void updateEmployeeData(Employee employee) throws Exception;
 
@@ -28,17 +37,29 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployee(Employee employee) throws Exception;
 
-    Employee getEmployeeById(Integer id) throws Exception;
+    List<Employee> getEmployeeById(Integer id) throws Exception;
 
     List<Employee> queryEmployeeByCondition(Employee employee) throws Exception;
+
+    List<Leave> queryLeaveByCondition(Leave leave) throws Exception;
+
+    int queryLeaveByConditionCount(Leave leave) throws Exception;
 
     int queryEmployeeByConditionCount(Employee employee) throws Exception;
 
     List<Dept> findAllDept(Dept dept) throws Exception;
 
+    int checkBeginLeaveRight(Leave leave) throws Exception;
+
     void deleteEmployeetById(Integer deleteEmployeetById) throws Exception;
 
     int findAllEmployeeCount() throws Exception;
+
+    List<Leave> findAllLeave(Leave leave) throws Exception;
+
+    void addLeaveData(Leave leave) throws Exception;
+
+    int findAllLeaveCount() throws Exception;
 
     int findAllDeptConditionCount(Dept dep) throws Exception;
 
