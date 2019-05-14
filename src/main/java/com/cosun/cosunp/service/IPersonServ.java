@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IPersonServ {
 
-    int checkAndSavePosition(String positionName) throws Exception;
+    int checkAndSavePosition(Position position) throws Exception;
 
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
 
@@ -78,7 +78,7 @@ public interface IPersonServ {
 
     int queryDeptCountByNameA(Dept dept) throws Exception;
 
-    void saveUpdateData(Integer id,String positionName) throws Exception;
+    void saveUpdateData(Integer id,String positionName,String positionLevel) throws Exception;
 
     void saveUpdateData2(Integer id,String deptname) throws Exception;
 

@@ -35,10 +35,12 @@
     function showDateByMonth() {
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var month = $("#monthId").val();
+        var positionLevel = $("#positionLevel").val();
         var formData = new FormData();
         var largeMonth = new Array('3', '5', '7', '8', '10', '12');
         var smallMonth = new Array('4', '6', '9', '11');
         formData.append('month', month);
+        formData.append('positionLevel', positionLevel);
         $.ajax({
             data: formData,
             type: "POST",
@@ -258,14 +260,18 @@
 
     function saveOrUpdateWorkDate() {
         var month = $("#monthId").val();
+        var positionLevel = $("#positionLevel").val();
         var remark = $("#remark").val();
         var chk_value = [];//定义一个数组
+        var largeMonth = new Array('3', '5', '7', '8', '10', '12');
+        var smallMonth = new Array('4', '6', '9', '11');
         $('input[name="workDates"]:checked').each(function () {//遍历每一个名字为interest的复选框，其中选中的执行函数
             chk_value.push($(this).val().trim());//将选中的值添加到数组chk_value中
         });
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
         formData.append('month', month);
+        formData.append('positionLevel', positionLevel);
         formData.append('remark', remark);
         formData.append('workDates', chk_value);
         $.ajax({
@@ -506,6 +512,20 @@
                                 <option th:value="10">10</option>
                                 <option th:value="11">11</option>
                                 <option th:value="12">12</option>
+                            </select>
+
+                        <td style="text-align: right">
+                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位类别：</label>
+                        </td>
+                        <td style="width: 150px">
+                            <select id="positionLevel"  class="selectpicker show-tick form-control"
+                                    data-live-search="true"  onchange="showDateByMonth()" >
+                                <option th:value="0">请选择</option>
+                                <option th:value="A">A</option>
+                                <option th:value="B">B</option>
+                                <option th:value="C">C</option>
+                                <option th:value="D">D</option>
+                                <option th:value="E">E</option>
                             </select>
                         </td>
                         <td>

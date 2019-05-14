@@ -190,8 +190,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/checkAndSave", method = RequestMethod.POST)
-    public void checkAndSave(@RequestBody String positionname, HttpSession session, HttpServletResponse response) throws Exception {
-        int isSave = personServ.checkAndSavePosition(positionname);
+    public void checkAndSave(Position position, HttpSession session, HttpServletResponse response) throws Exception {
+        int isSave = personServ.checkAndSavePosition(position);
         String str1;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
@@ -404,7 +404,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryPositionByName", method = RequestMethod.GET)
-    public ModelAndView queryPositionByName(String positionName, Integer currentpage) throws Exception {
+    public ModelAndView queryPositionByName(String positionName,String positionLevel, Integer currentpage) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Position position = new Position();
         Dept dept = new Dept();
@@ -412,6 +412,9 @@ public class PersonController {
             currentpage = 1;
         position.setCurrentPage(currentpage);
         position.setPositionName(positionName);
+        if(!"0".equals(positionLevel)) {
+            position.setPositionLevel(positionLevel);
+        }
         List<Position> positionList = personServ.queryPositionByNameA(position);
         int recordCount = personServ.queryPositionCountByNameA(position);
         int maxPage = recordCount % position.getPageSize() == 0 ? recordCount / position.getPageSize() : recordCount / position.getPageSize() + 1;
@@ -468,13 +471,13 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveUpdateData", method = RequestMethod.GET)
-    public ModelAndView saveUpdateData(Integer id, String positionName) throws Exception {
+    public ModelAndView saveUpdateData(Integer id, String positionName,String positionLevel) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Dept dept = new Dept();
         Position position = new Position();
         int isExsit = personServ.checkIfExsit(positionName);
         if (isExsit == 0) {
-            personServ.saveUpdateData(id, positionName);
+            personServ.saveUpdateData(id, positionName,positionLevel);
             view.addObject("flag", 1);
         } else {
             view.addObject("flag", 5);//新名字已存在，保存失败

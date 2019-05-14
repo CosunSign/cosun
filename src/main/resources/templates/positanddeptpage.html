@@ -8,13 +8,16 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="../static/lib/bootstrap/css/bootstrap.css">
     <script src="../static/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap-select.min.js"></script>
+    <script src="/lib/defaults-zh_CN.js" type="text/javascript"></script>
 </head>
 <style type="text/css">
     #innerupdatediv {
         border: 1px solid #9AC0CD;
         width: 350px;
-        height: 200px;
+        height: 300px;
         margin-left: 5px;
         margin-right: 5px;
         margin-top: 5px;
@@ -24,7 +27,7 @@
         top: 27%;
         left: 28%;
         width: 400px;
-        height: 250px;
+        height: 350px;
         padding: 10px;
         border: 8px solid lightsteelblue;
         background-color: #E0EEEE;
@@ -335,10 +338,11 @@
         $("#errormessage").hide();
         var currentpage = $("#n_currentPage").val();
         var positionname = $("#positionName").val();
-        if (positionname.trim().length > 0) {
+        var positionLevel = $("#positionLevel").val();
+        if (positionname.trim().length > 0||positionLevel!="0") {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
-            window.location.href = "/person/queryPositionByName?positionName=" + positionname;
+            window.location.href = "/person/queryPositionByName?positionName=" + positionname+"&positionLevel="+positionLevel;
         } else {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
@@ -349,14 +353,21 @@
     function addposition() {
         $("#errormessage").hide();
         var positionname = $("#positionName").val();
+        var positionLevel = $("#positionLevel").val();
         var errormessagediv = document.getElementById("errormessage");
         errormessagediv.innerHTML = "";
-        if (positionname.trim().length > 0) {
+        if (positionname.trim().length > 0&&positionLevel!="0") {
+            var formData = new FormData();
+            formData.append('positionName',positionname);
+            formData.append('positionLevel',positionLevel);
             $.ajax({
-                data: positionname,
+                data: formData,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
                 url: "/person/checkAndSave",
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
                 success: function (msg) {
                     var amsg = eval(msg)
                     if (amsg > 0) {
@@ -380,9 +391,15 @@
             });
 
         } else {
-            $("#errormessage").show();
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新增前请输入职位名称!";
-            errormessagediv.style.color = "red";
+            if(positionname.trim().length <= 0) {
+                $("#errormessage").show();
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新增前请输入职位名称!";
+                errormessagediv.style.color = "red";
+            }else if(positionLevel=="0") {
+                $("#errormessage").show();
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新增前请输入职位类别!";
+                errormessagediv.style.color = "red";
+            }
         }
 
     }
@@ -396,10 +413,11 @@
         window.location.href = "/person/deletePosition?id=" + positionid;
     }
 
-    function updatePosition(positionid, positionname) {
+    function updatePosition(positionid, positionname,positionlevel) {
         $("#errormessage").hide();
         $("#beforPositionName").val(positionname);
         $("#newPositionName").val('');
+        $("#beforPositionLevel").val(positionlevel);
         $("#positionId").val(positionid);
         window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
         window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
@@ -433,7 +451,7 @@
                 errormessagediv.style.color = "red";
             } else {
                 $("#updatediv").hide();
-                window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() + "&positionName=" + $("#newPositionName").val();
+                window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() + "&positionName=" + $("#newPositionName").val()+"&positionLevel="+$("#positionLevelId").val();
             }
         } else {
             $("#updatemessage").show();
@@ -540,6 +558,23 @@
                                                   th:name="positionName" th:value="${positionName}"
                                                   onkeypress="if(event.keyCode==13) {querybutton.click();return false;}"></label>
                                 </td>
+
+                                <td style="text-align: right">
+                                    <label>&nbsp;&nbsp;&nbsp;&nbsp;职位类别：</label>
+                                </td>
+                                <td style="width: 120px">
+                                        <select id="positionLevel"  class="selectpicker show-tick form-control"
+                                                data-live-search="true" >
+                                            <option th:value="0">请选择</option>
+                                            <option th:value="A">A</option>
+                                            <option th:value="B">B</option>
+                                            <option th:value="C">C</option>
+                                            <option th:value="D">D</option>
+                                            <option th:value="E">E</option>
+                                        </select>
+                                </td>
+
+
                                 <td style="text-align: center">
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="btn btn-primary" id="querybutton"
@@ -566,6 +601,7 @@
                 <tr>
                     <th style="text-align: center;width: 50px">序号</th>
                     <th style="text-align: center">职位</th>
+                    <th style="text-align: center">职位类别</th>
                     <th style="text-align: center">操作</th>
                 </tr>
                 </thead>
@@ -576,9 +612,10 @@
                             <td align="center"
                                 th:text="${(iterStat.index+1)}+${position.currentPage-1}*${position.pageSize}"></td>
                             <td align="center" th:text="${posit.positionName}"></td>
+                            <td align="center" th:text="${posit.positionLevel}"></td>
                             <td align="center">
                                 <a href="javascript:void(0);"
-                                   th:onclick="updatePosition([[${posit.id}]],[[${posit.positionName}]], this);">编辑</a>
+                                   th:onclick="updatePosition([[${posit.id}]],[[${posit.positionName}]], [[${posit.positionLevel}]],this);">编辑</a>
                                 <a href="javascript:void(0);"
                                    th:onclick="deletePosition([[${posit.id}]], this);">删除</a>
                             </td>
@@ -589,7 +626,7 @@
                 <tfoot id="s_tfoot">
                 <tr id="showdiv">
 
-                    <td colspan="3" align="center">
+                    <td colspan="4" align="center">
                         <span>第</span>
                         <span th:text="${position.currentPage}" id="currentpagespan"> </span>
                         <span>页|共</span>
@@ -645,7 +682,7 @@
 
 
                 <tr style="display:none;" id="nodatadiv">
-                    <td colspan="3" align="center">
+                    <td colspan="4" align="center">
                         查无数据
                     </td>
                 </tr>
@@ -800,6 +837,25 @@
             <tr>
                 <td><label>现职位职位：</label></td>
                 <td><input type="text" class="form-control" style="width:180px" id="newPositionName"></td>
+            </tr>
+            <tr>
+                <td><label>原职位类别：</label></td>
+                <td><input type="text" class="form-control" style="width:180px" id="beforPositionLevel" disabled></td>
+            </tr>
+
+            <tr>
+                <td><label>现职位类别：</label></td>
+                <td>
+                    <select id="positionLevelId"  class="selectpicker show-tick form-control"
+                            data-live-search="true" >
+                        <option th:value="0">请选择</option>
+                        <option th:value="A">A</option>
+                        <option th:value="B">B</option>
+                        <option th:value="C">C</option>
+                        <option th:value="D">D</option>
+                        <option th:value="E">E</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td colspan="2">

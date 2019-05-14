@@ -17,6 +17,7 @@ public class WorkDate implements Serializable {
     private Integer month;
     private String workDate;
     private String remark;
+    private String positionLevel;
     private String[] workDates;
 
     public Integer getId() {
@@ -29,6 +30,14 @@ public class WorkDate implements Serializable {
 
     public void setWorkDates(String[] workDates) {
         this.workDates = workDates;
+    }
+
+    public String getPositionLevel() {
+        return positionLevel;
+    }
+
+    public void setPositionLevel(String positionLevel) {
+        this.positionLevel = positionLevel;
     }
 
     public void setId(Integer id) {

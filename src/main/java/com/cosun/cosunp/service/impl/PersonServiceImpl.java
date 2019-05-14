@@ -28,12 +28,12 @@ public class PersonServiceImpl implements IPersonServ {
     @Autowired
     PersonMapper personMapper;
 
-    public int checkAndSavePosition(String positionName) throws Exception {
-        int isExist = personMapper.findSaveOrNot(positionName);
+    public int checkAndSavePosition(Position position) throws Exception {
+        int isExist = personMapper.findSaveOrNot(position);
         if (isExist > 0) {//代表数据库存在职位，不允许重复增加 0
             return isExist; //0代表重复
         } else {
-            personMapper.savePosition(positionName);
+            personMapper.savePosition(position);
         }
         return isExist;
     }
@@ -81,8 +81,8 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
 
-    public void saveUpdateData(Integer id, String positionName) throws Exception {
-        personMapper.saveUpdateData(id, positionName);
+    public void saveUpdateData(Integer id, String positionName,String positionLevel) throws Exception {
+        personMapper.saveUpdateData(id, positionName,positionLevel);
     }
 
     public void saveUpdateData2(Integer id, String deptName) throws Exception {
@@ -102,11 +102,7 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public List<Position> queryPositionByNameA(Position position) throws Exception {
-        if (position.getPositionName() == null || position.getPositionName().trim().length() == 0) {
-            return personMapper.findAllPosition(position);
-        } else {
             return personMapper.queryPositionByNameA(position);
-        }
     }
 
     public List<Dept> queryDeptByNameA(Dept dept) throws Exception {
@@ -119,11 +115,7 @@ public class PersonServiceImpl implements IPersonServ {
 
 
     public int queryPositionCountByNameA(Position position) throws Exception {
-        if (position.getPositionName() == null || position.getPositionName().trim().length() == 0) {
-            return personMapper.findAllPositionConditionCount();
-        } else {
             return personMapper.findAllPositionByConditionCount(position);
-        }
     }
 
     public List<Position> findAllPositionAll() throws Exception {

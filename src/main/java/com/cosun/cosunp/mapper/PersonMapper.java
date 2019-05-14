@@ -2,6 +2,7 @@ package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
 import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import javafx.geometry.Pos;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -20,13 +21,13 @@ import java.util.List;
 public interface PersonMapper {
 
     @Select("select count(*) from position where positionName like  CONCAT('%',#{positionName},'%') ")
-    int findSaveOrNot(String positionName);
+    int findSaveOrNot(Position position);
 
     @Select("select count(*) from dept where deptName like  CONCAT('%',#{deptName},'%') ")
     int findSaveOrNot2(String deptName);
 
-    @Insert("insert into position (positionName) values (#{positionName})")
-    void savePosition(String positionName);
+    @Insert("insert into position (positionName,positionLevel) values (#{positionName},#{positionLevel})")
+    void savePosition(Position position);
 
     @Insert("insert into dept (deptName) values (#{deptName})")
     void saveDept(String deptName);
@@ -96,7 +97,7 @@ public interface PersonMapper {
             "\t\t\tNAME ASC limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
 
-    @Select("select *,#{currentPage} as currentPage from position where positionName like  CONCAT('%',#{positionName},'%') order by positionName desc limit #{currentPageTotalNum},#{pageSize}")
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryPositionByNameA")
     List<Position> queryPositionByNameA(Position position);
 
 
@@ -107,7 +108,7 @@ public interface PersonMapper {
     @Select("select *,#{currentPage} as currentPage from dept where deptname like  CONCAT('%',#{deptname},'%') order by deptname desc limit #{currentPageTotalNum},#{pageSize}")
     List<Dept> queryDeptByNameA(Dept dept);
 
-    @Select("select count(*) from position where positionName like  CONCAT('%',#{positionName},'%') ")
+    @SelectProvider(type = PseronDaoProvider.class, method = "findAllPositionByConditionCount")
     int findAllPositionByConditionCount(Position position);
 
     @Select("select count(*) from dept where deptname like  CONCAT('%',#{deptname},'%') ")
@@ -146,15 +147,15 @@ public interface PersonMapper {
     void deleteDeptById(Integer id);
 
 
-    @Select("select * from workdate where month = #{month}")
+    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
     WorkDate getWorkDateByMonth(WorkDate workDate);
 
     @Insert("\n" +
-            "INSERT into workdate (month,workDate,remark)\n" +
-            " values(#{month},#{workDate},#{remark})\n")
+            "INSERT into workdate (month,positionLevel,workDate,remark)\n" +
+            " values(#{month},#{positionLevel},#{workDate},#{remark})\n")
     void saveWorkData(WorkDate workDate);
 
-    @Update("update workdate set workDate =  #{workDate},remark = #{remark} where month = #{month} ")
+    @Update("update workdate set workDate =  #{workDate},remark = #{remark} where month = #{month} and positionLevel = #{positionLevel} ")
     void updateWorkData(WorkDate workDate);
 
     @Delete("delete from employee where id = #{id}")
@@ -203,8 +204,8 @@ public interface PersonMapper {
     @Select("select * from employee ")
     List<Employee> findAllEmployees();
 
-    @Update("update position set positionName =  #{positionName} where id = #{id} ")
-    void saveUpdateData(Integer id, String positionName);
+    @Update("update position set positionName =  #{positionName},positionLevel=#{positionLevel} where id = #{id} ")
+    void saveUpdateData(Integer id, String positionName,String positionLevel);
 
     @Update("update dept set deptname =  #{deptName} where id = #{id} ")
     void saveUpdateData2(Integer id, String deptName);
@@ -383,6 +384,29 @@ public interface PersonMapper {
             if (leave.getBeginLeaveStr() != null&&leave.getBeginLeaveStr().length()>0 && leave.getEndLeaveStr() != null&&leave.getEndLeaveStr().length()>0) {
                 sb.append(" and (a.beginleave  <= #{beginLeaveStr} and a.endleave  >= #{beginLeaveStr}");
                 sb.append(" or a.beginleave  <= #{endLeaveStr} and a.endleave  >= #{endLeaveStr})");
+            }
+            return sb.toString();
+        }
+
+        public String queryPositionByNameA(Position position) {
+            StringBuilder sb = new StringBuilder("select *,#{currentPage} as currentPage from position where 1=1 ");
+            if(position.getPositionName()!=null && position.getPositionName().trim().length()>0) {
+                sb.append(" and positionName like  CONCAT('%',#{positionName},'%') ");
+            }
+            if(position.getPositionLevel()!=null && position.getPositionLevel().trim().length()>0) {
+                sb.append(" and positionLevel = #{positionLevel}");
+            }
+            sb.append(" order by positionName desc limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+        public String findAllPositionByConditionCount(Position position) {
+            StringBuilder sb = new StringBuilder("select count(*) from position where 1=1 ");
+            if(position.getPositionName()!=null && position.getPositionName().trim().length()>0) {
+                sb.append(" and positionName like  CONCAT('%',#{positionName},'%') ");
+            }
+            if(position.getPositionLevel()!=null && position.getPositionLevel().trim().length()>0) {
+                sb.append(" and positionLevel = #{positionLevel}");
             }
             return sb.toString();
         }
