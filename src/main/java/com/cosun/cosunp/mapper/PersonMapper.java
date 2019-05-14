@@ -1,9 +1,7 @@
 package com.cosun.cosunp.mapper;
 
-import com.cosun.cosunp.entity.Dept;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.Leave;
-import com.cosun.cosunp.entity.Position;
+import com.cosun.cosunp.entity.*;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -146,6 +144,18 @@ public interface PersonMapper {
 
     @Delete("delete from dept where id = #{id}")
     void deleteDeptById(Integer id);
+
+
+    @Select("select * from workdate where month = #{month}")
+    WorkDate getWorkDateByMonth(WorkDate workDate);
+
+    @Insert("\n" +
+            "INSERT into workdate (month,workDate,remark)\n" +
+            " values(#{month},#{workDate},#{remark})\n")
+    void saveWorkData(WorkDate workDate);
+
+    @Update("update workdate set workDate =  #{workDate},remark = #{remark} where month = #{month} ")
+    void updateWorkData(WorkDate workDate);
 
     @Delete("delete from employee where id = #{id}")
     void deleteEmployeetById(Integer id);

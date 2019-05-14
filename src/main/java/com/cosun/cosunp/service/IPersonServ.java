@@ -1,15 +1,16 @@
 package com.cosun.cosunp.service;
 
-import com.cosun.cosunp.entity.Dept;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.Leave;
-import com.cosun.cosunp.entity.Position;
+import com.cosun.cosunp.entity.*;
 
 import java.util.List;
 
 public interface IPersonServ {
 
     int checkAndSavePosition(String positionName) throws Exception;
+
+    WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
+
+    void saveOrUpdateWorkData(WorkDate workDate) throws Exception;
 
     int checkAndSaveDept(String deptName) throws Exception;
 

@@ -1,11 +1,9 @@
 package com.cosun.cosunp.service.impl;
 
-import com.cosun.cosunp.entity.Dept;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.Leave;
-import com.cosun.cosunp.entity.Position;
+import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.PersonMapper;
 import com.cosun.cosunp.service.IPersonServ;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,6 +183,16 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.getLeaveById(id);
     }
 
+    public void saveOrUpdateWorkData(WorkDate workDate) throws Exception {
+        WorkDate num = personMapper.getWorkDateByMonth(workDate);
+        if(num==null) {//save
+            personMapper.saveWorkData(workDate);
+        }else{//update
+            personMapper.updateWorkData(workDate);
+        }
+
+    }
+
 
     public void updateEmployeeData(Employee employee) throws Exception {
         personMapper.updateEmployeeData(employee);
@@ -218,6 +226,11 @@ public class PersonServiceImpl implements IPersonServ {
     public List<Employee> findAllEmployees() throws Exception {
         return personMapper.findAllEmployees();
     }
+
+    public WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception {
+        return personMapper.getWorkDateByMonth(workDate);
+    }
+
 
 
 }

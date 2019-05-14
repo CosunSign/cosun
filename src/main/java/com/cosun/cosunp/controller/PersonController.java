@@ -1,11 +1,9 @@
 package com.cosun.cosunp.controller;
 
-import com.cosun.cosunp.entity.Dept;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.Leave;
-import com.cosun.cosunp.entity.Position;
+import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IPersonServ;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -37,6 +36,13 @@ public class PersonController {
     @Autowired
     IPersonServ personServ;
     private Integer flag;
+
+    @ResponseBody
+    @RequestMapping("/toworkdatepage")
+    public ModelAndView toworkdatepage() throws Exception {
+        ModelAndView view = new ModelAndView("workdatepage.html");
+        return view;
+    }
 
     @ResponseBody
     @RequestMapping("/tomainpage")
@@ -200,6 +206,57 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/saveOrUpdateWorkDate", method = RequestMethod.POST)
+    public void saveOrUpdateWorkDate(WorkDate workDate, HttpServletResponse response) throws Exception {
+        String str = "";
+        for (int i = 0; i < workDate.getWorkDates().length - 1; i++) {
+            str += workDate.getWorkDates()[i].trim() + ",";
+        }
+        str += workDate.getWorkDates()[workDate.getWorkDates().length - 1].trim();
+        workDate.setWorkDate(str);
+        personServ.saveOrUpdateWorkData(workDate);
+        workDate = personServ.getWorkDateByMonth(workDate);
+        List<WorkDate> workDateList = new ArrayList<WorkDate>();
+        workDateList.add(workDate);
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(workDateList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getWorkDateByMonth", method = RequestMethod.POST)
+    public void getWorkDateByMonth(WorkDate workDate, HttpServletResponse response) throws Exception {
+        List<WorkDate> workDateList = new ArrayList<WorkDate>();
+        workDate = personServ.getWorkDateByMonth(workDate);
+        if (workDate != null) {
+            workDateList.add(workDate);
+        }else{
+            WorkDate w = new WorkDate();
+            w.setWorkDate("");
+            workDateList.add(w);
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(workDateList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/getemployeebyId", method = RequestMethod.POST)
     public void getemployeebyId(@RequestBody Integer employeeId, HttpServletResponse response) throws Exception {
         List<Employee> employees = personServ.getEmployeeById(employeeId);
@@ -218,7 +275,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/addLeaveToMysql", method = RequestMethod.GET)
-    public ModelAndView addLeaveToMysql( Leave leavea) throws Exception {
+    public ModelAndView addLeaveToMysql(Leave leavea) throws Exception {
         ModelAndView view = new ModelAndView("leave");
         personServ.addLeaveData(leavea);
         Leave leave = new Leave();
@@ -560,7 +617,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/checkBeginLeaveRight", method = RequestMethod.POST)
-    public void checkBeginLeaveRight(Leave leave,HttpServletResponse response) throws Exception {
+    public void checkBeginLeaveRight(Leave leave, HttpServletResponse response) throws Exception {
         int isright = personServ.checkBeginLeaveRight(leave);
         String str1;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
