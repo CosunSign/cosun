@@ -3,7 +3,6 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IPersonServ;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,7 +39,22 @@ public class PersonController {
     @ResponseBody
     @RequestMapping("/toworkdatepage")
     public ModelAndView toworkdatepage() throws Exception {
-        ModelAndView view = new ModelAndView("workdatepage.html");
+        ModelAndView view = new ModelAndView("workdatepage");
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toworksetpage")
+    public ModelAndView toworksetpage() throws Exception {
+        ModelAndView view = new ModelAndView("worksetpage");
+        WorkSet workSet = new WorkSet();
+        List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
+        int recordCount = personServ.findAllWorkSetCount(workSet);
+        int maxPage = recordCount % workSet.getPageSize() == 0 ? recordCount / workSet.getPageSize() : recordCount / workSet.getPageSize() + 1;
+        workSet.setMaxPage(maxPage);
+        workSet.setRecordCount(recordCount);
+        view.addObject("workSet", workSet);
+        view.addObject("workSetList", workSetList);
         return view;
     }
 
@@ -90,6 +104,14 @@ public class PersonController {
         List<Employee> employeeList = personServ.findAllEmployees();
         view.addObject("leave", new Leave());
         view.addObject("employeeList", employeeList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toaddworksetpage")
+    public ModelAndView toaddworksetpage() throws Exception {
+        ModelAndView view = new ModelAndView("addworksetpage");
+        view.addObject("workSet", new WorkSet());
         return view;
     }
 
@@ -206,6 +228,44 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/getWorkDatesAndPositionsByData", method = RequestMethod.POST)
+    public void getWorkDatesAndPositionsByData(WorkDate workDate, HttpServletResponse response) throws Exception {
+        WorkSet workSet = personServ.getWorkSetByMonthAndPositionLevel(workDate);
+        String workDatesAndPositionNames;
+        if(workSet==null) {
+            WorkDate workDate1 = personServ.getWorkDateByMonth(workDate);
+            String positionStr = personServ.getPositionNamesByPositionLevel(workDate.getPositionLevel());
+            if (workDate1 != null && positionStr != null) {
+                workDatesAndPositionNames = workDate1.getWorkDate() + "$" + positionStr;
+            } else {
+                if (workDate1 != null) {
+                    workDatesAndPositionNames = "您的排单表中没有" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，请前往排单设置新增;";
+                } else if (positionStr != null) {
+                    workDatesAndPositionNames = "您所有的职位信息没有" + workDate.getPositionLevel() + "职位类别的数据，请前往职位模块设置;";
+                } else {
+                    workDatesAndPositionNames = "您的排单表中没有" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，请前往排单设置新增;";
+                    workDatesAndPositionNames += "您所有的职位信息没有" + workDate.getPositionLevel() + "职位类别的数据，请前往职位模块设置;";
+
+                }
+            }
+        }else{
+            workDatesAndPositionNames = "系统中已存在" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，不可重复增加;";
+
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(workDatesAndPositionNames);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/saveOrUpdateWorkDate", method = RequestMethod.POST)
     public void saveOrUpdateWorkDate(WorkDate workDate, HttpServletResponse response) throws Exception {
         String str = "";
@@ -238,7 +298,7 @@ public class PersonController {
         workDate = personServ.getWorkDateByMonth(workDate);
         if (workDate != null) {
             workDateList.add(workDate);
-        }else{
+        } else {
             WorkDate w = new WorkDate();
             w.setWorkDate("");
             workDateList.add(w);
@@ -272,6 +332,56 @@ public class PersonController {
             throw e;
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/addWorkSet")
+    public ModelAndView addWorkSet(WorkSet workSet) throws Exception {
+        ModelAndView view = new ModelAndView("worksetpage");
+        workSet.setUpdateDate(new Date());
+        personServ.addWorkSetData(workSet);
+        List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
+        int recordCount = personServ.findAllWorkSetCount(workSet);
+        int maxPage = recordCount % workSet.getPageSize() == 0 ? recordCount / workSet.getPageSize() : recordCount / workSet.getPageSize() + 1;
+        workSet.setMaxPage(maxPage);
+        workSet.setRecordCount(recordCount);
+        view.addObject("workSetList", workSetList);
+        view.addObject("flag",1);
+        return view;
+    }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "/updateWorkSet")
+    public ModelAndView updateWorkSet(WorkSet workSet) throws Exception {
+        ModelAndView view = new ModelAndView("worksetpage");
+        workSet.setUpdateDate(new Date());
+        personServ.updateWorkSetDataById(workSet);
+        List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
+        int recordCount = personServ.findAllWorkSetCount(workSet);
+        int maxPage = recordCount % workSet.getPageSize() == 0 ? recordCount / workSet.getPageSize() : recordCount / workSet.getPageSize() + 1;
+        workSet.setMaxPage(maxPage);
+        workSet.setRecordCount(recordCount);
+        view.addObject("workSetList", workSetList);
+        view.addObject("flag",3);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteWorkSetById", method = RequestMethod.GET)
+    public ModelAndView deleteWorkSetById(WorkSet workSet) throws Exception {
+        ModelAndView view = new ModelAndView("worksetpage");
+        personServ.deleteWorkSetById(workSet);
+        List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
+        int recordCount = personServ.findAllWorkSetCount(workSet);
+        int maxPage = recordCount % workSet.getPageSize() == 0 ? recordCount / workSet.getPageSize() : recordCount / workSet.getPageSize() + 1;
+        workSet.setMaxPage(maxPage);
+        workSet.setRecordCount(recordCount);
+        view.addObject("workSetList", workSetList);
+        view.addObject("flag",2);
+        return view;
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/addLeaveToMysql", method = RequestMethod.GET)
@@ -404,7 +514,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryPositionByName", method = RequestMethod.GET)
-    public ModelAndView queryPositionByName(String positionName,String positionLevel, Integer currentpage) throws Exception {
+    public ModelAndView queryPositionByName(String positionName, String positionLevel, Integer currentpage) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Position position = new Position();
         Dept dept = new Dept();
@@ -412,7 +522,7 @@ public class PersonController {
             currentpage = 1;
         position.setCurrentPage(currentpage);
         position.setPositionName(positionName);
-        if(!"0".equals(positionLevel)) {
+        if (!"0".equals(positionLevel)) {
             position.setPositionLevel(positionLevel);
         }
         List<Position> positionList = personServ.queryPositionByNameA(position);
@@ -471,13 +581,13 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveUpdateData", method = RequestMethod.GET)
-    public ModelAndView saveUpdateData(Integer id, String positionName,String positionLevel) throws Exception {
+    public ModelAndView saveUpdateData(Integer id, String positionName, String positionLevel) throws Exception {
         ModelAndView view = new ModelAndView("positanddeptpage");
         Dept dept = new Dept();
         Position position = new Position();
         int isExsit = personServ.checkIfExsit(positionName);
         if (isExsit == 0) {
-            personServ.saveUpdateData(id, positionName,positionLevel);
+            personServ.saveUpdateData(id, positionName, positionLevel);
             view.addObject("flag", 1);
         } else {
             view.addObject("flag", 5);//新名字已存在，保存失败
@@ -571,6 +681,23 @@ public class PersonController {
 
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/toupdateWorkSetById", method = RequestMethod.GET)
+    public ModelAndView toupdateWorkSetById(WorkSet workSet) throws Exception {
+        ModelAndView view = new ModelAndView("updateworksetpage");
+        workSet = personServ.getWorkSetById(workSet.getId());
+        WorkDate a = new WorkDate();
+        a.setMonth(workSet.getMonth());
+        a.setPositionLevel(workSet.getWorkLevel());
+        a  = personServ.getWorkDateByMonth(a);
+        workSet.setWorkDate(a.getWorkDate());
+        workSet.setWorkLevel(personServ.getPositionNamesByPositionLevel(workSet.getWorkLevel()));
+        view.addObject("workSet", workSet);
+        return view;
+
+    }
+
     @ResponseBody
     @RequestMapping(value = "/updatePersonToMysql", method = RequestMethod.GET)
     public ModelAndView updatePersonToMysql(Employee employee1) throws Exception {
@@ -609,6 +736,32 @@ public class PersonController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryWorkSetByCondition", method = RequestMethod.POST)
+    public void queryWorkSetByCondition(WorkSet workSet, HttpServletResponse response) throws Exception {
+        List<WorkSet> workSetList = personServ.queryWorkSetByCondition(workSet);
+        int recordCount = personServ.queryWorkSetByConditionCount(workSet);
+        int maxPage = recordCount % workSet.getPageSize() == 0 ? recordCount / workSet.getPageSize() : recordCount / workSet.getPageSize() + 1;
+        if (workSetList.size() > 0) {
+            workSetList.get(0).setMaxPage(maxPage);
+            workSetList.get(0).setRecordCount(recordCount);
+            workSetList.get(0).setCurrentPage(workSet.getCurrentPage());
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(workSetList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax

@@ -1,6 +1,7 @@
 package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.*;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 
 import java.util.List;
 
@@ -9,6 +10,10 @@ public interface IPersonServ {
     int checkAndSavePosition(Position position) throws Exception;
 
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
+
+    WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate) throws Exception;
+
+    String getPositionNamesByPositionLevel(String positionLevel) throws Exception;
 
     void saveOrUpdateWorkData(WorkDate workDate) throws Exception;
 
@@ -38,9 +43,26 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployee(Employee employee) throws Exception;
 
+    List<WorkSet> findAllWorkSet(WorkSet workSet) throws Exception;
+
+
+    void updateWorkSetDataById(WorkSet workSet) throws Exception;
+
+    void deleteWorkSetById(WorkSet workSet) throws Exception;
+
+    int findAllWorkSetCount(WorkSet workSet) throws Exception;
+
     List<Employee> getEmployeeById(Integer id) throws Exception;
 
+    WorkSet getWorkSetById(Integer id) throws Exception;
+
+    void addWorkSetData(WorkSet workSet) throws Exception;
+
     List<Employee> queryEmployeeByCondition(Employee employee) throws Exception;
+
+    List<WorkSet> queryWorkSetByCondition(WorkSet workSet) throws Exception;
+
+    int queryWorkSetByConditionCount(WorkSet workSet) throws Exception;
 
     List<Leave> queryLeaveByCondition(Leave leave) throws Exception;
 

@@ -175,6 +175,51 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.getLeaveById(id);
     }
 
+    public void addWorkSetData(WorkSet workSet) throws Exception {
+         personMapper.addWorkSetData(workSet);
+    }
+
+    public WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate) throws Exception {
+        return personMapper.getWorkSetByMonthAndPositionLevel(workDate);
+    }
+
+    public List<WorkSet> findAllWorkSet(WorkSet workSet) throws Exception {
+        return personMapper.findAllWorkSet(workSet);
+    }
+
+    public int findAllWorkSetCount(WorkSet workSet) throws Exception {
+        return personMapper.findAllWorkSetCount(workSet);
+    }
+
+    public void deleteWorkSetById(WorkSet workSet) throws Exception {
+        personMapper.deleteWorkSetById(workSet);
+    }
+
+
+    public List<WorkSet> queryWorkSetByCondition(WorkSet workSet) throws Exception {
+        return personMapper.queryWorkSetByCondition(workSet);
+    }
+
+    public int queryWorkSetByConditionCount(WorkSet workSet) throws Exception {
+        return personMapper.queryWorkSetByConditionCount(workSet);
+
+    }
+
+    public void updateWorkSetDataById(WorkSet workSet) throws Exception {
+        personMapper.updateWorkSetDataById(workSet);
+    }
+
+
+    public WorkSet getWorkSetById(Integer id) throws Exception {
+        return personMapper.getWorkSetById(id);
+    }
+
+
+    public String getPositionNamesByPositionLevel(String positionLevel) throws Exception {
+        return personMapper.getPositionNamesByPositionLevel(positionLevel);
+    }
+
+
     public void saveOrUpdateWorkData(WorkDate workDate) throws Exception {
         WorkDate num = personMapper.getWorkDateByMonth(workDate);
         if(num==null) {//save
