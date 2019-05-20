@@ -131,12 +131,31 @@
                 <li>
                     <a th:href="@{/person/toleavepage}" target="targetText"><span
                             class="fa fa-caret-right"></span>请假单</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span>考勤计算</a></li>
+                <li>
+                    <a th:href="@{/person/tocomputeworkdate}" target="targetText"><span
+                            class="fa fa-caret-right"></span>考勤计算</a></li>
                 <li>
                     <a th:href="@{/person/topositanddeptpage(flaga=0)}" target="targetText"><span
                             class="fa fa-caret-right"></span>职位/部门</a></li>
             </ul>
         </li>
+
+
+
+
+        <li data-popover="false"
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfileab"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>规章制度<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforfileab nav nav-list collapse">
+                <li>
+                    <a th:href="@{/rules/torulespage}" target="targetText"><span
+                            class="fa fa-caret-right"></span>规章制度管理</a></li>
+            </ul>
+        </li>
+
 
 
         <li data-popover="false"

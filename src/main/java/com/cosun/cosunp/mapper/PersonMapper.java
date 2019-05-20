@@ -1,8 +1,6 @@
 package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
-import javafx.geometry.Pos;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -44,8 +42,36 @@ public interface PersonMapper {
     @Select("select count(*) from dept where deptname like  CONCAT('%',#{deptname},'%')")
     int checkIfExsit2(String deptname);
 
-    @Select("select * from workset where id = #{id}")
+    @Select("SELECT\n" +
+            "\tid,\n" +
+            "\tworkLevel,\n" +
+            "\t`month`,\n" +
+            "\tupdatedate as updateDateStr,\n" +
+            "\tmorningon as morningOnStr,\n" +
+            "\tmorningonfrom as morningOnFromStr,\n" +
+            "\tmorningonend as morningOnEndStr,\n" +
+            "\tmorningoff as morningOffStr,\n" +
+            "\tmorningofffrom as morningOffFromStr,\n" +
+            "\tmorningoffend as morningOffEndStr,\n" +
+            "\tnoonon as noonOnStr,\n" +
+            "\tnoononfrom as noonOnFromStr,\n" +
+            "\tnoononend as noonOnEndStr,\n" +
+            "\tnoonoff as noonOffStr,\n" +
+            "\tnoonofffrom as noonOffFromStr,\n" +
+            "\tnoonoffend as noonOffEndStr,\n" +
+            "\textworkon as extworkonStr,\n" +
+            "\textworkonfrom as extworkonFromStr,\n" +
+            "\textworkonend as extworkonEndStr,\n" +
+            "\textworkoff as extworkoffStr,\n" +
+            "\tremark as remark\n" +
+            "FROM\n" +
+            "\tworkset\n" +
+            "WHERE\n" +
+            "\tid = #{id}")
     WorkSet getWorkSetById(Integer id);
+
+    @Select("select * from dept where deptname = #{name}")
+    Dept getDeptByName(String name);
 
     @Select("select count(*) from employee where name = #{name}")
     int checkEmployIsExsit(String name);
@@ -107,6 +133,28 @@ public interface PersonMapper {
             "\t\t\tNAME ASC limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
 
+    @Select("SELECT\n" +
+            "\te.id AS id,\n" +
+            "\tname AS name,\n" +
+            "\tsex as sex,\n" +
+            "  d.deptname as deptName,\n" +
+            "  n.positionName as positionName,\n" +
+            "  n.positionLevel as positionLevel,\n" +
+            "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "  e.empno as empNo\n" +
+            "\t\tFROM\n" +
+            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
+            "LEFT JOIN position n on e.positionId = n.id\n" +
+            "\t\tORDER BY\n" +
+            "\t\t\tNAME ASC ")
+    List<Employee> findAllEmployeeAll();
+
+    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
+    WorkDate getWorkDateByMonthAnPositionLevel(int month,String positionLevel);
+
+    @Select("select * from workdate where month = #{month}")
+    List<WorkDate> findAllWorkDateListByMonth(int month);
+
     @SelectProvider(type = PseronDaoProvider.class, method = "queryPositionByNameA")
     List<Position> queryPositionByNameA(Position position);
 
@@ -145,9 +193,9 @@ public interface PersonMapper {
             "\te.sex as sex,\n" +
             "\tt.deptname as deptName,\n" +
             "\tn.positionName as positionName,\n" +
-            "\tdate_format(e.incompdate, '%Y-%m-%d %h:%m:%s') as incomdateStr,\n" +
-            "\tdate_format(a.beginleave, '%Y-%m-%d %h:%m:%s') as beginLeaveStr,\n" +
-            "\tdate_format(a.endleave, '%Y-%m-%d %h:%m:%s') as endLeaveStr,\n" +
+            "\tdate_format(e.incompdate, '%Y-%m-%d') as incomdateStr,\n" +
+            "\ta.beginleave as beginLeaveStr,\n" +
+            "\ta.endleave as endLeaveStr,\n" +
             "\ta.leavelong as leaveLong,\n" +
             "\ta.leaveDescrip as leaveDescrip,\n" +
             "\ta.remark as remark\n" +
@@ -171,8 +219,42 @@ public interface PersonMapper {
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
     WorkDate getWorkDateByMonth(WorkDate workDate);
 
+    @Insert("insert into dept (deptname) values(#{deptName})")
+    void addDeptByDeptName(String deptName);
+
+    @Insert("insert into position (positionName) values(#{positionName})")
+    void addPositionByName(String positionName);
+
+    @Update("TRUNCATE table dept")
+    void clearDeptData();
+
+    @Update("TRUNCATE table position")
+    void clearPositionData();
+
+    @Update("TRUNCATE table employee")
+    void clearEmployeeData();
+
+    @Select("select * from position where positionName = #{name} ")
+    Position getPositionByName(String name);
+
     @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
     WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate);
+
+    @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
+    WorkSet getWorkSetByMonthAndPositionLevel2(int month,String positionLevel);
+
+    @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s') as beginLeaveStr ,date_format(endleave, '%Y-%m-%d %h:%i:%s') as endLeaveStr,leavelong as leaveLong,leaveDescrip,remark  " +
+            "from leavedata where employeeid = #{employeeId} and  beginleave<= #{dataStrStart} and endleave>= #{dataEnd} limit 1 ")
+    Leave getLeaveByEmIdAndMonth(Integer employeeId,String dataStrStart,String dataEnd);
+
+    @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
+            "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark" +
+            "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
+    Leave getLeaveByEmIdAndMonthA(Integer employeeId,String dataStr);
+
+    @Insert("insert into employee (name,deptId,empno,positionId)\n" +
+            "values (#{name},#{deptId},#{empNo},#{positionId})")
+    void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
             "INSERT into workdate (month,positionLevel,workDate,remark)\n" +
@@ -182,10 +264,10 @@ public interface PersonMapper {
     @Insert("\n" +
             "INSERT into workset(workLevel,month,updatedate,morningon,morningonfrom,morningonend,morningoff," +
             "morningofffrom,morningoffend,noonon,noononfrom,noononend,noonoff,noonofffrom,noonoffend," +
-            "extworkon,extworkoff,remark)\n" +
+            "extworkon,extworkonfrom,extworkonend,extworkoff,remark)\n" +
             " values(#{workLevel},#{month},#{updateDate},#{morningOnStr},#{morningOnFromStr},#{morningOnEndStr},#{morningOffStr}" +
             ",#{morningOffFromStr},#{morningOffEndStr},#{noonOnStr},#{noonOnFromStr},#{noonOnEndStr},#{noonOffStr},#{noonOffFromStr},#{noonOffEndStr}" +
-            ",#{extworkonStr},#{extworkoffStr},#{remark})\n")
+            ",#{extworkonStr},#{extworkonFromStr},#{extworkonEndStr},#{extworkoffStr},#{remark})\n")
     void addWorkSetData(WorkSet workSet);
 
 
@@ -241,11 +323,11 @@ public interface PersonMapper {
     @Update("update position set positionName =  #{positionName},positionLevel=#{positionLevel} where id = #{id} ")
     void saveUpdateData(Integer id, String positionName, String positionLevel);
 
-    @Update("update workset set updatedate = #{updateDate},morningon = #{morningOn} , " +
-            " morningonfrom = #{morningOnFrom},morningonend = #{morningOnEnd},morningoff = #{morningOff}," +
-            " morningofffrom = #{morningOffFrom},morningoffend = #{morningOffEnd},noonon = #{noonOn}," +
-            " noononfrom= #{noonOnFrom},noononend = #{noonOnEnd},noonoff = #{noonOff} ,noonofffrom = #{noonOffFrom}," +
-            " noonoffend = #{noonOffEnd},extworkon = #{extworkon},extworkoff = #{extworkoff},remark = #{remark}" +
+    @Update("update workset set updatedate = #{updateDate},morningon = #{morningOnStr} , " +
+            " morningonfrom = #{morningOnFromStr},morningonend = #{morningOnEndStr},morningoff = #{morningOffStr}," +
+            " morningofffrom = #{morningOffFromStr},morningoffend = #{morningOffEndStr},noonon = #{noonOnStr}," +
+            " noononfrom= #{noonOnFromStr},noononend = #{noonOnEndStr},noonoff = #{noonOffStr} ,noonofffrom = #{noonOffFromStr}," +
+            " noonoffend = #{noonOffEndStr},extworkon = #{extworkonStr},extworkonFrom = #{extworkonFromStr},extworkonEnd = #{extworkonEndStr},extworkoff = #{extworkoffStr},remark = #{remark}" +
             " where id = #{id} ")
     void updateWorkSetDataById(WorkSet workSet);
 
@@ -348,8 +430,9 @@ public interface PersonMapper {
                     "\temployee e\n" +
                     "LEFT JOIN dept t ON e.deptId = t.id\n" +
                     "LEFT JOIN position n ON e.positionId = n.id where 1=1");
-            if (employee.getName() != "" && employee.getName() != null && employee.getName().trim().length() > 0) {
-                sb.append(" and e.name like  CONCAT('%',#{name},'%') ");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
             }
             if (employee.getSex() != null) {
                 sb.append(" and e.sex = #{sex} ");
@@ -387,8 +470,8 @@ public interface PersonMapper {
                     "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
                     "\tt.deptname AS deptName,\n" +
                     "\tn.positionName AS positionName,\n" +
-                    "\tdate_format(a.beginleave, '%Y-%m-%d %h:%m:%s')  AS beginLeaveStr,\n" +
-                    "\tdate_format(a.endleave, '%Y-%m-%d %h:%m:%s')   AS endleaveStr,\n" +
+                    "\tdate_format(a.beginleave, '%Y-%m-%d %h:%i:%s')  AS beginLeaveStr,\n" +
+                    "\tdate_format(a.endleave, '%Y-%m-%d %h:%i:%s')   AS endleaveStr,\n" +
                     "\ta.remark AS remark,\n" +
                     "\ta.leaveDescrip AS leaveDescrip,\n" +
                     "\ta.leavelong AS leaveLong" +

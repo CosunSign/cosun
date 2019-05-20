@@ -27,12 +27,16 @@ public class Employee implements Serializable {
     private String deptName;
     private String positionName;
 
+    private String positionLevel;
+
     private String endLeaveStr;
     private String beginLeaveStr;
 
     private List<Integer> deptIds;
 
     private List<Integer> positionIds;
+
+    private List<Integer> nameIds;
 
     private String startIncomDateStr;
     private String endIncomDateStr;
@@ -48,6 +52,22 @@ public class Employee implements Serializable {
 
     public String getEndLeaveStr() {
         return endLeaveStr;
+    }
+
+    public List<Integer> getNameIds() {
+        return nameIds;
+    }
+
+    public void setNameIds(List<Integer> nameIds) {
+        this.nameIds = nameIds;
+    }
+
+    public String getPositionLevel() {
+        return positionLevel;
+    }
+
+    public void setPositionLevel(String positionLevel) {
+        this.positionLevel = positionLevel;
     }
 
     public void setEndLeaveStr(String endLeaveStr) {

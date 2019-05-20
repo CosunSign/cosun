@@ -19,6 +19,18 @@ public class WorkDate implements Serializable {
     private String remark;
     private String positionLevel;
     private String[] workDates;
+    private String[] workDatess;
+
+    public String[] getWorkDatess() {
+        if (workDate != null) {
+            return this.workDate.split(",");
+        }
+        return null;
+    }
+
+    public void setWorkDatess(String[] workDatess) {
+        this.workDatess = workDatess;
+    }
 
     public Integer getId() {
         return id;

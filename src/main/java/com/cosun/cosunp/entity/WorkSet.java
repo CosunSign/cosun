@@ -33,6 +33,8 @@ public class WorkSet implements Serializable {
     private Time noonOffFrom;
     private Time noonOffEnd;
     private Time extworkon;
+    private Time extworkonFrom;
+    private Time extworkonEnd;
     private Time extworkoff;
     private String remark;
 
@@ -51,6 +53,8 @@ public class WorkSet implements Serializable {
     private String noonOffEndStr;
     private String extworkonStr;
     private String extworkoffStr;
+    private String extworkonFromStr;
+    private String extworkonEndStr;
 
     private List<String> months;
     private List<String> workLevels;
@@ -64,6 +68,38 @@ public class WorkSet implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public Time getExtworkonFrom() {
+        return extworkonFrom;
+    }
+
+    public void setExtworkonFrom(Time extworkonFrom) {
+        this.extworkonFrom = extworkonFrom;
+    }
+
+    public Time getExtworkonEnd() {
+        return extworkonEnd;
+    }
+
+    public void setExtworkonEnd(Time extworkonEnd) {
+        this.extworkonEnd = extworkonEnd;
+    }
+
+    public String getExtworkonFromStr() {
+        return extworkonFromStr;
+    }
+
+    public void setExtworkonFromStr(String extworkonFromStr) {
+        this.extworkonFromStr = extworkonFromStr;
+    }
+
+    public String getExtworkonEndStr() {
+        return extworkonEndStr;
+    }
+
+    public void setExtworkonEndStr(String extworkonEndStr) {
+        this.extworkonEndStr = extworkonEndStr;
+    }
 
     public String getWorkDate() {
         return workDate;

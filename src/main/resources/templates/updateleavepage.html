@@ -20,17 +20,58 @@
 
 
     function computeLeaveLong() {
-        var endLeaveStr = new Date($("#endLeaveStr").val());
-        var beginLeaveStr = new Date($("#beginLeaveStr").val());
-        var leaveLong = 0;
-        if (endLeaveStr != null && beginLeaveStr != null) {
-            var ms = endLeaveStr.getTime() - beginLeaveStr.getTime();
-            if (ms < 0) leaveLong = 0;
-            leaveLong = Math.round(ms / 1000 / 60 / 60);
-            if (!isNaN(leaveLong))
-                $("#leaveLong").val(leaveLong);
-        }
+        // var endLeaveStr = new Date($("#endLeaveStr").val());
+        // var beginLeaveStr = new Date($("#beginLeaveStr").val());
+        // var leaveLong = 0;
+        // if (endLeaveStr != null && beginLeaveStr != null) {
+        //     var ms = endLeaveStr.getTime() - beginLeaveStr.getTime();
+        //     if (ms < 0) leaveLong = 0;
+        //     leaveLong = Math.round(ms / 1000 / 60 / 60);
+        //     if (!isNaN(leaveLong))
+        //         $("#leaveLong").val(leaveLong);
+        // }
 
+        if ($("#endLeaveStr").val().length > 1 && $("#beginLeaveStr").val().length > 1) {
+            var endLeaveStr = new Date($("#endLeaveStr").val());
+            var splitA = $("#endLeaveStr").val().split("T");
+            var splitC = splitA[0].split(" ");
+            var splitEndDate = splitC[0]
+            var splitAA = $("#beginLeaveStr").val().split("T");
+            var splitCC = splitAA[0].split(" ");
+            var splitBeginDate = splitCC[0]
+            var beginLeaveStr = new Date($("#beginLeaveStr").val());
+            var leaveLong = 0;
+            if (endLeaveStr != null && beginLeaveStr != null) {
+                if (splitBeginDate == splitEndDate) {
+                    var ms = endLeaveStr.getTime() - beginLeaveStr.getTime();
+                    console.log(ms);
+                    if (ms < 0) leaveLong = 0;
+                    leaveLong = Math.floor(ms / 1000 / 60 / 60);
+                    if (ms >= 32400000) {
+                        leaveLong = leaveLong - 1.5;
+                    }
+                    if (!isNaN(leaveLong))
+                        $("#leaveLong").val(leaveLong);
+                } else {
+                    var interDay = datedifference(splitBeginDate, splitEndDate);
+                    var sampleBegin = new Date(splitBeginDate + " 08:30:00").getTime();
+                    var sampleEnd = new Date(splitEndDate + " 17:30:00").getTime();
+                    if (sampleBegin >= beginLeaveStr.getTime() && sampleEnd <= endLeaveStr.getTime()) {
+                        leaveLong = interDay * 8;
+                        if (!isNaN(leaveLong))
+                            $("#leaveLong").val(leaveLong);
+                    } else if (sampleBegin < beginLeaveStr.getTime() && sampleEnd > endLeaveStr.getTime()) {
+                        $("#leaveLong").val(interDay * 8);
+                    } else if (sampleBegin < beginLeaveStr.getTime()) {
+                        $("#leaveLong").val(interDay * 8);
+                    } else if (sampleEnd > endLeaveStr.getTime()) {
+                        $("#leaveLong").val(interDay * 8);
+                    }
+
+                }
+            }
+
+        }
 
     }
 
@@ -41,18 +82,28 @@
         var leaveLong = $("#leaveLong").val();
         var leaveDescrip = $("#leaveDescrip").val();
         var remark = $("#remark").val();
-        if (employeeId != 0 && beginLeaveStr.trim().length>0 && endLeaveStr.trim().length>0 != null) {
+        if (employeeId != 0 && beginLeaveStr.trim().length > 0 && endLeaveStr.trim().length > 0 != null) {
             window.location.href = "/person/updateLeaveToMysql?id=" + employeeId
                 + "&beginLeaveStr=" + beginLeaveStr + "&endLeaveStr=" + endLeaveStr + "&leaveLong=" + leaveLong + "&leaveDescrip=" + leaveDescrip
                 + "&remark=" + remark;
-        }else{
+        } else {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请填写相关信息再提交!";
             errormessagediv.style.color = "red";
         }
     }
-
+    function datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+        var dateSpan,
+            tempDate,
+            iDays;
+        sDate1 = Date.parse(sDate1);
+        sDate2 = Date.parse(sDate2);
+        dateSpan = sDate2 - sDate1;
+        dateSpan = Math.abs(dateSpan);
+        iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+        return iDays
+    }
 
     String.prototype.trim = function () {
         return this.replace(/(^\s*)|(\s*$)/g, "");
@@ -153,7 +204,7 @@
                             <td>
                                 <input type="text" id="beginLeaveStr"
                                        style="width:170px;height: 34px;text-align: center"
-                                       class="Wdate"  th:value="*{beginLeaveStr}"
+                                       class="Wdate" th:value="*{beginLeaveStr}"
                                        onchange="computeLeaveLong()"
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endLeaveStr\')}'})"/>
 
@@ -165,7 +216,8 @@
                             </td>
                             <td>
                                 <input type="text" id="endLeaveStr"
-                                       style="width:170px;height: 34px;text-align: center" class="Wdate"  th:value="*{endLeaveStr}"
+                                       style="width:170px;height: 34px;text-align: center" class="Wdate"
+                                       th:value="*{endLeaveStr}"
                                        onchange="computeLeaveLong()"
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginLeaveStr\')}'})"/>
 
@@ -173,8 +225,11 @@
                         </tr>
                         <tr>
                             <td><label>请假工时：</label></td>
-                            <td><input disabled="" type="text" class="form-control" th:field="*{leaveLong}"
+                            <td><input type="text" class="form-control" th:field="*{leaveLong}"
                                        id="leaveLong">
+                            </td>
+                            <td>
+                                <font color="red">&nbsp;&nbsp;&nbsp;*如系统计算不准确请手工输入</font>
                             </td>
                         </tr>
                         <tr>

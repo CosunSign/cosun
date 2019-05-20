@@ -121,7 +121,7 @@
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
-        formData.append('name', $("#name").val());
+        formData.append('nameIds', $("#name").val());
         formData.append('sex', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
@@ -259,7 +259,15 @@
                             <label>姓名：</label>
                         </td>
                         <td>
-                            <label><input type="text" id="name" class="form-control" style="width:130px"></label>
+                            <label>
+                                <select id="name" multiple class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true"
+                                        data-selected-text-format="count > 2">
+                                    　　
+                                    <option th:each="c:${empList}" th:value="${c.id}"
+                                            th:text="${c.name}"></option>
+                                </select>
+                            </label>
                         </td>
                         <td style="text-align: right">
                             <label>性别：</label>
@@ -377,6 +385,13 @@
                     </td>
                 </tr>
             </div>
+        </div>
+        <div th:if="${#lists.isEmpty(employeeList)}">
+            <tr>
+                <td colspan="8">
+查无数据
+                </td>
+            </tr>
         </div>
         </tbody>
 

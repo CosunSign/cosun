@@ -2,19 +2,20 @@ package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IPersonServ;
+import com.cosun.cosunp.tool.ExcelUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
 @RequestMapping("/person")
 public class PersonController {
 
-    private static Logger logger = LogManager.getLogger(FileUploadAndDownController.class);
+    private static Logger logger = LogManager.getLogger(PersonController.class);
 
     @Autowired
     IPersonServ personServ;
@@ -40,6 +41,18 @@ public class PersonController {
     @RequestMapping("/toworkdatepage")
     public ModelAndView toworkdatepage() throws Exception {
         ModelAndView view = new ModelAndView("workdatepage");
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/tocomputeworkdate")
+    public ModelAndView tocomputeworkdate() throws Exception {
+        ModelAndView view = new ModelAndView("computeworkdate");
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        File com = fsv.getHomeDirectory();    //这便是读取桌面路径的方法了
+        Compute compute = new Compute();
+        compute.setFileLocation(com.getPath());
+        view.addObject("compute", compute);
         return view;
     }
 
@@ -65,12 +78,14 @@ public class PersonController {
         Employee employee = new Employee();
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
         List<Employee> employeeList = personServ.findAllEmployee(employee);
         int recordCount = personServ.findAllEmployeeCount();
         int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
         employee.setMaxPage(maxPage);
         employee.setRecordCount(recordCount);
         view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
@@ -210,6 +225,44 @@ public class PersonController {
         return view;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/computeWorkTable", method = RequestMethod.POST)
+    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, @RequestParam("fileLocation") String fileLocation, HttpServletResponse response) throws Exception {
+        ModelAndView view = new ModelAndView("computeworkdate");
+        Compute compute = new Compute();
+        compute.setFileLocation(fileLocation);
+        compute.setFileLocation(fileLocation);
+        List<ClockInOrgin> clockInOrginList = personServ.translateTabletoBean(compute, file);
+        List<OutPutWorkData> outPutWorkDataList = personServ.computeTableListData(clockInOrginList);
+        String outpathname = "";
+        if (outPutWorkDataList.get(0).getErrorMessage() == null || outPutWorkDataList.get(0).getErrorMessage().trim().length() <= 0) {
+            outpathname = ExcelUtil.writeExcel(outPutWorkDataList, fileLocation);
+        }
+        view.addObject("flag2", outpathname);
+        view.addObject("errorMessage", outPutWorkDataList.get(0).getErrorMessage());
+        view.addObject("compute", compute);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/dataInMysql", method = RequestMethod.POST)
+    public ModelAndView dataInMysql(@RequestParam("file1") MultipartFile file1, HttpServletResponse response) throws Exception {
+        ModelAndView view = new ModelAndView("computeworkdate");
+        List<Employee> employeeList = personServ.translateTabletoEmployeeBean(file1);
+        String isRepeatData = personServ.checkEmpNoOrEmpNameRepeat(employeeList);//true 代表重复
+        if (isRepeatData.trim().length() > 0) {
+            view.addObject("flag1", isRepeatData);//代表有重复
+            return view;
+        } else {
+            personServ.saveDeptNameAndPositionNameAndEms(employeeList);
+        }
+
+        view.addObject("compute", new Compute());
+        view.addObject("flag1", 10);
+        return view;
+    }
+
     @ResponseBody
     @RequestMapping(value = "/checkAndSave", method = RequestMethod.POST)
     public void checkAndSave(Position position, HttpSession session, HttpServletResponse response) throws Exception {
@@ -232,7 +285,7 @@ public class PersonController {
     public void getWorkDatesAndPositionsByData(WorkDate workDate, HttpServletResponse response) throws Exception {
         WorkSet workSet = personServ.getWorkSetByMonthAndPositionLevel(workDate);
         String workDatesAndPositionNames;
-        if(workSet==null) {
+        if (workSet == null) {
             WorkDate workDate1 = personServ.getWorkDateByMonth(workDate);
             String positionStr = personServ.getPositionNamesByPositionLevel(workDate.getPositionLevel());
             if (workDate1 != null && positionStr != null) {
@@ -248,7 +301,7 @@ public class PersonController {
 
                 }
             }
-        }else{
+        } else {
             workDatesAndPositionNames = "系统中已存在" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，不可重复增加;";
 
         }
@@ -345,10 +398,9 @@ public class PersonController {
         workSet.setMaxPage(maxPage);
         workSet.setRecordCount(recordCount);
         view.addObject("workSetList", workSetList);
-        view.addObject("flag",1);
+        view.addObject("flag", 1);
         return view;
     }
-
 
 
     @ResponseBody
@@ -363,7 +415,7 @@ public class PersonController {
         workSet.setMaxPage(maxPage);
         workSet.setRecordCount(recordCount);
         view.addObject("workSetList", workSetList);
-        view.addObject("flag",3);
+        view.addObject("flag", 3);
         return view;
     }
 
@@ -378,7 +430,7 @@ public class PersonController {
         workSet.setMaxPage(maxPage);
         workSet.setRecordCount(recordCount);
         view.addObject("workSetList", workSetList);
-        view.addObject("flag",2);
+        view.addObject("flag", 2);
         return view;
     }
 
@@ -653,6 +705,7 @@ public class PersonController {
         personServ.addEmployeeData(employee1);
         Employee employee = new Employee();
         List<Position> positionList = personServ.findAllPositionAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
         List<Dept> deptList = personServ.findAllDeptAll();
         List<Employee> employeeList = personServ.findAllEmployee(employee);
         int recordCount = personServ.findAllEmployeeCount();
@@ -660,6 +713,7 @@ public class PersonController {
         employee.setMaxPage(maxPage);
         employee.setRecordCount(recordCount);
         view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
@@ -690,7 +744,7 @@ public class PersonController {
         WorkDate a = new WorkDate();
         a.setMonth(workSet.getMonth());
         a.setPositionLevel(workSet.getWorkLevel());
-        a  = personServ.getWorkDateByMonth(a);
+        a = personServ.getWorkDateByMonth(a);
         workSet.setWorkDate(a.getWorkDate());
         workSet.setWorkLevel(personServ.getPositionNamesByPositionLevel(workSet.getWorkLevel()));
         view.addObject("workSet", workSet);
@@ -703,7 +757,7 @@ public class PersonController {
     public ModelAndView updatePersonToMysql(Employee employee1) throws Exception {
         ModelAndView view = new ModelAndView("person");
         personServ.updateEmployeeData(employee1);
-
+        List<Employee> empList = personServ.findAllEmployees();
         Employee employee = new Employee();
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
@@ -713,6 +767,7 @@ public class PersonController {
         employee.setMaxPage(maxPage);
         employee.setRecordCount(recordCount);
         view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
@@ -744,7 +799,6 @@ public class PersonController {
             throw e;
         }
     }
-
 
 
     @ResponseBody
@@ -818,6 +872,7 @@ public class PersonController {
         ModelAndView view = new ModelAndView("person");
         personServ.deleteEmployeetById(id);
         Employee employee = new Employee();
+        List<Employee> empList = personServ.findAllEmployeeAll();
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
         List<Employee> employeeList = personServ.findAllEmployee(employee);
@@ -826,6 +881,7 @@ public class PersonController {
         employee.setMaxPage(maxPage);
         employee.setRecordCount(recordCount);
         view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);

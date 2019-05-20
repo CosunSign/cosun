@@ -111,7 +111,9 @@ public class Leave implements Serializable {
     }
 
     public int getCurrentPageTotalNum() {
-        return currentPageTotalNum;
+        if(this.currentPage!=0)
+            return (currentPage - 1) * pageSize;
+        return 0;
     }
 
     public void setCurrentPageTotalNum(int currentPageTotalNum) {

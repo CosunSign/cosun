@@ -152,7 +152,6 @@
     });
 
 
-
     // =================================以下为部门=====================================================================
 
     function querydept() {
@@ -328,10 +327,7 @@
     }
 
 
-
-
     // ================================ 以下为职位模块================================
-
 
 
     function queryposition() {
@@ -339,10 +335,10 @@
         var currentpage = $("#n_currentPage").val();
         var positionname = $("#positionName").val();
         var positionLevel = $("#positionLevel").val();
-        if (positionname.trim().length > 0||positionLevel!="0") {
+        if (positionname.trim().length > 0 || positionLevel != "0") {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
-            window.location.href = "/person/queryPositionByName?positionName=" + positionname+"&positionLevel="+positionLevel;
+            window.location.href = "/person/queryPositionByName?positionName=" + positionname + "&positionLevel=" + positionLevel;
         } else {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
@@ -356,10 +352,10 @@
         var positionLevel = $("#positionLevel").val();
         var errormessagediv = document.getElementById("errormessage");
         errormessagediv.innerHTML = "";
-        if (positionname.trim().length > 0&&positionLevel!="0") {
+        if (positionname.trim().length > 0 && positionLevel != "0") {
             var formData = new FormData();
-            formData.append('positionName',positionname);
-            formData.append('positionLevel',positionLevel);
+            formData.append('positionName', positionname);
+            formData.append('positionLevel', positionLevel);
             $.ajax({
                 data: formData,
                 type: "POST",
@@ -391,11 +387,11 @@
             });
 
         } else {
-            if(positionname.trim().length <= 0) {
+            if (positionname.trim().length <= 0) {
                 $("#errormessage").show();
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新增前请输入职位名称!";
                 errormessagediv.style.color = "red";
-            }else if(positionLevel=="0") {
+            } else if (positionLevel == "0") {
                 $("#errormessage").show();
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新增前请输入职位类别!";
                 errormessagediv.style.color = "red";
@@ -413,7 +409,7 @@
         window.location.href = "/person/deletePosition?id=" + positionid;
     }
 
-    function updatePosition(positionid, positionname,positionlevel) {
+    function updatePosition(positionid, positionname, positionlevel) {
         $("#errormessage").hide();
         $("#beforPositionName").val(positionname);
         $("#newPositionName").val('');
@@ -443,7 +439,8 @@
         $("#coverbehidepage1").hide();
         var newPositionNmae = $("#newPositionName").val();
         var oldPositionName = $("#beforPositionName").val();
-        if (newPositionNmae.trim().length > 0) {
+        var positionLevelId = $("#positionLevelId").val();
+        if (newPositionNmae.trim().length > 0 && positionLevelId.trim() != "0") {
             if (oldPositionName == newPositionNmae) {
                 $("#updatemessage").show();
                 var errormessagediv = document.getElementById("updatemessage");
@@ -451,13 +448,20 @@
                 errormessagediv.style.color = "red";
             } else {
                 $("#updatediv").hide();
-                window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() + "&positionName=" + $("#newPositionName").val()+"&positionLevel="+$("#positionLevelId").val();
+                window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() + "&positionName=" + $("#newPositionName").val() + "&positionLevel=" + $("#positionLevelId").val();
             }
         } else {
-            $("#updatemessage").show();
-            var errormessagediv = document.getElementById("updatemessage");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新职位名不能为空!";
-            errormessagediv.style.color = "red";
+            if (newPositionNmae.trim().length <= 0) {
+                $("#updatemessage").show();
+                var errormessagediv = document.getElementById("updatemessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新职位名不能为空!";
+                errormessagediv.style.color = "red";
+            } else if (positionLevelId.trim() == "0") {
+                $("#updatemessage").show();
+                var errormessagediv = document.getElementById("updatemessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;职位属性不能为空!";
+                errormessagediv.style.color = "red";
+            }
         }
     }
 
@@ -563,15 +567,15 @@
                                     <label>&nbsp;&nbsp;&nbsp;&nbsp;职位类别：</label>
                                 </td>
                                 <td style="width: 120px">
-                                        <select id="positionLevel"  class="selectpicker show-tick form-control"
-                                                data-live-search="true" >
-                                            <option th:value="0">请选择</option>
-                                            <option th:value="A">A</option>
-                                            <option th:value="B">B</option>
-                                            <option th:value="C">C</option>
-                                            <option th:value="D">D</option>
-                                            <option th:value="E">E</option>
-                                        </select>
+                                    <select id="positionLevel" class="selectpicker show-tick form-control"
+                                            data-live-search="true">
+                                        <option th:value="0">请选择</option>
+                                        <option th:value="A">A</option>
+                                        <option th:value="B">B</option>
+                                        <option th:value="C">C</option>
+                                        <option th:value="D">D</option>
+                                        <option th:value="E">E</option>
+                                    </select>
                                 </td>
 
 
@@ -621,6 +625,11 @@
                             </td>
                         </tr>
                     </div>
+                </div>
+                <div th:if="${#lists.isEmpty(positionList)}">
+                    <tr>
+                        <td colspan="4">查无数据</td>
+                    </tr>
                 </div>
                 </tbody>
                 <tfoot id="s_tfoot">
@@ -754,6 +763,11 @@
                         </tr>
                     </div>
                 </div>
+                <div th:if="${#lists.isEmpty(deptList)}">
+                    <tr>
+                        <td colspan="3">查无数据</td>
+                    </tr>
+                </div>
                 </tbody>
                 <tfoot id="s_tfoot2">
                 <tr id="showdi2">
@@ -846,8 +860,8 @@
             <tr>
                 <td><label>现职位类别：</label></td>
                 <td>
-                    <select id="positionLevelId"  class="selectpicker show-tick form-control"
-                            data-live-search="true" >
+                    <select id="positionLevelId" class="selectpicker show-tick form-control"
+                            data-live-search="true">
                         <option th:value="0">请选择</option>
                         <option th:value="A">A</option>
                         <option th:value="B">B</option>
@@ -875,7 +889,6 @@
         </table>
     </div>
 </div>
-
 
 
 <div id="updatediv2" style="display: none">

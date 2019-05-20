@@ -1,13 +1,23 @@
 package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.*;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface IPersonServ {
 
     int checkAndSavePosition(Position position) throws Exception;
+
+    List<ClockInOrgin> translateTabletoBean(Compute compute, MultipartFile file) throws Exception;
+
+    List<OutPutWorkData> computeTableListData(List<ClockInOrgin> clockInOrginList) throws Exception;
+
+    List<Employee> translateTabletoEmployeeBean(MultipartFile file) throws Exception;
+
+    void saveDeptNameAndPositionNameAndEms(List<Employee> employeeList) throws Exception;
+
+    String checkEmpNoOrEmpNameRepeat(List<Employee> employeeList) throws Exception;
 
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
 
@@ -40,6 +50,8 @@ public interface IPersonServ {
     List<Position> findAllPosition(Position position) throws Exception;
 
     void addEmployeeData(Employee employee) throws Exception;
+
+    List<Employee> findAllEmployeeAll() throws Exception;
 
     List<Employee> findAllEmployee(Employee employee) throws Exception;
 
