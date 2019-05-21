@@ -39,6 +39,8 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
         addInterceptor.addPathPatterns("/account/toMainPage");
         addInterceptor.addPathPatterns("/order/createsinglegoods");
         addInterceptor.addPathPatterns("/fileupdown/**");
+        addInterceptor.addPathPatterns("/person/**");
+        addInterceptor.addPathPatterns("/rules/**");
     }
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {

@@ -43,6 +43,7 @@ public interface IPersonServ {
 
     List<Dept> findAllDeptAll() throws Exception;
 
+
     void deleteLeaveById(Integer id) throws Exception;
 
     void updateEmployeeData(Employee employee) throws Exception;

@@ -28,7 +28,7 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class PersonServiceImpl implements IPersonServ {
 
-    private static Logger logger = LogManager.getLogger(FileUploadAndDownServiceImpl.class);
+    private static Logger logger = LogManager.getLogger(PersonServiceImpl.class);
 
     @Autowired
     PersonMapper personMapper;

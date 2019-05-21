@@ -1,8 +1,10 @@
 package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.DownloadView;
+import com.cosun.cosunp.entity.Rules;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IUserInfoServ;
+import com.cosun.cosunp.service.IrulesServ;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/account")
@@ -28,6 +31,9 @@ public class AccountController {
 
     @Autowired
     private IUserInfoServ userInfoServ;
+
+    @Autowired
+    private IrulesServ rulesServ;
 
     private static final String INDEX = "index";
     private static Logger logger = LogManager.getLogger(AccountController.class);
@@ -84,6 +90,8 @@ public class AccountController {
             session.setAttribute("username", userInfo.getUserName());
             session.setAttribute("password", userInfo.getUserPwd());
             mav.addObject("view", view);
+            List<Rules> menuList = rulesServ.findAllRulesAll();
+            mav.addObject("menuList",menuList);
             return mav;
         }
         mav = new ModelAndView(INDEX);
@@ -110,6 +118,7 @@ public class AccountController {
     @GetMapping("/toMainPage")
     public ModelAndView toMainPage(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("mainindex");
+        List<Rules> menuList = rulesServ.findAllRulesAll();
         DownloadView v = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         v.setFullName(userInfo.getFullName());
@@ -117,6 +126,7 @@ public class AccountController {
             view = new ModelAndView(INDEX);
         }
         view.addObject("view", v);
+        view.addObject("menuList",menuList);
         return view;
 
     }

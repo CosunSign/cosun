@@ -153,6 +153,13 @@
                 <li>
                     <a th:href="@{/rules/torulespage}" target="targetText"><span
                             class="fa fa-caret-right"></span>规章制度管理</a></li>
+                <div th:unless="${#lists.isEmpty(menuList)}">
+                    <div th:each="rule,iterStat: ${menuList}" align="center">
+                        <li>
+                            <a th:href="@{/rules/showRulesById(id=${rule.id})}" target="targetText" th:text="${rule.deptName}"><span
+                                    class="fa fa-caret-right"></span></a></li>
+                    </div>
+                </div>
             </ul>
         </li>
 
