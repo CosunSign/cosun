@@ -59,6 +59,23 @@ public interface RulesMapper {
             "FROM\n" +
             "\trules s\n" +
             "LEFT JOIN dept t ON s.deptId = t.id\n" +
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where t.deptname = #{deptName} ")
+    Rules getRulesByName(String deptName);
+
+    @Select("SELECT\n" +
+            "\ts.id AS id,\n" +
+            "\ts.filename AS fileName,\n" +
+            "\ts.deptId AS deptId,\n" +
+            "\ts.uploaderId AS uploaderId,\n" +
+            "\ts.uploadDate AS uploadDateStr,\n" +
+            "\ts.titleName AS titleName,\n" +
+            "\ts.filedir AS fileDir,\n" +
+            "\ts.remark AS remark,\n" +
+            "\tt.deptname AS deptName,\n" +
+            "\to.fullname AS uploaderName\n" +
+            "FROM\n" +
+            "\trules s\n" +
+            "LEFT JOIN dept t ON s.deptId = t.id\n" +
             "LEFT JOIN userinfo o ON s.uploaderId = o.uid  ")
     List<Rules> findAllRulesAll();
 

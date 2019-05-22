@@ -1274,6 +1274,8 @@
 
 <script type="text/javascript">
     $(function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
         var uls = $('.sidebar-nav > ul > *').clone();
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());

@@ -76,20 +76,20 @@ public class RulesController {
         ModelAndView modelAndView = new ModelAndView("updaterules");
         List<Dept> deptList = personServ.findAllDeptAll();
         Rules rules = rulesServ.getRulesById(id);
-        modelAndView.addObject("rules",rules);
-        modelAndView.addObject("deptList",deptList);
+        modelAndView.addObject("rules", rules);
+        modelAndView.addObject("deptList", deptList);
         return modelAndView;
     }
 
 
     @ResponseBody
     @RequestMapping("/downLoadByRulesId")
-    public void downLoadByRulesId (HttpServletResponse resp,Integer id)
+    public void downLoadByRulesId(HttpServletResponse resp, Integer id)
             throws Exception {
         Rules rule = rulesServ.getRulesById(id);
         resp.setHeader("content-type", "application/octet-stream");
         resp.setContentType("application/octet-stream");
-        resp.setHeader("Content-Disposition", "attachment;filename=" + new String(rule.getFileName().getBytes(),"iso-8859-1"));
+        resp.setHeader("Content-Disposition", "attachment;filename=" + new String(rule.getFileName().getBytes(), "iso-8859-1"));
         byte[] buff = new byte[1024];
         BufferedInputStream bufferedInputStream = null;
         OutputStream outputStream = null;
@@ -135,10 +135,32 @@ public class RulesController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/showRulesById", method = RequestMethod.GET)
-    public ModelAndView showRulesById(Integer id) throws Exception {
-        ModelAndView view = new ModelAndView("");
-        return view;
+    @RequestMapping(value = "/showRulesById", method = RequestMethod.POST)
+    public void showRulesById(Integer id,HttpServletResponse response) throws Exception {
+        Rules rules = rulesServ.getRulesById(id);
+        String[] centerPath =  rules.getFileDir().split("\\.");
+        String htmlName = centerPath[0]+".html";
+//        String str1;
+//        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+//            str1 = x.writeValueAsString(new FileOutputStream(htmlName));
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html;charset=UTF-8");
+//            response.getWriter().print(str1); //返回前端ajax
+            BufferedReader br=new BufferedReader(
+                    new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
+            String line;
+            String htmlContent = "";
+            while ((line = br.readLine()) != null) {
+                htmlContent += line +"\n";
+            }
+            response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println(htmlContent);
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
     }
 
     @ResponseBody
@@ -160,7 +182,7 @@ public class RulesController {
 
     @ResponseBody
     @RequestMapping(value = "/queryRulesByCondition", method = RequestMethod.POST)
-    public void queryRulesByCondition(Rules rules,HttpServletResponse response) throws Exception {
+    public void queryRulesByCondition(Rules rules, HttpServletResponse response) throws Exception {
         List<Rules> rulesList = rulesServ.queryRulesByCondition(rules);
         int recordCount = rulesServ.queryRulesByConditionCount(rules);
         int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() : recordCount / rules.getPageSize() + 1;
@@ -190,7 +212,7 @@ public class RulesController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         rules.setUploaderId(userInfo.getuId());
         rules.setUploadDate(new Date());
-        rulesServ.updateRulesById(file,rules);
+        boolean isUploadFileRight = rulesServ.updateRulesById(file, rules);
         List<Rules> rulesList = rulesServ.findAllRules(new Rules());
         int recordCount = rulesServ.findAllRulesCount();
         int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() :
@@ -199,7 +221,11 @@ public class RulesController {
         rules.setRecordCount(recordCount);
         view.addObject("rulesList", rulesList);
         view.addObject("rules", rules);
-        view.addObject("flag", 3);
+        if(isUploadFileRight) {
+            view.addObject("flag", 3);
+        }else{
+            view.addObject("flag", 5);
+        }
         return view;
     }
 
@@ -212,7 +238,7 @@ public class RulesController {
         rules.setLoginName(userInfo.getFullName());
         rules.setUploadDate(new Date());
         rules.setUploaderId(userInfo.getuId());
-        rulesServ.saveRuleByRuleBean(file, rules);
+        boolean isDocorDocx = rulesServ.saveRuleByRuleBean(file, rules);
         List<Rules> rulesList = rulesServ.findAllRules(new Rules());
         int recordCount = rulesServ.findAllRulesCount();
         int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() :
@@ -221,10 +247,13 @@ public class RulesController {
         rules.setRecordCount(recordCount);
         view.addObject("rulesList", rulesList);
         view.addObject("rules", rules);
-        view.addObject("deptList",deptList);
-        view.addObject("flag", 1);
+        view.addObject("deptList", deptList);
+        if (isDocorDocx) {
+            view.addObject("flag", 1);
+        } else {
+            view.addObject("flag", 5);
+        }
         return view;
     }
-
 
 }

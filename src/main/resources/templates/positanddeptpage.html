@@ -79,6 +79,8 @@
 </style>
 <script>
     $(function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
         $('#myTab li:eq(0) a').tab('show');
         var flag = $("#flag").val();
         var aflag = eval(flag)

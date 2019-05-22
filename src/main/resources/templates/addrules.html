@@ -29,6 +29,8 @@
 </style>
 <script>
     $(window).on('load', function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
         $('.selectpicker').selectpicker();
         $("#uploadDate").val(today());
     });

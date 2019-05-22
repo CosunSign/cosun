@@ -252,6 +252,8 @@
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
     $(function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
         $('[data-popover="true"]').popover({html: true});
         $('.demo-cancel-click').click(function () {
             return false;

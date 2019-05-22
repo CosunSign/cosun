@@ -5,6 +5,7 @@ import com.cosun.cosunp.mapper.RulesMapper;
 import com.cosun.cosunp.service.IrulesServ;
 import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
+import com.cosun.cosunp.tool.WordToHtml;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,28 @@ public class RulesServiceImpl implements IrulesServ {
         return rulesMapper.getRulesByDeptId(deptId);
     }
 
-    public void saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception {
+    public Rules getRulesByName(String name) throws Exception {
+        return rulesMapper.getRulesByName(name);
+    }
+
+
+    public boolean saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception {
         //step1 存文件在文件服务器  取得地址
         String descDir = this.finalDirPath + rules.getDeptId() + "/" + file.getOriginalFilename();
         String descFolder = this.finalDirPath + rules.getDeptId() + "/";
-        FileUtil.uploadFileForRules(file, descFolder);
+        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+            FileUtil.uploadFileForRules(file, descFolder);
+            WordToHtml.word2007ToHtml(descFolder, descDir, file);
+        } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+            FileUtil.uploadFileForRules(file, descFolder);
+            WordToHtml.DocToHtml(descFolder, descDir, file);
+        } else {
+            return false;
+        }
         rules.setFileDir(descDir);
         rules.setFileName(file.getOriginalFilename());
         rulesMapper.saveRulesBean(rules);
-
+        return true;
     }
 
     public int findAllRulesCount() throws Exception {
@@ -57,18 +71,38 @@ public class RulesServiceImpl implements IrulesServ {
         return rulesMapper.getRulesById(id);
     }
 
-    public void updateRulesById(MultipartFile file, Rules rules) throws Exception {
+    public boolean updateRulesById(MultipartFile file, Rules rules) throws Exception {
         // E:/ftpserver/5/4月车间考勤记1录.xls
-        String descDir = rules.getFileDir();
-        String centerPath = StringUtil.subMyString(descDir, "/");
-        FileUtil.delFile(descDir);
-        FileUtil.uploadFileForRules(file,centerPath);
-        rules.setFileDir(centerPath+file.getOriginalFilename());
+        String[] centerPaths =  rules.getFileDir().split("\\.");
+        String htmlName = centerPaths[0]+".html";
+        FileUtil.delFile(rules.getFileDir());
+        FileUtil.delFile(htmlName);
+
+        String origName = file.getOriginalFilename();
+        String oriCenNa = origName.split("\\.")[0];
+
+        String centerPath = StringUtil.subMyString(rules.getFileDir(), "/");
+        String descDir = centerPath+origName;
+        FileUtil.uploadFileForRules(file, centerPath);
+        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+            WordToHtml.word2007ToHtml(centerPath, descDir, file);
+        }else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+            WordToHtml.DocToHtml(centerPath, descDir, file);
+        } else {
+            return false;
+        }
+        rules.setFileDir(centerPath + file.getOriginalFilename());
         rules.setFileName(file.getOriginalFilename());
         rulesMapper.updateRulesBean(rules);
+        return true;
     }
 
     public void deleteRulesById(Integer id) throws Exception {
+        Rules rules = rulesMapper.getRulesById(id);
+        String[] centerPaths =  rules.getFileDir().split("\\.");
+        String htmlName = centerPaths[0]+".html";
+        FileUtil.delFile(rules.getFileDir());
+        FileUtil.delFile(htmlName);
         rulesMapper.deleteRulesById(id);
     }
 
@@ -88,7 +122,6 @@ public class RulesServiceImpl implements IrulesServ {
     public List<Rules> findAllRulesAll() throws Exception {
         return rulesMapper.findAllRulesAll();
     }
-
 
 
 }

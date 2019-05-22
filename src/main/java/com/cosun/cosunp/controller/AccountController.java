@@ -17,7 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 @Controller
@@ -43,7 +46,7 @@ public class AccountController {
     public ModelAndView toLoginPage(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         int interval = session.getMaxInactiveInterval();
-        System.out.println("=============session time================"+interval);
+        System.out.println("=============session time================" + interval);
         ModelAndView mav = new ModelAndView(INDEX);
         DownloadView downloadView = new DownloadView();
         downloadView.setFlag("true");
@@ -57,7 +60,7 @@ public class AccountController {
     public ModelAndView toResetPassword(HttpSession session) throws Exception {
         ModelAndView mav = new ModelAndView("reset-password");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        if(userInfo==null) {
+        if (userInfo == null) {
             mav = new ModelAndView(INDEX);
             DownloadView downloadView = new DownloadView();
             downloadView.setFlag("true");
@@ -91,7 +94,21 @@ public class AccountController {
             session.setAttribute("password", userInfo.getUserPwd());
             mav.addObject("view", view);
             List<Rules> menuList = rulesServ.findAllRulesAll();
-            mav.addObject("menuList",menuList);
+            mav.addObject("menuList", menuList);
+            Rules rules = rulesServ.getRulesByName("总经办");
+            String htmlContent = "";
+            if (rules != null) {
+                String[] centerPath = rules.getFileDir().split("\\.");
+                String htmlName = centerPath[0] + ".html";
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    htmlContent += line + "\n";
+                }
+            }
+            mav.addObject("htmlStr", htmlContent);
             return mav;
         }
         mav = new ModelAndView(INDEX);
@@ -126,7 +143,7 @@ public class AccountController {
             view = new ModelAndView(INDEX);
         }
         view.addObject("view", v);
-        view.addObject("menuList",menuList);
+        view.addObject("menuList", menuList);
         return view;
 
     }
@@ -136,7 +153,7 @@ public class AccountController {
         ModelAndView view = new ModelAndView(INDEX);
         DownloadView v = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        if(userInfo!=null) {
+        if (userInfo != null) {
             session.removeAttribute("account");
             v.setFullName(userInfo.getFullName());
             userInfoServ.setNewPasswordByuId(userInfo.getuId(), newPassword);

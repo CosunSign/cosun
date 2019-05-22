@@ -17,6 +17,9 @@
 <script>
 
     $(function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
+
         var flag = $("#flag").val();
         var aflag = eval(flag)
         if (aflag == 1) {
@@ -39,6 +42,11 @@
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
             errormessagediv.style.color = "green";
+        }else if (aflag == 5) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能上传doc或docx格式的文件!";
+            errormessagediv.style.color = "red";
         }
     });
 

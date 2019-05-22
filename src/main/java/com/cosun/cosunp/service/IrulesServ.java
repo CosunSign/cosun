@@ -11,11 +11,13 @@ public interface IrulesServ {
 
     List<Rules> findAllRulesAll() throws Exception;
 
+    Rules getRulesByName(String name) throws Exception;
+
     int queryRulesByConditionCount(Rules rules) throws Exception;
 
     int getRulesByDeptId(Integer deptId) throws Exception;
 
-    void saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception;
+    boolean saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception;
 
     List<Rules> findAllRules(Rules rules) throws Exception;
 
@@ -23,7 +25,7 @@ public interface IrulesServ {
 
     Rules getRulesById(Integer id) throws Exception;
 
-    void updateRulesById(MultipartFile file, Rules rules) throws Exception;
+    boolean updateRulesById(MultipartFile file, Rules rules) throws Exception;
 
     void deleteRulesById(Integer id) throws Exception;
 }

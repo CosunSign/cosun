@@ -32,6 +32,8 @@
 <script src="//open.thunderurl.com/thunder-link.js"></script>
 <script type="text/javascript">
     $(function () {
+        window.parent.document.getElementById('content').style.display = "block";
+        window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
         if (flag == "-1") {
             alert("您单次要删除的文件已超过2G!不能超过2G");
