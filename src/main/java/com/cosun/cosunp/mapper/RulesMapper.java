@@ -129,6 +129,8 @@ public interface RulesMapper {
             if (rules.getDeptIds() != null && rules.getDeptIds().size() > 0) {
                 sb.append(" and s.deptId in (" + StringUtils.strip(rules.getDeptIds().toString(), "[]") + ") ");
             }
+
+            sb.append(" limit #{currentPageTotalNum},#{pageSize} ");
             return sb.toString();
         }
 

@@ -73,20 +73,22 @@ public class RulesServiceImpl implements IrulesServ {
 
     public boolean updateRulesById(MultipartFile file, Rules rules) throws Exception {
         // E:/ftpserver/5/4月车间考勤记1录.xls
-        String[] centerPaths =  rules.getFileDir().split("\\.");
-        String htmlName = centerPaths[0]+".html";
-        FileUtil.delFile(rules.getFileDir());
-        FileUtil.delFile(htmlName);
+        //String[] centerPaths = rules.getFileDir().split("\\.");
+        //String htmlName = centerPaths[0] + ".html";
+        //FileUtil.delFile(rules.getFileDir());
+       // FileUtil.delFile(htmlName);
+
+        int index = rules.getFileDir().lastIndexOf("/");
+        String centerPaths = rules.getFileDir().substring(0,index);
+        FileUtil.delFolderNew(centerPaths);
 
         String origName = file.getOriginalFilename();
-        String oriCenNa = origName.split("\\.")[0];
-
         String centerPath = StringUtil.subMyString(rules.getFileDir(), "/");
-        String descDir = centerPath+origName;
+        String descDir = centerPath + origName;
         FileUtil.uploadFileForRules(file, centerPath);
         if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
             WordToHtml.word2007ToHtml(centerPath, descDir, file);
-        }else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+        } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
             WordToHtml.DocToHtml(centerPath, descDir, file);
         } else {
             return false;
@@ -99,10 +101,13 @@ public class RulesServiceImpl implements IrulesServ {
 
     public void deleteRulesById(Integer id) throws Exception {
         Rules rules = rulesMapper.getRulesById(id);
-        String[] centerPaths =  rules.getFileDir().split("\\.");
-        String htmlName = centerPaths[0]+".html";
-        FileUtil.delFile(rules.getFileDir());
-        FileUtil.delFile(htmlName);
+        int index = rules.getFileDir().lastIndexOf("/");
+        String centerPaths = rules.getFileDir().substring(0,index);
+        //String htmlName = centerPaths[0]+".html";
+       // FileUtil.delFolder(centerPaths[0]);
+        FileUtil.delFolderNew(centerPaths);
+        // FileUtil.delFile(rules.getFileDir());
+        // FileUtil.delFile(htmlName);
         rulesMapper.deleteRulesById(id);
     }
 

@@ -129,7 +129,9 @@
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
+        var userActor;
         formData.append('deptIds', $("#dept").val());
+        formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
@@ -166,6 +168,7 @@
                     totalPage = data[0].maxPage; //总多少页
                     totaldata = data[0].recordCount; //总共多少记录
                     pageSize = data[0].pageSize;
+                    userActor = data[0].userActor;
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
@@ -179,13 +182,23 @@
                         tr.append("<td>" + isNull(data[num].uploadDateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
-                        td +=   " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"downloadRules(" + data[num].id + ");\">下载</a>\n" +
-                            " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"updateRules(" + data[num].id + ");\">编辑</a>\n" +
-                            "  <a href=\"javascript:void(0);\"\n" +
-                            " onclick=\"deleteRules(" + data[num].id + ");\">删除</a>\n" +
-                            "  </td>";
+                        if(userActor==1) {
+                            td += "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
+                                "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
+                                "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
+                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
+                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</a>\n" +
+                                "  </td>";
+                        }else {
+                            td += "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
+                                "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
+                                "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
+                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
+                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</a>\n" +
+                                "  </td>";
+                        }
                         tr.append(td);
                         tr.appendTo(tbody);
                     });
@@ -279,9 +292,11 @@
 
                         <td  style="text-align: right">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryRulesByCondition()">查找</a>
+                               href="javascript:void(0);" onclick="queryRulesByCondition()"
+                        >查找</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
+                               th:disabled="${userInfo.userActor ne 1}"
                                href="/rules/toaddrulespage">新增</a>
                         </td>
                         <td>
@@ -320,13 +335,16 @@
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
                     <td align="center" th:text="${rule.remark}"></td>
-                    <td align="center">
-                        <a href="javascript:void(0);"
-                           th:onclick="downloadRules([[${rule.id}]]);">下载</a>
-                        <a href="javascript:void(0);"
-                           th:onclick="updateRules([[${rule.id}]]);">编辑</a>
-                        <a href="javascript:void(0);"
-                           th:onclick="deleteRules([[${rule.id}]]);">删除</a>
+                    <td align="center" th:disabled="${userInfo.userActor ne 1}">
+                        <button type="button" class="btn btn-primary btn-sm"
+                           th:disabled="${userInfo.userActor ne 1}"
+                           th:onclick="downloadRules([[${rule.id}]]);">下载</button>
+                        <button type="button" class="btn btn-primary btn-sm"
+                           th:disabled="${userInfo.userActor ne 1}"
+                                th:onclick="updateRules([[${rule.id}]]);">编辑</button>
+                        <button type="button" class="btn btn-primary btn-sm"
+                           th:disabled="${userInfo.userActor ne 1}"
+                                th:onclick="deleteRules([[${rule.id}]]);">删除</button>
                     </td>
                 </tr>
             </div>
@@ -340,7 +358,7 @@
         </div>
         </tbody>
 
-        <tfoot id="s_tfoot">
+        <tfoot id="s_tfoot" >
         <tr id="showdiv">
 
             <td colspan="8" align="center">
@@ -358,7 +376,7 @@
                                          onClick="goPageone()"/>
                                     <img src="/images/page/syy-2.jpg" align="middle" border="0" onClick="goPrePage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
-
++
                                 </span>
                                 </span>
                 <span id="image02">
@@ -391,7 +409,9 @@
                        style="width: 50px"
                        id="_tp" th:name="currentPage" type="text" th:value="${rules.currentPage}"/>
                 页&nbsp;
-                <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
+                <img src="/images/page/cx-2.jpg"
+                     th:disabled="${userInfo.userActor ne 1}"
+                     id="gopage" onClick="goPage2()"
                      style="width:20px;height:20px;vertical-align:middle">
             </td>
 
@@ -399,7 +419,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="7" align="center">
+            <td colspan=8" align="center">
                 查无数据
             </td>
         </tr>

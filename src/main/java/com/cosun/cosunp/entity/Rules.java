@@ -31,6 +31,7 @@ public class Rules implements Serializable {
     private String loginName;
     private MultipartFile uploadRuleFile;
     private String fileDir;
+    private Integer userActor;
 
     private List<Integer> deptIds;
 
@@ -40,6 +41,14 @@ public class Rules implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public Integer getUserActor() {
+        return userActor;
+    }
+
+    public void setUserActor(Integer userActor) {
+        this.userActor = userActor;
+    }
 
     public String getFileName() {
         return fileName;

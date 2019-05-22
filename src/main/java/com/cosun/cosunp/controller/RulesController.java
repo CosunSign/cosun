@@ -41,7 +41,8 @@ public class RulesController {
 
     @ResponseBody
     @RequestMapping("/torulespage")
-    public ModelAndView torulespage() throws Exception {
+    public ModelAndView torulespage(HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("rules");
         Rules rules = new Rules();
         List<Dept> deptList = personServ.findAllDeptAll();
@@ -54,6 +55,7 @@ public class RulesController {
         view.addObject("deptList", deptList);
         view.addObject("rules", rules);
         view.addObject("rulesList", rulesList);
+        view.addObject("userInfo",userInfo);
         return view;
     }
 
@@ -138,8 +140,8 @@ public class RulesController {
     @RequestMapping(value = "/showRulesById", method = RequestMethod.POST)
     public void showRulesById(Integer id,HttpServletResponse response) throws Exception {
         Rules rules = rulesServ.getRulesById(id);
-        String[] centerPath =  rules.getFileDir().split("\\.");
-        String htmlName = centerPath[0]+".html";
+        int index = rules.getFileDir().lastIndexOf(".");
+        String htmlName = rules.getFileDir().substring(0,index)+".html";
 //        String str1;
 //        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
@@ -182,7 +184,8 @@ public class RulesController {
 
     @ResponseBody
     @RequestMapping(value = "/queryRulesByCondition", method = RequestMethod.POST)
-    public void queryRulesByCondition(Rules rules, HttpServletResponse response) throws Exception {
+    public void queryRulesByCondition(Rules rules, HttpServletResponse response,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Rules> rulesList = rulesServ.queryRulesByCondition(rules);
         int recordCount = rulesServ.queryRulesByConditionCount(rules);
         int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() : recordCount / rules.getPageSize() + 1;
@@ -190,6 +193,7 @@ public class RulesController {
             rulesList.get(0).setMaxPage(maxPage);
             rulesList.get(0).setRecordCount(recordCount);
             rulesList.get(0).setCurrentPage(rules.getCurrentPage());
+            rulesList.get(0).setUserActor(userInfo.getUserActor());
         }
         String str1;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据

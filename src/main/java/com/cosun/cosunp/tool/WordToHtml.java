@@ -38,8 +38,8 @@ public class WordToHtml {
      * poi:word07在线预览
      */
     public static void word2007ToHtml(String centerPath, String allPath, MultipartFile file) throws Exception {
-        String[] nameOnlys = file.getOriginalFilename().split("\\.");
-        String nameOnly = nameOnlys[0];
+        int index = file.getOriginalFilename().lastIndexOf(".");
+        String nameOnly = file.getOriginalFilename().substring(0,index);
         String imagePathStr = centerPath + "image/";
         OutputStreamWriter outputStreamWriter = null;
         try {
@@ -52,6 +52,7 @@ public class WordToHtml {
             outputStreamWriter = new OutputStreamWriter(new FileOutputStream(centerPath + nameOnly + ".html"), "utf-8");
             XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance();
             xhtmlConverter.convert(document, outputStreamWriter, options);
+            outputStreamWriter.close();
         } finally {
             if (outputStreamWriter != null) {
                 outputStreamWriter.close();
@@ -61,8 +62,8 @@ public class WordToHtml {
 
 
     public static void DocToHtml(String centerPath, String allPath, MultipartFile file) {
-        String[] nameOnlys = file.getOriginalFilename().split("\\.");
-        String nameOnly = nameOnlys[0];
+        int index = file.getOriginalFilename().lastIndexOf(".");
+        String nameOnly = file.getOriginalFilename().substring(0,index);
         String outPutFile = centerPath + nameOnly + ".html";
         HWPFDocument wordDocument;
         try {

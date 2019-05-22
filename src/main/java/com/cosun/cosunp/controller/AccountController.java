@@ -98,8 +98,8 @@ public class AccountController {
             Rules rules = rulesServ.getRulesByName("总经办");
             String htmlContent = "";
             if (rules != null) {
-                String[] centerPath = rules.getFileDir().split("\\.");
-                String htmlName = centerPath[0] + ".html";
+                int index = rules.getFileDir().lastIndexOf(".");
+                String htmlName = rules.getFileDir().substring(0,index) + ".html";
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
                 String line;
