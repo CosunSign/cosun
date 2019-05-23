@@ -91,6 +91,7 @@ public class RulesController {
         Rules rule = rulesServ.getRulesById(id);
         resp.setHeader("content-type", "application/octet-stream");
         resp.setContentType("application/octet-stream");
+        resp.setCharacterEncoding("UTF-8");
         resp.setHeader("Content-Disposition", "attachment;filename=" + new String(rule.getFileName().getBytes(), "iso-8859-1"));
         byte[] buff = new byte[1024];
         BufferedInputStream bufferedInputStream = null;
@@ -119,7 +120,8 @@ public class RulesController {
 
     @ResponseBody
     @RequestMapping("/deleteRulesById")
-    public ModelAndView deleteRulesById(Integer id) throws Exception {
+    public ModelAndView deleteRulesById(Integer id,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         rulesServ.deleteRulesById(id);
         Rules rules = new Rules();
         ModelAndView view = new ModelAndView("rules");
@@ -133,6 +135,7 @@ public class RulesController {
         view.addObject("deptList", deptList);
         view.addObject("rules", rules);
         view.addObject("rulesList", rulesList);
+        view.addObject("userInfo",userInfo);
         return view;
     }
 
@@ -225,6 +228,7 @@ public class RulesController {
         rules.setRecordCount(recordCount);
         view.addObject("rulesList", rulesList);
         view.addObject("rules", rules);
+        view.addObject("userInfo",userInfo);
         if(isUploadFileRight) {
             view.addObject("flag", 3);
         }else{
@@ -252,6 +256,7 @@ public class RulesController {
         view.addObject("rulesList", rulesList);
         view.addObject("rules", rules);
         view.addObject("deptList", deptList);
+        view.addObject("userInfo",userInfo);
         if (isDocorDocx) {
             view.addObject("flag", 1);
         } else {
