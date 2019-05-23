@@ -689,7 +689,7 @@ public class PersonController {
         a.setPositionLevel(workSet.getWorkLevel());
         a = personServ.getWorkDateByMonth(a);
         workSet.setWorkDate(a.getWorkDate());
-        workSet.setWorkLevel(personServ.getPositionNamesByPositionLevel(workSet.getWorkLevel()));
+        workSet.setWorkLevelStr(personServ.getPositionNamesByPositionLevel(workSet.getWorkLevel()));
         view.addObject("workSet", workSet);
         return view;
 

@@ -90,29 +90,41 @@
             flag = false;
         }
 
-        var morningOffStr = $("#morningOffStr").val();
-        if (morningOffStr <= 0) {
+        // var morningOffStr = $("#morningOffStr").val();
+        // if (morningOffStr <= 0) {
+        //     flag = false;
+        // }
+        // var morningOffFromStr = $("#morningOffFromStr").val();
+        // if (morningOffFromStr <= 0) {
+        //     flag = false;
+        // }
+        // var morningOffEndStr = $("#morningOffEndStr").val();
+        // if (morningOffEndStr <= 0) {
+        //     flag = false;
+        // }
+        //
+        // var noonOnStr = $("#noonOnStr").val();
+        // if (noonOnStr <= 0) {
+        //     flag = false;
+        // }
+        // var noonOnFromStr = $("#noonOnFromStr").val();
+        // if (noonOnFromStr <= 0) {
+        //     flag = false;
+        // }
+        // var noonOnEndStr = $("#noonOnEndStr").val();
+        // if (noonOnEndStr <= 0) {
+        //     flag = false;
+        // }
+        var noonOffStr = $("#noonOffStr").val();
+        if (noonOffStr <= 0) {
             flag = false;
         }
-        var morningOffFromStr = $("#morningOffFromStr").val();
-        if (morningOffFromStr <= 0) {
+        var noonOffFromStr = $("#noonOffFromStr").val();
+        if (noonOffFromStr <= 0) {
             flag = false;
         }
-        var morningOffEndStr = $("#morningOffEndStr").val();
-        if (morningOffEndStr <= 0) {
-            flag = false;
-        }
-
-        var noonOnStr = $("#noonOnStr").val();
-        if (noonOnStr <= 0) {
-            flag = false;
-        }
-        var noonOnFromStr = $("#noonOnFromStr").val();
-        if (noonOnFromStr <= 0) {
-            flag = false;
-        }
-        var noonOnEndStr = $("#noonOnEndStr").val();
-        if (noonOnEndStr <= 0) {
+        var noonOffEndStr = $("#noonOffEndStr").val();
+        if (noonOffEndStr <= 0) {
             flag = false;
         }
         if (flag) {
@@ -183,7 +195,7 @@
                     </tr>
                     <tr>
                         <td><label>职位类别信息：</label></td>
-                        <td colspan="5"><input type="text" id="positionLevelId" th:field="*{workLevel}" class="form-control" disabled
+                        <td colspan="5"><input type="text" id="positionLevelId" th:field="*{workLevelStr}" class="form-control" disabled
                                                style="width:900px"/>
                         </td>
                     </tr>

@@ -18,6 +18,7 @@ public class WorkSet implements Serializable {
 
     private Integer id;
     private String workLevel;
+    private String workLevelStr;
     private Integer month;
     private Date updateDate;
     private Time morningOn;
@@ -68,6 +69,14 @@ public class WorkSet implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public String getWorkLevelStr() {
+        return workLevelStr;
+    }
+
+    public void setWorkLevelStr(String workLevelStr) {
+        this.workLevelStr = workLevelStr;
+    }
 
     public Time getExtworkonFrom() {
         return extworkonFrom;

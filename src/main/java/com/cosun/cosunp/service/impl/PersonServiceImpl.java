@@ -353,7 +353,7 @@ public class PersonServiceImpl implements IPersonServ {
                     em.setName(cell[2].getContents().trim());
                     em.setDeptName(cell[3].getContents().trim());
                     em.setPositionName(cell[4].getContents().trim());
-                    if (cell.length>=6) {
+                    if (cell.length >= 6) {
                         em.setPositionLevel(cell[5].getContents().trim());
                     }
                     employeeList.add(em);
@@ -570,16 +570,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                     otw.setIsAoffOk("正常");
                                                 }
                                             } else {
-                                                errorMessage = em.getName() + "没有设置早上下班打卡时间段";
-                                                aaa.setErrorMessage(errorMessage);
-                                                outPutWorkData.add(aaa);
-                                                return outPutWorkData;
+                                                aoff = true;
+//                                                errorMessage = em.getName() + "没有设置早上下班打卡时间段";
+//                                                aaa.setErrorMessage(errorMessage);
+//                                                outPutWorkData.add(aaa);
+//                                                return outPutWorkData;
                                             }
                                         } else {
-                                            errorMessage = em.getName() + "没有设置早上下班时间";
-                                            aaa.setErrorMessage(errorMessage);
-                                            outPutWorkData.add(aaa);
-                                            return outPutWorkData;
+                                            aoff = true;
+//                                            errorMessage = em.getName() + "没有设置早上下班时间";
+//                                            aaa.setErrorMessage(errorMessage);
+//                                            outPutWorkData.add(aaa);
+//                                            return outPutWorkData;
                                         }
                                         //下午上班
                                         if (workSet.getNoonOn() != null) {
@@ -593,16 +595,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                     otw.setIsPOnOk("正常");
                                                 }
                                             } else {
-                                                errorMessage = em.getName() + "没有设置上午上班打卡时间段";
-                                                aaa.setErrorMessage(errorMessage);
-                                                outPutWorkData.add(aaa);
-                                                return outPutWorkData;
+                                                pon = true;
+//                                                errorMessage = em.getName() + "没有设置上午上班打卡时间段";
+//                                                aaa.setErrorMessage(errorMessage);
+//                                                outPutWorkData.add(aaa);
+//                                                return outPutWorkData;
                                             }
                                         } else {
-                                            errorMessage = em.getName() + "没有设置上午上班打卡时间";
-                                            aaa.setErrorMessage(errorMessage);
-                                            outPutWorkData.add(aaa);
-                                            return outPutWorkData;
+                                            pon = true;
+//                                            errorMessage = em.getName() + "没有设置上午上班打卡时间";
+//                                            aaa.setErrorMessage(errorMessage);
+//                                            outPutWorkData.add(aaa);
+//                                            return outPutWorkData;
                                         }
                                         //下午下班
                                         if (workSet.getNoonOff() != null) {
@@ -616,16 +620,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                     otw.setIsPOffOk("正常");
                                                 }
                                             } else {
-                                                errorMessage = em.getName() + "没有设置下午下班打卡时间段";
-                                                aaa.setErrorMessage(errorMessage);
-                                                outPutWorkData.add(aaa);
-                                                return outPutWorkData;
+                                                poff = true;
+//                                                errorMessage = em.getName() + "没有设置下午下班打卡时间段";
+//                                                aaa.setErrorMessage(errorMessage);
+//                                                outPutWorkData.add(aaa);
+//                                                return outPutWorkData;
                                             }
                                         } else {
-                                            errorMessage = em.getName() + "没有设置下午下班打卡时间";
-                                            aaa.setErrorMessage(errorMessage);
-                                            outPutWorkData.add(aaa);
-                                            return outPutWorkData;
+                                            poff = true;
+//                                            errorMessage = em.getName() + "没有设置下午下班打卡时间";
+//                                            aaa.setErrorMessage(errorMessage);
+//                                            outPutWorkData.add(aaa);
+//                                            return outPutWorkData;
                                         }
                                         //晚上加班
                                         Double extHours = 0.0;
@@ -730,25 +736,29 @@ public class PersonServiceImpl implements IPersonServ {
                                         otw.setIsAonOk("旷工");
                                         otw.setRemark("旷工");
                                     }
-                                    leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
-                                    if (leave != null) {
-                                        otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                        otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                        otw.setRemark("请假");
-                                        otw.setIsAoffOk("请假");
-                                    } else {
-                                        otw.setIsAoffOk("旷工");
-                                        otw.setRemark("旷工");
+                                    if (workSet.getMorningOff() != null) {
+                                        leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
+                                        if (leave != null) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setRemark("请假");
+                                            otw.setIsAoffOk("请假");
+                                        } else {
+                                            otw.setIsAoffOk("旷工");
+                                            otw.setRemark("旷工");
+                                        }
                                     }
-                                    leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
-                                    if (leave != null) {
-                                        otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                        otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                        otw.setRemark("请假");
-                                        otw.setIsPOnOk("请假");
-                                    } else {
-                                        otw.setIsPOnOk("旷工");
-                                        otw.setRemark("旷工");
+                                    if (workSet.getNoonOn() != null) {
+                                        leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
+                                        if (leave != null) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setRemark("请假");
+                                            otw.setIsPOnOk("请假");
+                                        } else {
+                                            otw.setIsPOnOk("旷工");
+                                            otw.setRemark("旷工");
+                                        }
                                     }
                                     leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOff().toString());
                                     if (leave != null) {
