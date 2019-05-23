@@ -225,6 +225,9 @@ public interface PersonMapper {
     @Insert("insert into position (positionName) values(#{positionName})")
     void addPositionByName(String positionName);
 
+    @Insert("insert into position (positionName,positionLevel) values(#{positionName},#{positionLevel})")
+    void addPositionByNameandPositionLevel(String positionName,String positionLevel);
+
     @Update("TRUNCATE table dept")
     void clearDeptData();
 
@@ -438,7 +441,7 @@ public interface PersonMapper {
                 sb.append(" and e.sex = #{sex} ");
             }
             if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
-                sb.append(" and e.empno  like  CONCAT('%',#{empno},'%') ");
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
             }
 
             if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {

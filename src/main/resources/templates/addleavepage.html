@@ -59,7 +59,7 @@
         dateSpan = sDate2 - sDate1;
         dateSpan = Math.abs(dateSpan);
         iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
-        return iDays
+        return iDays+1;
     }
 
     function computeLeaveLong() {
@@ -80,7 +80,7 @@
                     if (ms < 0) leaveLong = 0;
                     leaveLong = Math.floor(ms / 1000 / 60 / 60);
                     if (ms >= 32400000) {
-                        leaveLong = leaveLong - 1.5;
+                        leaveLong = leaveLong - 1;
                     }
                     if (!isNaN(leaveLong))
                         $("#leaveLong").val(leaveLong);

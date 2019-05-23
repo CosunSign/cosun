@@ -131,9 +131,9 @@
         <input type="hidden" id="flag2" th:value="${flag2}">
         <input type="hidden" id="errorMessage" th:value="${errorMessage}">
         <input type="hidden" id="orginLcation"   th:value="compute.fileLocation">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">考勤计算</h3>
+        <div >
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">考勤计算(仅支持XLS)</h3>
             </div>
             <div class="panel-body form-inline">
                 <table class="table table-bordered table-hover table-striped">
@@ -174,9 +174,9 @@
 
     <form  id="inData" th:action="@{/person/dataInMysql}" th:method="post" enctype="multipart/form-data" >
         <input type="hidden" id="flag1" th:value="${flag1}">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">数据导入</h3>
+        <div  >
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">数据导入(仅支持XLS)</h3>
             </div>
             <div class="panel-body form-inline">
                 <table class="table table-bordered table-hover table-striped">

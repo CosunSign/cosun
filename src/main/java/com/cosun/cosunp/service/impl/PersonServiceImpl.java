@@ -353,6 +353,9 @@ public class PersonServiceImpl implements IPersonServ {
                     em.setName(cell[2].getContents().trim());
                     em.setDeptName(cell[3].getContents().trim());
                     em.setPositionName(cell[4].getContents().trim());
+                    if (cell.length>=6) {
+                        em.setPositionLevel(cell[5].getContents().trim());
+                    }
                     employeeList.add(em);
                 }
             }
@@ -371,6 +374,10 @@ public class PersonServiceImpl implements IPersonServ {
                     em.setName(cell2[2].getContents().trim());
                     em.setDeptName(cell2[3].getContents().trim());
                     em.setPositionName(cell2[4].getContents().trim());
+                    if (cell2.length >= 6) {
+                        em.setPositionLevel(cell2[5].getContents().trim());
+                    }
+
                     employeeList.add(em);
                 }
             }
@@ -428,7 +435,11 @@ public class PersonServiceImpl implements IPersonServ {
                 depts.add(em.getDeptName());
             }
             if (!positions.contains(em.getPositionName())) {
-                personMapper.addPositionByName(em.getPositionName());
+                if (em.getPositionLevel() != null) {
+                    personMapper.addPositionByNameandPositionLevel(em.getPositionName(), em.getPositionLevel());
+                } else {
+                    personMapper.addPositionByName(em.getPositionName());
+                }
                 positions.add(em.getPositionName());
             }
         }

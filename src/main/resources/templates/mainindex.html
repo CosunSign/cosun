@@ -135,12 +135,10 @@
                     <a th:href="@{/person/tocomputeworkdate}" target="targetText"><span
                             class="fa fa-caret-right"></span>考勤计算</a></li>
                 <li>
-                    <a th:href="@{/person/topositanddeptpage(flaga=0)}" target="targetText"><span
+                    <a th:href="@{/person/topositanddeptpage}" target="targetText"><span
                             class="fa fa-caret-right"></span>职位/部门</a></li>
             </ul>
         </li>
-
-
 
 
         <li data-popover="false"
@@ -157,13 +155,13 @@
                     <div th:each="rule,iterStat: ${menuList}" align="center">
                         <li>
                             <a href="javascript:void(0);"
-                               th:onclick="getHtmlStreamById([[${rule.id}]]);" target="targetText" th:text="${rule.deptName}"><span
+                               th:onclick="getHtmlStreamById([[${rule.id}]]);" target="targetText"
+                               th:text="${rule.deptName}"><span
                                     class="fa fa-caret-right"></span></a></li>
                     </div>
                 </div>
             </ul>
         </li>
-
 
 
         <li data-popover="false"
@@ -196,12 +194,9 @@
         <iframe class="iframecontent" src="" style="float: left" name="targetText" id="abcds">
         </iframe>
     </div>
-    <div class="content" id="contentnew" style="overflow-y:scroll;" th:utext="${htmlStr}" >
-1112
+    <div class="content" id="contentnew" style="overflow-y:scroll;" th:utext="${htmlStr}">
     </div>
 </div>
-
-
 
 
 <div id="showMessageDiv" style="display: none">
@@ -324,7 +319,7 @@
 
     function getHtmlStreamById(rulesId) {
         var formData = new FormData();
-        formData.append('id',rulesId );
+        formData.append('id', rulesId);
         $.ajax({
             data: formData,
             type: "POST",
@@ -336,7 +331,7 @@
             success: function (msg) {
                 $("#content").hide();
                 $("#contentnew").show();
-               $("#contentnew").html(msg)
+                $("#contentnew").html(msg)
             },
             error: function (msg) {
             }
@@ -386,10 +381,16 @@
 
     }
 
-    #contentnew{
+    #contentnew {
         width: 1180px;
         height: 500px;
     }
+
+
+    .content {
+        min-height: 700px;
+    }
+
 
     #showMessageDiv {
         border: 1px solid #9AC0CD;
@@ -442,24 +443,24 @@
     }
 
     /*#inneradddiv {*/
-        /*border: 1px solid #9AC0CD;*/
-        /*width: 453px;*/
-        /*height: 553px;*/
-        /*margin-left: 5px;*/
-        /*margin-right: 5px;*/
-        /*margin-top: 5px;*/
+    /*border: 1px solid #9AC0CD;*/
+    /*width: 453px;*/
+    /*height: 553px;*/
+    /*margin-left: 5px;*/
+    /*margin-right: 5px;*/
+    /*margin-top: 5px;*/
     /*}*/
 
     /*#adddiv {*/
-        /*top: 13%;*/
-        /*left: 35%;*/
-        /*width: 500px;*/
-        /*height: 600px;*/
-        /*padding: 10px;*/
-        /*border: 8px solid lightsteelblue;*/
-        /*background-color: #E0EEEE;*/
-        /*z-index: 1008;*/
-        /*position: absolute;*/
+    /*top: 13%;*/
+    /*left: 35%;*/
+    /*width: 500px;*/
+    /*height: 600px;*/
+    /*padding: 10px;*/
+    /*border: 8px solid lightsteelblue;*/
+    /*background-color: #E0EEEE;*/
+    /*z-index: 1008;*/
+    /*position: absolute;*/
     /*}*/
 
     #updateDivInner {

@@ -173,9 +173,12 @@ public class Employee implements Serializable {
     }
 
     public String getSexStr() {
-        if (this.sex != null && this.sex == 1)
+        if (this.sex != null && this.sex == 1) {
             return "男";
-        return "女";
+        } else if (this.sex != null && this.sex == 0) {
+            return "女";
+        }
+        return null;
     }
 
     public void setSexStr(String sexStr) {
