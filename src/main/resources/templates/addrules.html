@@ -174,7 +174,7 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/rules/addRules}" th:method="post" th:object="${rules}"
+                <form id="addEmployee" th:action="@{/rules/addRules}"  target="_top" th:method="post" th:object="${rules}"
                       enctype="multipart/form-data">
                     <input type="hidden" id="deptIdId" th:field="*{deptId}">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: 80%">

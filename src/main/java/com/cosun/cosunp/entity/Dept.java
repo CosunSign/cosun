@@ -1,6 +1,7 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -14,6 +15,7 @@ public class Dept implements Serializable {
     private static final long serialVersionUID = -1496868843470416075L;
 
     private Integer id;
+    private List<Integer> ids;
     private String deptname;//部门名称
     private String deptNo;//部门编号
     private String remark;//备注
@@ -25,6 +27,14 @@ public class Dept implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
 
     public int getCurrentPage() {
         return currentPage;

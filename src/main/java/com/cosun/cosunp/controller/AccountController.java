@@ -99,7 +99,7 @@ public class AccountController {
             String htmlContent = "";
             if (rules != null) {
                 int index = rules.getFileDir().lastIndexOf(".");
-                String htmlName = rules.getFileDir().substring(0,index) + ".html";
+                String htmlName = rules.getFileDir().substring(0, index) + ".html";
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
                 String line;
@@ -117,6 +117,35 @@ public class AccountController {
         view.setFlag("false");
         mav.addObject("view", view);
         return mav;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/loginnew")
+    public ModelAndView loginnew(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
+        ModelAndView mav;
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.setFullName(userInfo.getFullName());
+        mav = new ModelAndView("mainindex");
+        mav.addObject("view", view);
+        List<Rules> menuList = rulesServ.findAllRulesAll();
+        mav.addObject("menuList", menuList);
+        Rules rules = rulesServ.getRulesByName("总经办");
+        String htmlContent = "";
+        if (rules != null) {
+            int index = rules.getFileDir().lastIndexOf(".");
+            String htmlName = rules.getFileDir().substring(0, index) + ".html";
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                htmlContent += line + "\n";
+            }
+        }
+        mav.addObject("htmlStr", htmlContent);
+        return mav;
+
 
     }
 

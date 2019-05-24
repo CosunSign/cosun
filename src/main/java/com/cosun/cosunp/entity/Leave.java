@@ -21,9 +21,11 @@ public class Leave implements Serializable {
     private Double leaveLong;
     private String leaveDescrip;
     private String remark;
+    private Integer type; //0.代表正常请假  //1.因公外出
 
 
     //回显信息
+    private String typeStr;
     private String positionName;
     private String deptName;
     private String name;
@@ -34,9 +36,11 @@ public class Leave implements Serializable {
     private String beginLeaveStr;
     private Integer positionId;
     private Integer deptId;
-    private List<Integer> deptIds;
 
+    private List<Integer> ids;
+    private List<Integer> deptIds;
     private List<Integer> positionIds;
+    private List<Integer> types;
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -45,6 +49,45 @@ public class Leave implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public String getTypeStr() {
+        if (type != null) {
+            if (type == 0) {
+                return "正常请假";
+            } else if (type == 1) {
+                return "因公外出";
+            }
+        }
+        return "";
+    }
+
+    public List<Integer> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<Integer> types) {
+        this.types = types;
+    }
+
+    public void setTypeStr(String typeStr) {
+        this.typeStr = typeStr;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
 
     public Integer getPositionId() {
         return positionId;
@@ -111,7 +154,7 @@ public class Leave implements Serializable {
     }
 
     public int getCurrentPageTotalNum() {
-        if(this.currentPage!=0)
+        if (this.currentPage != 0)
             return (currentPage - 1) * pageSize;
         return 0;
     }

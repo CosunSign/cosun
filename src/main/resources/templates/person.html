@@ -187,6 +187,8 @@
                             "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
                             "  <a href=\"javascript:void(0);\"\n" +
                             " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                            " &nbsp;&nbsp;&nbsp;\n" +
+                            "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">" +
                             "  </td>";
                         tr.append(td);
                         tr.appendTo(tbody);
@@ -250,6 +252,25 @@
 
     function deleteEmployee(employeeId) {
         window.location.href = "/person/deleteEmployeeById?id=" + employeeId;
+    }
+
+    function deleteEmpByBatch() {
+        var deleteBatch = document.getElementsByName("deleteBatch");
+        var check_val = [];
+        var k;
+        for (k in deleteBatch) {
+            if (deleteBatch[k].checked)
+                check_val.push(deleteBatch[k].value);
+        }
+        if (check_val.length <= 0) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+            errormessagediv.style.color = "red";
+        } else {
+            $("#errormessage").hide();
+            window.location.href = "/person/deleteEmpByBatch?ids=" + check_val;
+        }
     }
 
 </script>
@@ -341,13 +362,16 @@
                                    onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
 
                         </td>
-                        <td colspan="2" style="text-align: right">
+                        <td colspan="3" style="text-align: right">
                             <a class="btn btn-primary"
                                href="javascript:void(0);" onclick="queryEmployeeByCondition()">查找</a>
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
                                href="/person/toaddpersonpage">新增</a>
+                            &nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-primary"
+                               href="javascript:void(0);" onclick="deleteEmpByBatch()">批量删除</a>
                             <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
                         </td>
                         <td>
@@ -391,6 +415,9 @@
                            th:onclick="updateEmployee([[${employ.id}]]);">编辑</a>
                         <a href="javascript:void(0);"
                            th:onclick="deleteEmployee([[${employ.id}]]);">删除</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" name="deleteBatch" th:value="${employ.id}">
+
                     </td>
                 </tr>
             </div>

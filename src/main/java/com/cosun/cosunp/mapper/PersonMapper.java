@@ -18,6 +18,57 @@ import java.util.List;
 @Mapper
 public interface PersonMapper {
 
+
+    @Delete({
+            "<script>",
+            "delete",
+            "from position",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deletePositionByIdBatch(@Param("ids") List<Integer> ids);
+
+    @Delete({
+            "<script>",
+            "delete",
+            "from dept",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteDeptByBatch(@Param("ids") List<Integer> ids);
+
+
+    @Delete({
+            "<script>",
+            "delete",
+            "from employee",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteEmpByBatch(@Param("ids") List<Integer> ids);
+
+
+    @Delete({
+            "<script>",
+            "delete",
+            "from leavedata",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteLeaveByBatch(@Param("ids") List<Integer> ids);
+
     @Select("select count(*) from position where positionName like  CONCAT('%',#{positionName},'%') ")
     int findSaveOrNot(Position position);
 
@@ -198,7 +249,8 @@ public interface PersonMapper {
             "\ta.endleave as endLeaveStr,\n" +
             "\ta.leavelong as leaveLong,\n" +
             "\ta.leaveDescrip as leaveDescrip,\n" +
-            "\ta.remark as remark\n" +
+            "\ta.remark as remark,\n" +
+            "\ta.type as type\n" +
             "FROM\n" +
             "\tleavedata a\n" +
             "LEFT JOIN employee e ON a.employeeid = e.id\n" +
@@ -307,7 +359,8 @@ public interface PersonMapper {
             "\ta.endleave as endLeaveStr,\n" +
             "\ta.leavelong as leaveLong,\n" +
             "\ta.leaveDescrip as leaveDescrip,\n" +
-            "\ta.remark as remark\n" +
+            "\ta.remark as remark,\n" +
+            "\ta.type as type\n" +
             "FROM\n" +
             "\tleavedata a\n" +
             "LEFT JOIN employee e ON a.employeeid = e.id\n" +
@@ -341,11 +394,11 @@ public interface PersonMapper {
     void updateEmployeeData(Employee employee);
 
     @Update("update leavedata set beginleave = #{beginLeaveStr},endleave = #{endLeaveStr},leavelong =#{leaveLong}" +
-            ",leaveDescrip = #{leaveDescrip},remark = #{remark}  where id = #{id} ")
+            ",leaveDescrip = #{leaveDescrip},remark = #{remark},type = #{type }  where id = #{id} ")
     void updateLeaveToMysql(Leave leave);
 
-    @Insert("insert into leavedata (employeeid,beginleave,endleave,leavelong,leaveDescrip,remark)\n" +
-            "VALUES(#{employeeId},#{beginLeaveStr},#{endLeaveStr},#{leaveLong},#{leaveDescrip},#{remark})")
+    @Insert("insert into leavedata (employeeid,beginleave,endleave,leavelong,leaveDescrip,remark,type)\n" +
+            "VALUES(#{employeeId},#{beginLeaveStr},#{endLeaveStr},#{leaveLong},#{leaveDescrip},#{remark},#{type})")
     void addLeaveData(Leave leave);
 
     class PseronDaoProvider {
@@ -466,7 +519,7 @@ public interface PersonMapper {
 
         public String queryLeaveByCondition(Leave leave) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
-                    "\te.id AS id,\n" +
+                    "\ta.id AS id,\n" +
                     "\te.`name` AS NAME,\n" +
                     "\te.sex AS sex,\n" +
                     "\te.empno AS empNo,\n" +
@@ -477,7 +530,8 @@ public interface PersonMapper {
                     "\tdate_format(a.endleave, '%Y-%m-%d %h:%i:%s')   AS endleaveStr,\n" +
                     "\ta.remark AS remark,\n" +
                     "\ta.leaveDescrip AS leaveDescrip,\n" +
-                    "\ta.leavelong AS leaveLong" +
+                    "\ta.leavelong AS leaveLong," +
+                    "\ta.type AS type" +
                     "\n" +
                     "FROM\n" +
                     "\t leavedata a join  employee e on a.employeeid = e.id \n" +
@@ -489,6 +543,7 @@ public interface PersonMapper {
             if (leave.getSex() != null) {
                 sb.append(" and e.sex = #{sex} ");
             }
+
             if (leave.getEmpNo() != null && leave.getEmpNo() != "" && leave.getEmpNo().trim().length() > 0) {
                 sb.append(" and e.empno  like  CONCAT('%',#{empno},'%') ");
             }
@@ -497,6 +552,9 @@ public interface PersonMapper {
                 sb.append(" and e.deptId in (" + StringUtils.strip(leave.getDeptIds().toString(), "[]") + ") ");
             }
 
+            if (leave.getTypes() != null && leave.getTypes().size() > 0) {
+                sb.append(" and a.type in (" + StringUtils.strip(leave.getTypes().toString(), "[]") + ") ");
+            }
             if (leave.getPositionIds() != null && leave.getPositionIds().size() > 0) {
                 sb.append(" and e.positionId in (" + StringUtils.strip(leave.getPositionIds().toString(), "[]") + ") ");
             }
@@ -531,6 +589,10 @@ public interface PersonMapper {
 
             if (leave.getDeptIds() != null && leave.getDeptIds().size() > 0) {
                 sb.append(" and e.deptId in (" + StringUtils.strip(leave.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (leave.getTypes() != null && leave.getTypes().size() > 0) {
+                sb.append(" and a.type in (" + StringUtils.strip(leave.getTypes().toString(), "[]") + ") ");
             }
 
             if (leave.getPositionIds() != null && leave.getPositionIds().size() > 0) {

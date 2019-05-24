@@ -34,6 +34,7 @@ public class Rules implements Serializable {
     private Integer userActor;
 
     private List<Integer> deptIds;
+    private List<Integer> ids;
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -44,6 +45,14 @@ public class Rules implements Serializable {
 
     public Integer getUserActor() {
         return userActor;
+    }
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
     public void setUserActor(Integer userActor) {

@@ -99,16 +99,23 @@ public class RulesServiceImpl implements IrulesServ {
         return true;
     }
 
+    public void deleteRulesByBatch(List<Integer> ids) throws Exception {
+        rulesMapper.deleteRulesByBatch(ids);
+    }
+
+
     public void deleteRulesById(Integer id) throws Exception {
         Rules rules = rulesMapper.getRulesById(id);
-        int index = rules.getFileDir().lastIndexOf("/");
-        String centerPaths = rules.getFileDir().substring(0,index);
-        //String htmlName = centerPaths[0]+".html";
-       // FileUtil.delFolder(centerPaths[0]);
-        FileUtil.delFolderNew(centerPaths);
-        // FileUtil.delFile(rules.getFileDir());
-        // FileUtil.delFile(htmlName);
-        rulesMapper.deleteRulesById(id);
+        if(rules!=null) {
+            int index = rules.getFileDir().lastIndexOf("/");
+            String centerPaths = rules.getFileDir().substring(0, index);
+            //String htmlName = centerPaths[0]+".html";
+            // FileUtil.delFolder(centerPaths[0]);
+            FileUtil.delFolderNew(centerPaths);
+            // FileUtil.delFile(rules.getFileDir());
+            // FileUtil.delFile(htmlName);
+            rulesMapper.deleteRulesById(id);
+        }
     }
 
 

@@ -162,6 +162,25 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping("/deleteLeaveByBatch")
+    public ModelAndView deleteLeaveByBatch(Leave leave) throws Exception {
+        personServ.deleteLeaveByBatch(leave.getIds());
+        ModelAndView view = new ModelAndView("leave");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Leave> leaveList = personServ.findAllLeave(leave);
+        int recordCount = personServ.findAllLeaveCount();
+        int maxPage = recordCount % leave.getPageSize() == 0 ? recordCount / leave.getPageSize() : recordCount / leave.getPageSize() + 1;
+        leave.setMaxPage(maxPage);
+        leave.setRecordCount(recordCount);
+        view.addObject("leaveList", leaveList);
+        view.addObject("leave", leave);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        return view;
+    }
+
+    @ResponseBody
     @RequestMapping("/deleteLeaveById")
     public ModelAndView deleteLeaveById(Integer id) throws Exception {
         personServ.deleteLeaveById(id);
@@ -509,12 +528,28 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/deletePositionByBatch", method = RequestMethod.GET)
+    public ModelAndView deletePositionByBatch(Position position) throws Exception {
+        ModelAndView view = new ModelAndView("positionpage");
+        personServ.deletePositionByIdBatch(position.getIds());
+        List<Position> positionList = new ArrayList<Position>();
+        positionList = personServ.findAllPosition(position);
+        int recordCount = personServ.queryPositionCountByNameA(position);
+        int maxPage = recordCount % position.getPageSize() == 0 ? recordCount / position.getPageSize() : recordCount / position.getPageSize() + 1;
+        position.setMaxPage(maxPage);
+        position.setRecordCount(recordCount);
+        view.addObject("positionList", positionList);
+        view.addObject("position", position);
+        view.addObject("flag", 4);
+        return view;
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/deletePosition", method = RequestMethod.GET)
     public ModelAndView deletePosition(Integer id, Position position) throws Exception {
         ModelAndView view = new ModelAndView("positionpage");
-        Dept dept = new Dept();
         personServ.deletePositionById(id);
-
         List<Position> positionList = new ArrayList<Position>();
         positionList = personServ.findAllPosition(position);
         int recordCount = personServ.queryPositionCountByNameA(position);
@@ -532,6 +567,22 @@ public class PersonController {
     public ModelAndView deleteDept(Integer id, Dept dept) throws Exception {
         ModelAndView view = new ModelAndView("deptpage");
         personServ.deleteDeptById(id);
+        List<Dept> deptList = personServ.findAllDept(dept);
+        int recordCount = personServ.queryDeptCountByNameA(dept);
+        int maxPage = recordCount % dept.getPageSize() == 0 ? recordCount / dept.getPageSize() : recordCount / dept.getPageSize() + 1;
+        dept.setMaxPage(maxPage);
+        dept.setRecordCount(recordCount);
+        view.addObject("deptList", deptList);
+        view.addObject("dept", dept);
+        view.addObject("flag", 4);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteDeptByBatch", method = RequestMethod.GET)
+    public ModelAndView deleteDeptByBatch(Dept dept) throws Exception {
+        ModelAndView view = new ModelAndView("deptpage");
+        personServ.deleteDeptByBatch(dept.getIds());
         List<Dept> deptList = personServ.findAllDept(dept);
         int recordCount = personServ.queryDeptCountByNameA(dept);
         int maxPage = recordCount % dept.getPageSize() == 0 ? recordCount / dept.getPageSize() : recordCount / dept.getPageSize() + 1;
@@ -785,6 +836,7 @@ public class PersonController {
         }
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/queryLeaveByCondition", method = RequestMethod.POST)
     public void queryLeaveByCondition(Leave leave, HttpServletResponse response) throws Exception {
@@ -807,6 +859,28 @@ public class PersonController {
             logger.debug(e.getMessage());
             throw e;
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteEmpByBatch", method = RequestMethod.GET)
+    public ModelAndView deleteEmpByBatch(Employee employee) throws Exception {
+        ModelAndView view = new ModelAndView("person");
+        personServ.deleteEmpByBatch(employee.getIds());
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> employeeList = personServ.findAllEmployee(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("flag", 2);
+        return view;
     }
 
     @ResponseBody

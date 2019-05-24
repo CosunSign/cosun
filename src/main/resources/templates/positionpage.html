@@ -36,7 +36,6 @@
     }
 
 
-
     #coverbehidepage1 {
         position: absolute;
         top: 0px;
@@ -294,7 +293,25 @@
     }
 
 
-
+    function deletepositionByBatch() {
+        //deleteBatch
+        var deleteBatch = document.getElementsByName("deleteBatch");
+        var check_val = [];
+        var k;
+        for (k in deleteBatch) {
+            if (deleteBatch[k].checked)
+                check_val.push(deleteBatch[k].value);
+        }
+        if (check_val.length <= 0) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+            errormessagediv.style.color = "red";
+        } else {
+            $("#errormessage").hide();
+            window.location.href = "/person/deletePositionByBatch?ids=" + check_val;
+        }
+    }
 
 </script>
 <body>
@@ -304,14 +321,14 @@
 <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${position.currentPage}"/>
 <ul id="myTab" class="nav nav-tabs">
     <li class="active">
-        <a href="#position" data-toggle="tab"  >职位</a>
+        <a href="#position" data-toggle="tab">职位</a>
     </li>
-    <li><a th:href="@{/person/topositanddeptpage2}" >部门</a></li>
+    <li><a th:href="@{/person/topositanddeptpage2}">部门</a></li>
 </ul>
 <br>
 <p>
 <div id="myTabContent" class="tab-content">
-    <div  id="position" >
+    <div id="position">
         <div id='app'>
             <div class="panel panel-primary">
                 <div class="panel-body form-inline">
@@ -324,8 +341,8 @@
                                 <td>
                                     <label>
                                         <input type="text" class="form-control" style="width:180px" id="positionName"
-                                                  th:name="positionName" th:value="${positionName}"
-                                                  onkeypress="if(event.keyCode==13) {querybutton.click();return false;}"></label>
+                                               th:name="positionName" th:value="${positionName}"
+                                               onkeypress="if(event.keyCode==13) {querybutton.click();return false;}"></label>
                                 </td>
 
                                 <td style="text-align: right">
@@ -353,10 +370,13 @@
                                     <a class="btn btn-primary"
                                        href="javascript:void(0);" onclick="addposition()">新增</a>
                                     <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-primary"
+                                       href="javascript:void(0);" onclick="deletepositionByBatch()">批量删除</a>
                                 </td>
                                 <td>
                                     &nbsp;&nbsp;&nbsp;
-                                    <div  id="errormessage">
+                                    <div id="errormessage">
 
                                     </div>
                                 </td>
@@ -387,6 +407,7 @@
                                    th:onclick="updatePosition([[${posit.id}]],[[${posit.positionName}]], [[${posit.positionLevel}]],this);">编辑</a>
                                 <a href="javascript:void(0);"
                                    th:onclick="deletePosition([[${posit.id}]], this);">删除</a>
+                                &nbsp;&nbsp;&nbsp;<input type="checkbox" name="deleteBatch" th:value="${posit.id}">
                             </td>
                         </tr>
                     </div>
@@ -518,8 +539,6 @@
         </table>
     </div>
 </div>
-
-
 
 
 </body>

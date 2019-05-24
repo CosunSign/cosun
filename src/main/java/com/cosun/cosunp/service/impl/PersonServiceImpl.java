@@ -33,6 +33,25 @@ public class PersonServiceImpl implements IPersonServ {
     @Autowired
     PersonMapper personMapper;
 
+    public void deletePositionByIdBatch(List<Integer> ids) throws Exception {
+        personMapper.deletePositionByIdBatch(ids);
+    }
+
+    public void deleteDeptByBatch(List<Integer> ids) throws Exception {
+        personMapper.deleteDeptByBatch(ids);
+    }
+
+    public void deleteEmpByBatch(List<Integer> ids) throws Exception {
+        personMapper.deleteEmpByBatch(ids);
+    }
+
+
+    public void deleteLeaveByBatch(List<Integer> ids) throws Exception {
+        personMapper.deleteLeaveByBatch(ids);
+    }
+
+
+
     public int checkAndSavePosition(Position position) throws Exception {
         int isExist = personMapper.findSaveOrNot(position);
         if (isExist > 0) {//代表数据库存在职位，不允许重复增加 0
@@ -614,7 +633,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                 if (time.after(workSet.getNoonOffFrom()) && time.before(workSet.getNoonOffEnd()) || (time.equals(workSet.getNoonOff()))) {
                                                     poff = true;
                                                     otw.setWorkSetPOff(workSet.getNoonOff().toString());
-                                                    otw.setWorkSetPOffForm(workSet.getNoonOffFrom().toString());
+                                                     otw.setWorkSetPOffForm(workSet.getNoonOffFrom().toString());
                                                     otw.setWorkSetPOffEnd(workSet.getNoonOffEnd().toString());
                                                     otw.setClockPOff(time.toString());
                                                     otw.setIsPOffOk("正常");
@@ -669,10 +688,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!aon) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOn().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setIsAonOk("请假");
-                                            otw.setRemark("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsAonOk("正常请假");
+                                                otw.setRemark("正常请假");
+                                            }else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsAonOk("因公外出");
+                                                otw.setRemark("因公外出");
+                                            }
                                         } else {
                                             otw.setIsAonOk("打卡时间不在规定时间范围内");
                                             otw.setRemark("打卡时间不在规定时间范围内");
@@ -681,10 +707,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!aoff) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setIsAoffOk("请假");
-                                            otw.setRemark("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsAoffOk("正常请假");
+                                                otw.setRemark("正常请假");
+                                            }else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsAoffOk("因公外出");
+                                                otw.setRemark("因公外出");
+                                            }
                                         } else {
                                             otw.setIsAoffOk("打卡时间不在规定时间范围内");
                                             otw.setRemark("打卡时间不在规定时间范围内");
@@ -694,10 +727,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!pon) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setIsPOnOk("请假");
-                                            otw.setRemark("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsPOnOk("正常请假");
+                                                otw.setRemark("正常请假");
+                                            }else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsPOnOk("因公外出");
+                                                otw.setRemark("因公外出");
+                                            }
                                         } else {
                                             otw.setIsPOnOk("打卡时间不在规定时间范围内");
                                             otw.setRemark("打卡时间不在规定时间范围内");
@@ -707,10 +747,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!poff) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOff().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setIsPOffOk("请假");
-                                            otw.setRemark("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsPOffOk("正常请假");
+                                                otw.setRemark("正常请假");
+                                            }else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setIsPOffOk("因公外出");
+                                                otw.setRemark("因公外出");
+                                            }
                                         } else {
                                             otw.setIsPOffOk("打卡时间不在规定时间范围内");
                                             otw.setRemark("打卡时间不在规定时间范围内");
@@ -720,18 +767,31 @@ public class PersonServiceImpl implements IPersonServ {
                                 } else {
                                     Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), "2019-" + month + "-" + date + " " + "08:00:00", "2019-" + month + "-" + date + " " + "17:30:00");
                                     if (leave != null) {
-                                        otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                        otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                        otw.setRemark("请假");
+                                        if(leave.getType()==0) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setRemark("正常请假");
+                                        }else if(leave.getType()==1) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setRemark("因公外出");
+                                        }
                                     } else {
                                         otw.setRemark("旷工");
                                     }
                                     leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOn().toString());
                                     if (leave != null) {
-                                        otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                        otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                        otw.setIsAonOk("请假");
-                                        otw.setRemark("请假");
+                                        if(leave.getType()==0) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setIsAonOk("正常请假");
+                                            otw.setRemark("正常请假");
+                                        }else if(leave.getType()==1) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setIsAonOk("因公外出");
+                                            otw.setRemark("因公外出");
+                                        }
                                     } else {
                                         otw.setIsAonOk("旷工");
                                         otw.setRemark("旷工");
@@ -739,10 +799,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (workSet.getMorningOff() != null) {
                                         leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setRemark("请假");
-                                            otw.setIsAoffOk("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setRemark("正常请假");
+                                                otw.setIsAoffOk("正常请假");
+                                            }else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setRemark("因公外出");
+                                                otw.setIsAoffOk("因公外出");
+                                            }
                                         } else {
                                             otw.setIsAoffOk("旷工");
                                             otw.setRemark("旷工");
@@ -751,10 +818,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (workSet.getNoonOn() != null) {
                                         leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
                                         if (leave != null) {
-                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                            otw.setRemark("请假");
-                                            otw.setIsPOnOk("请假");
+                                            if(leave.getType()==0) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setRemark("正常请假");
+                                                otw.setIsPOnOk("正常请假");
+                                            } else if(leave.getType()==1) {
+                                                otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                                otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                                otw.setRemark("因公外出");
+                                                otw.setIsPOnOk("因公外出");
+                                            }
                                         } else {
                                             otw.setIsPOnOk("旷工");
                                             otw.setRemark("旷工");
@@ -762,10 +836,17 @@ public class PersonServiceImpl implements IPersonServ {
                                     }
                                     leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOff().toString());
                                     if (leave != null) {
-                                        otw.setLeaveDateStart(leave.getBeginLeaveStr());
-                                        otw.setLeaveDateEnd(leave.getEndLeaveStr());
-                                        otw.setIsPOffOk("请假");
-                                        otw.setRemark("请假");
+                                        if(leave.getType()==0) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setIsPOffOk("正常请假");
+                                            otw.setRemark("正常请假");
+                                        }else if(leave.getType()==1) {
+                                            otw.setLeaveDateStart(leave.getBeginLeaveStr());
+                                            otw.setLeaveDateEnd(leave.getEndLeaveStr());
+                                            otw.setIsPOffOk("因公外出");
+                                            otw.setRemark("因公外出");
+                                        }
                                     } else {
                                         otw.setIsPOffOk("旷工");
                                         otw.setRemark("旷工");

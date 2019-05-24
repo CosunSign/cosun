@@ -23,6 +23,8 @@ public interface IrulesServ {
 
     int findAllRulesCount() throws Exception;
 
+    void deleteRulesByBatch(List<Integer> ids) throws Exception;
+
     Rules getRulesById(Integer id) throws Exception;
 
     boolean updateRulesById(MultipartFile file, Rules rules) throws Exception;

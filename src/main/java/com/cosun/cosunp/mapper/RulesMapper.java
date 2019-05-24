@@ -28,6 +28,18 @@ public interface RulesMapper {
             " where id = #{id}")
     void updateRulesBean(Rules rules);
 
+    @Delete({
+            "<script>",
+            "delete",
+            "from rules",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteRulesByBatch(@Param("ids") List<Integer> ids);
+
     @Select("SELECT\n" +
             "\ts.id AS id,\n" +
             "\ts.filename AS fileName,\n" +

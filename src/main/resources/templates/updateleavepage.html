@@ -78,6 +78,8 @@
     }
 
     function updateLeaveToMysql() {
+        var typeValue = $('input[name="typeValue"]:checked').val();
+        $("#typeStr").val(typeValue)
         var employeeId = $("#employeeId").val();
         var beginLeaveStr = $("#beginLeaveStr").val();
         var endLeaveStr = $("#endLeaveStr").val();
@@ -87,7 +89,7 @@
         if (employeeId != 0 && beginLeaveStr.trim().length > 0 && endLeaveStr.trim().length > 0 != null) {
             window.location.href = "/person/updateLeaveToMysql?id=" + employeeId
                 + "&beginLeaveStr=" + beginLeaveStr + "&endLeaveStr=" + endLeaveStr + "&leaveLong=" + leaveLong + "&leaveDescrip=" + leaveDescrip
-                + "&remark=" + remark;
+                + "&remark=" + remark+"&type="+typeValue;
         } else {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
@@ -148,6 +150,7 @@
             <div id="innerdiv">
                 <form id="addEmployee" th:action="@{/person/addLeave}" th:method="post" th:object="${leave}">
                     <input type="hidden" id="employeeId" th:field="*{id}">
+                    <input type="hidden" id="typeStr" th:field="*{type}">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: auto">
                         <tr>
                             <td><label>姓名：</label></td>
@@ -197,6 +200,18 @@
                                 <input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"
                                        readOnly="true" class="Wdate" th:value="*{incomdateStr}"
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>请假类型：</label></td>
+                            <td align="center">
+
+
+                                    <label><input type="radio" th:attr="checked=*{type ==0}" th:value="0" name="typeValue"
+                                                  >正常请假</label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label><input type="radio" th:attr="checked=*{type == 1}" th:value="1" name="typeValue"
+                                                  >因公外出</label>
                             </td>
                         </tr>
                         <tr>

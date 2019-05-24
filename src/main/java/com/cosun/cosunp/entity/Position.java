@@ -1,6 +1,7 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -14,6 +15,7 @@ public class Position implements Serializable {
     private static final long serialVersionUID = 3282382538666102784L;
 
     private Integer id;
+    private List<Integer> ids;
     private String positionName;
     private String positionLevel;
     // 分页属性
@@ -23,6 +25,14 @@ public class Position implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
 
     public int getCurrentPageTotalNum() {
         if(this.currentPage!=0)

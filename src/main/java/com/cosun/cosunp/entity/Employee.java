@@ -34,6 +34,8 @@ public class Employee implements Serializable {
 
     private List<Integer> deptIds;
 
+    private List<Integer> ids;
+
     private List<Integer> positionIds;
 
     private List<Integer> nameIds;
@@ -49,6 +51,14 @@ public class Employee implements Serializable {
 
     private String deptIdsstr;
     private String positionIdsstr;
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
 
     public String getEndLeaveStr() {
         return endLeaveStr;

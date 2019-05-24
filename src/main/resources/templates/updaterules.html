@@ -137,7 +137,7 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/rules/updateRules}" th:method="post" th:object="${rules}" enctype="multipart/form-data">
+                <form id="addEmployee" th:action="@{/rules/updateRules}" target="_top" th:method="post" th:object="${rules}" enctype="multipart/form-data">
                     <input type="hidden" id="deptIdId" th:field="*{deptId}">
                     <input type="hidden" id="rulesId" th:field="*{id}">
                     <input type="hidden" id="fileDir" th:field="*{fileDir}">

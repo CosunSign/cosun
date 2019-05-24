@@ -186,17 +186,21 @@
                             td += "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
                                 "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
                                 "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
-                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</a>\n" +
+                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</button>\n" +
                                 "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
-                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</a>\n" +
+                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</button>\n" +
+                                    "  &nbsp;&nbsp;&nbsp;\n" +
+                                "   <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">"+
                                 "  </td>";
                         }else {
                             td += "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
                                 "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
                                 "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
-                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</a>\n" +
+                                "onclick=\"updateRules(" + data[num].id + ");\">编辑</button>\n" +
                                 "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
-                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</a>\n" +
+                                " onclick=\"deleteRules(" + data[num].id + ");\">删除</button>\n" +
+                                "  &nbsp;&nbsp;&nbsp;\n" +
+                                "   <input type=\"checkbox\" disabled='disabled' name=\"deleteBatch\" value=\""+data[num].id+"\">"+
                                 "  </td>";
                         }
                         tr.append(td);
@@ -260,12 +264,42 @@
     }
 
     function deleteRules(rulesId) {
-        window.location.href = "/rules/deleteRulesById?id=" + rulesId;
+        $("#deleteid").val(rulesId)
+        //window.location.href = "/rules/deleteRulesById?id=" + rulesId;
+        $('#showMain').submit();
+    }
+
+    function deleteRulesByBatch() {
+        var deleteBatch = document.getElementsByName("deleteBatch");
+        var check_val = [];
+        var k;
+        for (k in deleteBatch) {
+            if (deleteBatch[k].checked)
+                check_val.push(deleteBatch[k].value);
+        }
+        if (check_val.length <= 0) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+            errormessagediv.style.color = "red";
+            return;
+        } else {
+            $("#errormessage").hide();
+            $("#deleteids").val(check_val);
+            $('#showMain2').submit();
+            //window.location.href = "/rules/deleteRulesByBatch?ids=" + check_val;
+        }
+        return;
     }
 
 </script>
 <body>
-
+<form id="showMain" th:action="@{/rules/deleteRulesById}"  target="_top" th:method="post">
+    <input type="hidden" value="" name="id" id="deleteid">
+</form>
+<form id="showMain2" th:action="@{/rules/deleteRulesByBatch}"  target="_top" th:method="post">
+    <input type="hidden" value="" name="ids" id="deleteids">
+</form>
 <div id='app'>
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
@@ -298,6 +332,11 @@
                             <a class="btn btn-primary"
                                th:disabled="${userInfo.userActor ne 1}"
                                href="/rules/toaddrulespage">新增</a>
+
+                            &nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-primary"
+                               th:disabled="${userInfo.userActor ne 1}"
+                               onclick="deleteRulesByBatch()">批量删除</button>
                         </td>
                         <td>
                             <div style="display: none" id="errormessage">
@@ -342,9 +381,11 @@
                         <button type="button" class="btn btn-primary btn-sm"
                            th:disabled="${userInfo.userActor ne 1}"
                                 th:onclick="updateRules([[${rule.id}]]);">编辑</button>
-                        <button type="button" class="btn btn-primary btn-sm"
+                        <button th:type="button" class="btn btn-primary btn-sm"
                            th:disabled="${userInfo.userActor ne 1}"
                                 th:onclick="deleteRules([[${rule.id}]]);">删除</button>
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" name="deleteBatch" th:value="${rule.id}">
                     </td>
                 </tr>
             </div>

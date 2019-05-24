@@ -35,6 +35,8 @@ public interface IPersonServ {
 
     List<Position> findAllPositionAll() throws Exception;
 
+    void deleteLeaveByBatch(List<Integer> ids) throws Exception;
+
     void updateLeaveToMysql(Leave leave) throws Exception;
 
     List<Employee> findAllEmployees() throws Exception;
@@ -79,11 +81,15 @@ public interface IPersonServ {
 
     List<Leave> queryLeaveByCondition(Leave leave) throws Exception;
 
+    void deleteEmpByBatch(List<Integer> ids) throws Exception;
+
     int queryLeaveByConditionCount(Leave leave) throws Exception;
 
     int queryEmployeeByConditionCount(Employee employee) throws Exception;
 
     List<Dept> findAllDept(Dept dept) throws Exception;
+
+    void deleteDeptByBatch(List<Integer> ids) throws Exception;
 
     int checkBeginLeaveRight(Leave leave) throws Exception;
 
@@ -100,6 +106,8 @@ public interface IPersonServ {
     int findAllDeptConditionCount(Dept dep) throws Exception;
 
     void deletePositionById(Integer id) throws  Exception;
+
+    void deletePositionByIdBatch(List<Integer> ids) throws Exception;
 
     void deleteDeptById(Integer id) throws Exception;
 

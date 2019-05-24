@@ -215,8 +215,6 @@
         </div>
     </div>
 </div>
-
-
 <!--文件更新记录 下载记录DIV-->
 <div id="updateDiv" style="display: none">
     <input type="radio" name="showtype" checked value="0" id="listshow" onclick="showUpdatediv()">更新记录
@@ -276,6 +274,10 @@
             <input type="button" value="关闭" onclick="closeUpdateMessage()">
     </div>
 </div>
+
+<form id="abcd" th:action="@{/rules/torulespage}" th:method="post" target="targetText" enctype="multipart/form-data">
+    <input type="hidden" name="showflag" th:value="${showflag}"  id="showflag">
+</form>
 </body>
 </html>
 
@@ -285,12 +287,20 @@
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
     $(function () {
+        var showflag = $("#showflag").val();
+        if (showflag == 1 || showflag == 2 || showflag == 3 || showflag == 4 || showflag == 5) {
+            toOtherPage();
+        }
         $("#contentnew").show();
         $("#content").hide();
         $('.demo-cancel-click').click(function () {
             return false;
         });
     });
+
+    function toOtherPage() {
+        $("#abcd").submit();
+    }
 
     function showUpdatediv() {
         $("#downDivIn").hide();
