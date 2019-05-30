@@ -10,12 +10,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Modified By:
  * @Modified-date:
  */
-@SpringBootApplication
 public class SpringBootThymeleafApplication {
 
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringBootThymeleafApplication.class, args);
-    }
+//    public static void main(String[] args) {
+//        SpringApplication.run(SpringBootThymeleafApplication.class, args);
+//    }
 
 }

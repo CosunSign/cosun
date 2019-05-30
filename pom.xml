@@ -61,6 +61,9 @@
             <version>2.7.0</version>
         </dependency>
 
+
+
+
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-juli</artifactId>
@@ -328,7 +331,7 @@
     </dependencies>
 
     <build>
-        <finalName>cosunp_war_exploded</finalName>
+        <finalName>ROOT</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
