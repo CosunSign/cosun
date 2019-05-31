@@ -2885,8 +2885,14 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/saveFolderMessage", method = RequestMethod.POST)
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        fileUploadAndDownServ.saveFolderMessage(view, userInfo);
+        try {
+            logger.debug("没发生错误");
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            fileUploadAndDownServ.saveFolderMessage(view, userInfo);
+        }catch (Exception e) {
+            logger.debug(e.getMessage());
+            logger.debug( "发生错误 了");
+        }
     }
 
     @RequestMapping(value = "/saveFolderMessageUpdate", method = RequestMethod.POST)

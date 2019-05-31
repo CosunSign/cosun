@@ -33,7 +33,7 @@
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
 <input type="hidden" id="foldername">
-<div>
+<div style="width: 100%">
     <input type="hidden" name="saveFolderName" id="folderselect">
     <input type="hidden" name="filePathName" id="filePathName">
     <div id="tabs">
@@ -731,6 +731,9 @@
 
                 },
                 error: function (msg) {
+                    alert("插入数据失败")
+                    alert(msg)
+                    console.log(msg)
                 }
             });
         } else if (totalFileNum1 != 0) {

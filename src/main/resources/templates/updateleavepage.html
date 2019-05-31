@@ -194,14 +194,14 @@
                             <td> &nbsp;&nbsp;&nbsp;<a href="/person/topositanddeptpage?flaga=66">没有？新增部门</a></td>
 
                         </tr>
-                        <tr>
-                            <td><label>入职时间：</label></td>
-                            <td>
-                                <input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"
-                                       readOnly="true" class="Wdate" th:value="*{incomdateStr}"
-                                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>
-                            </td>
-                        </tr>
+                        <!--<tr>-->
+                            <!--<td><label>入职时间：</label></td>-->
+                            <!--<td>-->
+                                <!--<input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"-->
+                                       <!--readOnly="true" class="Wdate" th:value="*{incomdateStr}"-->
+                                       <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>-->
+                            <!--</td>-->
+                        <!--</tr>-->
                         <tr>
                             <td><label>请假类型：</label></td>
                             <td align="center">
@@ -260,7 +260,12 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align: center;">
+                            <td colspan="2" style="text-align: center;">
+                                <input type="button" value="返回" class="btn btn-primary" onclick="javascript:history.back(-1);">
+                                <input type="button" value="修改" class="btn btn-primary" onclick="updateLeaveToMysql()">
+
+                            </td>
+                            <td  style="text-align: center;">
                                 <div id="errormessage" style="display: none">
 
                                 </div>
@@ -269,10 +274,10 @@
                     </table>
                 </form>
             </div>
-            <div id="bottomdiv">
-                <input type="button" value="返回" class="btn btn-primary" onclick="javascript:history.back(-1);">
-                <input type="button" value="修改" class="btn btn-primary" onclick="updateLeaveToMysql()">
-            </div>
+            <!--<div id="bottomdiv">-->
+                <!--<input type="button" value="返回" class="btn btn-primary" onclick="javascript:history.back(-1);">-->
+                <!--<input type="button" value="修改" class="btn btn-primary" onclick="updateLeaveToMysql()">-->
+            <!--</div>-->
         </div>
     </div>
 </div>

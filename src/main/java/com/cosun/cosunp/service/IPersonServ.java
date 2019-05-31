@@ -9,7 +9,7 @@ public interface IPersonServ {
 
     int checkAndSavePosition(Position position) throws Exception;
 
-    List<ClockInOrgin> translateTabletoBean(Compute compute, MultipartFile file) throws Exception;
+    List<ClockInOrgin> translateTabletoBean( MultipartFile file) throws Exception;
 
     List<OutPutWorkData> computeTableListData(List<ClockInOrgin> clockInOrginList) throws Exception;
 

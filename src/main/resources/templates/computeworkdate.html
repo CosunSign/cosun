@@ -24,8 +24,8 @@
         var flag2 = $("#flag2").val();
         var errorMessage = $("#errorMessage").val();
         if (flag == 1) {
-            $("#errormessage").show();
-            var errormessagediv = document.getElementById("errormessage");
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算成功!";
             errormessagediv.style.color = "green";
         }
@@ -57,15 +57,15 @@
         }
 
         if(flag2.length>1) {
-            $("#errormessage").show();
-            var errormessagediv = document.getElementById("errormessage");
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算成功!文件名为:"+flag2;
             errormessagediv.style.color = "green";
         }
 
         if(errorMessage.length>1) {
-            $("#errormessage").show();
-            var errormessagediv = document.getElementById("errormessage");
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算失败!原因为:"+errorMessage;
             errormessagediv.style.color = "red";
         }
@@ -90,20 +90,20 @@
 
     function computeWorkTable() {
         var originFile = $("#originFile").val();
-        var filelocat = $("#filelocat").val();
-        if (filelocat.trim().length <= 0) {
-            $("#filelocat").val($("#orginLcation").val());
-        }
-        if (originFile.trim().length > 0 && filelocat.trim().length > 0) {
-            $("#errormessage").show();
-            var errormessagediv = document.getElementById("errormessage");
+        // var filelocat = $("#filelocat").val();
+        // if (filelocat.trim().length <= 0) {
+        //     $("#filelocat").val($("#orginLcation").val());
+        // }
+        if (originFile.trim().length > 0) {
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算中,请稍等!";
             errormessagediv.style.color = "green";
             var form = document.getElementById('computeForm');
             form.submit();
         } else if (originFile.trim().length <= 0) {
-            $("#errormessage").show();
-            var errormessagediv = document.getElementById("errormessage");
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法计算!";
             errormessagediv.style.color = "red";
         }
@@ -143,13 +143,13 @@
                             <input type="file"   th:name="file"  id="originFile">
                         </td>
                     </tr>
-                    <tr>
-                        <td><label>计算结果存放至：</label></td>
-                        <td>
-                            <input type="text" class="form-control"  th:name="fileLocation" th:value="${compute.fileLocation}" style="width: 500px"
-                                   id="filelocat">
-                        </td>
-                    </tr>
+                    <!--<tr>-->
+                        <!--<td><label>计算结果存放至：</label></td>-->
+                        <!--<td>-->
+                            <!--<input type="text" class="form-control"  th:name="fileLocation" th:value="${compute.fileLocation}" style="width: 500px"-->
+                                   <!--id="filelocat">-->
+                        <!--</td>-->
+                    <!--</tr>-->
                     <tr>
                         <td><label>动作：</label></td>
                         <td>
@@ -160,7 +160,7 @@
                     <tr>
                         <td><label>结果提示：</label></td>
                         <td>
-                            <div style="display: none;" id="errormessage">
+                            <div style="display: none;" id="errormessagee">
 
                             </div>
                         </td>

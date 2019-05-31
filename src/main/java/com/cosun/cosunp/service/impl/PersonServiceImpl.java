@@ -294,7 +294,7 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
 
-    public List<ClockInOrgin> translateTabletoBean(Compute compute, MultipartFile file) throws Exception {
+    public List<ClockInOrgin> translateTabletoBean( MultipartFile file) throws Exception {
         // File file = new File("C:\\Users\\Administrator\\Desktop\\4月车间考勤记录.xls");
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();

@@ -5,11 +5,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,14 +24,18 @@ import java.util.List;
  */
 public class ExcelUtil {
 
-    public static String writeExcel(List<OutPutWorkData> outDatas, String descPath) {
+
+
+    public static List<String> writeExcel(List<OutPutWorkData> outDatas,String finalDirPath) {
+        List<String> returnArray = new ArrayList<String>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         OutPutWorkData opw;
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet1 = workbook.createSheet("sheet1");
         Date d = new Date();
         String str = sdf.format(d);
-        String pathname = descPath + "\\" + str + "考勤结果表" + ".xlsx";
+        String pathname = finalDirPath + "/" + str + "考勤结果表" + ".xlsx";
+        returnArray.add( str + "考勤结果表"+".xlsx");
         File file = new File(pathname);
         if (file.exists()) {
             //如果文件存在就删除
@@ -194,7 +200,8 @@ public class ExcelUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return pathname;
+        returnArray.add(pathname);
+        return returnArray;
 
     }
 }

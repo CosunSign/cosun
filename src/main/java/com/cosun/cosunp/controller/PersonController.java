@@ -6,7 +6,9 @@ import com.cosun.cosunp.tool.ExcelUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.filechooser.FileSystemView;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +38,9 @@ public class PersonController {
     @Autowired
     IPersonServ personServ;
     private Integer flag;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String finalDirPath;
 
     @ResponseBody
     @RequestMapping("/toworkdatepage")
@@ -248,16 +253,39 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/computeWorkTable", method = RequestMethod.POST)
-    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, @RequestParam("fileLocation") String fileLocation, HttpServletResponse response) throws Exception {
+    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse resp) throws Exception {
         ModelAndView view = new ModelAndView("computeworkdate");
         Compute compute = new Compute();
-        compute.setFileLocation(fileLocation);
-        compute.setFileLocation(fileLocation);
-        List<ClockInOrgin> clockInOrginList = personServ.translateTabletoBean(compute, file);
+        List<ClockInOrgin> clockInOrginList = personServ.translateTabletoBean(file);
         List<OutPutWorkData> outPutWorkDataList = personServ.computeTableListData(clockInOrginList);
-        String outpathname = "";
+        String outpathname = "计算完成，请下载查看!";
         if (outPutWorkDataList.get(0).getErrorMessage() == null || outPutWorkDataList.get(0).getErrorMessage().trim().length() <= 0) {
-            outpathname = ExcelUtil.writeExcel(outPutWorkDataList, fileLocation);
+            resp.setHeader("content-type", "application/octet-stream");
+            resp.setContentType("application/octet-stream");
+            List<String> pathName = ExcelUtil.writeExcel(outPutWorkDataList,finalDirPath);
+            resp.setHeader("Content-Disposition", "attachment;filename=" + new String(pathName.get(0).getBytes(),"iso-8859-1"));
+            byte[] buff = new byte[1024];
+            BufferedInputStream bufferedInputStream = null;
+            OutputStream outputStream = null;
+            try {
+                outputStream = resp.getOutputStream();
+                File fi = new File(pathName.get(1));
+                FileInputStream fis = new FileInputStream(fi);
+                bufferedInputStream = new BufferedInputStream(fis);
+                int num = bufferedInputStream.read(buff);
+                while (num != -1) {
+                    outputStream.write(buff, 0, num);
+                    outputStream.flush();
+                    num = bufferedInputStream.read(buff);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            } finally {
+                if (bufferedInputStream != null) {
+                    bufferedInputStream.close();
+                    outputStream.close();
+                }
+            }
         }
         view.addObject("flag2", outpathname);
         view.addObject("errorMessage", outPutWorkDataList.get(0).getErrorMessage());
