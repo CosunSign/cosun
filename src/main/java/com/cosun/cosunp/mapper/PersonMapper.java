@@ -408,9 +408,10 @@ public interface PersonMapper {
             if (employee.getName() != "" && employee.getName() != null && employee.getName().trim().length() > 0) {
                 sb.append(" and name like  CONCAT('%',#{name},'%') ");
             }
-            if (employee.getSex() != null) {
-                sb.append(" and sex = #{sex} ");
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
             }
+
             if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
                 sb.append(" and empno  like  CONCAT('%',#{empNo},'%') ");
             }
@@ -490,9 +491,11 @@ public interface PersonMapper {
                 sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
 
             }
-            if (employee.getSex() != null) {
-                sb.append(" and e.sex = #{sex} ");
+
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and e.sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
             }
+
             if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
                 sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
             }

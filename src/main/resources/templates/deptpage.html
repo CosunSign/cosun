@@ -190,6 +190,8 @@
         $("#coverbehidepage1").hide();
         var newDeptNmae = $("#newDeptName").val();
         var oldDeptName = $("#beforDeptName").val();
+        var formData = new FormData();
+        formData.append("deptname",$("#newDeptName").val());
         if (newDeptNmae.trim().length > 0) {
             if (oldDeptName == newDeptNmae) {
                 $("#updatemessage2").show();
@@ -197,98 +199,124 @@
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新部门不能与原部门名相同!";
                 errormessagediv.style.color = "red";
             } else {
-                $("#updatediv2").hide();
-                window.location.href = "/person/saveUpdateData2?id=" + $("#deptId").val() + "&deptname=" + $("#newDeptName").val();
+                    $.ajax({
+                        data: formData,
+                        type: "POST",
+                        url: "/person/checkDept",
+                        async: true,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (msg) {
+                            if (msg == 0) {
+                                $("#updatediv2").hide();
+                                window.location.href = "/person/saveUpdateData2?id=" +
+                                    $("#deptId").val() + "&deptname=" + $("#newDeptName").val();
+                            } else {
+                                $("#updatemessage2").show();
+                                var errormessagediv = document.getElementById("updatemessage2");
+                                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新部门名系统中已存在!";
+                                errormessagediv.style.color = "red";
+                            }
+                        },
+                        error: function (msg) {
+                            $("#errormessage2").show();
+                            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                            errormessagediv.style.color = "red";
+                        }
+
+                    });
             }
-        } else {
-            $("#updatemessage2").show();
-            var errormessagediv = document.getElementById("updatemessage2");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新部门名不能为空!";
-            errormessagediv.style.color = "red";
+        }else {
+                $("#updatemessage2").show();
+                var errormessagediv = document.getElementById("updatemessage2");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新部门名不能为空!";
+                errormessagediv.style.color = "red";
+            }
         }
-    }
 
-    function goPageone2() {
-        $("#n_currentPage2").val(1);
-        querydept();
-    }
-
-    function goPrePage2() {
-        var currentpage = $("#_tp2").val();
-        $("#n_currentPage2").val(currentpage * 1 - 1 * 1);
-        querydept();
-    }
-
-    function goAftPage2() {
-        var currentpage = $("#_tp2").val();
-        $("#n_currentPage2").val(currentpage * 1 + 1 * 1);
-        querydept();
-    }
-
-    function goMaxPage2() {
-        $("#n_currentPage2").val($("#maxPage2").val());
-        querydept();
-    }
-
-    function goPage22() {
-        var tp = document.getElementById("_tp2").value;//currentPage
-        var max = $("#maxPage2").val(); //maxPage
-        tp = tp.trim();
-        var r = /^\+?[0-9][0-9]*$/;
-        if (!(r.test(tp))) {
-            alert("页数输入有误，请重新输入!");
-            $("#_tp2").val(max);
-            return false;
-        } else if (parseInt(tp) == 0) {
-            alert("页数必须大于0!");
-            $("#_tp2").val(max);
-            return false;
-        } else if (parseInt(tp) > parseInt(max)) {
-            alert("不能大于总页数!");
-            $("#_tp2").val(max);
-            return false;
-        } else {
-            $("#n_currentPage2").val(tp);
-            // document.forms["form0"].submit();
+        function goPageone2() {
+            $("#n_currentPage2").val(1);
             querydept();
         }
-    }
+
+        function goPrePage2() {
+            var currentpage = $("#_tp2").val();
+            $("#n_currentPage2").val(currentpage * 1 - 1 * 1);
+            querydept();
+        }
+
+        function goAftPage2() {
+            var currentpage = $("#_tp2").val();
+            $("#n_currentPage2").val(currentpage * 1 + 1 * 1);
+            querydept();
+        }
+
+        function goMaxPage2() {
+            $("#n_currentPage2").val($("#maxPage2").val());
+            querydept();
+        }
+
+        function goPage22() {
+            var tp = document.getElementById("_tp2").value;//currentPage
+            var max = $("#maxPage2").val(); //maxPage
+            tp = tp.trim();
+            var r = /^\+?[0-9][0-9]*$/;
+            if (!(r.test(tp))) {
+                alert("页数输入有误，请重新输入!");
+                $("#_tp2").val(max);
+                return false;
+            } else if (parseInt(tp) == 0) {
+                alert("页数必须大于0!");
+                $("#_tp2").val(max);
+                return false;
+            } else if (parseInt(tp) > parseInt(max)) {
+                alert("不能大于总页数!");
+                $("#_tp2").val(max);
+                return false;
+            } else {
+                $("#n_currentPage2").val(tp);
+                // document.forms["form0"].submit();
+                querydept();
+            }
+        }
 
 
-    function goPriAftPage2() {
-        var currentpage = $("#_tp2").val();
-        $("#n_currentPage2").val(currentpage * 1 + 1 * 1);
-        querydept();
-    }
+        function goPriAftPage2() {
+            var currentpage = $("#_tp2").val();
+            $("#n_currentPage2").val(currentpage * 1 + 1 * 1);
+            querydept();
+        }
 
-    function goPriMaxPage2() {
-        $("#n_currentPage2").val($("#maxPage2").val());
-        querydept();
-    }
+        function goPriMaxPage2() {
+            $("#n_currentPage2").val($("#maxPage2").val());
+            querydept();
+        }
 
-    function goPriPrePage2() {
-        var currentpage = $("#_tp2").val();
-        $("#n_currentPage2").val(currentpage * 1 - 1 * 1);
-        querydept();
-    }
-function deletedeptByBatch() {
-    var deleteBatch = document.getElementsByName("deleteBatch");
-    var check_val = [];
-    var k;
-    for (k in deleteBatch) {
-        if (deleteBatch[k].checked)
-            check_val.push(deleteBatch[k].value);
-    }
-    if (check_val.length <= 0) {
-        $("#errormessage2").show();
-        var errormessagediv = document.getElementById("errormessage2");
-        errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
-        errormessagediv.style.color = "red";
-    } else {
-        $("#errormessage2").hide();
-        window.location.href = "/person/deleteDeptByBatch?ids=" + check_val;
-    }
-}
+        function goPriPrePage2() {
+            var currentpage = $("#_tp2").val();
+            $("#n_currentPage2").val(currentpage * 1 - 1 * 1);
+            querydept();
+        }
+
+        function deletedeptByBatch() {
+            var deleteBatch = document.getElementsByName("deleteBatch");
+            var check_val = [];
+            var k;
+            for (k in deleteBatch) {
+                if (deleteBatch[k].checked)
+                    check_val.push(deleteBatch[k].value);
+            }
+            if (check_val.length <= 0) {
+                $("#errormessage2").show();
+                var errormessagediv = document.getElementById("errormessage2");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+                errormessagediv.style.color = "red";
+            } else {
+                $("#errormessage2").hide();
+                window.location.href = "/person/deleteDeptByBatch?ids=" + check_val;
+            }
+        }
 
 </script>
 <body>

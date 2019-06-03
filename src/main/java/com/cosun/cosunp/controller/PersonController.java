@@ -673,6 +673,25 @@ public class PersonController {
     }
 
 
+
+    @ResponseBody
+    @RequestMapping(value = "/check", method = RequestMethod.POST)
+    public void checkPositionName(Position position,HttpServletResponse response) throws Exception {
+        int isExsit = personServ.checkIfExsit(position.getPositionName());
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(isExsit);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+
     @ResponseBody
     @RequestMapping(value = "/saveUpdateData", method = RequestMethod.GET)
     public ModelAndView saveUpdateData(Integer id, String positionName, String positionLevel) throws Exception {
@@ -696,6 +715,22 @@ public class PersonController {
         return view;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/checkDept", method = RequestMethod.POST)
+    public void checkDept(Dept dept,HttpServletResponse response) throws Exception {
+        int isExsit = personServ.checkIfExsit2(dept.getDeptname());
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(isExsit);
+          response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/saveUpdateData2", method = RequestMethod.GET)

@@ -49,24 +49,24 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function isNull(arg1) {
@@ -97,43 +97,167 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryEmployeeByCondition();
+            queryEmployeeByCondition2();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition();
+        queryEmployeeByCondition2();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryEmployeeByCondition() {
+    function queryEmployeeByCondition2() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
         formData.append('nameIds', $("#name").val());
-        formData.append('sex', $("#sexId").val());
+        formData.append('sexIds', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
         formData.append('startIncomDateStr', $("#startIncomDateStr").val());
         formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('currentPage', currentpage);
+        $.ajax({
+            data: formData,
+            type: "POST",
+            url: "/person/queryEmployeeByCondition",
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (msg) {
+                $("#errormessage").show();
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
+                errormessagediv.style.color = "green";
+                var data = eval(msg);//将msg化为数;
+                var tr = "";
+                var image01 = $("#image01");
+                var image02 = $("#image02");
+                var image03 = $("#image03");
+                var image04 = $("#image04");
+                var maxpageid = $("#maxPage");
+                var n_currentPage = $("#n_currentPage");
+                var inputpage = $("#_tp");
+                image01.html("");
+                image02.html("");
+                image03.html("");
+                image04.html("");
+                var td = "";
+                var tbody = $("#tabletblody");
+                tbody.html("");
+                if (data != null && data != "") {
+                    $("#nodatadiv").hide();
+                    $("#showdiv").show();
+                    currentPage = data[0].currentPage; //当前页
+                    totalPage = data[0].maxPage; //总多少页
+                    totaldata = data[0].recordCount; //总共多少记录
+                    pageSize = data[0].pageSize;
+                    maxpageid.val(totalPage);
+                    n_currentPage.val(currentPage);
+                    inputpage.val(currentPage);
+                    $.each(data, function (num) {
+                        tr = $("<tr id='" + data[num].id + "'></tr>");
+                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].name) + "</td>");
+                        tr.append("<td>" + isNull(data[num].sexStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].empNo) + "</td>");
+                        tr.append("<td>" + isNull(data[num].deptName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
+                        td = "<td>";
+                        td += " <a href=\"javascript:void(0);\"\n" +
+                            "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                            "  <a href=\"javascript:void(0);\"\n" +
+                            " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                            " &nbsp;&nbsp;&nbsp;\n" +
+                            "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">" +
+                            "  </td>";
+                        tr.append(td);
+                        tr.appendTo(tbody);
+                    });
+                    $("#currentpagespan").html(currentPage);
+                    $("#maxpagespan").html(totalPage);
+                    $("#recordcountspan").html(totaldata);
+                    if (currentPage > 1) {
+                        var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPriPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPriPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image01.html(imange01str);
+                    } else {
+                        image01.html("");
+                    }
+                    if (currentPage <= 1) {
+                        var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image02.html(image02str);
+                    } else {
+                        image02.html("");
+                    }
+                    if (currentPage < totalPage) {
+                        var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goPriAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange03str += '<img src="/images/page/my-2.jpg" onClick="goPriMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image03.html(imange03str);
+                    } else {
+                        image03.html("");
+                    }
+                    if (currentPage >= totalPage) {
+                        var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image04.html(image04str);
+                    } else {
+                        image04.html("");
+                    }
+                } else {
+                    $("#nodatadiv").show();
+                    $("#showdiv").hide();
+                }
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+            },
+            error: function (msg) {
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                $("#errormessage").show();
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
+            }
+
+        });
+    }
+
+
+    function queryEmployeeByCondition() {
+        var currentpage = $("#n_currentPage").val();
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        var formData = new FormData();
+        formData.append('nameIds', $("#name").val());
+        formData.append('sexIds', $("#sexId").val());
+        formData.append('empNo', $("#empNo").val());
+        formData.append('deptIds', $("#deptId").val());
+        formData.append('positionIds', $("#positionId").val());
+        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        formData.append('currentPage', 1);
         $.ajax({
             data: formData,
             type: "POST",

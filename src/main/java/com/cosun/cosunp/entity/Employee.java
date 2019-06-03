@@ -34,6 +34,8 @@ public class Employee implements Serializable {
 
     private List<Integer> deptIds;
 
+    private List<Integer> sexIds;
+
     private List<Integer> ids;
 
     private List<Integer> positionIds;
@@ -48,6 +50,14 @@ public class Employee implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public List<Integer> getSexIds() {
+        return sexIds;
+    }
+
+    public void setSexIds(List<Integer> sexIds) {
+        this.sexIds = sexIds;
+    }
 
     private String deptIdsstr;
     private String positionIdsstr;

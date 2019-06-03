@@ -191,10 +191,10 @@
 </div>
 <div id="some-element">
     <div class="content" id="content" style="overflow-y:scroll;display: none;">
-        <iframe class="iframecontent" src="" style="float: left" name="targetText" id="abcds">
+        <iframe class="iframecontent" src="" style="float: left;height:670px;" name="targetText" id="abcds">
         </iframe>
     </div>
-    <div class="content" id="contentnew" style="overflow-y:scroll;" th:utext="${htmlStr}">
+    <div class="content" id="contentnew" style="overflow-y:scroll;height:670px;" th:utext="${htmlStr}">
     </div>
 </div>
 
@@ -399,6 +399,7 @@
 
     .content {
         min-height: 700px;
+        height: 700px;
     }
 
 

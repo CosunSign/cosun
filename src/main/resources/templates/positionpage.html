@@ -94,6 +94,22 @@
     // ================================ 以下为职位模块================================
 
 
+    function queryposition2() {
+        $("#errormessage").hide();
+        var currentpage = $("#n_currentPage").val();
+        var positionname = $("#positionName").val();
+        var positionLevel = $("#positionLevel").val();
+        if (positionname.trim().length > 0 || positionLevel != "0") {
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "";
+            window.location.href = "/person/queryPositionByName?positionName=" + positionname + "&positionLevel=" + positionLevel+"&currentpage="+currentpage;
+        } else {
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "";
+            window.location.href = "/person/queryPositionByName?currentpage=" + currentpage;
+        }
+    }
+
     function queryposition() {
         $("#errormessage").hide();
         var currentpage = $("#n_currentPage").val();
@@ -102,7 +118,7 @@
         if (positionname.trim().length > 0 || positionLevel != "0") {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
-            window.location.href = "/person/queryPositionByName?positionName=" + positionname + "&positionLevel=" + positionLevel;
+            window.location.href = "/person/queryPositionByName?positionName=" + positionname + "&positionLevel=" + positionLevel+"&currentpage="+1;
         } else {
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "";
@@ -211,8 +227,39 @@
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新职位不能与原职位名相同!";
                 errormessagediv.style.color = "red";
             } else {
-                $("#updatediv").hide();
-                window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() + "&positionName=" + $("#newPositionName").val() + "&positionLevel=" + $("#positionLevelId").val();
+                var formData = new FormData();
+                formData.append("positionId",$("#positionId").val());
+                formData.append('positionName', $("#newPositionName").val());
+                formData.append('positionLevel', $("#positionLevelId").val());
+                $.ajax({
+                    data: formData,
+                    type: "POST",
+                    url: "/person/check",
+                    async: true,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (msg) {
+                        if(msg==0) {
+                            $("#updatediv").hide();
+                            window.location.href = "/person/saveUpdateData?id=" + $("#positionId").val() +
+                                "&positionName=" + $("#newPositionName").val() + "&positionLevel=" +
+                                $("#positionLevelId").val();
+                        }else{
+                            $("#updatemessage").show();
+                            var errormessagediv = document.getElementById("updatemessage");
+                            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;新职位名系统中已存在!";
+                            errormessagediv.style.color = "red";
+                        }
+                    },
+                    error: function (msg) {
+                        $("#errormessage").show();
+                        errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                        errormessagediv.style.color = "red";
+                    }
+
+                });
+
             }
         } else {
             if (newPositionNmae.trim().length <= 0) {
@@ -231,24 +278,24 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryposition();
+        queryposition2();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryposition();
+        queryposition2();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryposition();
+        queryposition2();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryposition();
+        queryposition2();
     }
 
     function goPage2() {
@@ -271,25 +318,25 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryposition();
+            queryposition2();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryposition();
+        queryposition2();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryposition();
+        queryposition2();
     }
 
     function goPriPrePage2() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryposition();
+        queryposition2();
     }
 
 

@@ -133,7 +133,7 @@
         <input type="hidden" id="orginLcation"   th:value="compute.fileLocation">
         <div >
             <div class="panel-heading" style="background-color:lightsteelblue">
-                <h3 class="panel-title">考勤计算(仅支持XLS)</h3>
+                <h3 class="panel-title">考勤计算<font color="#00008b" size="2px">(仅支持xls格式)</font></h3>
             </div>
             <div class="panel-body form-inline">
                 <table class="table table-bordered table-hover table-striped">
@@ -176,7 +176,7 @@
         <input type="hidden" id="flag1" th:value="${flag1}">
         <div  >
             <div class="panel-heading" style="background-color:lightsteelblue">
-                <h3 class="panel-title">数据导入(仅支持XLS)</h3>
+                <h3 class="panel-title">数据导入<font color="#00008b" size="2px">(仅支持xls格式)</font></h3>
             </div>
             <div class="panel-body form-inline">
                 <table class="table table-bordered table-hover table-striped">
@@ -200,6 +200,17 @@
 
                             </div>
                         </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <font size="2px" color="red">
+                                *数据导入操作，将会清空所有人事信息(除请假单，排班设置，考勤设置).
+                                初次使用建议使用数据导入。
+                                二次使用建议使用手工录入。
+                            </font>
+                        </td>
+
                     </tr>
 
                 </table>
