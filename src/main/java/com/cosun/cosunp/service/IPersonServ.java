@@ -9,7 +9,7 @@ public interface IPersonServ {
 
     int checkAndSavePosition(Position position) throws Exception;
 
-    List<ClockInOrgin> translateTabletoBean( MultipartFile file) throws Exception;
+    List<ClockInOrgin> translateTabletoBean(MultipartFile file) throws Exception;
 
     List<OutPutWorkData> computeTableListData(List<ClockInOrgin> clockInOrginList) throws Exception;
 
@@ -105,7 +105,7 @@ public interface IPersonServ {
 
     int findAllDeptConditionCount(Dept dep) throws Exception;
 
-    void deletePositionById(Integer id) throws  Exception;
+    void deletePositionById(Integer id) throws Exception;
 
     void deletePositionByIdBatch(List<Integer> ids) throws Exception;
 
@@ -121,9 +121,9 @@ public interface IPersonServ {
 
     int queryDeptCountByNameA(Dept dept) throws Exception;
 
-    void saveUpdateData(Integer id,String positionName,String positionLevel) throws Exception;
+    void saveUpdateData(Integer id, String positionName, String positionLevel) throws Exception;
 
-    void saveUpdateData2(Integer id,String deptname) throws Exception;
+    void saveUpdateData2(Integer id, String deptname) throws Exception;
 
     int findAllPositionConditionCount() throws Exception;
 

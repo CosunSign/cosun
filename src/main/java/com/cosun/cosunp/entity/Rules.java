@@ -18,6 +18,7 @@ public class Rules implements Serializable {
 
     private static final long serialVersionUID = -3761627936696949450L;
 
+    private String deptStr;
     private Integer id;
     private Integer deptId;
     private String deptName;
@@ -42,6 +43,35 @@ public class Rules implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public String getDeptStr() {
+        if (deptId == 1) {
+            return "总经办";
+        }
+        if (deptId == 2) {
+            return "财务部";
+        }
+        if (deptId == 3) {
+            return "人事行政部";
+        }
+        if (deptId == 4) {
+            return "项目中心";
+        }
+        if (deptId == 5) {
+            return "销售中心";
+        }
+        if (deptId == 6) {
+            return "采购部";
+        }
+        if (deptId == 7) {
+            return "数字研发中心";
+        }
+        return null;
+    }
+
+    public void setDeptStr(String deptStr) {
+        this.deptStr = deptStr;
+    }
 
     public Integer getUserActor() {
         return userActor;
@@ -132,7 +162,7 @@ public class Rules implements Serializable {
     }
 
     public int getCurrentPageTotalNum() {
-        if(this.currentPage!=0)
+        if (this.currentPage != 0)
             return (currentPage - 1) * pageSize;
         return 0;
     }

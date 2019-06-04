@@ -174,7 +174,9 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/rules/addRules}"  target="_top" th:method="post" th:object="${rules}"
+                <!--<form id="addEmployee" th:action="@{/rules/addRules}"  target="_top" th:method="post" th:object="${rules}"-->
+
+                <form id="addEmployee" th:action="@{/rules/addRules}"   th:method="post" th:object="${rules}"
                       enctype="multipart/form-data">
                     <input type="hidden" id="deptIdId" th:field="*{deptId}">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: 80%">
@@ -182,10 +184,17 @@
                             <td><label>部门：</label></td>
                             <td style="width:200px">
                                 <select id="deptId" class="selectpicker show-tick form-control"
-                                        data-live-search="true" onchange="checkRulesIsExsit()">
+                                        data-live-search="true" >
                                     <option value="0">请选择</option>
-                                    <option th:each="c:${deptList}" th:value="${c.id}"
-                                            th:text="${c.deptname}"></option>
+                                    <option value="1">总经办</option>
+                                    <option value="2">财务部</option>
+                                    <option value="3">人事行政部</option>
+                                    <option value="4">项目中心</option>
+                                    <option value="5">销售中心</option>
+                                    <option value="6">采购部</option>
+                                    <option value="7">数字研发中心</option>
+                                    <!--<option th:each="c:${deptList}" th:value="${c.id}"-->
+                                            <!--th:text="${c.deptname}"></option>-->
                                 </select>
                             </td>
                             <td style="text-align: left;width:200px">

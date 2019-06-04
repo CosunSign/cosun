@@ -151,15 +151,29 @@
                 <li>
                     <a th:href="@{/rules/torulespage}" target="targetText"><span
                             class="fa fa-caret-right"></span>规章制度管理</a></li>
-                <div th:unless="${#lists.isEmpty(menuList)}">
-                    <div th:each="rule,iterStat: ${menuList}" align="center">
-                        <li>
-                            <a href="javascript:void(0);"
-                               th:onclick="getHtmlStreamById([[${rule.id}]]);" target="targetText"
-                               th:text="${rule.deptName}"><span
-                                    class="fa fa-caret-right"></span></a></li>
-                    </div>
-                </div>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=1)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>总经办</a></li>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=2)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>财务部</a></li>
+
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=3)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>人事行政部</a></li>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=4)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>项目中心</a></li>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=5)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>销售中心</a></li>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=6)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>采购部</a></li>
+                <li>
+                    <a th:href="@{/rules/torulespageAll(deptId=7)}" target="targetText"><span
+                            class="fa fa-caret-right"></span>数字研发中心</a></li>
+
             </ul>
         </li>
 
@@ -278,6 +292,19 @@
 <form id="abcd" th:action="@{/rules/torulespage}" th:method="post" target="targetText" enctype="multipart/form-data">
     <input type="hidden" name="showflag" th:value="${showflag}"  id="showflag">
 </form>
+
+<div style="display: none;" id="showHtmlDiv">
+    <div id="" th:align="right">
+        <p>
+            <br>
+            <input type="button" value="关闭" onclick="closeHtmlDiv()">
+    </div>
+
+    <div id="showHtmlDivinner">
+
+    </div>
+</div>
+
 </body>
 </html>
 
@@ -300,6 +327,12 @@
 
     function toOtherPage() {
         $("#abcd").submit();
+    }
+
+    function closeHtmlDiv() {
+        $("#showHtmlDiv").hide();
+        $("#coverbehidepage").hide();
+
     }
 
     function showUpdatediv() {
@@ -390,7 +423,20 @@
         font-size: 12px;
 
     }
-
+    #showHtmlDiv {
+        border: 1px solid #9AC0CD;
+        width:950px;
+        height: 580px;
+        Margin: 2px;
+        padding: 3px;
+        z-index: 1010;
+        background-color: #E0EEEE;
+        position: absolute;
+        top: 15%;
+        left:22%;
+        overflow-y:scroll;
+        overflow-x:scroll;
+    }
     #contentnew {
         width: 1180px;
         height: 500px;
@@ -415,6 +461,8 @@
         top: 19%;
         left: 28%;;
     }
+
+
 
     #line-chart {
         height: 300px;

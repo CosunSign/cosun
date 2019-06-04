@@ -45,15 +45,18 @@ public class RulesServiceImpl implements IrulesServ {
 
 
     public boolean saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception {
+        System.out.println(file.getOriginalFilename());
+        int index = file.getOriginalFilename().indexOf(".");
+        String filenamecenter = file.getOriginalFilename().substring(0, index);
         //step1 存文件在文件服务器  取得地址
-        String descDir = this.finalDirPath + rules.getDeptId() + "/" + file.getOriginalFilename();
-        String descFolder = this.finalDirPath + rules.getDeptId() + "/";
+        String descDir = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/" + file.getOriginalFilename();
+        String descFolder = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/";
         if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
             FileUtil.uploadFileForRules(file, descFolder);
-            WordToHtml.word2007ToHtml(descFolder, descDir, file);
+            WordToHtml.word2007ToHtml(descFolder, descDir, file, rules.getDeptId());
         } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
             FileUtil.uploadFileForRules(file, descFolder);
-            WordToHtml.DocToHtml(descFolder, descDir, file);
+            WordToHtml.DocToHtml(descFolder, descDir, file, rules.getDeptId());
         } else {
             return false;
         }
@@ -71,15 +74,28 @@ public class RulesServiceImpl implements IrulesServ {
         return rulesMapper.getRulesById(id);
     }
 
+    public int getRulesByNameAndId(String filename, Integer deptId) throws Exception {
+        return rulesMapper.getRulesByNameAndId(filename, deptId);
+    }
+
+    public List<Rules> findAllRulesByDeptId(Rules rules) throws Exception {
+        return rulesMapper.findAllRulesByDeptId(rules);
+    }
+
+    public int findAllRulesByDeptIdCount(Rules rules) throws Exception {
+        return rulesMapper.findAllRulesByDeptIdCount(rules);
+
+    }
+
     public boolean updateRulesById(MultipartFile file, Rules rules) throws Exception {
         // E:/ftpserver/5/4月车间考勤记1录.xls
         //String[] centerPaths = rules.getFileDir().split("\\.");
         //String htmlName = centerPaths[0] + ".html";
         //FileUtil.delFile(rules.getFileDir());
-       // FileUtil.delFile(htmlName);
+        // FileUtil.delFile(htmlName);
 
         int index = rules.getFileDir().lastIndexOf("/");
-        String centerPaths = rules.getFileDir().substring(0,index);
+        String centerPaths = rules.getFileDir().substring(0, index);
         FileUtil.delFolderNew(centerPaths);
 
         String origName = file.getOriginalFilename();
@@ -87,9 +103,9 @@ public class RulesServiceImpl implements IrulesServ {
         String descDir = centerPath + origName;
         FileUtil.uploadFileForRules(file, centerPath);
         if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
-            WordToHtml.word2007ToHtml(centerPath, descDir, file);
+            WordToHtml.word2007ToHtml(centerPath, descDir, file, rules.getDeptId());
         } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
-            WordToHtml.DocToHtml(centerPath, descDir, file);
+            WordToHtml.DocToHtml(centerPath, descDir, file, rules.getDeptId());
         } else {
             return false;
         }
@@ -106,7 +122,7 @@ public class RulesServiceImpl implements IrulesServ {
 
     public void deleteRulesById(Integer id) throws Exception {
         Rules rules = rulesMapper.getRulesById(id);
-        if(rules!=null) {
+        if (rules != null) {
             int index = rules.getFileDir().lastIndexOf("/");
             String centerPaths = rules.getFileDir().substring(0, index);
             //String htmlName = centerPaths[0]+".html";

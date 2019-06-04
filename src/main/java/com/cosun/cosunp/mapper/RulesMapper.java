@@ -71,7 +71,7 @@ public interface RulesMapper {
             "FROM\n" +
             "\trules s\n" +
             "LEFT JOIN dept t ON s.deptId = t.id\n" +
-            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where t.deptname = #{deptName} ")
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where t.deptname = #{deptName} limit 1")
     Rules getRulesByName(String deptName);
 
     @Select("SELECT\n" +
@@ -113,6 +113,35 @@ public interface RulesMapper {
             "LEFT JOIN dept t ON s.deptId = t.id\n" +
             "LEFT JOIN userinfo o ON s.uploaderId = o.uid where s.id= #{id} ")
     Rules getRulesById(Integer id);
+
+
+    @Select("SELECT\n" +
+            "\ts.id AS id,\n" +
+            "\ts.filename AS fileName,\n" +
+            "\ts.deptId AS deptId,\n" +
+            "\ts.uploaderId AS uploaderId,\n" +
+            "\ts.uploadDate AS uploadDateStr,\n" +
+            "\ts.titleName AS titleName,\n" +
+            "\ts.filedir AS fileDir,\n" +
+            "\ts.remark AS remark,\n" +
+            "\tt.deptname AS deptName,\n" +
+            "\to.fullname AS uploaderName\n" +
+            "FROM\n" +
+            "\trules s\n" +
+            "LEFT JOIN dept t ON s.deptId = t.id\n" +
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where s.deptId= #{deptId} ")
+    List<Rules>  findAllRulesByDeptId(Rules rules);
+
+    @Select("SELECT count(*) \n" +
+            "FROM\n" +
+            "\trules s\n" +
+            "LEFT JOIN dept t ON s.deptId = t.id\n" +
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where s.deptId= #{deptId} ")
+    int  findAllRulesByDeptIdCount(Rules rules);
+
+    @Select("select count(*) from rules where substring_index(filename,'.',1) = #{fileName} and deptId = #{deptId}")
+    int getRulesByNameAndId(String fileName,Integer deptId);
+
 
     @SelectProvider(type = RulesMapper.RulesDaoProvider.class, method = "queryRulesByCondition")
     List<Rules> queryRulesByCondition(Rules rules);

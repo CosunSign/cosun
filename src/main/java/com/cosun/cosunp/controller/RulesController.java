@@ -40,6 +40,57 @@ public class RulesController {
     IPersonServ personServ;
 
     @ResponseBody
+    @RequestMapping("/getHtmlById")
+    public void getHtmlById(Rules ruless,HttpServletResponse response) throws Exception {
+        Rules rules = rulesServ.getRulesById(ruless.getId());
+        String htmlContent = "";
+        if (rules != null) {
+            int index = rules.getFileDir().lastIndexOf(".");
+            String htmlName = rules.getFileDir().substring(0, index) + ".html";
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                htmlContent += line + "\n";
+            }
+        }
+        String str1;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str1 = x.writeValueAsString(htmlContent);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/torulespageAll")
+    public ModelAndView torulespageAll(int deptId, HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView view = new ModelAndView("rulesZong");
+        Rules rules = new Rules();
+        rules.setDeptId(deptId);
+        List<Rules> rulesList = rulesServ.findAllRulesByDeptId(rules);
+        int recordCount = rulesServ.findAllRulesByDeptIdCount(rules);
+        int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() :
+                recordCount / rules.getPageSize() + 1;
+        rules.setMaxPage(maxPage);
+        rules.setRecordCount(recordCount);
+        rules.setMaxPage(maxPage);
+        rules.setRecordCount(recordCount);
+        view.addObject("rulesList", rulesList);
+        view.addObject("rules", rules);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+
+    @ResponseBody
     @RequestMapping("/torulespage")
     public ModelAndView torulespage(Integer showflag, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -122,9 +173,10 @@ public class RulesController {
     @ResponseBody
     @RequestMapping(value = "/deleteRulesById", method = RequestMethod.POST)
     public ModelAndView deleteRulesById(Integer id, HttpSession session) throws Exception {
+        Rules rules = new Rules();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         rulesServ.deleteRulesById(id);
-        ModelAndView view = new ModelAndView("mainindex");
+        ModelAndView view = new ModelAndView("rules");
         DownloadView views = new DownloadView();
         session.setAttribute("account", userInfo);
         views.setFullName(userInfo.getFullName());
@@ -133,9 +185,18 @@ public class RulesController {
         session.setAttribute("password", userInfo.getUserPwd());
         view.addObject("view", views);
         List<Rules> menuList = rulesServ.findAllRulesAll();
+        List<Rules> rulesList = rulesServ.findAllRules(new Rules());
+        int recordCount = rulesServ.findAllRulesCount();
+        int maxPage = recordCount % rules.getPageSize() == 0 ? recordCount / rules.getPageSize() :
+                recordCount / rules.getPageSize() + 1;
+        rules.setMaxPage(maxPage);
+        rules.setRecordCount(recordCount);
+        view.addObject("rules", rules);
         view.addObject("menuList", menuList);
         view.addObject("flag", 2);
         view.addObject("showflag", 2);
+        view.addObject("userInfo", userInfo);
+        view.addObject("rulesList", rulesList);
 
         return view;
 //        Rules rules = new Rules();
@@ -161,8 +222,7 @@ public class RulesController {
     public ModelAndView deleteRulesByBatch(Rules rules, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         rulesServ.deleteRulesByBatch(rules.getIds());
-
-        ModelAndView view = new ModelAndView("mainindex");
+        ModelAndView view = new ModelAndView("rules");
         DownloadView views = new DownloadView();
         session.setAttribute("account", userInfo);
         views.setFullName(userInfo.getFullName());
@@ -174,7 +234,6 @@ public class RulesController {
         view.addObject("menuList", menuList);
         view.addObject("flag", 2);
         view.addObject("showflag", 2);
-
         return view;
 
 //        ModelAndView view = new ModelAndView("rules");
@@ -268,27 +327,51 @@ public class RulesController {
     @ResponseBody
     @RequestMapping(value = "/updateRules", method = RequestMethod.POST)
     public ModelAndView updateRules(@RequestParam("file") MultipartFile file, HttpSession session, Rules rules) throws Exception {
-        ModelAndView view = new ModelAndView("mainindex");
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        rules.setUploaderId(userInfo.getuId());
-        rules.setUploadDate(new Date());
-        boolean isUploadFileRight = rulesServ.updateRulesById(file, rules);
+        int index = file.getOriginalFilename().indexOf(".");
+        int filenamesame = rulesServ.getRulesByNameAndId(file.getOriginalFilename().substring(0,index), rules.getDeptId());
+        ModelAndView view = new ModelAndView("rules");
+        if (filenamesame <= 0) {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            rules.setUploaderId(userInfo.getuId());
+            rules.setUploadDate(new Date());
+            boolean isUploadFileRight = rulesServ.updateRulesById(file, rules);
 
-        DownloadView views = new DownloadView();
-        session.setAttribute("account", userInfo);
-        views.setFullName(userInfo.getFullName());
-        session.setAttribute("view", views);
-        session.setAttribute("username", userInfo.getUserName());
-        session.setAttribute("password", userInfo.getUserPwd());
-        view.addObject("view", views);
-        List<Rules> menuList = rulesServ.findAllRulesAll();
-        view.addObject("menuList", menuList);
-        if (isUploadFileRight) {
-            view.addObject("flag", 3);
-            view.addObject("showflag", 3);
+            DownloadView views = new DownloadView();
+            session.setAttribute("account", userInfo);
+            views.setFullName(userInfo.getFullName());
+            session.setAttribute("view", views);
+            session.setAttribute("username", userInfo.getUserName());
+            session.setAttribute("password", userInfo.getUserPwd());
+            view.addObject("userInfo", userInfo);
+            List<Rules> rulesList = rulesServ.findAllRules(rules);
+            view.addObject("view", views);
+            List<Rules> menuList = rulesServ.findAllRulesAll();
+            view.addObject("menuList", menuList);
+            view.addObject("rulesList", rulesList);
+            if (isUploadFileRight) {
+                view.addObject("flag", 3);
+                view.addObject("showflag", 3);
+            } else {
+                view.addObject("flag", 5);
+                view.addObject("showflag", 5);
+            }
         } else {
-            view.addObject("flag", 5);
-            view.addObject("showflag", 5);
+
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            DownloadView views = new DownloadView();
+            session.setAttribute("account", userInfo);
+            views.setFullName(userInfo.getFullName());
+            session.setAttribute("view", views);
+            session.setAttribute("username", userInfo.getUserName());
+            session.setAttribute("password", userInfo.getUserPwd());
+            view.addObject("userInfo", userInfo);
+            List<Rules> rulesList = rulesServ.findAllRules(rules);
+            view.addObject("view", views);
+            List<Rules> menuList = rulesServ.findAllRulesAll();
+            view.addObject("menuList", menuList);
+            view.addObject("rulesList", rulesList);
+            view.addObject("flag", 6);
+
         }
         return view;
 
@@ -313,31 +396,52 @@ public class RulesController {
     @ResponseBody
     @RequestMapping(value = "/addRules")
     public ModelAndView addRules(@RequestParam("file") MultipartFile file, HttpSession session, Rules rules, HttpServletResponse response) throws Exception {
-        //ModelAndView view = new ModelAndView("redirect:/account/loginnew");
-        ModelAndView view = new ModelAndView("mainindex");
-        List<Dept> deptList = personServ.findAllDeptAll();
+        ModelAndView view = new ModelAndView("rules");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        rules.setLoginName(userInfo.getFullName());
-        rules.setUploadDate(new Date());
-        rules.setUploaderId(userInfo.getuId());
-        boolean isDocorDocx = rulesServ.saveRuleByRuleBean(file, rules);
+        int index = file.getOriginalFilename().indexOf(".");
+        int fileNameCount = rulesServ.getRulesByNameAndId(file.getOriginalFilename().substring(0,index), rules.getDeptId());
+        if (fileNameCount <= 0) {
+            // ModelAndView view = new ModelAndView("mainindex");
+            List<Dept> deptList = personServ.findAllDeptAll();
+            rules.setLoginName(userInfo.getFullName());
+            rules.setUploadDate(new Date());
+            rules.setUploaderId(userInfo.getuId());
+            boolean isDocorDocx = rulesServ.saveRuleByRuleBean(file, rules);
 
 
-        DownloadView views = new DownloadView();
-        session.setAttribute("account", userInfo);
-        views.setFullName(userInfo.getFullName());
-        session.setAttribute("view", views);
-        session.setAttribute("username", userInfo.getUserName());
-        session.setAttribute("password", userInfo.getUserPwd());
-        view.addObject("view", views);
-        List<Rules> menuList = rulesServ.findAllRulesAll();
-        view.addObject("menuList", menuList);
-        if (isDocorDocx) {
-            view.addObject("flag", 1);
-            view.addObject("showflag", 1);
+            DownloadView views = new DownloadView();
+            session.setAttribute("account", userInfo);
+            views.setFullName(userInfo.getFullName());
+            session.setAttribute("view", views);
+            session.setAttribute("username", userInfo.getUserName());
+            session.setAttribute("password", userInfo.getUserPwd());
+            view.addObject("view", views);
+            view.addObject("userInfo", userInfo);
+            List<Rules> menuList = rulesServ.findAllRulesAll();
+            List<Rules> rulesList = rulesServ.findAllRules(rules);
+            view.addObject("menuList", menuList);
+            view.addObject("rulesList", rulesList);
+            if (isDocorDocx) {
+                view.addObject("flag", 1);
+                view.addObject("showflag", 1);
+            } else {
+                view.addObject("flag", 5);
+                view.addObject("showflag", 5);
+            }
         } else {
-            view.addObject("flag", 5);
-            view.addObject("showflag", 5);
+            DownloadView views = new DownloadView();
+            session.setAttribute("account", userInfo);
+            views.setFullName(userInfo.getFullName());
+            session.setAttribute("view", views);
+            session.setAttribute("username", userInfo.getUserName());
+            session.setAttribute("password", userInfo.getUserPwd());
+            view.addObject("view", views);
+            view.addObject("userInfo", userInfo);
+            List<Rules> menuList = rulesServ.findAllRulesAll();
+            List<Rules> rulesList = rulesServ.findAllRules(rules);
+            view.addObject("menuList", menuList);
+            view.addObject("rulesList", rulesList);
+            view.addObject("flag", 6);
         }
         return view;
 

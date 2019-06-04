@@ -137,7 +137,7 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/rules/updateRules}" target="_top" th:method="post" th:object="${rules}" enctype="multipart/form-data">
+                <form id="addEmployee" th:action="@{/rules/updateRules}"  th:method="post" th:object="${rules}" enctype="multipart/form-data">
                     <input type="hidden" id="deptIdId" th:field="*{deptId}">
                     <input type="hidden" id="rulesId" th:field="*{id}">
                     <input type="hidden" id="fileDir" th:field="*{fileDir}">
@@ -147,9 +147,7 @@
                             <td style="width:200px">
                                 <select id="deptId" class="selectpicker show-tick form-control"
                                         data-live-search="true" onchange="checkRulesIsExsit()">
-                                    <option th:each="c:${deptList}" th:value="${c.id}"
-                                            th:selected="${c.id eq rules.deptId}"
-                                            th:text="${c.deptname}" disabled></option>
+                                    <option th:text="*{deptStr}" disabled></option>
                                 </select>
                             </td>
                             <td style="text-align: left;width:200px">

@@ -47,6 +47,11 @@
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能上传doc或docx格式的文件!";
             errormessagediv.style.color = "red";
+        }else if (aflag == 6) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;同一部门系统中已存在此名称的文件,不能添加或改名后添加!";
+            errormessagediv.style.color = "red";
         }
     });
 
@@ -175,7 +180,7 @@
                     $.each(data, function (num) {
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
-                        tr.append("<td>" + isNull(data[num].deptName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].deptStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].titleName) + "</td>");
                         tr.append("<td>" + isNull(data[num].fileName) + "</td>");
                         tr.append("<td>" + isNull(data[num].uploaderName) + "</td>");
@@ -294,7 +299,7 @@
 
 </script>
 <body>
-<form id="showMain" th:action="@{/rules/deleteRulesById}"  target="_top" th:method="post">
+<form id="showMain" th:action="@{/rules/deleteRulesById}"   th:method="post">
     <input type="hidden" value="" name="id" id="deleteid">
 </form>
 <form id="showMain2" th:action="@{/rules/deleteRulesByBatch}"  target="_top" th:method="post">
@@ -318,8 +323,17 @@
                                         data-live-search="true" data-actions-box="true"
                                         data-selected-text-format="count > 5">
                                     　　
-                                    <option th:each="c:${deptList}" th:value="${c.id}"
-                                            th:text="${c.deptname}"></option>
+                                    <!--<option th:each="c:${deptList}" th:value="${c.id}"-->
+                                            <!--th:text="${c.deptname}"></option>-->
+
+                                    <option value="1">总经办</option>
+                                    <option value="2">财务部</option>
+                                    <option value="3">人事行政部</option>
+                                    <option value="4">项目中心</option>
+                                    <option value="5">销售中心</option>
+                                    <option value="6">采购部</option>
+                                    <option value="7">数字研发中心</option>
+
                                 </select>
                             </label>
                         </td>
@@ -334,9 +348,9 @@
                                href="/rules/toaddrulespage">新增</a>
 
                             &nbsp;&nbsp;&nbsp;
-                            <button class="btn btn-primary"
-                               th:disabled="${userInfo.userActor ne 1}"
-                               onclick="deleteRulesByBatch()">批量删除</button>
+                            <!--<button class="btn btn-primary"-->
+                               <!--th:disabled="${userInfo.userActor ne 1}"-->
+                               <!--onclick="deleteRulesByBatch()">批量删除</button>-->
                         </td>
                         <td>
                             <div style="display: none" id="errormessage">
@@ -368,7 +382,7 @@
                 <tr>
                     <td align="center"
                         th:text="${(iterStat.index+1)}+${rules.currentPage-1}*${rules.pageSize}"></td>
-                    <td align="center" th:text="${rule.deptName}"></td>
+                    <td align="center" th:text="${rule.deptStr}"></td>
                     <td align="center" th:text="${rule.titleName}"></td>
                     <td align="center" th:text="${rule.fileName}"></td>
                     <td align="center" th:text="${rule.uploaderName}"></td>
@@ -459,8 +473,13 @@
         </tr>
 
 
+        <!--<tr style="display:none;" id="nodatadiv">-->
+            <!--<td colspan=8" align="center">-->
+                <!--查无数据-->
+            <!--</td>-->
+        <!--</tr>-->
         <tr style="display:none;" id="nodatadiv">
-            <td colspan=8" align="center">
+            <td colspan="7" align="center">
                 查无数据
             </td>
         </tr>
