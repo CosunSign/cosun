@@ -18,6 +18,8 @@ public interface IrulesServ {
 
     int findAllRulesByDeptIdCount(Rules rules) throws Exception;
 
+    void saveFirstShowById(Rules rules) throws Exception;
+
     int getRulesByNameAndId(String filename,Integer deptId) throws Exception;
 
     int getRulesByDeptId(Integer deptId) throws Exception;

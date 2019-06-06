@@ -29,6 +29,7 @@
 </style>
 <script>
     $(window).on('load', function () {
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         $('.selectpicker').selectpicker();
@@ -97,7 +98,18 @@
         $("#showfileName").html()
         var fileName = getFileName($("#fileselect").val());
         var arr = fileName.split(".");
-        if (arr[arr.length - 1] == 'doc' || arr[arr.length - 1] == 'DOC' || arr[arr.length - 1] == 'docx' || arr[arr.length - 1] == 'DOCX') {
+        if(arr.length>2) {
+            selectRight = false;
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;文件名不能含.号!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+        if (arr[arr.length - 1] == 'doc' || arr[arr.length - 1] == 'DOC' || arr[arr.length - 1] == 'docx' || arr[arr.length - 1] == 'DOCX'
+        ||arr[arr.length - 1] == 'xls'||arr[arr.length - 1] == 'xlsx'||arr[arr.length - 1] == 'XLS'||arr[arr.length - 1] == 'XLSX'
+            ||arr[arr.length - 1] == 'ppt'||arr[arr.length - 1] == 'PPT'||arr[arr.length - 1] == 'pptx'||arr[arr.length - 1] == 'PPTX'
+            ||arr[arr.length - 1] == 'pdf'||arr[arr.length - 1] == 'PDF') {
             $("#showfileName").html(fileName)
             $("#errormessage").hide();
             var errormessagediv = document.getElementById("errormessage");
@@ -107,7 +119,7 @@
             selectRight = false;
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能选择word文件!";
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能选择OFFICE文件和PDF文件!";
             errormessagediv.style.color = "red";
         }
 
@@ -163,6 +175,8 @@
         }
         if (isCorrect) {
             document.forms[0].submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+
         }
     }
 </script>
@@ -193,6 +207,8 @@
                                     <option value="5">销售中心</option>
                                     <option value="6">采购部</option>
                                     <option value="7">数字研发中心</option>
+                                    <option value="8">生产制造</option>
+
                                     <!--<option th:each="c:${deptList}" th:value="${c.id}"-->
                                             <!--th:text="${c.deptname}"></option>-->
                                 </select>

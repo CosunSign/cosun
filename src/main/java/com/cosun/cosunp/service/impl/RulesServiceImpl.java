@@ -6,6 +6,7 @@ import com.cosun.cosunp.service.IrulesServ;
 import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.cosun.cosunp.tool.WordToHtml;
+import com.cosun.cosunp.tool.WordToPDF;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class RulesServiceImpl implements IrulesServ {
     @Value("${spring.servlet.multipart.location}")
     private String finalDirPath;
 
+    private String ftpAddr = "ftp://admin:FL33771@192.168.0.152/";
+
     public int getRulesByDeptId(Integer deptId) throws Exception {
         return rulesMapper.getRulesByDeptId(deptId);
     }
@@ -45,23 +48,35 @@ public class RulesServiceImpl implements IrulesServ {
 
 
     public boolean saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception {
-        System.out.println(file.getOriginalFilename());
         int index = file.getOriginalFilename().indexOf(".");
         String filenamecenter = file.getOriginalFilename().substring(0, index);
         //step1 存文件在文件服务器  取得地址
         String descDir = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/" + file.getOriginalFilename();
         String descFolder = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/";
-        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX") ||
+                file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC") ||
+                file.getOriginalFilename().endsWith(".xls") || file.getOriginalFilename().endsWith(".XLS") ||
+                file.getOriginalFilename().endsWith(".xlsx") || file.getOriginalFilename().endsWith(".XLSX") ||
+                file.getOriginalFilename().endsWith(".ppt") || file.getOriginalFilename().endsWith(".PPT") ||
+                file.getOriginalFilename().endsWith(".pptx") || file.getOriginalFilename().endsWith(".PPTX")
+        ) {
             FileUtil.uploadFileForRules(file, descFolder);
-            WordToHtml.word2007ToHtml(descFolder, descDir, file, rules.getDeptId());
-        } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+            WordToPDF.WordToPDF(file,descFolder.concat(filenamecenter).concat(".pdf"),finalDirPath);
+            if(rules.getDeptId()==1) {
+                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+                    WordToHtml.word2007ToHtml(descFolder, descDir, file, rules.getDeptId());
+                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+                    WordToHtml.DocToHtml(descFolder, descDir, file, rules.getDeptId());
+                }
+            }
+        }else if(file.getOriginalFilename().endsWith(".pdf")) {
             FileUtil.uploadFileForRules(file, descFolder);
-            WordToHtml.DocToHtml(descFolder, descDir, file, rules.getDeptId());
         } else {
             return false;
         }
         rules.setFileDir(descDir);
         rules.setFileName(file.getOriginalFilename());
+        rules.setFtpDir(ftpAddr+rules.getDeptId() + "/" + filenamecenter + "/" + filenamecenter+".pdf");
         rulesMapper.saveRulesBean(rules);
         return true;
     }
@@ -88,35 +103,63 @@ public class RulesServiceImpl implements IrulesServ {
     }
 
     public boolean updateRulesById(MultipartFile file, Rules rules) throws Exception {
-        // E:/ftpserver/5/4月车间考勤记1录.xls
-        //String[] centerPaths = rules.getFileDir().split("\\.");
-        //String htmlName = centerPaths[0] + ".html";
-        //FileUtil.delFile(rules.getFileDir());
-        // FileUtil.delFile(htmlName);
+        int indexa = file.getOriginalFilename().indexOf(".");
+        String filenamecenter = file.getOriginalFilename().substring(0, indexa);
 
         int index = rules.getFileDir().lastIndexOf("/");
         String centerPaths = rules.getFileDir().substring(0, index);
+        int indexc = centerPaths.lastIndexOf("/");
+        String centerPathsc = centerPaths.substring(0, indexc);
         FileUtil.delFolderNew(centerPaths);
 
         String origName = file.getOriginalFilename();
-        String centerPath = StringUtil.subMyString(rules.getFileDir(), "/");
+        String centerPath = centerPathsc+"/"+filenamecenter+"/";
         String descDir = centerPath + origName;
         FileUtil.uploadFileForRules(file, centerPath);
-        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
-            WordToHtml.word2007ToHtml(centerPath, descDir, file, rules.getDeptId());
-        } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
-            WordToHtml.DocToHtml(centerPath, descDir, file, rules.getDeptId());
+        if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX") ||
+                file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC") ||
+                file.getOriginalFilename().endsWith(".xls") || file.getOriginalFilename().endsWith(".XLS") ||
+                file.getOriginalFilename().endsWith(".xlsx") || file.getOriginalFilename().endsWith(".XLSX") ||
+                file.getOriginalFilename().endsWith(".ppt") || file.getOriginalFilename().endsWith(".PPT") ||
+                file.getOriginalFilename().endsWith(".pptx") || file.getOriginalFilename().endsWith(".PPTX")
+        ) {
+            FileUtil.uploadFileForRules(file, centerPath);
+            WordToPDF.WordToPDF(file,centerPath.concat(filenamecenter).concat(".pdf"),finalDirPath);
+            if(rules.getDeptId()==1) {
+                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+                    WordToHtml.word2007ToHtml(centerPath, descDir, file, rules.getDeptId());
+                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+                    WordToHtml.DocToHtml(centerPath, descDir, file, rules.getDeptId());
+                }
+            }
+        }else if(file.getOriginalFilename().endsWith(".pdf")) {
+            FileUtil.uploadFileForRules(file, centerPath);
         } else {
             return false;
         }
         rules.setFileDir(centerPath + file.getOriginalFilename());
         rules.setFileName(file.getOriginalFilename());
+        rules.setFtpDir(ftpAddr+rules.getDeptId() + "/" + filenamecenter + "/" + filenamecenter+".pdf");
         rulesMapper.updateRulesBean(rules);
         return true;
     }
 
+    public void saveFirstShowById(Rules rules) throws Exception {
+        rulesMapper.cancelFritShowAll();
+        rulesMapper.saveFirstShowById(rules);
+    }
+
+
     public void deleteRulesByBatch(List<Integer> ids) throws Exception {
-        rulesMapper.deleteRulesByBatch(ids);
+        List<Rules> rules = rulesMapper.getRulesByIds(ids);
+        if (rules != null && rules.size()>0) {
+            for(Rules rule : rules) {
+                int index = rule.getFileDir().lastIndexOf("/");
+                String centerPaths = rule.getFileDir().substring(0, index);
+                FileUtil.delFolderNew(centerPaths);
+                rulesMapper.deleteRulesById(rule.getId());
+            }
+        }
     }
 
 

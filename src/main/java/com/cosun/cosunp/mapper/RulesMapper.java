@@ -14,8 +14,8 @@ public interface RulesMapper {
     @Select("select count(*) from rules where deptId = #{deptId} ")
     int getRulesByDeptId(Integer deptId);
 
-    @Insert("INSERT into rules(deptId,uploaderId,uploadDate,titleName,filename,filedir,remark)\n" +
-            "values(#{deptId},#{uploaderId},#{uploadDate},#{titleName},#{fileName},#{fileDir},#{remark} )\n ")
+    @Insert("INSERT into rules(deptId,uploaderId,uploadDate,titleName,filename,filedir,remark,ftpdir)\n" +
+            "values(#{deptId},#{uploaderId},#{uploadDate},#{titleName},#{fileName},#{fileDir},#{remark},#{ftpDir} )\n ")
     void saveRulesBean(Rules rules);
 
     @Update("update rules set " +
@@ -24,9 +24,19 @@ public interface RulesMapper {
             "filename = #{fileName}," +
             "filedir = #{fileDir}," +
             "titlename = #{titleName}," +
-            "remark = #{remark}" +
+            "remark = #{remark}," +
+            "ftpdir = #{ftpDir}," +
             " where id = #{id}")
     void updateRulesBean(Rules rules);
+
+    @Update("update rules set " +
+            "firstshow = 1" +
+            " where id = #{id}")
+    void saveFirstShowById(Rules rules);
+
+    @Update("update rules set " +
+            "firstshow = 0")
+    void cancelFritShowAll();
 
     @Delete({
             "<script>",
@@ -39,6 +49,18 @@ public interface RulesMapper {
             "</script>"
     })
     void deleteRulesByBatch(@Param("ids") List<Integer> ids);
+
+    @Select({
+            "<script>",
+            "select * ",
+            "from rules",
+            "where id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    List<Rules> getRulesByIds(@Param("ids") List<Integer> ids);
 
     @Select("SELECT\n" +
             "\ts.id AS id,\n" +
@@ -71,7 +93,7 @@ public interface RulesMapper {
             "FROM\n" +
             "\trules s\n" +
             "LEFT JOIN dept t ON s.deptId = t.id\n" +
-            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where t.deptname = #{deptName} limit 1")
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where t.deptname = #{deptName} and s.firstshow = 1 limit 1")
     Rules getRulesByName(String deptName);
 
     @Select("SELECT\n" +
@@ -125,7 +147,9 @@ public interface RulesMapper {
             "\ts.filedir AS fileDir,\n" +
             "\ts.remark AS remark,\n" +
             "\tt.deptname AS deptName,\n" +
-            "\to.fullname AS uploaderName\n" +
+            "\to.fullname AS uploaderName,\n" +
+            "\ts.firstshow AS firstShow,\n" +
+            "\ts.ftpdir AS ftpDir\n" +
             "FROM\n" +
             "\trules s\n" +
             "LEFT JOIN dept t ON s.deptId = t.id\n" +

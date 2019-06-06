@@ -2,6 +2,8 @@ package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.UserInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,18 +22,26 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/order")
 public class OrderController {
 
+    private static Logger logger = LogManager.getLogger(OrderController.class);
+
 
     @ResponseBody
     @RequestMapping(value = "/createsinglegoods")
     public ModelAndView toCreateSingleGoodsPage(HttpSession session) throws Exception {
-        UserInfo userInfo =(UserInfo) session.getAttribute("account");
-        DownloadView view = new DownloadView();
-        ModelAndView mav = new ModelAndView("singleorder");
-        view.setUserName(userInfo.getUserName());
-        view.setPassword(userInfo.getUserPwd());
-        view.setFullName(userInfo.getFullName());
-        mav.addObject("view",view);
-        return mav;
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            DownloadView view = new DownloadView();
+            ModelAndView mav = new ModelAndView("singleorder");
+            view.setUserName(userInfo.getUserName());
+            view.setPassword(userInfo.getUserPwd());
+            view.setFullName(userInfo.getFullName());
+            mav.addObject("view", view);
+            return mav;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 }

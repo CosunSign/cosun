@@ -77,11 +77,7 @@
                         th:text="${(iterStat.index+1)}+${rules.currentPage-1}*${rules.pageSize}"></td>
                     <td align="center" th:text="${rule.deptStr}"></td>
                     <td align="center" th:text="${rule.titleName}"></td>
-                    <td>
-                        <a href="javascript:void(0);"
-                           th:onclick="showFileDivById([[${rule.id}]]);" th:text="${rule.fileName}"></a>
-                    </td>
-                    <!--<td align="center" th:text="${rule.fileName}"></td>-->
+                    <td align="center" th:text="${rule.fileName}"></td>
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
                     <td align="center" th:text="${rule.remark}"></td>

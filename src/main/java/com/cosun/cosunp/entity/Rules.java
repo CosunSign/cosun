@@ -1,5 +1,6 @@
 package com.cosun.cosunp.entity;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class Rules implements Serializable {
 
     private static final long serialVersionUID = -3761627936696949450L;
 
+
     private String deptStr;
     private Integer id;
     private Integer deptId;
@@ -34,8 +36,13 @@ public class Rules implements Serializable {
     private String fileDir;
     private Integer userActor;
 
+    private Integer firstShow;
+
     private List<Integer> deptIds;
     private List<Integer> ids;
+    private String ftpDir;
+
+//    private String fileDirA;
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -43,6 +50,40 @@ public class Rules implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+   //E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.docx
+
+
+    public String getFtpDir() {
+        return ftpDir;
+    }
+
+    public void setFtpDir(String ftpDir) {
+        this.ftpDir = ftpDir;
+    }
+
+//    public String getFileDirA() {
+//        int a = fileDir.indexOf("/");
+//        String astr = fileDir.substring(a+1,fileDir.length());
+//        int aa = astr.indexOf("/");
+//        String aastr = astr.substring(aa+1,astr.length());
+//        return "ftp://admin:FL33771@192.168.0.152/"+aastr;
+//    }
+//
+//    public void setFileDirA(String fileDirA) {
+//        this.fileDirA = fileDirA;
+//    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Integer getFirstShow() {
+        return firstShow;
+    }
+
+    public void setFirstShow(Integer firstShow) {
+        this.firstShow = firstShow;
+    }
 
     public String getDeptStr() {
         if (deptId == 1) {
@@ -65,6 +106,9 @@ public class Rules implements Serializable {
         }
         if (deptId == 7) {
             return "数字研发中心";
+        }
+        if(deptId==8) {
+            return "生产制造";
         }
         return null;
     }

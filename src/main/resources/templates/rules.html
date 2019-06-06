@@ -19,6 +19,8 @@
     $(function () {
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+
 
         var flag = $("#flag").val();
         var aflag = eval(flag)
@@ -302,7 +304,7 @@
 <form id="showMain" th:action="@{/rules/deleteRulesById}"   th:method="post">
     <input type="hidden" value="" name="id" id="deleteid">
 </form>
-<form id="showMain2" th:action="@{/rules/deleteRulesByBatch}"  target="_top" th:method="post">
+<form id="showMain2" th:action="@{/rules/deleteRulesByBatch}"  th:method="post">
     <input type="hidden" value="" name="ids" id="deleteids">
 </form>
 <div id='app'>
@@ -333,6 +335,7 @@
                                     <option value="5">销售中心</option>
                                     <option value="6">采购部</option>
                                     <option value="7">数字研发中心</option>
+                                    <option value="8">生产制造</option>
 
                                 </select>
                             </label>
@@ -348,9 +351,9 @@
                                href="/rules/toaddrulespage">新增</a>
 
                             &nbsp;&nbsp;&nbsp;
-                            <!--<button class="btn btn-primary"-->
-                               <!--th:disabled="${userInfo.userActor ne 1}"-->
-                               <!--onclick="deleteRulesByBatch()">批量删除</button>-->
+                            <a class="btn btn-primary" href="#"
+                               th:disabled="${userInfo.userActor ne 1}"
+                               onclick="deleteRulesByBatch()">批量删除</a>
                         </td>
                         <td>
                             <div style="display: none" id="errormessage">
