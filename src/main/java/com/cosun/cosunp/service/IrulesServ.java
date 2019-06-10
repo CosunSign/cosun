@@ -14,13 +14,16 @@ public interface IrulesServ {
     Rules getRulesByName(String name) throws Exception;
 
     int queryRulesByConditionCount(Rules rules) throws Exception;
+
     List<Rules> findAllRulesByDeptId(Rules rules) throws Exception;
 
     int findAllRulesByDeptIdCount(Rules rules) throws Exception;
 
+    Rules getRulesByFirst() throws Exception;
+
     void saveFirstShowById(Rules rules) throws Exception;
 
-    int getRulesByNameAndId(String filename,Integer deptId) throws Exception;
+    int getRulesByNameAndId(String filename, Integer deptId) throws Exception;
 
     int getRulesByDeptId(Integer deptId) throws Exception;
 

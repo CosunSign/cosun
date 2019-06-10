@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -461,5 +464,93 @@ public class RulesController {
 
 
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/getFileOutStreamById")
+    public void getFileOutStreamById(Integer rulesId, HttpSession session, HttpServletResponse response) throws Exception {
+//        //跨域请求
+        Rules rules = rulesServ.getRulesById(rulesId);
+        int index = rules.getFileDir().lastIndexOf(".");
+        String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
+        File file = new File(pdfPath);
+        if (file.exists()) {
+            byte[] data = null;
+            try {
+                FileInputStream input = new FileInputStream(file);
+                data = new byte[input.available()];
+                input.read(data);
+                response.getOutputStream().write(data);
+                input.close();
+            } catch (Exception e) {
+                logger.error("pdf文件处理异常：" + e.getMessage());
+            }
+        } else {
+            return;
+        }
+
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/preview", method = RequestMethod.GET)
+    public void pdfStreamHandler(@RequestParam("rulesId") Integer rulesId, HttpServletRequest request, HttpServletResponse response) {
+        //PDF文件地址
+        FileInputStream input = null;
+        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+            Rules rules = rulesServ.getRulesById(rulesId);
+            int index = rules.getFileDir().lastIndexOf(".");
+            String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
+            File file = new File(pdfPath);
+            if (file.exists()) {
+                byte[] data = null;
+                input = new FileInputStream(file);
+                data = new byte[input.available()];
+                input.read(data);
+                response.getOutputStream().write(data);
+            }
+        } catch (Exception e) {
+            System.out.println("pdf文件处理异常：" + e);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/previewFirst", method = RequestMethod.GET)
+    public void previewFirst( HttpServletResponse response) {
+        //PDF文件地址
+        FileInputStream input = null;
+        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+            Rules rules = rulesServ.getRulesByFirst();
+            int index = rules.getFileDir().lastIndexOf(".");
+            String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
+            File file = new File(pdfPath);
+            if (file.exists()) {
+                byte[] data = null;
+                input = new FileInputStream(file);
+                data = new byte[input.available()];
+                input.read(data);
+                response.getOutputStream().write(data);
+            }
+        } catch (Exception e) {
+            System.out.println("pdf文件处理异常：" + e);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }

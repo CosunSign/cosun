@@ -25,7 +25,7 @@ public interface RulesMapper {
             "filedir = #{fileDir}," +
             "titlename = #{titleName}," +
             "remark = #{remark}," +
-            "ftpdir = #{ftpDir}," +
+            "ftpdir = #{ftpDir}" +
             " where id = #{id}")
     void updateRulesBean(Rules rules);
 
@@ -135,6 +135,23 @@ public interface RulesMapper {
             "LEFT JOIN dept t ON s.deptId = t.id\n" +
             "LEFT JOIN userinfo o ON s.uploaderId = o.uid where s.id= #{id} ")
     Rules getRulesById(Integer id);
+
+    @Select("SELECT\n" +
+            "\ts.id AS id,\n" +
+            "\ts.filename AS fileName,\n" +
+            "\ts.deptId AS deptId,\n" +
+            "\ts.uploaderId AS uploaderId,\n" +
+            "\ts.uploadDate AS uploadDateStr,\n" +
+            "\ts.titleName AS titleName,\n" +
+            "\ts.filedir AS fileDir,\n" +
+            "\ts.remark AS remark,\n" +
+            "\tt.deptname AS deptName,\n" +
+            "\to.fullname AS uploaderName\n" +
+            "FROM\n" +
+            "\trules s\n" +
+            "LEFT JOIN dept t ON s.deptId = t.id\n" +
+            "LEFT JOIN userinfo o ON s.uploaderId = o.uid where firstshow = 1 limit 1 ")
+    Rules getRulesByFirst();
 
 
     @Select("SELECT\n" +

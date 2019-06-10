@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
-    <script src="/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap-select.min.css">
+    <script src="/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap-select.min.js"></script>
     <script src="/lib/WdatePicker.js" type="text/javascript"></script>
     <script src="/lib/defaults-zh_CN.js" type="text/javascript"></script>
+
 </head>
 <style type="text/css">
 
@@ -37,10 +38,10 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                var afterMsg = msg.substring(1,msg.length-3);
+                var afterMsg = msg.substring(1, msg.length - 3);
                 window.parent.document.getElementById('coverbehidepage').style.display = "block";
                 window.parent.document.getElementById('showHtmlDiv').style.display = "block";
-                window.parent.document.getElementById('showHtmlDivinner').innerHTML=afterMsg;
+                window.parent.document.getElementById('showHtmlDivinner').innerHTML = afterMsg;
                 // $("#showHtmlDiv").html(msg)
             },
             error: function (msg) {
@@ -53,6 +54,14 @@
 
         });
     }
+
+    function onLineReadPDF(rulesId) {
+       // window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId=" + rulesId);
+        window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D"+rulesId);
+        //		viewer.html?url_file=printcontroller.do?viewfile&id=9999
+
+    }
+
 </script>
 <body>
 <div id='app' style="overflow-y:scroll">
@@ -77,7 +86,12 @@
                         th:text="${(iterStat.index+1)}+${rules.currentPage-1}*${rules.pageSize}"></td>
                     <td align="center" th:text="${rule.deptStr}"></td>
                     <td align="center" th:text="${rule.titleName}"></td>
-                    <td align="center" th:text="${rule.fileName}"></td>
+                    <td>
+                        <!--<a th:href="@{/rules/torulespageAll(deptId=8)}" target="targetText"></a>-->
+                        <a href="javascript:void(0);"
+                           th:onclick="onLineReadPDF([[${rule.id}]]);" th:text="${rule.fileName}"></a>
+                    </td>
+                    <!--<td align="center" th:text="${rule.fileName}"></td>-->
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
                     <td align="center" th:text="${rule.remark}"></td>
@@ -154,8 +168,6 @@
         </tfoot>
     </table>
 </div>
-
-
 
 </body>
 </html>

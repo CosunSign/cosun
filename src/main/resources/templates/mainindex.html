@@ -109,7 +109,16 @@
                 <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
             </ul>
         </li>
-
+        <li data-popover="false"
+            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforcaiwu"
+                                                    class="nav-header collapsed"
+                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>财务<i
+                class="fa fa-collapse"></i></a></li>
+        <li>
+            <ul class="premium-menuforcaiwu nav nav-list collapse">
+            </ul>
+        </li>
 
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
@@ -142,15 +151,16 @@
 
 
         <li data-popover="false"
-            rel="popover" data-placement="right"><a  th:href="@{/rules/torulespage}" target="targetText" data-target=".premium-menuforfileab"
+            rel="popover" data-placement="right"><a th:href="@{/rules/torulespage}" target="targetText"
+                                                    data-target=".premium-menuforfileab"
                                                     class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>规章制度管理<i
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforfileab nav nav-list collapse">
                 <!--<li>-->
-                    <!--<a th:href="@{/rules/torulespage}" target="targetText"><span-->
-                            <!--class="fa fa-caret-right"></span>规章制度管理</a></li>-->
+                <!--<a th:href="@{/rules/torulespage}" target="targetText"><span-->
+                <!--class="fa fa-caret-right"></span>规章制度管理</a></li>-->
                 <li>
                     <a th:href="@{/rules/torulespageAll(deptId=1)}" target="targetText"><span
                             class="fa fa-caret-right"></span>总经办</a></li>
@@ -221,8 +231,16 @@
         <iframe class="iframecontent" src="" style="float: left;height:670px;" name="targetText" id="abcds">
         </iframe>
     </div>
-    <div class="content" id="contentnew" style="overflow-y:scroll;height:670px;" th:utext="${htmlStr}">
+    <!--<div class="content" id="contentnew" style="overflow-y:scroll;height:670px;" th:utext="${htmlStr}">-->
+    <!--</div>-->
+    <div class="content" id="contentnew" style="overflow-y:scroll;height:670px;">
+        <div th:if="${showflaga==1}">
+
+            <iframe class="iframecontent" src="/pdfjs/web/viewer.html?file=/rules/previewFirst"/>
+            " style="float: left;height:670px;" name="targetText"></iframe>
+        </div>
     </div>
+
 </div>
 
 
@@ -303,7 +321,7 @@
 </div>
 
 <form id="abcd" th:action="@{/rules/torulespage}" th:method="post" target="targetText" enctype="multipart/form-data">
-    <input type="hidden" name="showflag" th:value="${showflag}"  id="showflag">
+    <input type="hidden" name="showflag" th:value="${showflag}" id="showflag">
 </form>
 
 <div style="display: none;" id="showHtmlDiv">
@@ -327,7 +345,7 @@
 <script type="text/javascript">
     $("[rel=tooltip]").tooltip();
     $(function () {
-        $('a.media').media({width:800, height:600});
+        $('a.media').media({width: 800, height: 600});
         var showflag = $("#showflag").val();
         if (showflag == 1 || showflag == 2 || showflag == 3 || showflag == 4 || showflag == 5) {
             toOtherPage();
@@ -437,9 +455,10 @@
         font-size: 12px;
 
     }
+
     #showHtmlDiv {
         border: 1px solid #9AC0CD;
-        width:950px;
+        width: 950px;
         height: 580px;
         Margin: 2px;
         padding: 3px;
@@ -447,10 +466,11 @@
         background-color: #E0EEEE;
         position: absolute;
         top: 15%;
-        left:22%;
-        overflow-y:scroll;
-        overflow-x:scroll;
+        left: 22%;
+        overflow-y: scroll;
+        overflow-x: scroll;
     }
+
     #contentnew {
         width: 1180px;
         height: 500px;
@@ -475,7 +495,6 @@
         top: 19%;
         left: 28%;;
     }
-
 
 
     #line-chart {

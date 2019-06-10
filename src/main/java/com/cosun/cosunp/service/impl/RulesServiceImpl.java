@@ -62,13 +62,13 @@ public class RulesServiceImpl implements IrulesServ {
         ) {
             FileUtil.uploadFileForRules(file, descFolder);
             WordToPDF.WordToPDF(file,descFolder.concat(filenamecenter).concat(".pdf"),finalDirPath);
-            if(rules.getDeptId()==1) {
-                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
-                    WordToHtml.word2007ToHtml(descFolder, descDir, file, rules.getDeptId());
-                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
-                    WordToHtml.DocToHtml(descFolder, descDir, file, rules.getDeptId());
-                }
-            }
+//            if(rules.getDeptId()==1) {
+//                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+//                    WordToHtml.word2007ToHtml(descFolder, descDir, file, rules.getDeptId());
+//                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+//                    WordToHtml.DocToHtml(descFolder, descDir, file, rules.getDeptId());
+//                }
+//            }
         }else if(file.getOriginalFilename().endsWith(".pdf")) {
             FileUtil.uploadFileForRules(file, descFolder);
         } else {
@@ -88,6 +88,11 @@ public class RulesServiceImpl implements IrulesServ {
     public Rules getRulesById(Integer id) throws Exception {
         return rulesMapper.getRulesById(id);
     }
+
+    public Rules getRulesByFirst() throws Exception {
+        return rulesMapper.getRulesByFirst();
+    }
+
 
     public int getRulesByNameAndId(String filename, Integer deptId) throws Exception {
         return rulesMapper.getRulesByNameAndId(filename, deptId);
@@ -125,13 +130,13 @@ public class RulesServiceImpl implements IrulesServ {
         ) {
             FileUtil.uploadFileForRules(file, centerPath);
             WordToPDF.WordToPDF(file,centerPath.concat(filenamecenter).concat(".pdf"),finalDirPath);
-            if(rules.getDeptId()==1) {
-                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
-                    WordToHtml.word2007ToHtml(centerPath, descDir, file, rules.getDeptId());
-                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
-                    WordToHtml.DocToHtml(centerPath, descDir, file, rules.getDeptId());
-                }
-            }
+//            if(rules.getDeptId()==1) {
+//                if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX")) {
+//                    WordToHtml.word2007ToHtml(centerPath, descDir, file, rules.getDeptId());
+//                } else if (file.getOriginalFilename().endsWith(".doc") || file.getOriginalFilename().endsWith(".DOC")) {
+//                    WordToHtml.DocToHtml(centerPath, descDir, file, rules.getDeptId());
+//                }
+//            }
         }else if(file.getOriginalFilename().endsWith(".pdf")) {
             FileUtil.uploadFileForRules(file, centerPath);
         } else {

@@ -112,22 +112,23 @@ public class AccountController {
                 session.setAttribute("username", userInfo.getUserName());
                 session.setAttribute("password", userInfo.getUserPwd());
                 mav.addObject("view", view);
-                List<Rules> menuList = rulesServ.findAllRulesAll();
-                mav.addObject("menuList", menuList);
-                Rules rules = rulesServ.getRulesByName("总经办");
-                String htmlContent = "";
-                if (rules != null) {
-                    int index = rules.getFileDir().lastIndexOf(".");
-                    String htmlName = rules.getFileDir().substring(0, index) + ".html";
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
-                    String line;
-
-                    while ((line = br.readLine()) != null) {
-                        htmlContent += line + "\n";
-                    }
-                }
-                mav.addObject("htmlStr", htmlContent);
+//                List<Rules> menuList = rulesServ.findAllRulesAll();
+//                mav.addObject("menuList", menuList);
+                Rules rules = rulesServ.getRulesByFirst();
+//                String htmlContent = "";
+//                if (rules != null) {
+//                    int index = rules.getFileDir().lastIndexOf(".");
+//                    String htmlName = rules.getFileDir().substring(0, index) + ".html";
+//                    BufferedReader br = new BufferedReader(
+//                            new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
+//                    String line;
+//
+//                    while ((line = br.readLine()) != null) {
+//                        htmlContent += line + "\n";
+//                    }
+//                }
+//                mav.addObject("htmlStr", htmlContent);
+                mav.addObject("showflaga",rules==null ? 0:1);
                 return mav;
             }
             mav = new ModelAndView(INDEX);

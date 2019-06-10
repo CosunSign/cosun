@@ -299,6 +299,10 @@
         return;
     }
 
+    function onLineReadPDFSmall(rulesId) {
+        window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D"+rulesId);
+    }
+
 </script>
 <body>
 <form id="showMain" th:action="@{/rules/deleteRulesById}"   th:method="post">
@@ -387,7 +391,10 @@
                         th:text="${(iterStat.index+1)}+${rules.currentPage-1}*${rules.pageSize}"></td>
                     <td align="center" th:text="${rule.deptStr}"></td>
                     <td align="center" th:text="${rule.titleName}"></td>
-                    <td align="center" th:text="${rule.fileName}"></td>
+                    <td>
+                        <a href="javascript:void(0);"
+                           th:onclick="onLineReadPDFSmall([[${rule.id}]]);" th:text="${rule.fileName}"></a>
+                    </td>
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
                     <td align="center" th:text="${rule.remark}"></td>
