@@ -11501,7 +11501,7 @@ var ViewHistory = function () {
               case 0:
                 databaseStr = JSON.stringify(this.database);
 
-                localStorage.setItem('pdfjs.history', databaseStr);
+                // localStorage.setItem('pdfjs.history', databaseStr);
 
               case 2:
               case 'end':
