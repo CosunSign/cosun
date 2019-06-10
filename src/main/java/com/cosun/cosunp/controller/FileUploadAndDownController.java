@@ -1371,7 +1371,7 @@ public class FileUploadAndDownController {
     }
 
     @RequestMapping(value = "/showcookies")
-    public ModelAndView showcookies(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public ModelAndView showcookies(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Cookie[] cookies = request.getCookies();
         String cookievalue = null;
         if (cookies != null) {
@@ -2886,36 +2886,59 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
-        }catch (Exception e) {
-            logger.debug(e.getMessage());
-            logger.debug( "发生错误 了");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
         }
     }
 
     @RequestMapping(value = "/saveFolderMessageUpdate", method = RequestMethod.POST)
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
+        try {
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 
     @RequestMapping(value = "/saveFileMessage", method = RequestMethod.POST)
     @ResponseBody
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        fileUploadAndDownServ.saveFileMessage(view, userInfo);
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            fileUploadAndDownServ.saveFileMessage(view, userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 
     @RequestMapping(value = "/saveFileMessageUpdate", method = RequestMethod.POST)
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
+        try {
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     /**
@@ -3023,7 +3046,7 @@ public class FileUploadAndDownController {
      */
     @RequestMapping(value = "/uploadfolder1", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception{
+    public ResponseEntity fileUpload(MultipartFileParam param, HttpServletRequest request, HttpSession session) throws Exception {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
