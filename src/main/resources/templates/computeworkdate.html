@@ -17,6 +17,7 @@
 <script>
 
     $(function () {
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
@@ -80,6 +81,7 @@
             errormessagediv1.style.color = "green";
             var form = document.getElementById('inData');
             form.submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
         } else if (originFile.trim().length <= 0) {
             $("#errormessage1").show();
             var errormessagediv1 = document.getElementById("errormessage1");
@@ -101,6 +103,7 @@
             errormessagediv.style.color = "green";
             var form = document.getElementById('computeForm');
             form.submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
         } else if (originFile.trim().length <= 0) {
             $("#errormessagee").show();
             var errormessagediv = document.getElementById("errormessagee");

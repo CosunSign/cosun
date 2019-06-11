@@ -28,7 +28,7 @@ public class DownLoadUtil {
     /**
      * 下载线程数
      */
-    private static final int DOWNLOAD_THREAD_NUM = 14;
+    private static final int DOWNLOAD_THREAD_NUM = 15;
     /**
      * 下载线程池
      */

@@ -945,7 +945,7 @@
                 throw new Error('Not implemented: initPassiveLoading');
             },
             setTitleUsingUrl: function setTitleUsingUrl() {
-                 var url = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
                 //
                 // this.url = url;
                 // this.baseUrl = url.split('#')[0];
@@ -958,7 +958,7 @@
                 //   }
                 // }
                 // this.setTitle(title);
-
+                var url = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
                 this.url = url;
                 try {
                     var titleTmp = (TITLE == '' || TITLE == undefined) ? (decodeURIComponent(pdfjsLib.getFilenameFromUrl(url)) || url) : TITLE;
