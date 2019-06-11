@@ -55,7 +55,8 @@
         });
     }
 
-    function onLineReadPDF(rulesId) {
+    function onLineReadPDF(rulesId,fileName) {
+        localStorage.setItem("fileName",fileName)
        // window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId=" + rulesId);
         window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D"+rulesId);
         //		viewer.html?url_file=printcontroller.do?viewfile&id=9999
@@ -89,7 +90,7 @@
                     <td>
                         <!--<a th:href="@{/rules/torulespageAll(deptId=8)}" target="targetText"></a>-->
                         <a href="javascript:void(0);"
-                           th:onclick="onLineReadPDF([[${rule.id}]]);" th:text="${rule.fileName}"></a>
+                           th:onclick="onLineReadPDF([[${rule.id}]],[[${rule.fileName}]]);" th:text="${rule.fileName}"></a>
                     </td>
                     <!--<td align="center" th:text="${rule.fileName}"></td>-->
                     <td align="center" th:text="${rule.uploaderName}"></td>

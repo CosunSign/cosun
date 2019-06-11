@@ -299,7 +299,8 @@
         return;
     }
 
-    function onLineReadPDFSmall(rulesId) {
+    function onLineReadPDFSmall(rulesId,fileName) {
+        localStorage.setItem("fileName",fileName)
         window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D"+rulesId);
     }
 
@@ -393,7 +394,7 @@
                     <td align="center" th:text="${rule.titleName}"></td>
                     <td>
                         <a href="javascript:void(0);"
-                           th:onclick="onLineReadPDFSmall([[${rule.id}]]);" th:text="${rule.fileName}"></a>
+                           th:onclick="onLineReadPDFSmall([[${rule.id}]],[[${rule.fileName}]]);" th:text="${rule.fileName}"></a>
                     </td>
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
