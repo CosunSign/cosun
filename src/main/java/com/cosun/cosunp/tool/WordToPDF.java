@@ -37,6 +37,7 @@ public class WordToPDF {
             outputFile.getParentFile().exists();
         }
 
+
         // 调用openoffice服务线程
         /** 我把openOffice下载到了 C:/Program Files (x86)/下  ,下面的写法自己修改编辑就可以**/
         //String command = "/opt/openoffice4/program/soffice -headless -accept=\"socket,host=0.0.0.0,port=8100;urp;\" -nofirststartwizard";
@@ -44,8 +45,8 @@ public class WordToPDF {
         //Process p = Runtime.getRuntime().exec(command);
 
         // 连接openoffice服务
-        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+        OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
+        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
         connection.connect();
 
         // 转换

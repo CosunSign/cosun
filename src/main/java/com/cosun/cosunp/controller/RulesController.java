@@ -89,8 +89,6 @@ public class RulesController {
                     recordCount / rules.getPageSize() + 1;
             rules.setMaxPage(maxPage);
             rules.setRecordCount(recordCount);
-            rules.setMaxPage(maxPage);
-            rules.setRecordCount(recordCount);
             view.addObject("rulesList", rulesList);
             view.addObject("rules", rules);
             view.addObject("userInfo", userInfo);

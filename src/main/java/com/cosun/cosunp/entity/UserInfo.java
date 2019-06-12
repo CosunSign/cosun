@@ -1,6 +1,8 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 public class UserInfo implements Serializable {
 
@@ -13,7 +15,271 @@ public class UserInfo implements Serializable {
     private Integer type; //type是不同的权限配置
     private String fullName;//中文全名
     private Integer useruploadright;//上传权限  0代表没有  默认1代表有
+    private String empNo;
+    private Integer state;// 0代表未审核   1代表审核通过  2 代表审核未通过
+    private String deptNo;
+    private Integer flag;
+    private String positionName;
+    private String deptName;
+    private String newestlogintime;
 
+
+    private String stateStr;
+    private String useruploadrightStr;
+    private String userActorStr;
+
+
+    private List<Integer> useruploadrights;
+    private List<Integer> userActors;
+    private List<Integer> states;
+
+    private List<Integer> nameIds;
+    private List<Integer> ids;
+    private List<Integer> deptIds;
+    private List<Integer> sexIds;
+    private List<Integer> positionIds;
+
+    private String startIncomDateStr;
+    private String endIncomDateStr;
+
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 10;
+    private int currentPageTotalNum;
+
+
+    public String getNewestlogintime() {
+        return newestlogintime;
+    }
+
+    public void setNewestlogintime(String newestlogintime) {
+        this.newestlogintime = newestlogintime;
+    }
+
+    public List<Integer> getNameIds() {
+        return nameIds;
+    }
+
+    public void setNameIds(List<Integer> nameIds) {
+        this.nameIds = nameIds;
+    }
+
+    public List<Integer> getDeptIds() {
+        return deptIds;
+    }
+
+    public List<Integer> getUseruploadrights() {
+        return useruploadrights;
+    }
+
+    public void setUseruploadrights(List<Integer> useruploadrights) {
+        this.useruploadrights = useruploadrights;
+    }
+
+    public List<Integer> getUserActors() {
+        return userActors;
+    }
+
+    public void setUserActors(List<Integer> userActors) {
+        this.userActors = userActors;
+    }
+
+    public List<Integer> getStates() {
+        return states;
+    }
+
+    public void setStates(List<Integer> states) {
+        this.states = states;
+    }
+
+    public void setDeptIds(List<Integer> deptIds) {
+        this.deptIds = deptIds;
+    }
+
+    public List<Integer> getSexIds() {
+        return sexIds;
+    }
+
+    public void setSexIds(List<Integer> sexIds) {
+        this.sexIds = sexIds;
+    }
+
+    public List<Integer> getPositionIds() {
+        return positionIds;
+    }
+
+    public void setPositionIds(List<Integer> positionIds) {
+        this.positionIds = positionIds;
+    }
+
+    public String getStartIncomDateStr() {
+        return startIncomDateStr;
+    }
+
+    public void setStartIncomDateStr(String startIncomDateStr) {
+        this.startIncomDateStr = startIncomDateStr;
+    }
+
+    public String getEndIncomDateStr() {
+        return endIncomDateStr;
+    }
+
+    public void setEndIncomDateStr(String endIncomDateStr) {
+        this.endIncomDateStr = endIncomDateStr;
+    }
+
+    public List<Integer> getIds() {
+        return ids;
+    }
+
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
+    }
+
+    public String getStateStr() {
+        if(state!=null) {
+            if(state==0) {
+                return "未审核";
+            }else if(state ==1) {
+                return "审核通过";
+            }else if(state==2) {
+                return "审核未通过";
+            }
+        }
+        return "";
+    }
+
+    public void setStateStr(String stateStr) {
+        this.stateStr = stateStr;
+    }
+
+    public String getUseruploadrightStr() {
+        if(useruploadright!=null) {
+            if(useruploadright==0) {
+                return "无";
+            }else if(useruploadright==1) {
+                return "有";
+            }
+        }
+        return "";
+    }
+
+    public void setUseruploadrightStr(String useruploadrightStr) {
+        this.useruploadrightStr = useruploadrightStr;
+    }
+
+    public String getUserActorStr() {
+        if(this.userActor!=null) {
+            if(userActor==1) {
+                return "总监级别";
+            }else if(userActor==2) {
+                return "经理级别";
+            }else if(userActor==3) {
+                return "组长级别";
+            }else{
+                return "普通员工";
+            }
+        }
+        return userActorStr;
+    }
+
+    public void setUserActorStr(String userActorStr) {
+        this.userActorStr = userActorStr;
+    }
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPageTotalNum() {
+        if (this.currentPage != 0)
+            return (currentPage - 1) * pageSize;
+        return 0;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
+
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
+
+    public String getDeptNo() {
+        return deptNo;
+    }
+
+    public void setDeptNo(String deptNo) {
+        this.deptNo = deptNo;
+    }
+
+    public String getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(String empNo) {
+        this.empNo = empNo;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public Integer getUseruploadright() {
         return useruploadright;

@@ -77,7 +77,16 @@
             $("#username").val("");
             $("#password").val("")
             $("#uid").val("");
-        }else{
+        }else if(flag=="3"){
+            showerrmessage.innerHTML = "用户注册成功,请让上级审核后再登录！";
+            showerrmessage.style.color = "red";
+        }else if(flag=="0"){
+            showerrmessage.innerHTML = "您注册的用户未经过上级审核！";
+            showerrmessage.style.color = "red";
+        } else if(flag=="2"){
+            showerrmessage.innerHTML = "您注册的用户上级审核未通过！";
+            showerrmessage.style.color = "red";
+        } else{
             showerrmessage.innerHTML = "";
         }
         var uls = $('.sidebar-nav > ul > *').clone();
@@ -225,7 +234,18 @@
         </div>
     </div>
     <!--<p class="pull-right" style=""><a href="http://www.portnine.com" target="blank" style="font-size: .75em; margin-top: .25em;">Design by Portnine</a></p>-->
-    <p><a th:href="@{/account/toforgetpasswordpage}">忘记密码?</a></p>
+    <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+        <a th:href="@{/account/toregister}">注册</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a th:href="@{/account/toforgetpasswordpage}">忘记密码?</a></p>
 </div>
 
 

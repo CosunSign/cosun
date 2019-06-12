@@ -19,9 +19,8 @@ public class Test {
 //            "	\"E:/ftpserver/8/2018公司宿舍管理制度/2018公司宿舍管理制度.docx\":\"E:/ftpserver/8/2018公司宿舍管理制度/2018公司宿舍管理制度.docx\"}";
 
     static String json = "{\r\n" +
-            "	\"https://code.jquery.com/jquery-3.4.1.js\":\"E:/myFile/111/123.js\",\r\n" +
-            "	\"https://code.jquery.com/jquery-migrate-1.4.1.min.js\":\"E:/myFile/111/124.js\",\r\n" +
-            "	\"https://code.jquery.com/jquery-migrate-3.0.1.js\":\"E:/myFile/111/125.js\"\r\n" + "}";
+            "	\"ftp://admin:FL33771@192.168.0.152/1/2018公司宿舍管理制度/2018公司宿舍管理制度.docx\":\"E:/myFile/111/123.docx\",\r\n" +
+            "	\"ftp://admin:FL33771@192.168.0.152/8/2019项目中心设计部员工手册（福田组）/2019项目中心设计部员工手册（福田组）.docx\":\"E:/myFile/111/124.docx\"\r\n}";
 
     public static void main(String[] arg) {
         Map<String, String> map = new HashMap<>();

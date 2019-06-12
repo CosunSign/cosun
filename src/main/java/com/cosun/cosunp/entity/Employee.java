@@ -36,9 +36,11 @@ public class Employee implements Serializable {
 
     private List<Integer> sexIds;
 
+    private List<Integer> positionIds;
+
     private List<Integer> ids;
 
-    private List<Integer> positionIds;
+
 
     private List<Integer> nameIds;
 

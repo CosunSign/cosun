@@ -3,6 +3,7 @@ package com.cosun.cosunp.tool;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.net.www.protocol.ftp.FtpURLConnection;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,8 +50,9 @@ public class DownLoadUtil {
         FileOutputStream out = null;
         try {
             URL url = new URL(fileUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET"); // 2s
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            FtpURLConnection conn = (FtpURLConnection) url.openConnection();
+//            conn.setRequestMethod("GET"); // 2s
             conn.setConnectTimeout(10000);
             in = conn.getInputStream();
             out = new FileOutputStream(path);
@@ -60,7 +62,6 @@ public class DownLoadUtil {
                 out.write(arr, 0, len);
             }
             out.flush();
-            conn.disconnect();
         } catch (Exception e) {
             logger.error("Fail to download: {} by {}", fileUrl, e.getMessage());
         } finally {

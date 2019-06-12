@@ -1,10 +1,10 @@
 package com.cosun.cosunp.controller;
 
-import com.cosun.cosunp.entity.DownloadView;
-import com.cosun.cosunp.entity.Rules;
-import com.cosun.cosunp.entity.UserInfo;
+import com.cosun.cosunp.entity.*;
+import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.service.IrulesServ;
+import com.cosun.cosunp.tool.PinYinUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -34,6 +36,9 @@ public class AccountController {
 
     @Autowired
     private IUserInfoServ userInfoServ;
+
+    @Autowired
+    IPersonServ personServ;
 
     @Autowired
     private IrulesServ rulesServ;
@@ -99,12 +104,80 @@ public class AccountController {
     }
 
     @ResponseBody
+    @RequestMapping("/toregister")
+    public ModelAndView toregister() throws Exception {
+        try {
+            ModelAndView mav = new ModelAndView("register");
+            List<Employee> employeeList = personServ.findAllEmployees();
+            mav.addObject("employeeList", employeeList);
+            mav.addObject("userInfo", new UserInfo());
+            return mav;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/checkUserNameExsit", method = RequestMethod.POST)
+    public void checkUserNameExsit(@RequestBody String username, HttpServletResponse response) throws Exception {
+        try {
+            int isExsitCount = userInfoServ.getUserInfoCountByUserName(username);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+
+            str1 = x.writeValueAsString(isExsitCount);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/checkUserExsitAndReturnPinyinName", method = RequestMethod.POST)
+    public void checkUserExsitAndReturnPinyinName(@RequestBody String empNo, HttpServletResponse response) throws
+            Exception {
+        try {
+            String returnMessage;
+            Employee employee;
+            int isExsit = userInfoServ.getUserInfoCountByEmpNo(empNo);
+            if (isExsit > 0) {
+                returnMessage = "1";
+            } else {
+                employee = userInfoServ.getUserInfoByEmpNo(empNo);
+                returnMessage = PinYinUtil.toPinyin(employee.getName()).concat(",").concat(employee.getDeptName());
+            }
+
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+
+            str1 = x.writeValueAsString(returnMessage);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/login")
-    public ModelAndView login(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
+    public ModelAndView login(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws
+            Exception {
         ModelAndView mav;
         try {
             UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(), view.getPassword());
-            if (userInfo != null && userInfo.getUserName() != null) {
+            if (userInfo != null && userInfo.getUserName() != null && userInfo.getState()==1) {
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+                userInfoServ.updateUserInfoLoginTime(userInfo.getuId(),df.format(new Date()).toString());
                 session.setAttribute("account", userInfo);
                 view.setFullName(userInfo.getFullName());
                 session.setAttribute("view", view);
@@ -128,7 +201,13 @@ public class AccountController {
 //                    }
 //                }
 //                mav.addObject("htmlStr", htmlContent);
-                mav.addObject("showflaga",rules==null ? 0:1);
+                mav.addObject("showflaga", rules == null ? 0 : 1);
+                return mav;
+            }else if(userInfo !=null && userInfo.getState()!=1) {
+                mav = new ModelAndView(INDEX);
+                view.setUserName(userInfo.getUserName());
+                view.setFlag(userInfo.getState().toString());
+                mav.addObject("view", view);
                 return mav;
             }
             mav = new ModelAndView(INDEX);
@@ -145,9 +224,29 @@ public class AccountController {
 
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/register")
+    public ModelAndView register(@ModelAttribute(value = "userInfo") UserInfo userInfo, HttpSession session) throws
+            Exception {
+        ModelAndView view = new ModelAndView("index");
+        Employee employee = userInfoServ.getUserInfoByEmpNo(userInfo.getEmpNo());
+        userInfo.setFullName(employee.getName());
+        userInfo.setState(0);// 0代表未审核
+        userInfo.setUseruploadright(1);//默认有上传
+        userInfo.setUserActor(4);//默认普通员工
+        userInfoServ.saveUserInfoByBean(userInfo);
+        DownloadView vi = new DownloadView();
+        vi.setFlag("3");
+        vi.setUserName(userInfo.getUserName());
+        view.addObject("view",vi);
+        return view;
+    }
+
     @ResponseBody
     @RequestMapping(value = "/loginnew")
-    public ModelAndView loginnew(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws Exception {
+    public ModelAndView loginnew(@ModelAttribute(value = "view") DownloadView view, HttpSession session) throws
+            Exception {
         ModelAndView mav;
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         try {
