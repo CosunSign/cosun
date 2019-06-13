@@ -508,6 +508,9 @@ public interface FileUploadAndDownMapper {
     @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlByParamManyOrNoCount")
     int findAllUrlByParamManyOrNoCount(DownloadView view);
 
+    @SelectProvider(type = DownloadViewDaoProvider.class, method = "findAllUrlOnlyByParamManyOrNo")
+    List<String> findAllUrlOnlyByParamManyOrNo(DownloadView view);
+
     @Select("SELECT\n" +
             "\ta.createuser AS engineer,\n" +
             "\ta.extinfo1 AS salor,\n" +
@@ -1120,6 +1123,55 @@ public interface FileUploadAndDownMapper {
             sql.append(" group by ffi.ordernum order by  ffi.ordernum desc limit #{currentPageTotalNum},#{pageSize} ");
             return sql.toString();
         }
+
+
+        public String findAllUrlOnlyByParamManyOrNo(DownloadView view) {
+            StringBuilder sql = new StringBuilder(" select fu.logur1 as urlAddr  from filemanurl fu left join ");
+            sql.append(" filemanfileinfo ffi on fu.fileInfoId = ffi.id ");
+            sql.append(" where 1=1");
+            if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
+                sql.append(" and ffi.extinfo1 = #{salor} ");
+            }
+            if (view.getEngineer() != null && view.getEngineer() != "" && view.getEngineer().trim().length() > 0) {
+                sql.append(" and ffi.uid = #{engineer} ");
+            }
+            if (view.getOrderNo() != null && view.getOrderNo() != "" && view.getOrderNo().trim().length() > 0) {
+                sql.append(" and ffi.ordernum = #{orderNo} ");
+            } else {
+                if (view.getOrderNoMessage() != null) {
+                    if (view.getOrderNoMessage().contains(",")) {
+                        String[] orderNums = view.getOrderNoMessage().split(",");
+                        sql.append(" and ffi.ordernum  in( '" + orderNums[0] + "'");
+                        for (int a = 1; a < orderNums.length; a++) {
+                            sql.append(",'" + orderNums[a] + "'");
+                        }
+                        sql.append(") ");
+                    } else {
+                        sql.append(" and ffi.ordernum = '" + view.getOrderNoMessage() + "' ");
+                    }
+
+                }
+            }
+
+            if (view.getProjectName() != null && view.getProjectName() != "" && view.getProjectName().trim().length() > 0) {
+                sql.append(" and ffi.projectname = #{projectName} ");
+            }
+            if (view.getFileName() != null && view.getFileName() != "" && view.getFileName().trim().length() > 0) {
+                sql.append(" and fu.orginname = #{fileName} ");
+            }
+            if (view.getStartNewestSaveDateStr() != null && view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime  >= #{startNewestSaveDateStr} and fu.uptime  <= #{endNewestSaveDateStr}");
+            } else if (view.getStartNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime >= #{startNewestSaveDateStr}");
+            } else if (view.getEndNewestSaveDateStr() != null) {
+                sql.append(" and fu.uptime <= #{endNewestSaveDateStr}");
+            }
+
+
+            sql.append(" group by ffi.ordernum order by  ffi.ordernum desc limit #{currentPageTotalNum},#{pageSize} ");
+            return sql.toString();
+        }
+
 
 
         public String findAllUrlByParamManyOrNoCount(DownloadView view) {

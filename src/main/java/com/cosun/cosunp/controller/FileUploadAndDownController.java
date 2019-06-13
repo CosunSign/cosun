@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
-import com.cosun.cosunp.tool.Constants;
-import com.cosun.cosunp.tool.CusAccessObjectUtil;
-import com.cosun.cosunp.tool.FileUtil;
-import com.cosun.cosunp.tool.StringUtil;
+import com.cosun.cosunp.tool.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -18,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
@@ -38,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -1514,7 +1515,6 @@ public class FileUploadAndDownController {
         //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
         boolean isDownRight = true;
         int index = 0;
-        //InetAddress inetAddress = InetAddress.getLocalHost();
         a:
         for (DownloadView view : vs) {
             views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
@@ -1619,22 +1619,198 @@ public class FileUploadAndDownController {
             throw e;
         }
     }
-
+//    @ResponseBody  //优化多线程压缩打包下载  06-13
+//    @RequestMapping(value = "/downloadfileorfolderforzip")
+//    public void downloadFileOrFolderForZip(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+//        List<DownloadView> vs = JSON.parseArray(checkval, DownloadView.class);
+//        UserInfo info = (UserInfo) session.getAttribute("account");
+//        List<DownloadView> views = new ArrayList<DownloadView>();
+//        List<String> urls = new ArrayList<String>();
+//        DownloadView vie = new DownloadView();
+//        File file = null;
+//        List<File> files = new ArrayList<File>();
+//        List<FilemanDownRecord> records = new ArrayList<FilemanDownRecord>();
+//        FilemanDownRecord record = null;
+//        //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
+//        boolean isDownRight = true;
+//        int index = 0;
+//        a:
+//        for (DownloadView view : vs) {
+//            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
+//            for (DownloadView vi : views) {
+//                if (view.getFolderOrFileName().contains(".")) {//代表是文件
+//                    index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
+//                    if (index > 0) {
+//                        if (!vi.getOpRight().contains("3")) {
+//                            isDownRight = false;
+//                            break a;
+//                        }
+//                        urls.add(vi.getUrlAddr());
+//                        record = new FilemanDownRecord();
+//                        record.setDownDate(new Date());
+//                        record.setDownFullName(info.getUserName());
+//                        record.setDownUid(info.getuId());
+//                        record.setFileName(vi.getFileName());
+//                        record.setFileurlid(vi.getFileUrlId());
+//                        record.setOrderNum(vi.getOrderNo());
+//                        record.setProjectName(vi.getProjectName());
+//                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+//                        record.setIpName("");
+//                        file = new File(vi.getUrlAddr());
+//                        records.add(record);
+//                        files.add(file);
+//                    }
+//                } else {//代表是文件夹
+//                    index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
+//                    if (index > 0) {
+//                        if (vi.getOpRight() == null || vi.getOpRight() == "") {
+//                            isDownRight = false;
+//                            break a;
+//                        } else {
+//                            if (!vi.getOpRight().contains("3")) {
+//                                isDownRight = false;
+//                                break a;
+//                            }
+//                        }
+//                        urls.add(vi.getUrlAddr());
+//                        file = new File(vi.getUrlAddr());
+//                        record = new FilemanDownRecord();
+//                        record.setDownDate(new Date());
+//                        record.setDownFullName(info.getUserName());
+//                        record.setDownUid(info.getuId());
+//                        record.setFileName(vi.getFileName());
+//                        record.setFileurlid(vi.getFileUrlId());
+//                        record.setOrderNum(vi.getOrderNo());
+//                        record.setProjectName(vi.getProjectName());
+//                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+//                        record.setIpName("");
+//                        file = new File(vi.getUrlAddr());
+//                        records.add(record);
+//                        files.add(file);
+//                    }
+//                }
+//            }
+//            if (views == null || views.size() == 0) {
+//                vie.setFlag("-258");
+//                isDownRight = false;
+//                break a;
+//            }
+//        }
+//        //返回
+//
+//        if (isDownRight) {
+//            boolean isLarge = FileUtil.checkDownloadFileSize(files, 2, "G");
+//            if (!isLarge) {
+//                vie.setFlag("-1");//文件太大
+//            }
+//            if (urls.size() > 200) {//代表文件超过200个
+//                vie.setFlag("-369");
+//            }
+//            if (isLarge && urls.size() <= 200) {
+//                fileUploadAndDownServ.saveFileDownRecords(records);
+//            }
+//
+//        } else {
+//            vie.setFlag("-258");
+//        }
+//        if (vie.getFlag() != null) {
+//            urls.add(vie.getFlag());
+//            String str = null;
+//            if (urls != null) {
+//                ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+//                try {
+//                    str = x.writeValueAsString(urls);
+//
+//                } catch (JsonProcessingException e) {
+//                    logger.debug(e.getMessage());
+//                    e.printStackTrace();
+//                    throw e;
+//                }
+//            }
+//
+//            try {
+//                response.setCharacterEncoding("UTF-8");
+//                response.setContentType("text/html;charset=UTF-8");
+//                response.getWriter().print(str); //返回前端ajax
+//            } catch (IOException e) {
+//                logger.debug(e.getMessage());
+//                e.printStackTrace();
+//                throw e;
+//            }
+//        } else {
+//            //响应头的设置
+//            response.reset();
+//            response.setCharacterEncoding("utf-8");
+//            response.setContentType("multipart/form-data");
+//
+//            //设置压缩包的名字
+//            //解决不同浏览器压缩包名字含有中文时乱码的问题
+//            String downloadName = "我是压缩包的名字.zip";
+//            String agent = request.getHeader("USER-AGENT");
+//            try {
+//                if (agent.contains("MSIE")||agent.contains("Trident")) {
+//                    downloadName = java.net.URLEncoder.encode(downloadName, "UTF-8");
+//                } else {
+//                    downloadName = new String(downloadName.getBytes("UTF-8"),"ISO-8859-1");
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            response.setHeader("Content-Disposition", "attachment;fileName=\"" + downloadName + "\"");
+//
+//            //设置压缩流：直接写入response，实现边压缩边下载
+//            ZipOutputStream zipos = null;
+//            try {
+//                zipos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()));
+//                zipos.setMethod(ZipOutputStream.DEFLATED); //设置压缩方法
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            //循环将文件写入压缩流
+//            DataOutputStream os = null;
+//            String fileName = null;
+//            int indexa;
+//            for(int i = 0; i < urls.size(); i++ ){
+//
+//                File fi = new File(finalDirPath+urls.get(i));
+//                indexa = urls.get(i).lastIndexOf("/");
+//                fileName = urls.get(i).substring(index,urls.get(i).length()-1);
+//                try {
+//                    //添加ZipEntry，并ZipEntry中写入文件流
+//                    //这里，加上i是防止要下载的文件有重名的导致下载失败
+//                    zipos.putNextEntry(new ZipEntry(fileName+i));
+//                    os = new DataOutputStream(zipos);
+//                    InputStream is = new FileInputStream(fi);
+//                    byte[] b = new byte[100];
+//                    int length = 0;
+//                    while((length = is.read(b))!= -1){
+//                        os.write(b, 0, length);
+//                    }
+//                    is.close();
+//                    zipos.closeEntry();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            //关闭流
+//            try {
+//                os.flush();
+//                os.close();
+//                zipos.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
 //    @ResponseBody
 //    @RequestMapping(value = "/downloadfileorfolderforzip")
 //    public ModelAndView downloadFileOrFolderForZip(String orderno, String check_val, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
 //        ModelAndView mav = new ModelAndView("mainindex");
-//        Cookie[] cookies = request.getCookies();
-//        // 迭代查找并清除Cookie
-//        for (Cookie cookie : cookies) {
-//            if ("ccc".equals(cookie.getName())) {
-//                cookie.setValue(null);
-//                cookie.setMaxAge(0);
-//                response.addCookie(cookie);
-//            }
-//        }
-//        try {
+////        List<DownloadView> vs = JSON.parseArray(check_val, DownloadView.class);
+//        try  {
 //            UserInfo info = (UserInfo) session.getAttribute("account");
 //            String[] fileFoldersName = null;
 //            String singfileName = null;
@@ -1649,7 +1825,7 @@ public class FileUploadAndDownController {
 //            if (orderno == "" || orderno.trim().length() == 0) {
 //                view.setOrderNoMessage(check_val);
 //            }
-//            List<String> urlsAll = fileUploadAndDownServ.findAllUrlByParamManyOrNo(view);
+//            List<String> urlsAll = fileUploadAndDownServ.findAllUrlOnlyByParamManyOrNo(view);
 //            List<File> fileList = new ArrayList<File>();
 //            File file = null;
 //            int index = 0;
@@ -1699,10 +1875,6 @@ public class FileUploadAndDownController {
 //            }
 //            if (fileList.size() == 0) {//单个文件下载,不压缩
 //                response.setHeader("content-type", "application/octet-stream");
-//                Cookie cookie = new Cookie("ccc", "111");
-//                cookie.setPath("/");
-//                cookie.setMaxAge(3600 * 24);
-//                response.addCookie(cookie);
 //                response.setContentType("application/octet-stream");
 //                response.setHeader("Content-Disposition", "attachment;filename=" + new String(singfileName.replaceAll(" ", "").getBytes(), "iso-8859-1"));
 //                view.setFlag("-369");
@@ -1757,19 +1929,6 @@ public class FileUploadAndDownController {
 //                    }
 //                    //step3 返回消息 完成
 //                    IOUtil.downloadFile(fileZip, response, true);
-//                    //单个文件下载
-//                    /**
-//                     for (int i = 0; i < fileList.size(); i++) {
-//                     String curpath = fileList.get(i).getPath();//获取文件路径
-//                     iconNameList.add(curpath.substring(curpath.lastIndexOf("\\") + 1));//将文件名加入数组
-//
-//                     String fileName = new String(filecomplaintpath.getBytes("UTF-8"),"iso8859-1");
-//                     headers.setContentDispositionFormData("attachment", fileName);
-//                     return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(filecomplaintpath)),
-//                     headers, HttpStatus.OK);
-//                     }
-//                     **/
-//
 //                } catch (Exception e) {
 //                    System.out.println("系统异常,请从新录入!");
 //                    e.printStackTrace();
@@ -2886,7 +3045,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
@@ -2901,7 +3060,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
         } catch (Exception e) {
@@ -2917,7 +3076,7 @@ public class FileUploadAndDownController {
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             fileUploadAndDownServ.saveFileMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -2931,7 +3090,8 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-             UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

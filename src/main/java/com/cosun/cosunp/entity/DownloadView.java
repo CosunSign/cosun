@@ -71,6 +71,7 @@ public class DownloadView implements Serializable {
     private String filePathName;
     private String filePathNames;
 
+
     public Integer getFileUrlId() {
         return fileUrlId;
     }

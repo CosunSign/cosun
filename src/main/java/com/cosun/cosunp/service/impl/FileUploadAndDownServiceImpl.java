@@ -1391,6 +1391,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.findAllUrlByParamManyOrNoCount(view);
     }
 
+    public List<String> findAllUrlOnlyByParamManyOrNo(DownloadView dv) throws Exception {
+        return fileUploadAndDownMapper.findAllUrlOnlyByParamManyOrNo(dv);
+    }
+
+
     @Transactional(rollbackFor = Exception.class)
     public int findAllUrlByParamThreeNew2Count(DownloadView view) throws Exception {
         String linshiId = view.getLinshiId();

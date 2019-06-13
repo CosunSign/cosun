@@ -21,7 +21,7 @@ import java.util.zip.ZipOutputStream;
  * @Modified-date:
  */
 public class IOUtil {
-    public static final int THREAD_COUNT = 4;
+    public static final int THREAD_COUNT = 5;
     private static int filesToBeCompressed = -1;
     private static Lock lock = new ReentrantLock();
     private final static Condition c = lock.newCondition();

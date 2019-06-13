@@ -851,22 +851,23 @@
         var orderno = $("#orderno").val();
         //$("#coverbehidepage").show();
         window.parent.document.getElementById('coverbehidepage').style.display="block";
-
         //第二步,向后台发送消息
         //$("#some-element").busyLoad("show");//遮罩层开启
-        //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
-        var jsonarray = {
-            "orderNo": orderno, //订单编号
-            "check_val": checkval
-        };
+        // var data = JSON.stringify(checkval);
+        //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+data;
+        // var jsonarray = {
+        //     "orderNo": orderno, //订单编号
+        //     "check_val": checkval
+        // };
         var data = JSON.stringify(checkval);
-        var urlstrArr = [];
+         var urlstrArr = [];
         $.ajax({
             data: data,
             type: "POST",
             contentType: "application/json",//上传内容格式为json结构
             url: "/fileupdown/downloadfileorfolderforzip",
             success: function (msg) {
+                window.parent.document.getElementById('coverbehidepage').style.display="none";
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
                 var flag = data[totalnum - 1];
@@ -929,12 +930,12 @@
                 alert("下载失败");
             }
         });
-        //第三步,下载完成
-        //$("#coverbehidepage").hide();
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
-
-        //$("#some-element").busyLoad("hide");
-        blockUIForDownload();
+        // //第三步,下载完成
+        // //$("#coverbehidepage").hide();
+        // window.parent.document.getElementById('coverbehidepage').style.display="none";
+        //
+        // //$("#some-element").busyLoad("hide");
+        // blockUIForDownload();
     }
 </script>
 
