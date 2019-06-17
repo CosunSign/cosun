@@ -48,11 +48,11 @@ public interface IPersonServ {
 
     void deleteLeaveById(Integer id) throws Exception;
 
-    void updateEmployeeData(Employee employee) throws Exception;
+    void updateEmployeeData(MultipartFile educationLeFile,MultipartFile sateListAndLeaCertiFile,MultipartFile otherCertiFile,Employee employee) throws Exception;
 
     List<Position> findAllPosition(Position position) throws Exception;
 
-    void addEmployeeData(Employee employee) throws Exception;
+    void addEmployeeData(MultipartFile educationLeFile,MultipartFile sateListAndLeaCertiFile,MultipartFile otherCertiFile,Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
 

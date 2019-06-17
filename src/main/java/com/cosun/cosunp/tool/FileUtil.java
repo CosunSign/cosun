@@ -56,7 +56,7 @@ public class FileUtil {
      * @describtion
      */
 
-    public static void modifyUpdateFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception{
+    public static void modifyUpdateFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception {
         File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
         if (targetFile.exists()) {
@@ -155,7 +155,7 @@ public class FileUtil {
      * @describtion
      */
 
-    public static void uploadFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception{
+    public static void uploadFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception {
         String fileName = file.getOriginalFilename();
         File targetFile = new File(oldPath);
         //：判断目录是否存在   不存在：创建目录
@@ -189,7 +189,7 @@ public class FileUtil {
      * @param file
      * @return
      */
-    public static void uploadFileForRules(MultipartFile file, String descDir) throws Exception{
+    public static void uploadFileForRules(MultipartFile file, String descDir) throws Exception {
         String fileName = file.getOriginalFilename();
         File targetFile = new File(descDir);
         //：判断目录是否存在   不存在：创建目录
@@ -217,7 +217,43 @@ public class FileUtil {
     }
 
 
-    public static String uploadFile(MultipartFile file, UserInfo userInfo, DownloadView view, String randomnum) throws Exception{
+    /**
+     * 第一步：判断文件是否为空   true：返回提示为空信息   false：执行第二步
+     * 第二步：判断目录是否存在   不存在：创建目录
+     * 第三部：通过输出流将文件写入硬盘文件夹并关闭流  fileName.substring(0,fileName.lastIndexOf("."))+"_CY"+
+     *
+     * @param file
+     * @return
+     */
+    public static void uploadFileForEmployeeAppend(MultipartFile file, String descDir) throws Exception {
+        String fileName = file.getOriginalFilename();
+        File targetFile = new File(descDir);
+        //：判断目录是否存在   不存在：创建目录
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+        //：通过输出流将文件写入硬盘文件夹并关闭流
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(descDir + fileName));
+            stream.write(file.getBytes());
+            stream.flush();
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+
+
+    public static String uploadFile(MultipartFile file, UserInfo userInfo, DownloadView view, String randomnum) throws Exception {
         String fileName = file.getOriginalFilename();
         String salorpinyinPinYin = view.getSalor();
         String filePath = "F:\\" + userInfo.getuId() + "\\" + formateString(new Date()) + "\\" + salorpinyinPinYin + "\\"
@@ -249,7 +285,7 @@ public class FileUtil {
 
 
     //上传文件夹内的文件（单个）
-    public static String uploadFileFolder(MultipartFile file, DownloadView view, String randomnum) throws Exception{
+    public static String uploadFileFolder(MultipartFile file, DownloadView view, String randomnum) throws Exception {
         String fileName = file.getOriginalFilename().replaceAll("/", "\\\\");
         int index = fileName.lastIndexOf("\\");
         String centerPath = fileName.substring(0, index);
@@ -289,7 +325,7 @@ public class FileUtil {
      * @param unit:限制单位（B,K,M,G)
      * @return boolean:是否大于
      */
-    public static boolean checkFileSize(List<MultipartFile> multipartFiles, int size, String unit) throws Exception{
+    public static boolean checkFileSize(List<MultipartFile> multipartFiles, int size, String unit) throws Exception {
         long len = 0;  //上传文件的大小, 单位为字节.
         for (MultipartFile file : multipartFiles) {
             len += file.getSize();
@@ -321,7 +357,7 @@ public class FileUtil {
      * @param unit:限制单位（B,K,M,G)
      * @return boolean:是否大于
      */
-    public static double getFileSize(List<MultipartFile> multipartFiles, String unit) throws Exception{
+    public static double getFileSize(List<MultipartFile> multipartFiles, String unit) throws Exception {
         long len = 0;  //上传文件的大小, 单位为字节.
         for (MultipartFile file : multipartFiles) {
             len += file.getSize();
@@ -343,7 +379,7 @@ public class FileUtil {
     }
 
 
-    public static double getFileSizeFrSingle(MultipartFile multipartFiles, String unit) throws Exception{
+    public static double getFileSizeFrSingle(MultipartFile multipartFiles, String unit) throws Exception {
         long len = multipartFiles.getSize();
 
         //准备接收换算后文件大小的容器
@@ -370,7 +406,7 @@ public class FileUtil {
      * @param unit:限制单位（B,K,M,G)
      * @return boolean:是否大于
      */
-    public static boolean checkDownloadFileSize(List<File> files, int size, String unit) throws Exception{
+    public static boolean checkDownloadFileSize(List<File> files, int size, String unit) throws Exception {
         long len = 0;  //上传文件的大小, 单位为字节.
         for (File file : files) {
             len += file.length();
@@ -402,7 +438,7 @@ public class FileUtil {
      * @param unit:限制单位（B,K,M,G)
      * @return boolean:是否大于
      */
-    public static boolean checkDownloadFileSize(File file, int size, String unit) throws Exception{
+    public static boolean checkDownloadFileSize(File file, int size, String unit) throws Exception {
         long len = file.length();
         //上传文件的大小, 单位为字节.
 
@@ -424,7 +460,7 @@ public class FileUtil {
         return true;
     }
 
-    public static Cookie addCookie(String cookieName, String cookieValue) throws Exception{
+    public static Cookie addCookie(String cookieName, String cookieValue) throws Exception {
         Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath("/");
         cookie.setMaxAge(3600 * 24);
@@ -432,19 +468,20 @@ public class FileUtil {
     }
 
 
-    public static void delFolderIFNoFiles(String folderPath) throws Exception{
+    public static void delFolderIFNoFiles(String folderPath) throws Exception {
         File file = new File(folderPath);//
         File[] list = file.listFiles();
-        if(list==null || list.length==0) {
+        if (list == null || list.length == 0) {
             delFolder(folderPath);
         }
     }
 
     /**
      * 删除文件夹
+     *
      * @param folderPath 文件夹完整绝对路径 ,"Z:/xuyun/save"
      */
-    public static void delFolder(String folderPath) throws Exception{
+    public static void delFolder(String folderPath) throws Exception {
         try {
             delAllFile(folderPath); //删除完里面所有内容
             File myFilePath = new File(folderPath);
@@ -457,9 +494,10 @@ public class FileUtil {
 
     /**
      * 删除指定文件夹下所有文件
+     *
      * @param path 文件夹完整绝对路径 ,"Z:/xuyun/save"
      */
-    public static boolean delAllFile(String path) throws Exception{
+    public static boolean delAllFile(String path) throws Exception {
         boolean flag = false;
         File file = new File(path);
         if (!file.exists()) {
@@ -491,10 +529,12 @@ public class FileUtil {
     /**************删除文件夹delFolder / 删除文件夹中的所有文件delAllFile *over*******/
 
 
-    public static void delFile(String filePath) throws Exception{
-        File file=new File(filePath);
-        if(file.exists()&&file.isFile())
-            file.delete();
+    public static void delFile(String filePath) throws Exception {
+        if (filePath != null) {
+            File file = new File(filePath);
+            if (file.exists() && file.isFile())
+                file.delete();
+        }
     }
 
     public static void delFolderNew(String folderPath) {

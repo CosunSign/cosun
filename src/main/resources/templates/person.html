@@ -15,7 +15,9 @@
     <script src="/lib/defaults-zh_CN.js" type="text/javascript"></script>
 </head>
 <style type="text/css">
-
+    .hongmei tr {
+        height: 5px
+    }
 </style>
 <script>
 
@@ -163,6 +165,7 @@
                 var td = "";
                 var tbody = $("#tabletblody");
                 tbody.html("");
+                var userType;
                 if (data != null && data != "") {
                     $("#nodatadiv").hide();
                     $("#showdiv").show();
@@ -170,10 +173,12 @@
                     totalPage = data[0].maxPage; //总多少页
                     totaldata = data[0].recordCount; //总共多少记录
                     pageSize = data[0].pageSize;
+                    userType = data[0].type;
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
                     $.each(data, function (num) {
+
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -181,15 +186,29 @@
                         tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].birthDayStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
                         td = "<td>";
-                        td += " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                            "  <a href=\"javascript:void(0);\"\n" +
-                            " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                            " &nbsp;&nbsp;&nbsp;\n" +
-                            "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">" +
-                            "  </td>";
+                        if (userType == 1) {
+                            td += " <a class=\"btn btn-sm btn-primary\" \n" +
+                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <a class=\"btn btn-sm btn-primary\"\n" +
+                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                                " &nbsp;&nbsp;&nbsp;\n" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
+                                "  </td>";
+                        } else {
+                            td += " <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                                " &nbsp;&nbsp;&nbsp;\n" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
+                                "  </td>";
+                        }
                         tr.append(td);
                         tr.appendTo(tbody);
                     });
@@ -287,6 +306,7 @@
                 var td = "";
                 var tbody = $("#tabletblody");
                 tbody.html("");
+                var userType;
                 if (data != null && data != "") {
                     $("#nodatadiv").hide();
                     $("#showdiv").show();
@@ -294,10 +314,12 @@
                     totalPage = data[0].maxPage; //总多少页
                     totaldata = data[0].recordCount; //总共多少记录
                     pageSize = data[0].pageSize;
+                    userType = data[0].type;
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
                     $.each(data, function (num) {
+
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -305,15 +327,29 @@
                         tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
+                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].birthDayStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
                         td = "<td>";
-                        td += " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                            "  <a href=\"javascript:void(0);\"\n" +
-                            " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                            " &nbsp;&nbsp;&nbsp;\n" +
-                            "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">" +
-                            "  </td>";
+                        if (userType == 1) {
+                            td += " <a class=\"btn btn-sm btn-primary\" \n" +
+                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <a class=\"btn btn-sm btn-primary\"\n" +
+                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                                " &nbsp;&nbsp;&nbsp;\n" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
+                                "  </td>";
+                        } else {
+                            td += " <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
+                                "  <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
+                                " &nbsp;&nbsp;&nbsp;\n" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
+                                "  </td>";
+                        }
                         tr.append(td);
                         tr.appendTo(tbody);
                     });
@@ -404,6 +440,7 @@
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
         <input type="hidden" id="maxPage" th:value="${employee.maxPage}">
+        <input type="hidden" id="userType" th:value="${userInfo.type}">
         <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${employee.currentPage}"/>
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
@@ -492,9 +529,11 @@
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
+                               th:disabled="${userInfo.type ne 1}"
                                href="/person/toaddpersonpage">新增</a>
                             &nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
+                               th:disabled="${userInfo.type ne 1}"
                                href="javascript:void(0);" onclick="deleteEmpByBatch()">批量删除</a>
                             <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
                         </td>
@@ -508,7 +547,7 @@
             </div>
         </div>
     </form>
-    <table class="table table-bordered table-hover table-striped text-center" id="showlistbody">
+    <table class="table table-bordered table-hover table-striped text-center hongmei" id="showlistbody">
         <thead style="background-color:lightsteelblue">
         <tr>
             <th style="text-align: center">序号</th>
@@ -517,7 +556,11 @@
             <th style="text-align: center">工号</th>
             <th style="text-align: center">部门</th>
             <th style="text-align: center">职位</th>
+            <th style="text-align: center">职务</th>
+            <th style="text-align: center">出生日期</th>
             <th style="text-align: center">入职时间</th>
+            <th style="text-align: center">籍贯</th>
+            <th style="text-align: center">手机号码</th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
@@ -533,11 +576,17 @@
                     <td align="center" th:text="${employ.empNo}"></td>
                     <td align="center" th:text="${employ.deptName}"></td>
                     <td align="center" th:text="${employ.positionName}"></td>
+                    <td align="center" th:text="${employ.positionAttrIdStr}"></td>
+                    <td align="center" th:text="${employ.birthDayStr}"></td>
                     <td align="center" th:text="${employ.incomdateStr}"></td>
+                    <td align="center" th:text="${employ.nativePlaStr}"></td>
+                    <td align="center" th:text="${employ.contactPhone}"></td>
                     <td align="center">
-                        <a href="javascript:void(0);"
+                        <a class="btn btn-sm btn-primary"
+                           th:disabled="${userInfo.type ne 1}"
                            th:onclick="updateEmployee([[${employ.id}]]);">编辑</a>
-                        <a href="javascript:void(0);"
+                        <a class="btn btn-sm btn-primary"
+                           th:disabled="${userInfo.type ne 1}"
                            th:onclick="deleteEmployee([[${employ.id}]]);">删除</a>
                         &nbsp;&nbsp;&nbsp;
                         <input type="checkbox" name="deleteBatch" th:value="${employ.id}">
@@ -548,7 +597,7 @@
         </div>
         <div th:if="${#lists.isEmpty(employeeList)}">
             <tr>
-                <td colspan="8">
+                <td colspan="12">
                     查无数据
                 </td>
             </tr>
@@ -558,7 +607,7 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="8" align="center">
+            <td colspan="12" align="center">
                 <span>第</span>
                 <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>

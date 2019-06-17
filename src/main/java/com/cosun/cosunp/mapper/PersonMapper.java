@@ -31,6 +31,18 @@ public interface PersonMapper {
     })
     void deletePositionByIdBatch(@Param("ids") List<Integer> ids);
 
+    @Select({
+            "<script>",
+            "select e.id AS id, e.empno as empNo ",
+            "FROM employee e left join dept t on e.deptId = t.id left join position n on n.id = e.positionId",
+            " where e.id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    List<Employee> getEmployeeByIds(@Param("ids") List<Integer> ids);
+
     @Delete({
             "<script>",
             "delete",
@@ -164,19 +176,54 @@ public interface PersonMapper {
     @Select("select * from dept order by deptname desc")
     List<Dept> findAllDeptAll();
 
-    @Insert("\n" +
-            "INSERT into employee (name,sex,deptId,empno,positionId,incompdate)\n" +
-            " values(#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incompdate})\n")
+    @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
+            "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,educationLeUrl,\n" +
+            "screAgreement,healthCerti,sateListAndLeaCerti,sateListAndLeaCertiUrl,otherCerti,otherCertiUrl,positionAttrId)" +
+            "values (#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incomdateStr},#{conExpDateStr},#{birthDayStr},#{ID_NO}," +
+            "#{nativePla},#{homeAddr},#{valiPeriodOfIDStr},#{nation},#{marriaged},#{contactPhone},#{educationLe},#{educationLeUrl}," +
+            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{sateListAndLeaCertiUrl},#{otherCerti},#{otherCertiUrl},#{positionAttrId})")
     void addEmployeeData(Employee employee);
 
-    @Select("SELECT\n" +
-            "\te.id AS id,\n" +
-            "\tname AS name,\n" +
-            "\tsex as sex,\n" +
-            "  d.deptname as deptName,\n" +
-            "  n.positionName as positionName,\n" +
-            "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "  e.empno as empNo\n" +
+
+    @Insert("\n" +
+            "INSERT into salary (empno,compresalary,possalary,jobsalary,meritsalary)\n" +
+            " values(#{empNo},#{compSalary},#{posiSalary},#{jobSalary},#{meritSalary})\n")
+    void addSalaryData(String empNo,Double compSalary,Double posiSalary,Double jobSalary,Double meritSalary);
+
+    @Update(" update salary set compresalary = #{compSalary},possalary=#{posiSalary},jobsalary=#{jobSalary},meritsalary = #{meritSalary}\n" +
+            " where empno = #{empNo}\n")
+    void updateSalaryData(String empNo,Double compSalary,Double posiSalary,Double jobSalary,Double meritSalary);
+
+    @Select("SELECT\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\te.otherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "  e.id AS id,\n" +
+            "\td.deptname AS deptName,\n" +
+            "\tn.positionName AS positionName,\n" +
+            "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "\te.empno AS empNo" +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
@@ -307,8 +354,12 @@ public interface PersonMapper {
             "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
     Leave getLeaveByEmIdAndMonthA(Integer employeeId,String dataStr);
 
-    @Insert("insert into employee (name,deptId,empno,positionId)\n" +
-            "values (#{name},#{deptId},#{empNo},#{positionId})")
+    @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
+            "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,\n" +
+            "screAgreement,healthCerti,sateListAndLeaCerti,otherCerti,positionAttrId)" +
+            "values (#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incompdateStr},#{conExpDateStr},#{birthDayStr},#{ID_NO}," +
+            "#{nativePla},#{homeAddr},#{valiPeriodOfIDStr},#{nation},#{marriaged},#{contactPhone},#{educationLe}," +
+            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{otherCerti},#{positionAttrId})")
     void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
@@ -332,19 +383,55 @@ public interface PersonMapper {
     @Delete("delete from employee where id = #{id}")
     void deleteEmployeetById(Integer id);
 
+    @Delete("delete from salary where empno = #{empno}")
+    void deleteSalaryByEmpno(String empno);
+
+    @Delete("delete from userinfo where empno = #{empno}")
+    void deleteUserInfoByEmpNo(String empno);
+
     @Select("SELECT\n" +
-            "\te.id AS id,\n" +
-            "\te.name AS name,\n" +
-            "\te.sex as sex,\n" +
-            "  e.deptId as deptId,\n" +
-            "  e.positionId as positionId,\n" +
-            "  t.deptname as deptName,\n" +
-            "  n.positionName as positionName,\n" +
-            "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "  e.empno as empNo\n" +
-            "\t\tFROM employee e left join dept t on e.deptId = t.id left join position n on n.id = e.positionId" +
-            " where e.id = #{id}")
+            "\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\totherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "\to.username,\n" +
+            "\to.userpwd AS passowrd,\n" +
+            "\to.userpwd AS passowrd22,\n" +
+            "\ts.compresalary,\n" +
+            "\ts.possalary,\n" +
+            "\ts.jobsalary,\n" +
+            "\ts.meritsalary\n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "LEFT JOIN salary s ON e.empno = s.empno\n" +
+            "LEFT JOIN userinfo o ON o.empno = e.empno where e.id = #{id}")
     List<Employee> getEmployeeById(Integer id);
+
+    @Select("SELECT e.* " +
+            "FROM employee e left join dept t on e.deptId = t.id left join position n on n.id = e.positionId" +
+            " where e.empno = #{empNo }")
+    Employee getEmployeeByEmpNo(String empNo);
 
     @Select("select * from position where positionName like  CONCAT('%',#{positionName},'%')")
     List<Position> queryPositionByName(String positionName);
@@ -390,7 +477,14 @@ public interface PersonMapper {
     @Update("update dept set deptname =  #{deptName} where id = #{id} ")
     void saveUpdateData2(Integer id, String deptName);
 
-    @Update("update employee set deptId =  #{deptId},positionId = #{positionId} where id = #{id} ")
+    @Update("update employee set deptId = #{deptId},positionId = #{positionId},incompdate=#{incomdateStr},conExpDate=#{conExpDateStr}," +
+            "birthDay=#{birthDayStr},ID_NO = #{ID_NO},\n" +
+            "nativePla = #{nativePla},homeAddr=#{homeAddr},valiPeriodOfID=#{valiPeriodOfIDStr},nation=#{nation}," +
+            "marriaged=#{marriaged},contactPhone=#{contactPhone},educationLe=#{educationLe},educationLeUrl=#{educationLeUrl},\n" +
+            "screAgreement=#{screAgreement},healthCerti=#{healthCerti},sateListAndLeaCerti=#{sateListAndLeaCerti}," +
+            "sateListAndLeaCertiUrl=#{sateListAndLeaCertiUrl},otherCerti=#{otherCerti},otherCertiUrl=#{otherCertiUrl}," +
+            "positionAttrId=#{positionAttrId} " +
+            "where empno = #{empNo}" )
     void updateEmployeeData(Employee employee);
 
     @Update("update leavedata set beginleave = #{beginLeaveStr},endleave = #{endLeaveStr},leavelong =#{leaveLong}" +
@@ -475,17 +569,39 @@ public interface PersonMapper {
 
 
         public String queryEmployeeByCondition(Employee employee) {
-            StringBuilder sb = new StringBuilder("SELECT\n" +
-                    "\te.id AS id,\n" +
-                    "\te.`name` AS NAME,\n" +
-                    "\te.sex AS sex,\n" +
-                    "\te.empno AS empNo,\n" +
+            StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +
+                    "\te. NAME AS namea,\n" +
+                    "\te.sex,\n" +
+                    "\te.deptId,\n" +
+                    "\te.empno,\n" +
+                    "\te.positionId,\n" +
+                    "\te.incompdate,\n" +
+                    "\te.conExpDate,\n" +
+                    "\te.birthDay,\n" +
+                    "\te.ID_NO,\n" +
+                    "\te.nativePla,\n" +
+                    "\te.homeAddr,\n" +
+                    "\te.valiPeriodOfID,\n" +
+                    "\te.nation,\n" +
+                    "\te.marriaged,\n" +
+                    "\te.contactPhone,\n" +
+                    "\te.educationLe,\n" +
+                    "\te.educationLeUrl,\n" +
+                    "\te.screAgreement,\n" +
+                    "\te.healthCerti,\n" +
+                    "\te.sateListAndLeaCerti,\n" +
+                    "\te.sateListAndLeaCertiUrl,\n" +
+                    "\te.otherCerti,\n" +
+                    "\te.otherCertiUrl,\n" +
+                    "\te.positionAttrId,\n" +
+                    "  e.id AS id,\n" +
+                    "\td.deptname AS deptName,\n" +
+                    "\tn.positionName AS positionName,\n" +
                     "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-                    "\tt.deptname AS deptName,\n" +
-                    "\tn.positionName AS positionName\n" +
-                    "FROM\n" +
+                    "\te.empno AS empNo" +
+                    "\t\t FROM \n" +
                     "\temployee e\n" +
-                    "LEFT JOIN dept t ON e.deptId = t.id\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
                     "LEFT JOIN position n ON e.positionId = n.id where 1=1");
             if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
                 sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");

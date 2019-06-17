@@ -2,6 +2,9 @@ package com.cosun.cosunp.tool;
 
 import com.alibaba.fastjson.JSON;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +26,19 @@ public class Test {
             "	\"ftp://admin:FL33771@192.168.0.152/admin/201906/凡钟俊/03063247/COSUN20190108WW26/IntelliJ IDEA 2018.5.zip\":\"E:/myFile/111/IntelliJ IDEA 2018.5.zip\"\r\n}";
 
     public static void main(String[] arg) {
-        Map<String, String> map = new HashMap<>();
-        Map<String, String> resMap = JSON.parseObject(json, map.getClass());
-        int times = 1;
-        for (int index = 0; index < times; index++) {
-            DownLoadUtil.batch(resMap);
+//        Map<String, String> map = new HashMap<>();
+//        Map<String, String> resMap = JSON.parseObject(json, map.getClass());
+//        int times = 1;
+//        for (int index = 0; index < times; index++) {
+//            DownLoadUtil.batch(resMap);
+//        }
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = dateFormat.parse("1986-10-10");
+            String abc = dateFormat.format("1986-10-10");
+            System.out.println(abc);
+        } catch (Exception e) {
+
         }
     }
 }

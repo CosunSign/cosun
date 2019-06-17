@@ -95,6 +95,9 @@ public interface UserInfoMapper {
             "values(#{fullName},#{userName},#{userPwd},#{state},#{empNo},#{useruploadright},#{userActor})\n ")
     void saveUserInfoByBean(UserInfo userInfo);
 
+    @Update("update userinfo set username = #{userName},userpwd = #{userPwd} where empno = #{empNo}\n ")
+    void updateUserInfoByBean(UserInfo userInfo);
+
     @Update("update userinfo set state = #{state},useractor = #{userActor},useruploadright=#{useruploadright} where uid = #{uId} ")
     void updateUserInfo(UserInfo userInfo);
 

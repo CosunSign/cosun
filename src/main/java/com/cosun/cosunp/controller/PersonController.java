@@ -6,9 +6,9 @@ import com.cosun.cosunp.tool.ExcelUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,8 +90,9 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping("/tomainpage")
-    public ModelAndView toUploadPage() throws Exception {
+    public ModelAndView toUploadPage(HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
@@ -107,6 +108,7 @@ public class PersonController {
             view.addObject("employee", employee);
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -260,14 +262,19 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping("/toaddpersonpage")
-    public ModelAndView toaddpersonpage() throws Exception {
+    public ModelAndView toaddpersonpage(HttpSession session) throws Exception {
         try {
+            ModelAndView mav = new ModelAndView("register");
+            List<Employee> employeeList = personServ.findAllEmployees();
+            mav.addObject("employeeList", employeeList);
+            UserInfo info = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("addpersonpage");
             List<Position> positionList = personServ.findAllPositionAll();
             List<Dept> deptList = personServ.findAllDeptAll();
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("employee", new Employee());
+            view.addObject("userInfo",info);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -928,10 +935,14 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
-    public ModelAndView addEmployee(Employee employee1) throws Exception {
+    public ModelAndView addEmployee(@RequestParam("educationLeFile") MultipartFile educationLeFile,
+                                    @RequestParam("sateListAndLeaCertiFile") MultipartFile sateListAndLeaCertiFile,
+                                    @RequestParam("otherCertiFile") MultipartFile otherCertiFile,
+                                    Employee employee1,HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
-            personServ.addEmployeeData(employee1);
+            personServ.addEmployeeData(educationLeFile,sateListAndLeaCertiFile,otherCertiFile,employee1);
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
             List<Employee> empList = personServ.findAllEmployeeAll();
@@ -947,6 +958,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 1);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -999,11 +1011,15 @@ public class PersonController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/updatePersonToMysql", method = RequestMethod.GET)
-    public ModelAndView updatePersonToMysql(Employee employee1) throws Exception {
+    @RequestMapping(value = "/updatePersonToMysql", method = RequestMethod.POST)
+    public ModelAndView updatePersonToMysql(@RequestParam("educationLeFile") MultipartFile educationLeFile,
+                                            @RequestParam("sateListAndLeaCertiFile") MultipartFile sateListAndLeaCertiFile,
+                                            @RequestParam("otherCertiFile") MultipartFile otherCertiFile,
+                                            Employee employee1,HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
-            personServ.updateEmployeeData(employee1);
+            personServ.updateEmployeeData(educationLeFile,sateListAndLeaCertiFile,otherCertiFile,employee1);
             List<Employee> empList = personServ.findAllEmployees();
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
@@ -1019,6 +1035,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 3);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1030,8 +1047,9 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryEmployeeByCondition", method = RequestMethod.POST)
-    public void queryEmployeeByCondition(Employee employee, HttpServletResponse response) throws Exception {
+    public void queryEmployeeByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryEmployeeByCondition(employee);
             int recordCount = personServ.queryEmployeeByConditionCount(employee);
             int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
@@ -1039,6 +1057,7 @@ public class PersonController {
                 employeeList.get(0).setMaxPage(maxPage);
                 employeeList.get(0).setRecordCount(recordCount);
                 employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+                employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -1128,8 +1147,9 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmpByBatch", method = RequestMethod.GET)
-    public ModelAndView deleteEmpByBatch(Employee employee) throws Exception {
+    public ModelAndView deleteEmpByBatch(Employee employee,HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
             personServ.deleteEmpByBatch(employee.getIds());
             List<Employee> empList = personServ.findAllEmployeeAll();
@@ -1146,6 +1166,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 2);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1156,8 +1177,9 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmployeeById", method = RequestMethod.GET)
-    public ModelAndView deleteEmployeeById(Integer id) throws Exception {
+    public ModelAndView deleteEmployeeById(Integer id,HttpSession session) throws Exception {
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
             personServ.deleteEmployeetById(id);
             Employee employee = new Employee();
@@ -1175,6 +1197,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 2);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -2,11 +2,15 @@ package com.cosun.cosunp.service.impl;
 
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.PersonMapper;
+import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IPersonServ;
+import com.cosun.cosunp.tool.FileUtil;
+import jxl.Cell;
 import jxl.WorkbookSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +35,59 @@ public class PersonServiceImpl implements IPersonServ {
     private static Logger logger = LogManager.getLogger(PersonServiceImpl.class);
 
     @Autowired
+    private UserInfoMapper userInfoMapper;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String finalDirPath;
+
+    @Autowired
     PersonMapper personMapper;
+
+    String nameTitle = "姓名";//姓名
+    Integer nameTitleIndex;
+    String sexTitle = "性别";//性别
+    Integer sexTitleIndex;
+    String deptIdTitle = "部门";//部门编号
+    Integer deptIdTitleIndex;
+    String empNoTitle = "编号";//工号
+    Integer empNoTitleIndex;
+    String positionIdTitle = "职务";//职位ID
+    Integer positionIdTitleIndex;
+    String positionAttrIdTitle = "职位";
+    Integer positionAttrIdTitleIndex;
+    String incompdateTitle = "到职日期";//入厂时间
+    Integer incompdateTitleIndex;
+    String conExpDateTitle = "合同到期时间";//合同到期时间
+    Integer conExpDateTitleIndex;
+    String birthDayTitle = "出生日期";//出生日期
+    Integer birthDayTitleIndex;
+    String ID_NOTitle = "身份证号码";//身份证号码
+    Integer ID_NOTitleIndex;
+    String nativePlaTitle = "籍贯";//籍guan
+    Integer nativePlaTitleIndex;
+    String homeAddrTtile = "家庭住址";//家庭住址
+    Integer homeAddrTtileIndex;
+    String valiPeriodOfIDTitle = "身份证到期时间";//身份证有效期
+    Integer valiPeriodOfIDTitleIndex;
+    String nationTitle = "民族";//民族
+    Integer nationTitleIndex;
+    String marriagedTitle = "婚否";//婚否
+    Integer marriagedTitleIndex;
+    String contactPhoneTitle = "联系电话";//联系电话
+    Integer contactPhoneTitleIndex;
+    String educationLeTitle = "学历";//学历
+    Integer educationLeTitleIndex;
+    String screAgreementTitle = "保密协议";//保密协议
+    Integer screAgreementTitleIndex;
+    String healthCertiTitle = "健康证";//健康证
+    Integer healthCertiTitleIndex;
+    String sateListAndLeaCertiTitle = "社保清单或离职证明";//社保清单或离职证明
+    Integer sateListAndLeaCertiTitleIndex;
+    String otherCertiTitle = "其他证件";//其它证件
+    Integer otherCertiTitleIndex;
+    String attributeTitle = "属性";
+    Integer attributeTitleIndex;
+
 
     public void deletePositionByIdBatch(List<Integer> ids) throws Exception {
         personMapper.deletePositionByIdBatch(ids);
@@ -42,14 +98,21 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public void deleteEmpByBatch(List<Integer> ids) throws Exception {
+        List<Employee> emlist = personMapper.getEmployeeByIds(ids);
+        for (Employee ee : emlist) {
+            String folderName = finalDirPath + "append/" + ee.getEmpNo() + "/";
+            personMapper.deleteSalaryByEmpno(ee.getEmpNo());
+            personMapper.deleteUserInfoByEmpNo(ee.getEmpNo());
+            FileUtil.delFolderNew(folderName);
+        }
         personMapper.deleteEmpByBatch(ids);
+
     }
 
 
     public void deleteLeaveByBatch(List<Integer> ids) throws Exception {
         personMapper.deleteLeaveByBatch(ids);
     }
-
 
 
     public int checkAndSavePosition(Position position) throws Exception {
@@ -150,8 +213,46 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllDeptAll();
     }
 
-    public void addEmployeeData(Employee employee) throws Exception {
+    public void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception {
+        String fileName;
+        String folderName = finalDirPath + "append/" + employee.getEmpNo() + "/";
+        UserInfo userInfo;
+        if (employee.getEducationLe() > 7) {
+            FileUtil.uploadFileForEmployeeAppend(educationLeFile, folderName);
+            fileName = educationLeFile.getOriginalFilename();
+            employee.setEducationLeUrl(folderName + fileName);
+        } else {
+            employee.setEducationLeUrl("");
+        }
+        if (employee.getSateListAndLeaCerti() > 0) {
+            FileUtil.uploadFileForEmployeeAppend(sateListAndLeaCertiFile, folderName);
+            fileName = sateListAndLeaCertiFile.getOriginalFilename();
+            employee.setSateListAndLeaCertiUrl(folderName + fileName);
+        } else {
+            employee.setSateListAndLeaCertiUrl("");
+        }
+        if (employee.getOtherCerti() > 0) {
+            FileUtil.uploadFileForEmployeeAppend(otherCertiFile, folderName);
+            fileName = otherCertiFile.getOriginalFilename();
+            employee.setOtherCertiUrl(folderName + fileName);
+        } else {
+            employee.setOtherCertiUrl("");
+
+        }
+
+        if (employee.getUsername() != null) {
+            userInfo = new UserInfo();
+            userInfo.setEmpNo(employee.getEmpNo());
+            userInfo.setFullName(employee.getName());
+            userInfo.setUserName(employee.getUsername());
+            userInfo.setUserPwd(employee.getPassowrd());
+            userInfo.setState(0);// 0代表未审核
+            userInfo.setUseruploadright(1);//默认有上传
+            userInfo.setUserActor(employee.getPositionAttrId());//默认普通员工
+            userInfoMapper.saveUserInfoByBean(userInfo);
+        }
         personMapper.addEmployeeData(employee);
+        personMapper.addSalaryData(employee.getEmpNo(), employee.getCompreSalary(), employee.getPosSalary(), employee.getJobSalary(), employee.getMeritSalary());
     }
 
     public List<Employee> findAllEmployee(Employee employee) throws Exception {
@@ -180,7 +281,12 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public void deleteEmployeetById(Integer id) throws Exception {
+        List<Employee> emlist = personMapper.getEmployeeById(id);
+        String folderName = finalDirPath + "append/" + emlist.get(0).getEmpNo() + "/";
         personMapper.deleteEmployeetById(id);
+        personMapper.deleteSalaryByEmpno(emlist.get(0).getEmpNo());
+        personMapper.deleteUserInfoByEmpNo(emlist.get(0).getEmpNo());
+        FileUtil.delFolderNew(folderName);
     }
 
     public List<Employee> getEmployeeById(Integer id) throws Exception {
@@ -255,8 +361,62 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
 
-    public void updateEmployeeData(Employee employee) throws Exception {
+    public void updateEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile,
+                                   MultipartFile otherCertiFile, Employee employee) throws Exception {
+        String fileName;
+        String folderName = finalDirPath + "append/" + employee.getEmpNo() + "/";
+        UserInfo userInfo;
+        Employee eee = personMapper.getEmployeeByEmpNo(employee.getEmpNo());
+        if (employee.getEducationLe() <= 7) {
+            FileUtil.delFile(eee.getEducationLeUrl());
+            employee.setEducationLeUrl("");
+        } else {
+            fileName = educationLeFile.getOriginalFilename();
+            if (fileName.trim().length() > 0 ) {
+                FileUtil.delFile(eee.getEducationLeUrl());
+                FileUtil.uploadFileForEmployeeAppend(educationLeFile, folderName);
+                employee.setEducationLeUrl(folderName + fileName);
+            }else{
+                employee.setEducationLeUrl(eee.getEducationLeUrl());
+            }
+
+        }
+        if (employee.getSateListAndLeaCerti() == 0) {
+            FileUtil.delFile(eee.getSateListAndLeaCertiUrl());
+            employee.setSateListAndLeaCertiUrl("");
+        } else {
+            fileName = sateListAndLeaCertiFile.getOriginalFilename();
+            if (fileName.trim().length() > 0) {
+                FileUtil.delFile(eee.getSateListAndLeaCertiUrl());
+                FileUtil.uploadFileForEmployeeAppend(sateListAndLeaCertiFile, folderName);
+                employee.setSateListAndLeaCertiUrl(folderName + fileName);
+            }else{
+                employee.setSateListAndLeaCertiUrl(eee.getSateListAndLeaCertiUrl());
+            }
+        }
+        if (employee.getOtherCerti() == 0) {
+            FileUtil.delFile(eee.getOtherCertiUrl());
+            employee.setOtherCertiUrl("");
+        } else {
+            fileName = otherCertiFile.getOriginalFilename();
+            if (fileName.trim().length() > 0) {
+                FileUtil.delFile(eee.getOtherCertiUrl());
+                FileUtil.uploadFileForEmployeeAppend(otherCertiFile, folderName);
+                employee.setOtherCertiUrl(folderName + fileName);
+            }else{
+                employee.setOtherCertiUrl(eee.getOtherCertiUrl());
+            }
+        }
+
+        if (employee.getUsername() != null) {
+            userInfo = new UserInfo();
+            userInfo.setEmpNo(employee.getEmpNo());
+            userInfo.setUserName(employee.getUsername());
+            userInfo.setUserPwd(employee.getPassowrd());
+            userInfoMapper.updateUserInfoByBean(userInfo);
+        }
         personMapper.updateEmployeeData(employee);
+        personMapper.updateSalaryData(employee.getEmpNo(), employee.getCompreSalary(), employee.getPosSalary(), employee.getJobSalary(), employee.getMeritSalary());
     }
 
     public void updateLeaveToMysql(Leave leave) throws Exception {
@@ -294,7 +454,7 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
 
-    public List<ClockInOrgin> translateTabletoBean( MultipartFile file) throws Exception {
+    public List<ClockInOrgin> translateTabletoBean(MultipartFile file) throws Exception {
         // File file = new File("C:\\Users\\Administrator\\Desktop\\4月车间考勤记录.xls");
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();
@@ -341,7 +501,6 @@ public class PersonServiceImpl implements IPersonServ {
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();
         ws.setCellValidationDisabled(true);
-        //if (fileName.contains("-1.")) {
         jxl.Workbook Workbook = null;//.xlsx
         String fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         //根据后缀创建读取不同类型的excel
@@ -362,18 +521,126 @@ public class PersonServiceImpl implements IPersonServ {
         int rowNums = xlsfSheet.getRows();
         jxl.Cell[] cell = null;
         String name = null;
+        Cell cella;
+        if (rowNums > 0) {
+            cell = xlsfSheet.getRow(1);
+            int coloumNum = cell.length;
+            for (int ab = 0; ab < coloumNum; ab++) {
+                cella = cell[ab];// 获得第i行的第3个单元格
+                if (nameTitle.equals(cella.getContents().trim())) {
+                    nameTitleIndex = ab;
+                }
+                if (sexTitle.equals(cella.getContents().trim())) {
+                    sexTitleIndex = ab;
+                }
+                if (deptIdTitle.equals(cella.getContents().trim())) {
+                    deptIdTitleIndex = ab;
+                }
+                if (empNoTitle.equals(cella.getContents().trim())) {
+                    empNoTitleIndex = ab;
+                }
+
+                if (positionIdTitle.equals(cella.getContents().trim())) {
+                    positionIdTitleIndex = ab;
+                }
+                if (incompdateTitle.equals(cella.getContents().trim())) {
+                    incompdateTitleIndex = ab;
+                }
+
+                if (conExpDateTitle.equals(cella.getContents().trim())) {
+                    conExpDateTitleIndex = ab;
+                }
+
+                if (birthDayTitle.equals(cella.getContents().trim())) {
+                    birthDayTitleIndex = ab;
+                }
+
+                if (ID_NOTitle.equals(cella.getContents().trim())) {
+                    ID_NOTitleIndex = ab;
+                }
+
+                if (nativePlaTitle.equals(cella.getContents().trim())) {
+                    nativePlaTitleIndex = ab;
+                }
+
+                if (homeAddrTtile.equals(cella.getContents().trim())) {
+                    homeAddrTtileIndex = ab;
+                }
+                if (valiPeriodOfIDTitle.equals(cella.getContents().trim())) {
+                    valiPeriodOfIDTitleIndex = ab;
+                }
+                if (nationTitle.equals(cella.getContents().trim())) {
+                    nationTitleIndex = ab;
+                }
+                if (marriagedTitle.equals(cella.getContents().trim())) {
+                    marriagedTitleIndex = ab;
+                }
+
+                if (contactPhoneTitle.equals(cella.getContents().trim())) {
+                    contactPhoneTitleIndex = ab;
+                }
+
+                if (educationLeTitle.equals(cella.getContents().trim())) {
+                    educationLeTitleIndex = ab;
+                }
+                if (screAgreementTitle.equals(cella.getContents().trim())) {
+                    screAgreementTitleIndex = ab;
+                }
+                if (healthCertiTitle.equals(cella.getContents().trim())) {
+                    healthCertiTitleIndex = ab;
+                }
+
+                if (sateListAndLeaCertiTitle.equals(cella.getContents().trim())) {
+                    sateListAndLeaCertiTitleIndex = ab;
+                }
+                if (otherCertiTitle.equals(cella.getContents().trim())) {
+                    otherCertiTitleIndex = ab;
+                }
+                if (positionAttrIdTitle.equals(cella.getContents().trim())) {
+                    positionAttrIdTitleIndex = ab;
+                }
+            }
+        }
         for (int i = 2; i < rowNums; i++) {
             cell = xlsfSheet.getRow(i);
             if (cell != null && cell.length > 0) {
-                name = cell[1].getContents().trim();
+                name = cell[nameTitleIndex].getContents().trim();
                 if (name.length() > 0) {
                     em = new Employee();
-                    em.setEmpNo(cell[1].getContents().trim());
-                    em.setName(cell[2].getContents().trim());
-                    em.setDeptName(cell[3].getContents().trim());
-                    em.setPositionName(cell[4].getContents().trim());
-                    if (cell.length >= 6) {
-                        em.setPositionLevel(cell[5].getContents().trim());
+                    em.setEmpNo(cell[empNoTitleIndex].getContents().trim());
+                    em.setName(cell[nameTitleIndex].getContents().trim());
+                    em.setDeptName(cell[deptIdTitleIndex].getContents().trim());
+                    em.setPositionName(cell[positionIdTitleIndex].getContents().trim());
+                    em.setSexStr(cell[sexTitleIndex].getContents().trim());
+                    em.setBirthDayStr(cell[birthDayTitleIndex].getContents().trim());
+                    em.setID_NO(cell[ID_NOTitleIndex].getContents().trim());
+                    em.setNativePlaStr(cell[nativePlaTitleIndex].getContents().trim());
+                    em.setHomeAddr(cell[homeAddrTtileIndex].getContents().trim());
+                    System.out.println("=====================" + cell[valiPeriodOfIDTitleIndex].getContents().length());
+                    if ((cell[valiPeriodOfIDTitleIndex] != null || cell[valiPeriodOfIDTitleIndex].getContents() != null) && cell[valiPeriodOfIDTitleIndex].getContents().length() > 1) {
+                        em.setValiPeriodOfIDStr(cell[valiPeriodOfIDTitleIndex].getContents().trim());
+                    } else {
+                        em.setValiPeriodOfIDStr("9999-12-31");
+                    }
+                    em.setNationStr(cell[nationTitleIndex].getContents().trim());
+                    em.setMarriagedStr(cell[marriagedTitleIndex].getContents().trim());
+                    em.setPositionAttrIdStr(cell[positionAttrIdTitleIndex].getContents().trim());
+                    em.setContactPhone(cell[contactPhoneTitleIndex].getContents().trim());
+                    em.setEducationLeStr(cell[educationLeTitleIndex].getContents().trim());
+                    em.setScreAgreementStr(cell[screAgreementTitleIndex].getContents().trim());
+                    em.setHealthCertiStr(cell[healthCertiTitleIndex].getContents().trim());
+                    if (cell[sateListAndLeaCertiTitleIndex] != null || cell[sateListAndLeaCertiTitleIndex].getContents() != null)
+                        em.setSateListAndLeaCertiStr(cell[sateListAndLeaCertiTitleIndex].getContents().trim());
+                    em.setOtherCertiStr(cell[otherCertiTitleIndex].getContents().trim());
+                    em.setIncompdateStr(cell[incompdateTitleIndex].getContents().trim());
+
+                    if (!"长期".equals(cell[conExpDateTitleIndex].getContents().trim())) {
+                        em.setConExpDateStr(cell[conExpDateTitleIndex].getContents().trim());
+                    } else {
+                        em.setConExpDateStr("9999-12-31");
+                    }
+                    if (attributeTitleIndex != null) {
+                        em.setPositionLevel(cell[attributeTitleIndex].getContents().trim());
                     }
                     employeeList.add(em);
                 }
@@ -383,20 +650,126 @@ public class PersonServiceImpl implements IPersonServ {
         int rowNums2 = xlsfSheet2.getRows();
         jxl.Cell[] cell2 = null;
         String name2 = null;
+        Cell cella2;
+        if (rowNums2 > 0) {
+            cell2 = xlsfSheet2.getRow(1);
+            int coloumNum2 = cell2.length;
+            for (int ab = 0; ab < coloumNum2; ab++) {
+                cella2 = cell2[ab];// 获得第i行的第3个单元格
+                if (nameTitle.equals(cella2.getContents().trim())) {
+                    nameTitleIndex = ab;
+                }
+                if (sexTitle.equals(cella2.getContents().trim())) {
+                    sexTitleIndex = ab;
+                }
+                if (deptIdTitle.equals(cella2.getContents().trim())) {
+                    deptIdTitleIndex = ab;
+                }
+                if (empNoTitle.equals(cella2.getContents().trim())) {
+                    empNoTitleIndex = ab;
+                }
+
+                if (positionIdTitle.equals(cella2.getContents().trim())) {
+                    positionIdTitleIndex = ab;
+                }
+                if (incompdateTitle.equals(cella2.getContents().trim())) {
+                    incompdateTitleIndex = ab;
+                }
+
+                if (conExpDateTitle.equals(cella2.getContents().trim())) {
+                    conExpDateTitleIndex = ab;
+                }
+
+                if (birthDayTitle.equals(cella2.getContents().trim())) {
+                    birthDayTitleIndex = ab;
+                }
+
+                if (ID_NOTitle.equals(cella2.getContents().trim())) {
+                    ID_NOTitleIndex = ab;
+                }
+
+                if (nativePlaTitle.equals(cella2.getContents().trim())) {
+                    nativePlaTitleIndex = ab;
+                }
+
+                if (homeAddrTtile.equals(cella2.getContents().trim())) {
+                    homeAddrTtileIndex = ab;
+                }
+                if (valiPeriodOfIDTitle.equals(cella2.getContents().trim())) {
+                    valiPeriodOfIDTitleIndex = ab;
+                }
+                if (nationTitle.equals(cella2.getContents().trim())) {
+                    nationTitleIndex = ab;
+                }
+                if (marriagedTitle.equals(cella2.getContents().trim())) {
+                    marriagedTitleIndex = ab;
+                }
+
+                if (contactPhoneTitle.equals(cella2.getContents().trim())) {
+                    contactPhoneTitleIndex = ab;
+                }
+
+                if (educationLeTitle.equals(cella2.getContents().trim())) {
+                    educationLeTitleIndex = ab;
+                }
+                if (screAgreementTitle.equals(cella2.getContents().trim())) {
+                    screAgreementTitleIndex = ab;
+                }
+                if (healthCertiTitle.equals(cella2.getContents().trim())) {
+                    healthCertiTitleIndex = ab;
+                }
+
+                if (sateListAndLeaCertiTitle.equals(cella2.getContents().trim())) {
+                    sateListAndLeaCertiTitleIndex = ab;
+                }
+                if (otherCertiTitle.equals(cella2.getContents().trim())) {
+                    otherCertiTitleIndex = ab;
+                }
+                if (positionAttrIdTitle.equals(cella2.getContents().trim())) {
+                    positionAttrIdTitleIndex = ab;
+                }
+            }
+        }
         for (int i = 2; i < rowNums2; i++) {
             cell2 = xlsfSheet2.getRow(i);
             if (cell2 != null && cell2.length > 0) {
                 name2 = cell2[1].getContents().trim();
                 if (name2.length() > 0) {
                     em = new Employee();
-                    em.setEmpNo(cell2[1].getContents().trim());
-                    em.setName(cell2[2].getContents().trim());
-                    em.setDeptName(cell2[3].getContents().trim());
-                    em.setPositionName(cell2[4].getContents().trim());
-                    if (cell2.length >= 6) {
-                        em.setPositionLevel(cell2[5].getContents().trim());
+                    em.setEmpNo(cell2[empNoTitleIndex].getContents().trim());
+                    em.setName(cell2[nameTitleIndex].getContents().trim());
+                    em.setDeptName(cell2[deptIdTitleIndex].getContents().trim());
+                    em.setPositionName(cell2[positionIdTitleIndex].getContents().trim());
+                    em.setSexStr(cell2[sexTitleIndex].getContents().trim());
+                    em.setBirthDayStr(cell2[birthDayTitleIndex].getContents().trim());
+                    em.setID_NO(cell2[ID_NOTitleIndex].getContents().trim());
+                    em.setNativePlaStr(cell2[nativePlaTitleIndex].getContents().trim());
+                    em.setHomeAddr(cell2[homeAddrTtileIndex].getContents().trim());
+                    if ((cell2[valiPeriodOfIDTitleIndex] != null || cell2[valiPeriodOfIDTitleIndex].getContents() != null) && cell2[valiPeriodOfIDTitleIndex].getContents().length() > 1) {
+                        em.setValiPeriodOfIDStr(cell2[valiPeriodOfIDTitleIndex].getContents().trim());
+                    } else {
+                        em.setValiPeriodOfIDStr("9999-12-31");
                     }
+                    em.setNationStr(cell2[nationTitleIndex].getContents().trim());
+                    em.setMarriagedStr(cell2[marriagedTitleIndex].getContents().trim());
+                    em.setPositionAttrIdStr(cell2[positionAttrIdTitleIndex].getContents().trim());
+                    em.setContactPhone(cell2[contactPhoneTitleIndex].getContents().trim());
+                    em.setEducationLeStr(cell2[educationLeTitleIndex].getContents().trim());
+                    em.setScreAgreementStr(cell2[screAgreementTitleIndex].getContents().trim());
+                    em.setHealthCertiStr(cell2[healthCertiTitleIndex].getContents().trim());
+                    if (cell2[sateListAndLeaCertiTitleIndex] != null || cell2[sateListAndLeaCertiTitleIndex].getContents() != null)
+                        em.setSateListAndLeaCertiStr(cell2[sateListAndLeaCertiTitleIndex].getContents().trim());
+                    em.setOtherCertiStr(cell2[otherCertiTitleIndex].getContents().trim());
+                    em.setIncompdateStr(cell2[incompdateTitleIndex].getContents().trim());
 
+                    if (!"长期".equals(cell2[conExpDateTitleIndex].getContents().trim())) {
+                        em.setConExpDateStr(cell2[conExpDateTitleIndex].getContents().trim());
+                    } else {
+                        em.setConExpDateStr("9999-12-31");
+                    }
+                    if (attributeTitleIndex != null) {
+                        em.setPositionLevel(cell2[attributeTitleIndex].getContents().trim());
+                    }
                     employeeList.add(em);
                 }
             }
@@ -468,6 +841,268 @@ public class PersonServiceImpl implements IPersonServ {
             Position position = personMapper.getPositionByName(emm.getPositionName());
             emm.setDeptId(dept.getId());
             emm.setPositionId(position.getId());
+            emm.setSex("男".equals(emm.getSexStr()) ? 1 : 0);
+
+            if ("已".equals(emm.getMarriagedStr())) {
+                emm.setMarriaged(1);
+            } else if ("未".equals(emm.getMarriagedStr()) || "否".equals(emm.getMarriagedStr())) {
+                emm.setMarriaged(0);
+            } else if ("离".equals(emm.getMarriagedStr())) {
+                emm.setMarriaged(2);
+            }
+
+            if ("壮".equals(emm.getNationStr())) {
+                emm.setNation(1);
+            } else if ("藏".equals(emm.getNationStr())) {
+                emm.setNation(2);
+            } else if ("裕固".equals(emm.getNationStr())) {
+                emm.setNation(3);
+            } else if ("彝".equals(emm.getNationStr())) {
+                emm.setNation(4);
+            } else if ("瑶".equals(emm.getNationStr())) {
+                emm.setNation(5);
+            } else if ("锡伯".equals(emm.getNationStr())) {
+                emm.setNation(6);
+            } else if ("乌孜别克".equals(emm.getNationStr())) {
+                emm.setNation(7);
+            } else if ("维吾尔".equals(emm.getNationStr())) {
+                emm.setNation(8);
+            } else if ("佤".equals(emm.getNationStr())) {
+                emm.setNation(9);
+            } else if ("土家".equals(emm.getNationStr())) {
+                emm.setNation(10);
+            } else if ("土".equals(emm.getNationStr())) {
+                emm.setNation(11);
+            } else if ("塔塔尔".equals(emm.getNationStr())) {
+                emm.setNation(12);
+            } else if ("塔吉克".equals(emm.getNationStr())) {
+                emm.setNation(13);
+            } else if ("水".equals(emm.getNationStr())) {
+                emm.setNation(14);
+            } else if ("畲".equals(emm.getNationStr())) {
+                emm.setNation(15);
+            } else if ("撒拉".equals(emm.getNationStr())) {
+                emm.setNation(16);
+            } else if ("羌".equals(emm.getNationStr())) {
+                emm.setNation(17);
+            } else if ("普米".equals(emm.getNationStr())) {
+                emm.setNation(18);
+            } else if ("怒".equals(emm.getNationStr())) {
+                emm.setNation(19);
+            } else if ("纳西".equals(emm.getNationStr())) {
+                emm.setNation(20);
+            } else if ("仫佬".equals(emm.getNationStr())) {
+                emm.setNation(21);
+            } else if ("苗".equals(emm.getNationStr())) {
+                emm.setNation(22);
+            } else if ("蒙古".equals(emm.getNationStr())) {
+                emm.setNation(23);
+            } else if ("门巴".equals(emm.getNationStr())) {
+                emm.setNation(24);
+            } else if ("毛南".equals(emm.getNationStr())) {
+                emm.setNation(25);
+            } else if ("满".equals(emm.getNationStr())) {
+                emm.setNation(26);
+            } else if ("珞巴".equals(emm.getNationStr())) {
+                emm.setNation(27);
+            } else if ("僳僳".equals(emm.getNationStr())) {
+                emm.setNation(28);
+            } else if ("黎".equals(emm.getNationStr())) {
+                emm.setNation(29);
+            } else if ("拉祜".equals(emm.getNationStr())) {
+                emm.setNation(30);
+            } else if ("柯尔克孜".equals(emm.getNationStr())) {
+                emm.setNation(31);
+            } else if ("景颇".equals(emm.getNationStr())) {
+                emm.setNation(32);
+            } else if ("京".equals(emm.getNationStr())) {
+                emm.setNation(33);
+            } else if ("基诺".equals(emm.getNationStr())) {
+                emm.setNation(34);
+            } else if ("回".equals(emm.getNationStr())) {
+                emm.setNation(35);
+            } else if ("赫哲".equals(emm.getNationStr())) {
+                emm.setNation(36);
+            } else if ("哈萨克".equals(emm.getNationStr())) {
+                emm.setNation(37);
+            } else if ("哈尼".equals(emm.getNationStr())) {
+                emm.setNation(38);
+            } else if ("仡佬".equals(emm.getNationStr())) {
+                emm.setNation(39);
+            } else if ("高山".equals(emm.getNationStr())) {
+                emm.setNation(40);
+            } else if ("鄂温克".equals(emm.getNationStr())) {
+                emm.setNation(41);
+            } else if ("俄罗斯".equals(emm.getNationStr())) {
+                emm.setNation(42);
+            } else if ("鄂伦春".equals(emm.getNationStr())) {
+                emm.setNation(43);
+            } else if ("独龙".equals(emm.getNationStr())) {
+                emm.setNation(44);
+            } else if ("东乡".equals(emm.getNationStr())) {
+                emm.setNation(45);
+            } else if ("侗".equals(emm.getNationStr())) {
+                emm.setNation(46);
+            } else if ("德昂".equals(emm.getNationStr())) {
+                emm.setNation(47);
+            } else if ("傣".equals(emm.getNationStr())) {
+                emm.setNation(48);
+            } else if ("达斡尔".equals(emm.getNationStr())) {
+                emm.setNation(49);
+            } else if ("朝鲜".equals(emm.getNationStr())) {
+                emm.setNation(50);
+            } else if ("布依".equals(emm.getNationStr())) {
+                emm.setNation(51);
+            } else if ("布朗".equals(emm.getNationStr())) {
+                emm.setNation(52);
+            } else if ("保安".equals(emm.getNationStr())) {
+                emm.setNation(53);
+            } else if ("白".equals(emm.getNationStr())) {
+                emm.setNation(54);
+            } else if ("阿昌".equals(emm.getNationStr())) {
+                emm.setNation(55);
+            } else if ("汉".equals(emm.getNationStr())) {
+                emm.setNation(56);
+            }
+
+
+            if ("北京".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(1);
+            } else if ("上海".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(2);
+            } else if ("广东".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(3);
+            } else if ("河北".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(4);
+            } else if ("山西".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(5);
+            } else if ("辽宁".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(6);
+            } else if ("吉林".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(7);
+            } else if ("黑龙江".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(8);
+            } else if ("江苏".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(9);
+            } else if ("浙江".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(10);
+            } else if ("安徽".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(11);
+            } else if ("福建".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(12);
+            } else if ("江西".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(13);
+            } else if ("山东".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(14);
+            } else if ("河南".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(15);
+            } else if ("湖北".equals(emm.getNativePlaStr()) || "武汉".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(16);
+            } else if ("湖南".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(17);
+            } else if ("天津".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(18);
+            } else if ("陕西".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(19);
+            } else if ("四川".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(20);
+            } else if ("台湾".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(21);
+            } else if ("云南".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(22);
+            } else if ("青海".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(23);
+            } else if ("甘肃".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(24);
+            } else if ("海南".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(25);
+            } else if ("贵州".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(26);
+            } else if ("重庆".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(27);
+            } else if ("新疆".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(28);
+            } else if ("广西".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(29);
+            } else if ("宁夏".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(30);
+            } else if ("内蒙古".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(31);
+            } else if ("西藏".equals(emm.getNativePlaStr())) {
+                emm.setNativePla(32);
+            }
+
+            if ("小学".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(1);
+            } else if ("初中".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(2);
+            } else if ("高中".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(3);
+            } else if ("技校".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(4);
+            } else if ("中技".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(5);
+            } else if ("中专".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(6);
+            } else if ("大专".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(7);
+            } else if ("本科".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(8);
+            } else if ("研究生".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(9);
+            } else if ("硕士".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(10);
+            } else if ("博士".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(11);
+            } else if ("MBA".equals(emm.getEducationLeStr())) {
+                emm.setEducationLe(12);
+            }
+
+            emm.setScreAgreement("有".equals(emm.getScreAgreementStr()) || "是".equals(emm.getScreAgreementStr()) ? 1 : 0);
+
+            if ("离职和社保".equals(emm.getSateListAndLeaCertiStr()) || "是".equals(emm.getSateListAndLeaCertiStr())) {
+                emm.setSateListAndLeaCerti(1);
+            } else if ("无".equals(emm.getSateListAndLeaCertiStr())) {
+                emm.setSateListAndLeaCerti(0);
+            } else if ("社保".equals(emm.getSateListAndLeaCertiStr())) {
+                emm.setSateListAndLeaCerti(2);
+            } else if ("离职".equals(emm.getSateListAndLeaCertiStr())) {
+                emm.setSateListAndLeaCerti(3);
+            }
+
+            if ("毕业证".equals(emm.getOtherCertiStr())) {
+                emm.setOtherCerti(1);
+            } else if ("电工证".equals(emm.getOtherCertiStr())) {
+                emm.setOtherCerti(2);
+            } else if ("焊工证".equals(emm.getOtherCertiStr())) {
+                emm.setOtherCerti(3);
+            } else if ("结婚证".equals(emm.getOtherCertiStr())) {
+                emm.setOtherCerti(4);
+            }
+
+
+            if ("健康证".equals(emm.getHealthCertiStr()) || "有".equals(emm.getHealthCertiStr()) || "是".equals(emm.getHealthCertiStr())) {
+                emm.setHealthCerti(1);
+            } else if ("体检单".equals(emm.getHealthCertiStr())) {
+                emm.setHealthCerti(2);
+            } else if ("职业病体检".equals(emm.getHealthCertiStr())) {
+                emm.setHealthCerti(3);
+            } else if ("无".equals(emm.getHealthCertiStr())) {
+                emm.setHealthCerti(0);
+            } else if (emm.getSateListAndLeaCertiStr() == null) {
+                emm.setHealthCerti(0);
+            }
+
+            if ("经理".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(1);
+            } else if ("主管".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(2);
+            } else if ("组长".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(3);
+            } else if ("职员".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(4);
+            }
+
             personMapper.saveEmployeeByBean(emm);
         }
     }
@@ -633,7 +1268,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                 if (time.after(workSet.getNoonOffFrom()) && time.before(workSet.getNoonOffEnd()) || (time.equals(workSet.getNoonOff()))) {
                                                     poff = true;
                                                     otw.setWorkSetPOff(workSet.getNoonOff().toString());
-                                                     otw.setWorkSetPOffForm(workSet.getNoonOffFrom().toString());
+                                                    otw.setWorkSetPOffForm(workSet.getNoonOffFrom().toString());
                                                     otw.setWorkSetPOffEnd(workSet.getNoonOffEnd().toString());
                                                     otw.setClockPOff(time.toString());
                                                     otw.setIsPOffOk("正常");
@@ -688,12 +1323,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!aon) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOn().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsAonOk("正常请假");
                                                 otw.setRemark("正常请假");
-                                            }else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsAonOk("因公外出");
@@ -707,12 +1342,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!aoff) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsAoffOk("正常请假");
                                                 otw.setRemark("正常请假");
-                                            }else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsAoffOk("因公外出");
@@ -727,12 +1362,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!pon) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsPOnOk("正常请假");
                                                 otw.setRemark("正常请假");
-                                            }else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsPOnOk("因公外出");
@@ -747,12 +1382,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (!poff) {
                                         Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOff().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsPOffOk("正常请假");
                                                 otw.setRemark("正常请假");
-                                            }else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setIsPOffOk("因公外出");
@@ -767,11 +1402,11 @@ public class PersonServiceImpl implements IPersonServ {
                                 } else {
                                     Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), "2019-" + month + "-" + date + " " + "08:00:00", "2019-" + month + "-" + date + " " + "17:30:00");
                                     if (leave != null) {
-                                        if(leave.getType()==0) {
+                                        if (leave.getType() == 0) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setRemark("正常请假");
-                                        }else if(leave.getType()==1) {
+                                        } else if (leave.getType() == 1) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setRemark("因公外出");
@@ -781,12 +1416,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     }
                                     leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOn().toString());
                                     if (leave != null) {
-                                        if(leave.getType()==0) {
+                                        if (leave.getType() == 0) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setIsAonOk("正常请假");
                                             otw.setRemark("正常请假");
-                                        }else if(leave.getType()==1) {
+                                        } else if (leave.getType() == 1) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setIsAonOk("因公外出");
@@ -799,12 +1434,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (workSet.getMorningOff() != null) {
                                         leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getMorningOff().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setRemark("正常请假");
                                                 otw.setIsAoffOk("正常请假");
-                                            }else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setRemark("因公外出");
@@ -818,12 +1453,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (workSet.getNoonOn() != null) {
                                         leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOn().toString());
                                         if (leave != null) {
-                                            if(leave.getType()==0) {
+                                            if (leave.getType() == 0) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setRemark("正常请假");
                                                 otw.setIsPOnOk("正常请假");
-                                            } else if(leave.getType()==1) {
+                                            } else if (leave.getType() == 1) {
                                                 otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                 otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                 otw.setRemark("因公外出");
@@ -836,12 +1471,12 @@ public class PersonServiceImpl implements IPersonServ {
                                     }
                                     leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), "2019-" + beforeM + month + "-" + date + " " + workSet.getNoonOff().toString());
                                     if (leave != null) {
-                                        if(leave.getType()==0) {
+                                        if (leave.getType() == 0) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setIsPOffOk("正常请假");
                                             otw.setRemark("正常请假");
-                                        }else if(leave.getType()==1) {
+                                        } else if (leave.getType() == 1) {
                                             otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                             otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                             otw.setIsPOffOk("因公外出");
