@@ -3045,7 +3045,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
@@ -3060,7 +3060,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
         } catch (Exception e) {
@@ -3076,7 +3076,7 @@ public class FileUploadAndDownController {
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
-           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             fileUploadAndDownServ.saveFileMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -3090,7 +3090,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+             Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {

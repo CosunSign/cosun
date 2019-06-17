@@ -15,8 +15,8 @@
     <script src="/lib/defaults-zh_CN.js" type="text/javascript"></script>
 </head>
 <style type="text/css">
-    .hongmei tr {
-        height: 5px
+    td, th {
+        white-space: nowrap;
     }
 </style>
 <script>
@@ -163,6 +163,7 @@
                 image03.html("");
                 image04.html("");
                 var td = "";
+                var td2 = "";
                 var tbody = $("#tabletblody");
                 tbody.html("");
                 var userType;
@@ -177,8 +178,13 @@
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
+                    var eduLe;
+                    var safeLe;
+                    var otherLe;
                     $.each(data, function (num) {
-
+                        eduLe = data[num].educationLe;
+                        safeLe = data[num].sateListAndLeaCerti;
+                        otherLe = data[num].otherCerti;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -191,24 +197,49 @@
                         tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
+
+                        td2 = "";
+                        if (eduLe <= 7) {
+                            td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
+                        } else {
+                            td2 += " <td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>" + data[num].educationLeStr + "</a></td>";
+                        }
+
+                        if (safeLe > 0) {
+                            td2 += " <td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>" + data[num].sateListAndLeaCertiStr + "</a></td>";
+                        } else {
+                            td2 += "<td align=\"center\">" + isNull(data[num].sateListAndLeaCertiStr) + "</td>\n"
+                        }
+                        if (otherLe > 0) {
+                            td2 += "<td> <a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>" + data[num].otherCertiStr + "</a></td>";
+
+                        } else {
+                            td2 += "<td align=\"center\">" + isNull(data[num].otherCertiStr) + "</td>\n"
+
+                        }
+
                         td = "<td>";
                         if (userType == 1) {
-                            td += " <a class=\"btn btn-sm btn-primary\" \n" +
+                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
                                 "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-sm btn-primary\"\n" +
+                                "  <a class=\"btn btn-xs btn-primary\"\n" +
                                 " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
-                            td += " <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
                                 "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
                                 " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         }
+                        tr.append(td2);
                         tr.append(td);
                         tr.appendTo(tbody);
                     });
@@ -304,6 +335,7 @@
                 image03.html("");
                 image04.html("");
                 var td = "";
+                var td2 = "";
                 var tbody = $("#tabletblody");
                 tbody.html("");
                 var userType;
@@ -318,8 +350,13 @@
                     maxpageid.val(totalPage);
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
+                    var eduLe;
+                    var safeLe;
+                    var otherLe;
                     $.each(data, function (num) {
-
+                        eduLe = data[num].educationLe;
+                        safeLe = data[num].sateListAndLeaCerti;
+                        otherLe = data[num].otherCerti;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -332,24 +369,49 @@
                         tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
+
+                        td2 = "";
+                        if (eduLe <= 7) {
+                            td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
+                        } else {
+                            td2 += " <td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>" + data[num].educationLeStr + "</a></td>";
+                        }
+
+                        if (safeLe > 0) {
+                            td2 += " <td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>" + data[num].sateListAndLeaCertiStr + "</a></td>";
+                        } else {
+                            td2 += "<td align=\"center\">" + isNull(data[num].sateListAndLeaCertiStr) + "</td>\n"
+                        }
+                        if (otherLe > 0) {
+                            td2 += "<td> <a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>" + data[num].otherCertiStr + "</a></td>";
+
+                        } else {
+                            td2 += "<td align=\"center\">" + isNull(data[num].otherCertiStr) + "</td>\n"
+
+                        }
+
                         td = "<td>";
                         if (userType == 1) {
-                            td += " <a class=\"btn btn-sm btn-primary\" \n" +
+                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
                                 "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-sm btn-primary\"\n" +
+                                "  <a class=\"btn btn-xs btn-primary\"\n" +
                                 " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
-                            td += " <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
                                 "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-sm btn-primary\" disabled='disabled' \n" +
+                                "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
                                 " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         }
+                        tr.append(td2);
                         tr.append(td);
                         tr.appendTo(tbody);
                     });
@@ -431,6 +493,10 @@
             $("#errormessage").hide();
             window.location.href = "/person/deleteEmpByBatch?ids=" + check_val;
         }
+    }
+
+    function showPNG(id, type) {
+        window.open("/person/showImage?id=" + id + "&type=" + type);
     }
 
 </script>
@@ -561,6 +627,9 @@
             <th style="text-align: center">入职时间</th>
             <th style="text-align: center">籍贯</th>
             <th style="text-align: center">手机号码</th>
+            <th style="text-align: center">学历</th>
+            <th style="text-align: center">社保清单或离职证明</th>
+            <th style="text-align: center">其它证件</th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
@@ -581,11 +650,44 @@
                     <td align="center" th:text="${employ.incomdateStr}"></td>
                     <td align="center" th:text="${employ.nativePlaStr}"></td>
                     <td align="center" th:text="${employ.contactPhone}"></td>
+                    <div th:if="${employ.educationLe gt 7}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],1);"
+                               th:text="${employ.educationLeStr}"></a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.educationLe le 7}">
+                        <td align="center" th:text="${employ.educationLeStr}"></td>
+                    </div>
+
+                    <div th:if="${employ.sateListAndLeaCerti gt 0}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],2);"
+                               th:text="${employ.sateListAndLeaCertiStr}"></a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.sateListAndLeaCerti le 0}">
+                        <td align="center" th:text="${employ.sateListAndLeaCertiStr}"></td>
+                    </div>
+
+                    <div th:if="${employ.otherCerti gt 0}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],3);"
+                               th:text="${employ.otherCertiStr}"></a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.otherCerti le 0}">
+                        <td align="center" th:text="${employ.otherCertiStr}"></td>
+                    </div>
+
                     <td align="center">
-                        <a class="btn btn-sm btn-primary"
+                        <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
                            th:onclick="updateEmployee([[${employ.id}]]);">编辑</a>
-                        <a class="btn btn-sm btn-primary"
+                        <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
                            th:onclick="deleteEmployee([[${employ.id}]]);">删除</a>
                         &nbsp;&nbsp;&nbsp;
@@ -597,7 +699,7 @@
         </div>
         <div th:if="${#lists.isEmpty(employeeList)}">
             <tr>
-                <td colspan="12">
+                <td colspan="15">
                     查无数据
                 </td>
             </tr>
@@ -607,7 +709,7 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="12" align="center">
+            <td colspan="15" align="center">
                 <span>第</span>
                 <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>

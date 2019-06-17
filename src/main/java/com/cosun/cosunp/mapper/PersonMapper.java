@@ -228,7 +228,7 @@ public interface PersonMapper {
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
             "\t\tORDER BY\n" +
-            "\t\t\tNAME ASC limit #{currentPageTotalNum},#{pageSize}")
+            "\t\t\te.empno desc limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
 
     @Select("SELECT\n" +
@@ -631,7 +631,7 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            sb.append(" order by e.name desc limit #{currentPageTotalNum},#{pageSize}");
+            sb.append(" order by e.empno desc limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
         }
 

@@ -45,6 +45,8 @@ public class Employee implements Serializable {
     private String sateListAndLeaCertiUrl;
     private String otherCertiUrl;
 
+
+
     private String username;
     private String passowrd;
     private Double posSalary;

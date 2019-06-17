@@ -108,7 +108,7 @@ public class PersonController {
             view.addObject("employee", employee);
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
-            view.addObject("userInfo",userInfo);
+            view.addObject("userInfo", userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -274,7 +274,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("employee", new Employee());
-            view.addObject("userInfo",info);
+            view.addObject("userInfo", info);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -934,15 +934,47 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/showImage")
+    public void showImage(Integer id, Integer type, HttpServletResponse response) throws Exception {
+        response.setContentType("text/html; charset=UTF-8");
+        response.setContentType("image/jpeg");
+        List<Employee> ee = personServ.getEmployeeById(id);
+        String pathName = "";
+        if (type == 1) {
+            pathName = ee.get(0).getEducationLeUrl();
+        }else if(type==2) {
+            pathName = ee.get(0).getSateListAndLeaCertiUrl();
+        }else if(type==3) {
+            pathName = ee.get(0).getOtherCertiUrl();
+        }
+        FileInputStream fis = new FileInputStream(pathName);
+        OutputStream os = response.getOutputStream();
+        try {
+            int count = 0;
+            byte[] buffer = new byte[1024 * 1024];
+            while ((count = fis.read(buffer)) != -1)
+                os.write(buffer, 0, count);
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null)
+                os.close();
+            if (fis != null)
+                fis.close();
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/addEmployee", method = RequestMethod.POST)
     public ModelAndView addEmployee(@RequestParam("educationLeFile") MultipartFile educationLeFile,
                                     @RequestParam("sateListAndLeaCertiFile") MultipartFile sateListAndLeaCertiFile,
                                     @RequestParam("otherCertiFile") MultipartFile otherCertiFile,
-                                    Employee employee1,HttpSession session) throws Exception {
+                                    Employee employee1, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
-            personServ.addEmployeeData(educationLeFile,sateListAndLeaCertiFile,otherCertiFile,employee1);
+            personServ.addEmployeeData(educationLeFile, sateListAndLeaCertiFile, otherCertiFile, employee1);
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
             List<Employee> empList = personServ.findAllEmployeeAll();
@@ -958,7 +990,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 1);
-            view.addObject("userInfo",userInfo);
+            view.addObject("userInfo", userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1015,11 +1047,11 @@ public class PersonController {
     public ModelAndView updatePersonToMysql(@RequestParam("educationLeFile") MultipartFile educationLeFile,
                                             @RequestParam("sateListAndLeaCertiFile") MultipartFile sateListAndLeaCertiFile,
                                             @RequestParam("otherCertiFile") MultipartFile otherCertiFile,
-                                            Employee employee1,HttpSession session) throws Exception {
+                                            Employee employee1, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
-            personServ.updateEmployeeData(educationLeFile,sateListAndLeaCertiFile,otherCertiFile,employee1);
+            personServ.updateEmployeeData(educationLeFile, sateListAndLeaCertiFile, otherCertiFile, employee1);
             List<Employee> empList = personServ.findAllEmployees();
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
@@ -1035,7 +1067,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 3);
-            view.addObject("userInfo",userInfo);
+            view.addObject("userInfo", userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1147,7 +1179,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmpByBatch", method = RequestMethod.GET)
-    public ModelAndView deleteEmpByBatch(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView deleteEmpByBatch(Employee employee, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
@@ -1166,7 +1198,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 2);
-            view.addObject("userInfo",userInfo);
+            view.addObject("userInfo", userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1177,7 +1209,7 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmployeeById", method = RequestMethod.GET)
-    public ModelAndView deleteEmployeeById(Integer id,HttpSession session) throws Exception {
+    public ModelAndView deleteEmployeeById(Integer id, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("person");
@@ -1197,7 +1229,7 @@ public class PersonController {
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 2);
-            view.addObject("userInfo",userInfo);
+            view.addObject("userInfo", userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
