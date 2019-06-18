@@ -642,6 +642,7 @@ public class PersonServiceImpl implements IPersonServ {
                     if (attributeTitleIndex != null) {
                         em.setPositionLevel(cell[attributeTitleIndex].getContents().trim());
                     }
+                    em.setWorkType(0);
                     employeeList.add(em);
                 }
             }
@@ -770,6 +771,7 @@ public class PersonServiceImpl implements IPersonServ {
                     if (attributeTitleIndex != null) {
                         em.setPositionLevel(cell2[attributeTitleIndex].getContents().trim());
                     }
+                    em.setWorkType(1);
                     employeeList.add(em);
                 }
             }

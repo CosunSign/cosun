@@ -188,11 +188,11 @@ public interface PersonMapper {
     @Insert("\n" +
             "INSERT into salary (empno,compresalary,possalary,jobsalary,meritsalary)\n" +
             " values(#{empNo},#{compSalary},#{posiSalary},#{jobSalary},#{meritSalary})\n")
-    void addSalaryData(String empNo,Double compSalary,Double posiSalary,Double jobSalary,Double meritSalary);
+    void addSalaryData(String empNo, Double compSalary, Double posiSalary, Double jobSalary, Double meritSalary);
 
     @Update(" update salary set compresalary = #{compSalary},possalary=#{posiSalary},jobsalary=#{jobSalary},meritsalary = #{meritSalary}\n" +
             " where empno = #{empNo}\n")
-    void updateSalaryData(String empNo,Double compSalary,Double posiSalary,Double jobSalary,Double meritSalary);
+    void updateSalaryData(String empNo, Double compSalary, Double posiSalary, Double jobSalary, Double meritSalary);
 
     @Select("SELECT\te. NAME,\n" +
             "\te. NAME AS namea,\n" +
@@ -248,7 +248,7 @@ public interface PersonMapper {
     List<Employee> findAllEmployeeAll();
 
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
-    WorkDate getWorkDateByMonthAnPositionLevel(int month,String positionLevel);
+    WorkDate getWorkDateByMonthAnPositionLevel(int month, String positionLevel);
 
     @Select("select * from workdate where month = #{month}")
     List<WorkDate> findAllWorkDateListByMonth(int month);
@@ -325,7 +325,7 @@ public interface PersonMapper {
     void addPositionByName(String positionName);
 
     @Insert("insert into position (positionName,positionLevel) values(#{positionName},#{positionLevel})")
-    void addPositionByNameandPositionLevel(String positionName,String positionLevel);
+    void addPositionByNameandPositionLevel(String positionName, String positionLevel);
 
     @Update("TRUNCATE table dept")
     void clearDeptData();
@@ -343,23 +343,23 @@ public interface PersonMapper {
     WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate);
 
     @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
-    WorkSet getWorkSetByMonthAndPositionLevel2(int month,String positionLevel);
+    WorkSet getWorkSetByMonthAndPositionLevel2(int month, String positionLevel);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s') as beginLeaveStr ,date_format(endleave, '%Y-%m-%d %h:%i:%s') as endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type  " +
             "from leavedata where employeeid = #{employeeId} and  beginleave<= #{dataStrStart} and endleave>= #{dataEnd} limit 1 ")
-    Leave getLeaveByEmIdAndMonth(Integer employeeId,String dataStrStart,String dataEnd);
+    Leave getLeaveByEmIdAndMonth(Integer employeeId, String dataStrStart, String dataEnd);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
             "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
-    Leave getLeaveByEmIdAndMonthA(Integer employeeId,String dataStr);
+    Leave getLeaveByEmIdAndMonthA(Integer employeeId, String dataStr);
 
     @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
             "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,\n" +
-            "screAgreement,healthCerti,sateListAndLeaCerti,otherCerti,positionAttrId)" +
+            "screAgreement,healthCerti,sateListAndLeaCerti,otherCerti,positionAttrId,worktype)" +
             "values (#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incompdateStr},#{conExpDateStr},#{birthDayStr},#{ID_NO}," +
             "#{nativePla},#{homeAddr},#{valiPeriodOfIDStr},#{nation},#{marriaged},#{contactPhone},#{educationLe}," +
-            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{otherCerti},#{positionAttrId})")
+            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{otherCerti},#{positionAttrId},#{workType})")
     void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
@@ -484,7 +484,7 @@ public interface PersonMapper {
             "screAgreement=#{screAgreement},healthCerti=#{healthCerti},sateListAndLeaCerti=#{sateListAndLeaCerti}," +
             "sateListAndLeaCertiUrl=#{sateListAndLeaCertiUrl},otherCerti=#{otherCerti},otherCertiUrl=#{otherCertiUrl}," +
             "positionAttrId=#{positionAttrId} " +
-            "where empno = #{empNo}" )
+            "where empno = #{empNo}")
     void updateEmployeeData(Employee employee);
 
     @Update("update leavedata set beginleave = #{beginLeaveStr},endleave = #{endLeaveStr},leavelong =#{leaveLong}" +
@@ -513,6 +513,9 @@ public interface PersonMapper {
             if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
                 sb.append(" and deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
             }
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
 
             if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
                 sb.append(" and positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
@@ -539,9 +542,9 @@ public interface PersonMapper {
                 } else if (workSet.getWorkLevels().size() >= 2) {
                     sb.append(" and workLevel in (");
                     for (int i = 0; i < workSet.getWorkLevels().size() - 1; i++) {
-                        sb.append("'"+workSet.getWorkLevels().get(i)+"'" + ",");
+                        sb.append("'" + workSet.getWorkLevels().get(i) + "'" + ",");
                     }
-                    sb.append("'"+ workSet.getWorkLevels().get(workSet.getWorkLevels().size() - 1) + "')");
+                    sb.append("'" + workSet.getWorkLevels().get(workSet.getWorkLevels().size() - 1) + "')");
                 }
             }
             sb.append(" order by workLevel asc,month asc  limit #{currentPageTotalNum},#{pageSize}");
@@ -559,9 +562,9 @@ public interface PersonMapper {
                 } else if (workSet.getWorkLevels().size() >= 2) {
                     sb.append(" and workLevel in (");
                     for (int i = 0; i < workSet.getWorkLevels().size() - 1; i++) {
-                        sb.append("'"+workSet.getWorkLevels().get(i) +"'"+ ",");
+                        sb.append("'" + workSet.getWorkLevels().get(i) + "'" + ",");
                     }
-                    sb.append("'"+workSet.getWorkLevels().get(workSet.getWorkLevels().size() - 1) + "')");
+                    sb.append("'" + workSet.getWorkLevels().get(workSet.getWorkLevels().size() - 1) + "')");
                 }
             }
             return sb.toString();
@@ -620,6 +623,10 @@ public interface PersonMapper {
                 sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
             }
 
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and e.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
             if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
                 sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
             }
@@ -631,7 +638,103 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            sb.append(" order by e.empno desc limit #{currentPageTotalNum},#{pageSize}");
+            if (employee.getSortMethod() != null && employee.getSortByName() != null) {
+                if("name".equals(employee.getSortByName())){
+                    sb.append(" order by e.name ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("sexStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.sex ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by e.empno ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by d.deptname ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("positionAttrIdStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.positionAttrId ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("birthDayStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.birthDay ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("incomdateStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.incompdate ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("nativePlaStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.nativePla ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("contactPhone".equals(employee.getSortByName())) {
+                    sb.append(" order by e.contactPhone ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("educationLeStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.educationLe ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.sateListAndLeaCerti ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("otherCertiStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.otherCerti ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" order by e.empno desc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
         }
 

@@ -40,6 +40,7 @@ public class Employee implements Serializable {
     private Integer otherCerti;//其它证件
     private Integer positionAttrId;//职位
     private Integer type;
+    private Integer workType;//0生产车间  1 办公区
 
     private String educationLeUrl;
     private String sateListAndLeaCertiUrl;
@@ -79,6 +80,7 @@ public class Employee implements Serializable {
     private List<Integer> positionIds;
     private List<Integer> ids;
     private List<Integer> nameIds;
+    private List<Integer> workTypes;
     private String startIncomDateStr;
     private String endIncomDateStr;
     private String deptIdsstr;
@@ -95,7 +97,41 @@ public class Employee implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+    private String sortMethod;
+    private String sortByName;
 
+
+    public List<Integer> getWorkTypes() {
+        return workTypes;
+    }
+
+    public void setWorkTypes(List<Integer> workTypes) {
+        this.workTypes = workTypes;
+    }
+
+    public Integer getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(Integer workType) {
+        this.workType = workType;
+    }
+
+    public String getSortMethod() {
+        return sortMethod;
+    }
+
+    public void setSortMethod(String sortMethod) {
+        this.sortMethod = sortMethod;
+    }
+
+    public String getSortByName() {
+        return sortByName;
+    }
+
+    public void setSortByName(String sortByName) {
+        this.sortByName = sortByName;
+    }
 
     public Integer getType() {
         return type;
