@@ -45,8 +45,8 @@ public class WordToPDF {
         //Process p = Runtime.getRuntime().exec(command);
 
         // 连接openoffice服务
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
-        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
+        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
         connection.connect();
 
         // 转换

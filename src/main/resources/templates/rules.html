@@ -319,12 +319,12 @@
         <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${rules.currentPage}"/>
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
-                <table>
+                <table width="100%">
                     <tr>
                         <td style="text-align: right">
                             <label>部门：</label>
                         </td>
-                        <td style="width: 300px;">
+                        <td style="width: 300px;text-align: left;" >
                             <label>
                                 <select id="dept" multiple class="selectpicker show-tick form-control"
                                         data-live-search="true" data-actions-box="true"
@@ -346,7 +346,7 @@
                             </label>
                         </td>
 
-                        <td  style="text-align: right">
+                        <td  style="text-align: left">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-primary"
                                href="javascript:void(0);" onclick="queryRulesByCondition()"
                         >查找</a>

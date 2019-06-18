@@ -66,7 +66,7 @@
 
         #div1css {
             border: 1px solid #9AC0CD;
-            width: 1125px;
+            width: 100%;
             height: 65px;
             Margin: 2px;
             padding: 3px;
@@ -105,7 +105,7 @@
 
         #folderdiv {
             border: 1px solid #9AC0CD;
-            width: 1125px;
+            width: 99%;
             height: 500px;
             Margin: 2px;
             padding: 3px;
@@ -113,7 +113,7 @@
 
         #titlename {
             border: 1px solid #9AC0CD;
-            width: 1095px;
+            width: 99%;
             height: 20px;
             margin-left: 10px;
             margin-right: 10px;
@@ -212,7 +212,7 @@
 
         #innerfolderdiv {
             border: 2px solid #9AC0CD;
-            width: 1095px;
+            width: 99%;
             height: 438px;
             margin-left: 10px;
             margin-right: 10px;
@@ -222,7 +222,7 @@
 
         #div2css {
             border: 1px solid #9AC0CD;
-            width: 1125px;
+            width: 100%;
             height: 40px;
             Margin: 2px;
             padding: 3px;
@@ -1725,7 +1725,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 
 
             <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
@@ -1840,60 +1840,60 @@
                         &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
                                                        onclick="backFolder3();">
                     <div id="titlename">
-                        <table class="grid" id="tablecsshead">
+                        <table class="grid" style="width: 100%" id="tablecsshead">
                             <thead style="background-color: #E0EEEE" align="center" id="urlthead">
-                            <th width="30px">序号</th>
-                            <th width="30px">更新</th>
-                            <th width="30px">下载</th>
-                            <th width="30px">删除</th>
-                            <th width="155px">订单编号</th>
-                            <th width="50px">业务员</th>
-                            <th width="50px">设计师</th>
-                            <th width="50px">权限者</th>
-                            <th width="150px">最新上传/更新时间</th>
-                            <th width="520px">文件夹或文件名</th>
+                            <th width="5%">序号</th>
+                            <th width="5%">更新</th>
+                            <th width="5%">下载</th>
+                            <th width="5%">删除</th>
+                            <th width="10%">订单编号</th>
+                            <th width="10%">业务员</th>
+                            <th width="10%">设计师</th>
+                            <th width="10%">权限者</th>
+                            <th width="10%">最新上传/更新时间</th>
+                            <th width="30%">文件夹或文件名</th>
                             </thead>
                         </table>
                     </div>
 
                     <div id="innerfolderdiv">
-                        <table class="grid" id="showlistbody">
+                        <table class="grid" id="showlistbody" style="width: 100%">
                             <tbody id="showdatatable">
                             <div th:unless="${#lists.isEmpty(views)}" id="innerfolderdivforTable">
                                 <div th:each="view ,iterStat: ${views}">
                                     <tr th:id="${view.orderNo}+${view.orderNo}">
-                                        <td width="29px" align="center" th:text="${iterStat.count}">
+                                        <td width="5%" align="center" th:text="${iterStat.count}">
                                         </td>
-                                        <td width="29px" align="center">
+                                        <td width="5%" align="center">
                                             <input type="checkbox" th:value="2"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.updatePrivilege eq '2' }">
                                         </td>
-                                        <td width="30px" align="center">
+                                        <td width="5%" align="center">
                                             <input type="checkbox" th:value="3"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.downloadPrivilege eq '3' }">
                                         </td>
-                                        <td width="30px" align="center">
+                                        <td width="5%" align="center">
                                             <input type="checkbox" th:value="4"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.deletePrivilege eq '4' }">
                                         </td>
-                                        <td width="155px" align="center">
+                                        <td width="10%" align="center">
                                             <span style="width:150px;height:50px;" th:text="${view.orderNo}"></span>
                                         </td>
-                                        <td width="50px" align="center">
+                                        <td width="10%" align="center">
                                             <i th:text="${view.salor}"></i>
                                         </td>
-                                        <td width="50px" align="center">
+                                        <td width="10%" align="center">
                                             <i th:text="${view.engineer}"></i>
                                         </td>
-                                        <td width="50px" align="center" th:text="${view.oprighter}">
+                                        <td width="10%" align="center" th:text="${view.oprighter}">
                                         </td>
-                                        <td width="150px" align="center">
+                                        <td width="10%" align="center">
                                             <i th:text="${view.createTime}"></i>
                                         </td>
-                                        <td width="520px" align="left" th:id="${view.orderNo}">
+                                        <td width="30%" align="left" th:id="${view.orderNo}">
                                             <img src="/images/icon/Folder.png" align="middle" border="0"
                                                  th:value="${view.orderNo}" ondblclick="shownextfolderorfiles(this)"
                                                  style="width: 30px; height: 30px; vertical-align: middle"
