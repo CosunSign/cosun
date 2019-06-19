@@ -44,7 +44,7 @@ public class WordToPDF {
        // String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard";
         //Process p = Runtime.getRuntime().exec(command);
 
-        // 连接openoffice服务
+        // 连接openoffi ce服务
         //OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
         OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
         connection.connect();
