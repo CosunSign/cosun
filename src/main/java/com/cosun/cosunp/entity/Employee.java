@@ -514,7 +514,7 @@ public class Employee implements Serializable {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (this.incompdate != null)
             return formatter.format(this.incompdate);
-        return this.incompdateStr;
+        return this.conExpDateStr;
     }
 
     public void setIncompdateStr(String incompdateStr) {

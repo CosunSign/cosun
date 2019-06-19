@@ -240,7 +240,7 @@
     <div class="content" id="contentnew" style="overflow-y:scroll;">
         <div th:if="${showflaga==1}">
 
-            <iframe class="iframecontent" src="/pdfjs/web/viewer.html?file=/rules/previewFirst"
+            <iframe class="iframecontentnew" src="/pdfjs/web/viewer.html?file=/rules/previewFirst"
              style="float: left;" name="targetText"></iframe>
         </div>
     </div>
@@ -476,7 +476,7 @@
     }
 
     #contentnew {
-        width: 87%;
+        width: 83%;
         height: 500px;
     }
 
@@ -674,6 +674,16 @@
     .iframecontent {
         height: 700px;
         width: 100%;
+        background: #fff;
+        border-left: 1px solid #cccccc;
+        border-right: 1px solid #cccccc;
+        border-top: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
+    }
+
+    .iframecontentnew {
+        height: 700px;
+        width: 98%;
         background: #fff;
         border-left: 1px solid #cccccc;
         border-right: 1px solid #cccccc;

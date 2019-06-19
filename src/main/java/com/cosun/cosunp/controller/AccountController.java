@@ -303,6 +303,8 @@ public class AccountController {
             DownloadView v = new DownloadView();
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             v.setFullName(userInfo.getFullName());
+            Rules rules = rulesServ.getRulesByFirst();
+            view.addObject("showflaga", rules == null ? 0 : 1);
             if (userInfo == null) {
                 view = new ModelAndView(INDEX);
             }
