@@ -22,10 +22,6 @@
     });
 
     function addPersonToMysql() {
-        // document.forms[0].submit();
-        // return
-        //
-
         var isflag = true;
         var employeeNo = $("#employeeNo").val();
         var employeeName = $("#employeeName").val();
@@ -173,19 +169,23 @@
         var password1 = $("#password1").val();
         var password2 = $("#password2").val();
         if (username.trim().length > 0) {
-            if (password1.trim().length == 0) {
-                $("#errormessage").show();
-                var errormessagediv = document.getElementById("errormessage");
-                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;用户注册密码不能为空!";
-                errormessagediv.style.color = "red";
-                return;
-            }
-            if (password2.trim().length == 0) {
-                $("#errormessage").show();
-                var errormessagediv = document.getElementById("errormessage");
-                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;用户注册确认密码不能为空!";
-                errormessagediv.style.color = "red";
-                return;
+            if(password1.trim().length>0) {
+                if (password1.trim().length == 0) {
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;用户注册密码不能为空!";
+                    errormessagediv.style.color = "red";
+                    return;
+                }
+                if (password2.trim().length == 0) {
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;用户注册确认密码不能为空!";
+                    errormessagediv.style.color = "red";
+                    return;
+                }
+            }else{
+                $("#username").val("");
             }
         }
 
@@ -231,6 +231,7 @@
                         } else {
                             $("#errormessageempNo").hide();
                             $("#rightmessageempNo").show();
+                            $("#username").val($("#employeeNo").val());
                         }
                     },
                     error: function (msg) {
@@ -615,7 +616,7 @@
                         <table class="table table-hover table-striped text-center"
                                style="text-align: right;width: 100%">
                             <tr>
-                                <td><label>姓名：</label></td>
+                                <td><label> <font color="#FF0000" size="2">*</font>&nbsp;姓名：</label></td>
                                 <td>
                                     <input type="text" class="form-control" id="employeeName" th:field="*{name}"
                                            onblur="checkNameisChineseOrRepeat(this.value)">
@@ -632,7 +633,7 @@
                                              align="center">
                                     </div>
                                 </td>
-                                <td><label>籍贯：</label></td>
+                                <td><label> <font color="#FF0000" size="2">*</font>&nbsp;籍贯：</label></td>
                                 <td>
                                     <select id="nativePla" class="selectpicker show-tick form-control"
                                             data-live-search="true" th:field="*{nativePla}">
@@ -673,7 +674,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>性别：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;性别：</label></td>
                                 <td align="center">
                                     <label><input type="radio" th:value="1" name="sex" checked>男</label>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -681,7 +682,7 @@
                                 </td>
                                 <td></td>
 
-                                <td><label>身份证到期时间：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;身份证到期时间：</label></td>
                                 <td>
                                     <input type="text" style="width:170px;height: 34px;text-align: center"
                                            id="valiPeriodOfID"
@@ -690,14 +691,14 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>出生日期：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;出生日期：</label></td>
                                 <td>
                                     <input type="text" style="width:170px;height: 34px;text-align: center" id="birthDay"
                                            readOnly="true" class="Wdate" th:field="*{birthDayStr}"
                                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                                 </td>
                                 <td></td>
-                                <td><label>民族：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;民族：</label></td>
                                 <td>
                                     <select id="nation" class="selectpicker show-tick form-control"
                                             data-live-search="true" th:field="*{nation}">
@@ -761,7 +762,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>身份证号码：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;身份证号码：</label></td>
                                 <td>
                                     <input type="text" class="form-control" id="ID_NO" th:field="*{ID_NO}"
                                            onblur="checkPersonIDNo(this)">
@@ -778,7 +779,7 @@
                                              align="center">
                                     </div>
                                 </td>
-                                <td><label>婚否：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;婚否：</label></td>
                                 <td align="center">
                                     <label><input type="radio" th:value="0" name="marriaged" checked>未</label>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -788,7 +789,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>入职时间：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;入职时间：</label></td>
                                 <td>
                                     <input type="text" style="width:170px;height: 34px;text-align: center"
                                            id="incompDate" th:field="*{incomdateStr}"
@@ -796,7 +797,7 @@
                                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                                 </td>
                                 <td></td>
-                                <td><label>手机号码：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;手机号码：</label></td>
                                 <td>
                                     <input type="text" class="form-control" id="contactPhone" th:field="*{contactPhone}"
                                            onblur="checkMobileNo(this.value)">
@@ -816,7 +817,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>工号：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;工号：</label></td>
                                 <td><input type="text" class="form-control" th:field="*{empNo}" id="employeeNo"
                                            onblur="checkemployno(this.value)"></td>
                                 <td style="text-align: left">
@@ -832,7 +833,7 @@
                                              align="center">
                                     </div>
                                 </td>
-                                <td><label>健康证：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;健康证：</label></td>
                                 <td>
                                     <select id="healthCerti" class="selectpicker show-tick form-control"
                                             data-live-search="true" th:field="*{healthCerti}">
@@ -847,19 +848,21 @@
 
                             </tr>
                             <tr>
-                                <td><label>职位：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;职位：</label></td>
                                 <td>
                                     <select id="positionAttrId" class="selectpicker show-tick form-control"
                                             data-live-search="true" th:field="*{positionAttrId}">
                                         　　
-                                        <option value="1">经理</option>
-                                        <option value="2">主管</option>
-                                        <option value="3">组长</option>
                                         <option value="4">职员</option>
+                                        <option value="3">组长</option>
+                                        <option value="2">主管</option>
+                                        <option value="1">经理</option>
+
+
                                     </select>
                                 </td>
                                 <td></td>
-                                <td><label>保密协议：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;保密协议：</label></td>
                                 <td align="center">
                                     <label><input type="radio" th:value="0" name="screAgreement">无</label>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -867,7 +870,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>职务：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;职务：</label></td>
                                 <td>
                                     <select id="positionId" class="selectpicker show-tick form-control"
                                             data-live-search="true">
@@ -877,9 +880,10 @@
                                     </select>
 
                                 </td>
-                                <td style="text-align: left">&nbsp;&nbsp;&nbsp; <a href="/person/topositanddeptpage?">没有？新增职务</a></td>
+                                <td style="text-align: left">&nbsp;&nbsp;&nbsp; <a href="/person/topositanddeptpage?">没有？新增职务</a>
+                                </td>
 
-                                <td><label>学历：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;学历：</label></td>
                                 <td>
                                     <select id="educationLe" class="selectpicker show-tick form-control"
                                             data-live-search="true" onchange="showUploadeduAtta()"
@@ -903,7 +907,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>合同到期时间：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;合同到期时间：</label></td>
                                 <td>
                                     <input type="text" style="width:170px;height: 34px;text-align: center"
                                            id="conExpDateId"
@@ -929,7 +933,7 @@
 
                             </tr>
                             <tr>
-                                <td><label>部门：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;部门：</label></td>
                                 <td>
                                     <select id="deptId" class="selectpicker show-tick form-control"
                                             data-live-search="true">
@@ -939,7 +943,8 @@
                                     </select>
 
                                 </td>
-                                <td style="text-align: left;"> &nbsp;&nbsp;&nbsp;<a href="/person/topositanddeptpage2?flaga=66">没有？新增部门</a></td>
+                                <td style="text-align: left;"> &nbsp;&nbsp;&nbsp;<a
+                                        href="/person/topositanddeptpage2?flaga=66">没有？新增部门</a></td>
                                 <td><label>其它证件：</label></td>
                                 <td>
                                     <select id="otherCerti" class="selectpicker show-tick form-control"
@@ -959,7 +964,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td><label>家庭住址：</label></td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;家庭住址：</label></td>
                                 <td colspan="4">
                                     <input type="text" class="form-control" id="homeAddr" th:field="*{homeAddr}">
                                 </td>
@@ -997,7 +1002,7 @@
                             <div class="form-group">
                                 <label>用户名</label>
                                 <input type="text" class="form-controlspan12 form-control" id="username"
-                                       onchange="checkUserNameExsitA()"  th:field="*{username}">
+                                       onchange="checkUserNameExsitA()" th:field="*{username}">
                             </div>
 
                             <div class="form-group">

@@ -240,7 +240,7 @@ public class PersonServiceImpl implements IPersonServ {
 
         }
 
-        if (employee.getUsername() != null) {
+        if (employee.getUsername() != null&&employee.getPassowrd()!=null&&employee.getUsername().trim().length()>0 &&employee.getPassowrd().trim().length()>0) {
             userInfo = new UserInfo();
             userInfo.setEmpNo(employee.getEmpNo());
             userInfo.setFullName(employee.getName());

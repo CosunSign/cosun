@@ -228,7 +228,7 @@ public interface PersonMapper {
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
             "\t\tORDER BY\n" +
-            "\t\t\te.empno desc limit #{currentPageTotalNum},#{pageSize}")
+            "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
 
     @Select("SELECT\n" +
@@ -638,7 +638,7 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            if (employee.getSortMethod() != null && employee.getSortByName() != null) {
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod())&& !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
                 if("name".equals(employee.getSortByName())){
                     sb.append(" order by e.name ");
                     if("asc".equals(employee.getSortMethod())){
@@ -732,7 +732,7 @@ public interface PersonMapper {
                     }
                 }
             } else {
-                sb.append(" order by e.empno desc ");
+                sb.append(" order by e.empno asc ");
             }
             sb.append("  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
