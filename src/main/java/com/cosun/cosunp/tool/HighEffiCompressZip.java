@@ -5,6 +5,7 @@ import org.apache.commons.compress.parallel.InputStreamSupplier;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -16,7 +17,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class HighEffiCompressZip {
 
-    private String rootPath;
+    private String rootPaths;
 
 
     ParallelScatterZipCreator scatterZipCreator = new ParallelScatterZipCreator();
@@ -27,8 +28,8 @@ public class HighEffiCompressZip {
             .fileBased(File.createTempFile("whatever-preffix", ".whatever"));
 
 
-    public HighEffiCompressZip(String rootPath) throws IOException {
-        this.rootPath = rootPath;
+    public HighEffiCompressZip(String rootPaths) throws IOException {
+        this.rootPaths = rootPaths;
     }
 
     public HighEffiCompressZip() throws IOException {
@@ -53,13 +54,12 @@ public class HighEffiCompressZip {
     }
 
 
-    public String getRootPath() {
-        return rootPath;
+    public String getRootPaths() {
+        return rootPaths;
     }
 
-
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
+    public void setRootPaths(String rootPath) {
+        this.rootPaths = rootPaths;
     }
 
 

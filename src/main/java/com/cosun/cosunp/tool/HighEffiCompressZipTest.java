@@ -7,6 +7,7 @@ import org.apache.commons.io.input.NullInputStream;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
@@ -21,15 +22,18 @@ public class HighEffiCompressZipTest {
 
     public static void main(String[] arg) throws Exception {
         long begin = System.currentTimeMillis();
+        System.out.println(new Date());
         final File result = new File("E:/myFile/test.zip");
         List<String> urls = new ArrayList<String>();
         urls.add("C:\\Users\\Administrator\\Desktop\\test\\000001 (1).exe");
-        urls.add("C:\\Users\\Administrator\\Desktop\\test\\IntelliJ IDEA 2018.5.zip");
+        urls.add("C:\\Users\\Administrator\\Desktop\\test\\000001 (1) - 副本.exe");
+        urls.add("C:\\Users\\Administrator\\Desktop\\test\\000001 (2) - 副本.exe");
+        urls.add("C:\\Users\\Administrator\\Desktop\\test\\000001 (3) - 副本.exe");
          new HighEffiCompressZipTest().createZipFile(urls, result);
         long end = System.currentTimeMillis();
         System.out.println("用时：" + (end - begin) + " ms");
+        System.out.println(new Date());
     }
-
 
     class CustomInputStreamSupplier implements InputStreamSupplier {
         private File currentFile;
@@ -54,57 +58,53 @@ public class HighEffiCompressZipTest {
     }
 
 
-    private void addEntry(String entryName, File currentFile, HighEffiCompressZip highEffiCompressZip) throws IOException {
+    private void  addEntry(String entryName, File currentFile, HighEffiCompressZip scatterSample) throws IOException {
         ZipArchiveEntry archiveEntry = new ZipArchiveEntry(entryName);
         archiveEntry.setMethod(ZipEntry.DEFLATED);
         final InputStreamSupplier supp = new CustomInputStreamSupplier(currentFile);
-        highEffiCompressZip.addEntry(archiveEntry, supp);
+        scatterSample.addEntry(archiveEntry, supp);
     }
 
 
-    private void compressCurrentDirectory(File dir, HighEffiCompressZip highEffiCompressZip) throws IOException {
+    private void compressCurrentDirectory(List<String> dir, HighEffiCompressZip scatterSample) throws IOException {
         if (dir == null) {
             throw new IOException("源路径不能为空！");
         }
         String relativePath = "";
-        if (dir.isFile()) {
-            relativePath = dir.getName();
-            addEntry(relativePath, dir, highEffiCompressZip);
-            return;
-        }
+//       // if (dir.isFile()) {
+//           // relativePath = dir.getName();
+//            addEntry("download", null, scatterSample);
+//            return;
+//        }
 
 
-        // 空文件夹
-        if (dir.listFiles().length == 0) {
-            relativePath = dir.getAbsolutePath().replace(highEffiCompressZip.getRootPath(), "");
-            addEntry(relativePath + File.separator, dir, highEffiCompressZip);
-            return;
-        }
-        for (File f : dir.listFiles()) {
-            if (f.isDirectory()) {
-                compressCurrentDirectory(f, highEffiCompressZip);
-            } else {
-                relativePath = f.getParent().replace(highEffiCompressZip.getRootPath(), "");
-                addEntry(relativePath + File.separator + f.getName(), f, highEffiCompressZip);
+//        // 空文件夹
+//        if (dir.listFiles().length == 0) {
+//            relativePath = dir.getAbsolutePath().replace(scatterSample.getRootPath(), "");
+//            addEntry(relativePath + File.separator, dir, scatterSample);
+//            return;
+//        }
+        for (String file : dir) {
+            File f = new File(file);
+            if (!f.isDirectory()){
+                relativePath = f.getParent().replace(scatterSample.getRootPaths(), "");
+                addEntry(relativePath + File.separator + f.getName(), f, scatterSample);
             }
         }
     }
 
 
-    private void createZipFile(final List<String> rootPath, final File result) throws Exception {
+    public void createZipFile(final List<String> rootPaths, final File result) throws Exception {
         File dstFolder = new File(result.getParent());
         if (!dstFolder.isDirectory()) {
             dstFolder.mkdirs();
         }
-        for(String url : rootPath) {
-            File rootDir = new File(url);
-            final HighEffiCompressZip scatterSample = new HighEffiCompressZip(rootDir.getAbsolutePath());
-            compressCurrentDirectory(rootDir, scatterSample);
-            final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(result);
-            scatterSample.writeTo(zipArchiveOutputStream);
-            zipArchiveOutputStream.close();
-        }
-    }
 
+        final HighEffiCompressZip scatterSample = new HighEffiCompressZip("zip");
+        compressCurrentDirectory(rootPaths, scatterSample);
+        final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(result);
+        scatterSample.writeTo(zipArchiveOutputStream);
+        zipArchiveOutputStream.close();
+    }
 
 }

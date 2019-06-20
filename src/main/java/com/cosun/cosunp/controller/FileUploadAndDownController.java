@@ -7,6 +7,7 @@ import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1500,9 +1501,128 @@ public class FileUploadAndDownController {
      * @describtion
      */
 
-    @ResponseBody  //调用迅雷接口方法代码  02-15 12：00
-    @RequestMapping(value = "/downloadfileorfolderforzip")
-    public void downloadFileOrFolderForZip(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+//    @ResponseBody  //调用迅雷接口方法代码  02-15 12：00
+//    @RequestMapping(value = "/downloadfileorfolderforzip")
+//    public void downloadFileOrFolderForZip(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+//        List<DownloadView> vs = JSON.parseArray(checkval, DownloadView.class);
+//        UserInfo info = (UserInfo) session.getAttribute("account");
+//        List<DownloadView> views = new ArrayList<DownloadView>();
+//        List<String> urls = new ArrayList<String>();
+//        DownloadView vie = new DownloadView();
+//        File file = null;
+//        List<File> files = new ArrayList<File>();
+//        List<FilemanDownRecord> records = new ArrayList<FilemanDownRecord>();
+//        FilemanDownRecord record = null;
+//        //获取所有URL(DOWNLOADVIEW)集装,查看有没有权限 //集装所有URL
+//        boolean isDownRight = true;
+//        int index = 0;
+//        a:
+//        for (DownloadView view : vs) {
+//            views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
+//            for (DownloadView vi : views) {
+//                if (view.getFolderOrFileName().contains(".")) {//代表是文件
+//                    index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
+//                    if (index > 0) {
+//                        if (!vi.getOpRight().contains("3")) {
+//                            isDownRight = false;
+//                            break a;
+//                        }
+//                        urls.add(vi.getUrlAddr());
+//                        record = new FilemanDownRecord();
+//                        record.setDownDate(new Date());
+//                        record.setDownFullName(info.getUserName());
+//                        record.setDownUid(info.getuId());
+//                        record.setFileName(vi.getFileName());
+//                        record.setFileurlid(vi.getFileUrlId());
+//                        record.setOrderNum(vi.getOrderNo());
+//                        record.setProjectName(vi.getProjectName());
+//                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+//                        record.setIpName("");
+//                        file = new File(vi.getUrlAddr());
+//                        records.add(record);
+//                        files.add(file);
+//                    }
+//                } else {//代表是文件夹
+//                    index = vi.getUrlAddr().indexOf("/" + view.getFolderOrFileName() + "/");
+//                    if (index > 0) {
+//                        if (vi.getOpRight() == null || vi.getOpRight() == "") {
+//                            isDownRight = false;
+//                            break a;
+//                        } else {
+//                            if (!vi.getOpRight().contains("3")) {
+//                                isDownRight = false;
+//                                break a;
+//                            }
+//                        }
+//                        urls.add(vi.getUrlAddr());
+//                        file = new File(vi.getUrlAddr());
+//                        record = new FilemanDownRecord();
+//                        record.setDownDate(new Date());
+//                        record.setDownFullName(info.getUserName());
+//                        record.setDownUid(info.getuId());
+//                        record.setFileName(vi.getFileName());
+//                        record.setFileurlid(vi.getFileUrlId());
+//                        record.setOrderNum(vi.getOrderNo());
+//                        record.setProjectName(vi.getProjectName());
+//                        record.setIpAddr(CusAccessObjectUtil.getIpAddress(request));
+//                        record.setIpName("");
+//                        file = new File(vi.getUrlAddr());
+//                        records.add(record);
+//                        files.add(file);
+//                    }
+//                }
+//            }
+//            if (views == null || views.size() == 0) {
+//                vie.setFlag("-258");
+//                isDownRight = false;
+//                break a;
+//            }
+//        }
+//        //返回
+//
+//        if (isDownRight) {
+//            boolean isLarge = FileUtil.checkDownloadFileSize(files, 2, "G");
+//            if (!isLarge) {
+//                vie.setFlag("-1");//文件太大
+//            }
+//            if (urls.size() > 200) {//代表文件超过200个
+//                vie.setFlag("-369");
+//            }
+//            if (isLarge && urls.size() <= 200) {
+//                fileUploadAndDownServ.saveFileDownRecords(records);
+//            }
+//
+//        } else {
+//            vie.setFlag("-258");
+//        }
+//
+//        urls.add(vie.getFlag());
+//        String str = null;
+//        if (urls != null) {
+//            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+//            try {
+//                str = x.writeValueAsString(urls);
+//
+//            } catch (JsonProcessingException e) {
+//                logger.debug(e.getMessage());
+//                e.printStackTrace();
+//                throw e;
+//            }
+//        }
+//
+//        try {
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("text/html;charset=UTF-8");
+//            response.getWriter().print(str); //返回前端ajax
+//        } catch (IOException e) {
+//            logger.debug(e.getMessage());
+//            e.printStackTrace();
+//            throw e;
+//        }
+//    }
+    @ResponseBody  //高速压缩下载  2019.6.20
+    @RequestMapping(value = "/downloadfileorfolderforzipCheck")
+    public void downloadfileorfolderforzipCheck(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
         List<DownloadView> vs = JSON.parseArray(checkval, DownloadView.class);
         UserInfo info = (UserInfo) session.getAttribute("account");
         List<DownloadView> views = new ArrayList<DownloadView>();
@@ -1526,7 +1646,7 @@ public class FileUploadAndDownController {
                             isDownRight = false;
                             break a;
                         }
-                        urls.add(vi.getUrlAddr());
+                        urls.add(this.finalDirPath + vi.getUrlAddr());
                         record = new FilemanDownRecord();
                         record.setDownDate(new Date());
                         record.setDownFullName(info.getUserName());
@@ -1553,7 +1673,7 @@ public class FileUploadAndDownController {
                                 break a;
                             }
                         }
-                        urls.add(vi.getUrlAddr());
+                        urls.add(this.finalDirPath + vi.getUrlAddr());
                         file = new File(vi.getUrlAddr());
                         record = new FilemanDownRecord();
                         record.setDownDate(new Date());
@@ -1594,31 +1714,95 @@ public class FileUploadAndDownController {
         } else {
             vie.setFlag("-258");
         }
-
-        urls.add(vie.getFlag());
+        if (vie.getFlag() != null) {
+            urls.add(vie.getFlag());
+        }
         String str = null;
         if (urls != null) {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(urls);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
 
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         }
 
+    }
+
+
+    @ResponseBody  //高速压缩下载  2019.6.20
+    @RequestMapping(value = "/listenDownload")
+    public void listenDownload() throws Exception {
+
+    }
+
+    @ResponseBody  //高速压缩下载  2019.6.20
+    @RequestMapping(value = "/downloadfileorfolderforzip")
+    public void downloadfileorfolderforzip(String urlsStr, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        if (null==cookies) {
+            System.out.println("没有cookie==============");
+        } else {
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("downloadstatus")){
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);// 立即销毁cookie
+                    cookie.setPath("/");
+                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    response.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+        String[] urlss = urlsStr.split(",");
+        List<String> urls = new ArrayList<String>();
+        for(String str : urlss) {
+            urls.add(str);
+        }
+        String filename = new Date().getTime() + ".zip";
+        final File result = new File(this.finalDirPath + "linshi/" + filename);
+        new HighEffiCompressZipTest().createZipFile(urls, result);
+        BufferedInputStream bufferedInputStream = null;
+        OutputStream outputStream = null;
         try {
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
+            response.setHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes(), "iso-8859-1"));
+            byte[] buff = new byte[1024];
+            outputStream = response.getOutputStream();
+            FileInputStream fis = new FileInputStream(result);
+            bufferedInputStream = new BufferedInputStream(fis);
+            int num = bufferedInputStream.read(buff);
+            Cookie cookie = new Cookie("downloadstatus", String.valueOf(new Date().getTime()));
+            cookie.setMaxAge(5 * 60);// 设置为30min
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            while (num != -1) {
+                outputStream.write(buff, 0, num);
+                outputStream.flush();
+                num = bufferedInputStream.read(buff);
+            }
+            System.out.println("==================complete========");
         } catch (IOException e) {
-            logger.debug(e.getMessage());
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
             throw e;
+        } finally {
+            System.out.println("==================complete========");
+            if (bufferedInputStream != null) {
+                bufferedInputStream.close();
+            }
         }
     }
+
+
 //    @ResponseBody  //优化多线程压缩打包下载  06-13
 //    @RequestMapping(value = "/downloadfileorfolderforzip")
 //    public void downloadFileOrFolderForZip(@RequestBody(required = true) String checkval, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
@@ -1748,10 +1932,10 @@ public class FileUploadAndDownController {
 //            String downloadName = "我是压缩包的名字.zip";
 //            String agent = request.getHeader("USER-AGENT");
 //            try {
-//                if (agent.contains("MSIE")||agent.contains("Trident")) {
+//                if (agent.contains("MSIE") || agent.contains("Trident")) {
 //                    downloadName = java.net.URLEncoder.encode(downloadName, "UTF-8");
 //                } else {
-//                    downloadName = new String(downloadName.getBytes("UTF-8"),"ISO-8859-1");
+//                    downloadName = new String(downloadName.getBytes("UTF-8"), "ISO-8859-1");
 //                }
 //            } catch (Exception e) {
 //                e.printStackTrace();
@@ -1771,20 +1955,20 @@ public class FileUploadAndDownController {
 //            DataOutputStream os = null;
 //            String fileName = null;
 //            int indexa;
-//            for(int i = 0; i < urls.size(); i++ ){
+//            for (int i = 0; i < urls.size(); i++) {
 //
-//                File fi = new File(finalDirPath+urls.get(i));
+//                File fi = new File(finalDirPath + urls.get(i));
 //                indexa = urls.get(i).lastIndexOf("/");
-//                fileName = urls.get(i).substring(index,urls.get(i).length()-1);
+//                fileName = urls.get(i).substring(index, urls.get(i).length() - 1);
 //                try {
 //                    //添加ZipEntry，并ZipEntry中写入文件流
 //                    //这里，加上i是防止要下载的文件有重名的导致下载失败
-//                    zipos.putNextEntry(new ZipEntry(fileName+i));
+//                    zipos.putNextEntry(new ZipEntry(fileName + i));
 //                    os = new DataOutputStream(zipos);
 //                    InputStream is = new FileInputStream(fi);
 //                    byte[] b = new byte[100];
 //                    int length = 0;
-//                    while((length = is.read(b))!= -1){
+//                    while ((length = is.read(b)) != -1) {
 //                        os.write(b, 0, length);
 //                    }
 //                    is.close();
@@ -1804,6 +1988,7 @@ public class FileUploadAndDownController {
 //            }
 //        }
 //    }
+
 
 //    @ResponseBody
 //    @RequestMapping(value = "/downloadfileorfolderforzip")
@@ -3090,7 +3275,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-             Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {
