@@ -42,6 +42,9 @@ public class Employee implements Serializable {
     private Integer type;
     private Integer workType;//0生产车间  1 办公区
 
+
+    private String remark;
+
     private String educationLeUrl;
     private String sateListAndLeaCertiUrl;
     private String otherCertiUrl;
@@ -100,6 +103,24 @@ public class Employee implements Serializable {
     private String sortMethod;
     private String sortByName;
 
+    private Integer salaryId;
+
+
+    public Integer getSalaryId() {
+        return salaryId;
+    }
+
+    public void setSalaryId(Integer salaryId) {
+        this.salaryId = salaryId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public List<Integer> getWorkTypes() {
         return workTypes;
@@ -289,6 +310,9 @@ public class Employee implements Serializable {
     }
 
     public Double getPosSalary() {
+        if(this.posSalary==null) {
+            return 0.0;
+        }
         return posSalary;
     }
 
@@ -297,6 +321,9 @@ public class Employee implements Serializable {
     }
 
     public Double getJobSalary() {
+        if(jobSalary==null) {
+            return 0.0;
+        }
         return jobSalary;
     }
 
@@ -305,6 +332,9 @@ public class Employee implements Serializable {
     }
 
     public Double getMeritSalary() {
+        if(meritSalary==null) {
+            return 0.0;
+        }
         return meritSalary;
     }
 
@@ -313,6 +343,9 @@ public class Employee implements Serializable {
     }
 
     public Double getCompreSalary() {
+        if(compreSalary==null) {
+            return 0.0;
+        }
         return compreSalary;
     }
 

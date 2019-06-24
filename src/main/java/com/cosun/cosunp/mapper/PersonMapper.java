@@ -145,6 +145,9 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeByCondition")
     List<Employee> queryEmployeeByCondition(Employee employee);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeSalaryByCondition")
+    List<Employee> queryEmployeeSalaryByCondition(Employee employee);
+
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryWorkSetByCondition")
     List<WorkSet> queryWorkSetByCondition(WorkSet workSet);
@@ -163,6 +166,10 @@ public interface PersonMapper {
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeByConditionCount")
     int queryEmployeeByConditionCount(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeSalaryByConditionCount")
+    int queryEmployeeSalaryByConditionCount(Employee employee);
+
 
     @Select("select * from position order by positionName desc limit #{currentPageTotalNum},#{pageSize}")
     List<Position> findAllPosition(Position position);
@@ -230,6 +237,49 @@ public interface PersonMapper {
             "\t\tORDER BY\n" +
             "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
+
+
+    @Select("SELECT\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\te.otherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "  e.id AS id,\n" +
+            "\td.deptname AS deptName,\n" +
+            "\tn.positionName AS positionName,\n" +
+            "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "\te.empno AS empNo," +
+            "\ts.compreSalary AS compreSalary," +
+            "\ts.posSalary AS posSalary," +
+            "\ts.jobSalary AS jobSalary," +
+            "\ts.meritSalary AS meritSalary," +
+            "\ts.id AS salaryId " +
+            "\t\tFROM\n" +
+            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
+            "LEFT JOIN position n on e.positionId = n.id  left join salary s on e.empno = s.empno  \n" +
+            "\t\tORDER BY\n" +
+            "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
+    List<Employee> findAllEmployeeFinance(Employee employee);
 
     @Select("SELECT\n" +
             "\te.id AS id,\n" +
@@ -383,6 +433,9 @@ public interface PersonMapper {
     @Delete("delete from employee where id = #{id}")
     void deleteEmployeetById(Integer id);
 
+    @Delete("delete from salary where empno = #{empNo}")
+    void deleteEmployeeSalaryByEmpno(String empNo);
+
     @Delete("delete from salary where empno = #{empno}")
     void deleteSalaryByEmpno(String empno);
 
@@ -421,12 +474,63 @@ public interface PersonMapper {
             "\ts.compresalary,\n" +
             "\ts.possalary,\n" +
             "\ts.jobsalary,\n" +
-            "\ts.meritsalary\n" +
+            "\ts.meritsalary,\n" +
+            "\tn.positionname,\n" +
+            "\tt.deptname,\n" +
+            "\ts.remark\n" +
             "FROM\n" +
             "\temployee e\n" +
             "LEFT JOIN salary s ON e.empno = s.empno\n" +
-            "LEFT JOIN userinfo o ON o.empno = e.empno where e.id = #{id}")
+            "LEFT JOIN userinfo o ON o.empno = e.empno " +
+            "LEFT JOIN position n ON n.id = e.positionId " +
+            "LEFT JOIN dept t ON t.id = e.deptId " +
+            "where e.id = #{id}")
     List<Employee> getEmployeeById(Integer id);
+
+    @Select("SELECT\n" +
+            "\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\totherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "\to.username,\n" +
+            "\to.userpwd AS passowrd,\n" +
+            "\to.userpwd AS passowrd22,\n" +
+            "\ts.compresalary,\n" +
+            "\ts.possalary,\n" +
+            "\ts.jobsalary,\n" +
+            "\ts.meritsalary,\n" +
+            "\tn.positionname,\n" +
+            "\tt.deptname,\n" +
+            "\ts.remark\n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "LEFT JOIN salary s ON e.empno = s.empno\n" +
+            "LEFT JOIN userinfo o ON o.empno = e.empno " +
+            "LEFT JOIN position n ON n.id = e.positionId " +
+            "LEFT JOIN dept t ON t.id = e.deptId " +
+            "where e.empNo = #{empNo}")
+    Employee getEmployeeByEmpno(String empNo);
 
     @Select("SELECT e.* " +
             "FROM employee e left join dept t on e.deptId = t.id left join position n on n.id = e.positionId" +
@@ -531,6 +635,36 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+        public String queryEmployeeSalaryByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("select count(id) from employee where 1=1");
+            if (employee.getName() != "" && employee.getName() != null && employee.getName().trim().length() > 0) {
+                sb.append(" and name like  CONCAT('%',#{name},'%') ");
+            }
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and incompdate  >= #{startIncomDateStr} and incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and incompdate <= #{endIncomDateStr}");
+            }
+            return sb.toString();
+        }
+
         public String queryWorkSetByCondition(WorkSet workSet) {
             StringBuilder sb = new StringBuilder("SELECT * from workset where 1=1 ");
             if (workSet.getMonths() != null && workSet.getMonths().size() > 0) {
@@ -570,6 +704,211 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+
+        public String queryEmployeeSalaryByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +
+                    "\te. NAME AS namea,\n" +
+                    "\te.sex,\n" +
+                    "\te.deptId,\n" +
+                    "\te.empno,\n" +
+                    "\te.positionId,\n" +
+                    "\te.incompdate,\n" +
+                    "\te.conExpDate,\n" +
+                    "\te.birthDay,\n" +
+                    "\te.ID_NO,\n" +
+                    "\te.nativePla,\n" +
+                    "\te.homeAddr,\n" +
+                    "\te.valiPeriodOfID,\n" +
+                    "\te.nation,\n" +
+                    "\te.marriaged,\n" +
+                    "\te.contactPhone,\n" +
+                    "\te.educationLe,\n" +
+                    "\te.educationLeUrl,\n" +
+                    "\te.screAgreement,\n" +
+                    "\te.healthCerti,\n" +
+                    "\te.sateListAndLeaCerti,\n" +
+                    "\te.sateListAndLeaCertiUrl,\n" +
+                    "\te.otherCerti,\n" +
+                    "\te.otherCertiUrl,\n" +
+                    "\te.positionAttrId,\n" +
+                    "  e.id AS id,\n" +
+                    "\td.deptname AS deptName,\n" +
+                    "\tn.positionName AS positionName,\n" +
+                    "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+                    "\te.empno AS empNo," +
+                    "\ts.compreSalary AS compreSalary," +
+                    "\ts.posSalary AS posSalary," +
+                    "\ts.jobSalary AS jobSalary," +
+                    "\ts.meritSalary AS meritSalary," +
+                    "\ts.id AS salaryId " +
+                    "\t\t FROM \n" +
+                    "\temployee e\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id " +
+                    "LEFT JOIN salary s ON s.empno = e.empno " +
+                    "where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and e.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and e.incompdate  >= #{startIncomDateStr} and e.incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and e.incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and e.incompdate <= #{endIncomDateStr}");
+            }
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod())&& !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if("name".equals(employee.getSortByName())){
+                    sb.append(" order by e.name ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("sexStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.sex ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by e.empno ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by d.deptname ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("positionAttrIdStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.positionAttrId ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("birthDayStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.birthDay ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("incomdateStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.incompdate ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("nativePlaStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.nativePla ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("contactPhone".equals(employee.getSortByName())) {
+                    sb.append(" order by e.contactPhone ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("educationLeStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.educationLe ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.sateListAndLeaCerti ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("otherCertiStr".equals(employee.getSortByName())) {
+                    sb.append(" order by e.otherCerti ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("compreSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.compreSalary ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("posSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.posSalary ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("jobSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.jobSalary ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("meritSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.meritSalary ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("allMoney".equals(employee.getSortByName())) {
+                    sb.append(" order by (compresalary+possalary+jobsalary+meritsalary) ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" order by e.empno asc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
 
         public String queryEmployeeByCondition(Employee employee) {
             StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +

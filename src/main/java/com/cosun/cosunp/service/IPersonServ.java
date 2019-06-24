@@ -45,7 +45,6 @@ public interface IPersonServ {
 
     List<Dept> findAllDeptAll() throws Exception;
 
-
     void deleteLeaveById(Integer id) throws Exception;
 
     void updateEmployeeData(MultipartFile educationLeFile,MultipartFile sateListAndLeaCertiFile,MultipartFile otherCertiFile,Employee employee) throws Exception;
@@ -56,10 +55,19 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployeeAll() throws Exception;
 
+    Employee getEmployeeByEmpno(String empNo) throws Exception;
+
+    void deleteEmployeeSalaryByEmpno(String empNo) throws Exception;
+
+    List<Employee> findAllEmployeeFinance(Employee employee) throws Exception;
+
     List<Employee> findAllEmployee(Employee employee) throws Exception;
 
     List<WorkSet> findAllWorkSet(WorkSet workSet) throws Exception;
 
+    List<Employee> queryEmployeeSalaryByCondition(Employee employee) throws Exception;
+
+    int queryEmployeeSalaryByConditionCount(Employee employee) throws Exception;
 
     void updateWorkSetDataById(WorkSet workSet) throws Exception;
 

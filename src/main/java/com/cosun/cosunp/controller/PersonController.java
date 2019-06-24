@@ -37,6 +37,7 @@ public class PersonController {
 
     @Autowired
     IPersonServ personServ;
+
     private Integer flag;
 
     @Value("${spring.servlet.multipart.location}")
@@ -520,7 +521,6 @@ public class PersonController {
             List<Employee> employees = personServ.getEmployeeById(employeeId);
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-
             str1 = x.writeValueAsString(employees);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");

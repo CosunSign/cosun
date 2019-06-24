@@ -1517,6 +1517,29 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllEmployeeAll();
     }
 
+    public List<Employee> findAllEmployeeFinance(Employee employee) throws Exception {
+        return personMapper.findAllEmployeeFinance(employee);
+    }
+
+    public List<Employee> queryEmployeeSalaryByCondition(Employee employee) throws Exception {
+        return personMapper.queryEmployeeSalaryByCondition(employee);
+    }
+
+    public int queryEmployeeSalaryByConditionCount(Employee employee) throws Exception {
+        return personMapper.queryEmployeeSalaryByConditionCount(employee);
+    }
+
+    public void deleteEmployeeSalaryByEmpno(String empNo) throws Exception {
+         personMapper.deleteEmployeeSalaryByEmpno(empNo);
+    }
+
+    public Employee getEmployeeByEmpno(String empNo) throws Exception {
+       return personMapper.getEmployeeByEmpno(empNo);
+    }
+
+
+
+
 }
 
 

@@ -20,6 +20,16 @@ public class Salary implements Serializable {
     private Double jobSalary;
     private Double meritSalary;
 
+    private String remark;
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public String getEmpNo() {
         return empNo;
     }
