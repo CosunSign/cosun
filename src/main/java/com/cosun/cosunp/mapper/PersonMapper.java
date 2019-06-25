@@ -269,11 +269,12 @@ public interface PersonMapper {
             "\tn.positionName AS positionName,\n" +
             "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
             "\te.empno AS empNo," +
-            "\ts.compreSalary AS compreSalary," +
-            "\ts.posSalary AS posSalary," +
-            "\ts.jobSalary AS jobSalary," +
-            "\ts.meritSalary AS meritSalary," +
-            "\ts.id AS salaryId " +
+            "\tIFNULL(s.compreSalary,0) AS compreSalary," +
+            "\tIFNULL(s.posSalary,0) AS posSalary," +
+            "\tIFNULL(s.jobSalary,0) AS jobSalary," +
+            "\tIFNULL(s.meritSalary,0) AS meritSalary," +
+            "\ts.id AS salaryId, " +
+            "\ts.state AS state " +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id  left join salary s on e.empno = s.empno  \n" +
@@ -477,7 +478,8 @@ public interface PersonMapper {
             "\ts.meritsalary,\n" +
             "\tn.positionname,\n" +
             "\tt.deptname,\n" +
-            "\ts.remark\n" +
+            "\ts.remark,\n" +
+            "\ts.state\n" +
             "FROM\n" +
             "\temployee e\n" +
             "LEFT JOIN salary s ON e.empno = s.empno\n" +
@@ -522,7 +524,8 @@ public interface PersonMapper {
             "\ts.meritsalary,\n" +
             "\tn.positionname,\n" +
             "\tt.deptname,\n" +
-            "\ts.remark\n" +
+            "\ts.remark,\n" +
+            "\ts.state\n" +
             "FROM\n" +
             "\temployee e\n" +
             "LEFT JOIN salary s ON e.empno = s.empno\n" +
@@ -736,11 +739,12 @@ public interface PersonMapper {
                     "\tn.positionName AS positionName,\n" +
                     "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
                     "\te.empno AS empNo," +
-                    "\ts.compreSalary AS compreSalary," +
-                    "\ts.posSalary AS posSalary," +
-                    "\ts.jobSalary AS jobSalary," +
-                    "\ts.meritSalary AS meritSalary," +
-                    "\ts.id AS salaryId " +
+                    "\tIFNULL(s.compreSalary,0) AS compreSalary," +
+                    "\tIFNULL(s.posSalary,0) AS posSalary," +
+                    "\tIFNULL(s.jobSalary,0) AS jobSalary," +
+                    "\tIFNULL(s.meritSalary,0) AS meritSalary," +
+                    "\ts.id AS salaryId, " +
+                    "\ts.state AS state " +
                     "\t\t FROM \n" +
                     "\temployee e\n" +
                     "LEFT JOIN dept d ON e.deptId = d.id\n" +
@@ -754,6 +758,10 @@ public interface PersonMapper {
 
             if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
                 sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getState() != null) {
+                sb.append(" and s.state  = #{state} ");
             }
 
             if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
@@ -897,6 +905,13 @@ public interface PersonMapper {
                     }
                 }else if("allMoney".equals(employee.getSortByName())) {
                     sb.append(" order by (compresalary+possalary+jobsalary+meritsalary) ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("state".equals(employee.getSortByName())) {
+                    sb.append(" order by state ");
                     if("asc".equals(employee.getSortMethod())){
                         sb.append(" asc ");
                     }else if("desc".equals(employee.getSortMethod())) {

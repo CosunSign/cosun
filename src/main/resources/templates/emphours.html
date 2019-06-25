@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>工资信息</title>
+    <title>工时信息</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -138,17 +138,16 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
-        formData.append('sortMethod',sortMethod);
+        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
-        formData.append('workTypes',$("#workType").val());
-        formData.append('state', $("#state").val());
+        formData.append('workTypes', $("#workType").val());
         formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/finance/queryEmployeeSalaryByCondition",
+            url: "/finance/queryEmployeeHoursByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -193,32 +192,42 @@
                     $.each(data, function (num) {
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
-                        tr.append("<td>" + data[num].compreSalary + "</td>");
-                        tr.append("<td>" + data[num].posSalary + "</td>");
-                        tr.append("<td>" + data[num].jobSalary + "</td>");
-                        tr.append("<td>" + data[num].meritSalary + "</td>");
-                        tr.append("<td>" + data[num].allMoney + "</td>");
-                        tr.append("<td>" + isNull(data[num].stateStr) + "</td>");
-
+                        tr.append("<td>" + isNull(data[num].zhengbanHours) + "</td>");
+                        tr.append("<td>" + data[num].usualExtHours + "</td>");
+                        tr.append("<td>" + data[num].workendHours + "</td>");
+                        tr.append("<td>" + data[num].chinaPaidLeave + "</td>");
+                        tr.append("<td>" + data[num].otherPaidLeave + "</td>");
+                        tr.append("<td>" + data[num].leaveOfAbsense + "</td>");
+                        tr.append("<td>" + data[num].sickLeave + "</td>");
+                        tr.append("<td>" + data[num].otherAllo + "</td>");
+                        tr.append("<td>" + data[num].fullWorkReword + "</td>");
+                        tr.append("<td>" + data[num].foodExpense + "</td>");
+                        tr.append("<td>" + data[num].roomOrWaterEleExpense + "</td>");
+                        tr.append("<td>" + data[num].oldAgeINsuran + "</td>");
+                        tr.append("<td>" + data[num].medicalInsuran + "</td>");
+                        tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
+                        tr.append("<td>" + data[num].accumulaFund + "</td>");
+                        tr.append("<td>" + data[num].errorInWork + "</td>");
+                        tr.append("<td>" + data[num].meritScore + "</td>");
+                        tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployeeSalary('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployeeSalary('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployeeSalary('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployeeSalary('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
                                 "  </td>";
@@ -281,7 +290,8 @@
 
     var sortMethod;
     var sortByName;
-    function queryEmployeeSalaryByCondition() {
+
+    function queryEmployeeHoursByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -289,17 +299,16 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
-        formData.append('sortMethod',sortMethod);
+        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
-        formData.append('workTypes',$("#workType").val());
-        formData.append('state', $("#state").val());
+        formData.append('workTypes', $("#workType").val());
         formData.append('currentPage', 1);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/finance/queryEmployeeSalaryByCondition",
+            url: "/finance/queryEmployeeHoursByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -344,31 +353,42 @@
                     $.each(data, function (num) {
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
-                        tr.append("<td>" + data[num].compreSalary + "</td>");
-                        tr.append("<td>" + data[num].posSalary + "</td>");
-                        tr.append("<td>" + data[num].jobSalary + "</td>");
-                        tr.append("<td>" + data[num].meritSalary + "</td>");
-                        tr.append("<td>" + data[num].allMoney + "</td>");
-                        tr.append("<td>" + isNull(data[num].stateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].zhengbanHours) + "</td>");
+                        tr.append("<td>" + data[num].usualExtHours + "</td>");
+                        tr.append("<td>" + data[num].workendHours + "</td>");
+                        tr.append("<td>" + data[num].chinaPaidLeave + "</td>");
+                        tr.append("<td>" + data[num].otherPaidLeave + "</td>");
+                        tr.append("<td>" + data[num].leaveOfAbsense + "</td>");
+                        tr.append("<td>" + data[num].sickLeave + "</td>");
+                        tr.append("<td>" + data[num].otherAllo + "</td>");
+                        tr.append("<td>" + data[num].fullWorkReword + "</td>");
+                        tr.append("<td>" + data[num].foodExpense + "</td>");
+                        tr.append("<td>" + data[num].roomOrWaterEleExpense + "</td>");
+                        tr.append("<td>" + data[num].oldAgeINsuran + "</td>");
+                        tr.append("<td>" + data[num].medicalInsuran + "</td>");
+                        tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
+                        tr.append("<td>" + data[num].accumulaFund + "</td>");
+                        tr.append("<td>" + data[num].errorInWork + "</td>");
+                        tr.append("<td>" + data[num].meritScore + "</td>");
+                        tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployeeSalary('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployeeSalary('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
+                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployeeSalary('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployeeSalary('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
                                 "  </td>";
@@ -428,16 +448,16 @@
         });
     }
 
-    function updateEmployeeSalary(empNo) {
-        window.location.href = "/finance/toupdateEmployeeSalaryByempNo?empNo=" + empNo;
+    function updateEmployeeHours(empNo) {
+        window.location.href = "/finance/toupdateEmployeeHoursByempNo?empNo=" + empNo;
 
     }
 
-    function deleteEmployeeSalary(empNo) {
-        window.location.href = "/finance/deleteEmployeeSalaryByEmpNo?empNo=" + empNo;
+    function deleteEmployeeHours(empNo) {
+        window.location.href = "/finance/deleteEmployeeHoursByEmpNo?empNo=" + empNo;
     }
 
-    function deleteEmpSalaryByBatch() {
+    function deleteEmpHoursByBatch() {
         var deleteBatch = document.getElementsByName("deleteBatch");
         var check_val = [];
         var k;
@@ -455,7 +475,7 @@
             errormessagediv.style.color = "red";
         } else {
             $("#errormessage").hide();
-            window.location.href = "/finance/deleteEmpByBatch?ids=" + check_val;
+            window.location.href = "/finance/deleteEmpHoursByBatch?ids=" + check_val;
         }
     }
 
@@ -536,39 +556,26 @@
                         </td>
                     </tr>
                     <tr>
-                        <!--<td>-->
-                            <!--<label>入职时间起：</label>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<input type="text" id="startIncomDateStr"-->
-                                   <!--style="width:130px;height: 34px;text-align: center"-->
-                                   <!--class="Wdate"-->
-                                   <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>-->
-
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>-->
-                        <!--</td>-->
-                        <!--<td>-->
-                            <!--<input type="text" id="endIncomDateStr"-->
-                                   <!--style="width:140px;height: 34px;text-align: center" class="Wdate"-->
-                                   <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>-->
-
-                        <!--</td>-->
                         <td>
-                            <label>&nbsp;&nbsp;审核状态：</label>
+                        <label>入职时间起：</label>
                         </td>
                         <td>
-                            <select id="state" multiple class="selectpicker show-tick form-control"
-                                    data-live-search="true" data-actions-box="true"
-                                    data-selected-text-format="count > 2">
-                                　　
-                                <option  th:value="0">未审核</option>
-                                <option  th:value="1">审核通过</option>
-                                <option  th:value="2">审核未通过</option>
+                        <input type="text" id="startIncomDateStr"
+                        style="width:130px;height: 34px;text-align: center"
+                        class="Wdate"
+                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
 
-                            </select>
                         </td>
+                        <td>
+                        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>
+                        </td>
+                        <td>
+                        <input type="text" id="endIncomDateStr"
+                        style="width:140px;height: 34px;text-align: center" class="Wdate"
+                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
+
+                        </td>
+
 
                         <td>
                             <label>&nbsp;&nbsp;工作方式：</label>
@@ -578,24 +585,24 @@
                                     data-live-search="true" data-actions-box="true"
                                     data-selected-text-format="count > 2">
                                 　　
-                                <option  th:value="0">车间</option>
-                                <option  th:value="1">办公区</option>
+                                <option th:value="0">车间</option>
+                                <option th:value="1">办公区</option>
                             </select>
                         </td>
 
-                        <td colspan="3" style="text-align: right">
+                        <td colspan="2" style="text-align: right">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryEmployeeSalaryByCondition()">查找</a>
+                               href="javascript:void(0);" onclick="queryEmployeeHoursByCondition()">查找</a>
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
                                th:disabled="${userInfo.type ne 1}"
-                               href="/finance/toaddpersonsalarypage">新增</a>
+                               href="/finance/toaddpersonHourspage">新增</a>
                             &nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
                                th:disabled="${userInfo.type ne 1}"
-                               href="javascript:void(0);" onclick="deleteEmpSalaryByBatch()">批量删除</a>
+                               href="javascript:void(0);" onclick="deleteEmpHoursByBatch()">批量删除</a>
                             <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
                         </td>
                         <td>
@@ -613,6 +620,11 @@
         <tr>
             <th style="text-align: center"> 序号</th>
             <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('yearMonth')" aria-hidden="true"></i>
+                年月
+                <i class="fa fa-sort-desc" onclick="sortByDesc('yearMonth')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
                 <i class="fa fa-sort-asc" onclick="sortByAsc('name')" aria-hidden="true"></i>
                 姓名
                 <i class="fa fa-sort-desc" onclick="sortByDesc('name')" aria-hidden="true"></i>
@@ -629,88 +641,150 @@
                 <i class="fa fa-sort-desc" onclick="sortByDesc('deptName')" aria-hidden="true"></i>
             </th>
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('positionName')" aria-hidden="true"></i>
-                职位
-                <i class="fa fa-sort-desc" onclick="sortByDesc('positionName')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('zhengbanHours')" aria-hidden="true"></i>
+                正班出勤工时
+                <i class="fa fa-sort-desc" onclick="sortByDesc('zhengbanHours')" aria-hidden="true"></i>
             </th>
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('positionAttrIdStr')" aria-hidden="true"></i>
-                职务
-                <i class="fa fa-sort-desc" onclick="sortByDesc('positionAttrIdStr')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('usualExtHours')" aria-hidden="true"></i>
+                平时加班
+                <i class="fa fa-sort-desc" onclick="sortByDesc('usualExtHours')" aria-hidden="true"></i>
             </th>
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('compreSalary')" aria-hidden="true"></i>
-                综合技能
-                <i class="fa fa-sort-desc" onclick="sortByDesc('compreSalary')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('workendHours')" aria-hidden="true"></i>
+                周末加班
+                <i class="fa fa-sort-desc" onclick="sortByDesc('workendHours')" aria-hidden="true"></i>
             </th>
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('posSalary')" aria-hidden="true"></i>
-                岗位工资
-                <i class="fa fa-sort-desc" onclick="sortByDesc('posSalary')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('chinaPaidLeave')" aria-hidden="true"></i>
+                国家有薪假
+                <i class="fa fa-sort-desc" onclick="sortByDesc('chinaPaidLeave')" aria-hidden="true"></i>
             </th>
 
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('jobSalary')" aria-hidden="true"></i>
-                职务工资
-                <i class="fa fa-sort-desc" onclick="sortByDesc('jobSalary')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('otherPaidLeave')" aria-hidden="true"></i>
+                其它有薪假
+                <i class="fa fa-sort-desc" onclick="sortByDesc('otherPaidLeave')" aria-hidden="true"></i>
             </th>
 
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('meritSalary')" aria-hidden="true"></i>
-                绩效工资
-                <i class="fa fa-sort-desc" onclick="sortByDesc('meritSalary')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('leaveOfAbsense')" aria-hidden="true"></i>
+                事假
+                <i class="fa fa-sort-desc" onclick="sortByDesc('leaveOfAbsense')" aria-hidden="true"></i>
             </th>
 
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('allMoney')" aria-hidden="true"></i>
-                工资合计
-                <i class="fa fa-sort-desc" onclick="sortByDesc('allMoney')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('sickLeave')" aria-hidden="true"></i>
+                病假
+                <i class="fa fa-sort-desc" onclick="sortByDesc('sickLeave')" aria-hidden="true"></i>
             </th>
 
             <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('state')" aria-hidden="true"></i>
-                审核状态
-                <i class="fa fa-sort-desc" onclick="sortByDesc('state')" aria-hidden="true"></i>
+                <i class="fa fa-sort-asc" onclick="sortByAsc('otherAllo')" aria-hidden="true"></i>
+                其它补贴(出差/夜班)
+                <i class="fa fa-sort-desc" onclick="sortByDesc('otherAllo')" aria-hidden="true"></i>
             </th>
 
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('fullWorkReword')" aria-hidden="true"></i>
+                全勤奖
+                <i class="fa fa-sort-desc" onclick="sortByDesc('fullWorkReword')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('foodExpense')" aria-hidden="true"></i>
+                伙食费
+                <i class="fa fa-sort-desc" onclick="sortByDesc('foodExpense')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('roomOrWaterEleExpense')" aria-hidden="true"></i>
+                房租/水电费
+                <i class="fa fa-sort-desc" onclick="sortByDesc('roomOrWaterEleExpense')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('oldAgeINsuran')" aria-hidden="true"></i>
+                扣代付养老险
+                <i class="fa fa-sort-desc" onclick="sortByDesc('oldAgeINsuran')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('medicalInsuran')" aria-hidden="true"></i>
+                扣代付医疗险
+                <i class="fa fa-sort-desc" onclick="sortByDesc('medicalInsuran')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('unEmployeeInsur')" aria-hidden="true"></i>
+                扣代付失业险
+                <i class="fa fa-sort-desc" onclick="sortByDesc('unEmployeeInsur')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('accumulaFund')" aria-hidden="true"></i>
+                扣代付公积金
+                <i class="fa fa-sort-desc" onclick="sortByDesc('accumulaFund')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('errorInWork')" aria-hidden="true"></i>
+                工作失误
+                <i class="fa fa-sort-desc" onclick="sortByDesc('errorInWork')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('meritScore')" aria-hidden="true"></i>
+                绩效分
+                <i class="fa fa-sort-desc" onclick="sortByDesc('meritScore')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('remark')" aria-hidden="true"></i>
+                备注
+                <i class="fa fa-sort-desc" onclick="sortByDesc('remark')" aria-hidden="true"></i>
+            </th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody id="tabletblody">
         <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
-        <div th:unless="${#lists.isEmpty(employeeList)}">
-            <div th:each="employ ,iterStat: ${employeeList}" align="center">
+        <div th:unless="${#lists.isEmpty(empHoursList)}">
+            <div th:each="empH ,iterStat: ${empHoursList}" align="center">
                 <tr>
                     <td align="center"
                         th:text="${(iterStat.index+1)}+${employee.currentPage-1}*${employee.pageSize}"></td>
-                    <td align="center" th:text="${employ.name}"></td>
-                    <td align="center" th:text="${employ.empNo}"></td>
-                    <td align="center" th:text="${employ.deptName}"></td>
-                    <td align="center" th:text="${employ.positionName}"></td>
-                    <td align="center" th:text="${employ.positionAttrIdStr}"></td>
-                    <td align="center" th:text="${employ.compreSalary}"></td>
-                    <td align="center" th:text="${employ.posSalary}"></td>
-                    <td align="center" th:text="${employ.jobSalary}"></td>
-                    <td align="center" th:text="${employ.meritSalary}"></td>
-                    <td align="center" th:text="${employ.allMoney}"></td>
-                    <td align="center" th:text="${employ.stateStr}"></td>
+                    <td align="center" th:text="${empH.yearMonth}"></td>
+                    <td align="center" th:text="${empH.name}"></td>
+                    <td align="center" th:text="${empH.empNo}"></td>
+                    <td align="center" th:text="${empH.deptName}"></td>
+                    <td align="center" th:text="${empH.zhengbanHours}"></td>
+                    <td align="center" th:text="${empH.usualExtHours}"></td>
+                    <td align="center" th:text="${empH.workendHours}"></td>
+                    <td align="center" th:text="${empH.chinaPaidLeave}"></td>
+                    <td align="center" th:text="${empH.otherPaidLeave}"></td>
+                    <td align="center" th:text="${empH.leaveOfAbsense}"></td>
+                    <td align="center" th:text="${empH.sickLeave}"></td>
+                    <td align="center" th:text="${empH.otherAllo}"></td>
+                    <td align="center" th:text="${empH.fullWorkReword}"></td>
+                    <td align="center" th:text="${empH.foodExpense}"></td>
+                    <td align="center" th:text="${empH.roomOrWaterEleExpense}"></td>
+                    <td align="center" th:text="${empH.oldAgeINsuran}"></td>
+                    <td align="center" th:text="${empH.medicalInsuran}"></td>
+                    <td align="center" th:text="${empH.unEmployeeInsur}"></td>
+                    <td align="center" th:text="${empH.accumulaFund}"></td>
+                    <td align="center" th:text="${empH.errorInWork}"></td>
+                    <td align="center" th:text="${empH.meritScore}"></td>
+                    <td align="center" th:text="${empH.remark}"></td>
+
                     <td align="center">
                         <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
-                           th:onclick="updateEmployeeSalary([[${employ.empNo}]]);">编辑</a>
+                           th:onclick="updateEmployeeHours([[${empH.empNo}]]);">编辑</a>
                         <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
-                           th:onclick="deleteEmployeeSalary([[${employ.empNo}]]);">删除</a>
+                           th:onclick="deleteEmployeeHours([[${empH.empNo}]]);">删除</a>
                         &nbsp;&nbsp;&nbsp;
-                        <input type="checkbox" name="deleteBatch" th:value="${employ.salaryId}">
+                        <input type="checkbox" name="deleteBatch" th:value="${empH.id}">
 
                     </td>
                 </tr>
             </div>
         </div>
-        <div th:if="${#lists.isEmpty(employeeList)}">
+        <div th:if="${#lists.isEmpty(empHoursList)}">
             <tr>
-                <td colspan="16">
+                <td colspan="24">
                     查无数据
                 </td>
             </tr>
@@ -720,7 +794,7 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="16" align="center">
+            <td colspan="24" align="center">
                 <span>第</span>
                 <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
@@ -776,7 +850,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="16" align="center">
+            <td colspan="24" align="center">
                 查无数据
             </td>
         </tr>

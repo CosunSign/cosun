@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,8 @@ public class FinanceController {
     public ModelAndView tomainpage(HttpSession session) throws Exception {
         try {
             ModelAndView view = new ModelAndView("salaryimport");
+            EmpHours empHours = new EmpHours();
+            view.addObject("empHours",empHours);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -51,6 +54,28 @@ public class FinanceController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping("/toupdatesalary")
+    public ModelAndView toupdatesalary(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("financeappli");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<Employee> employeeList = personServ.findAllEmployeeFinance(employee);
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/toaddpersonsalarypage", method = RequestMethod.GET)
@@ -64,11 +89,146 @@ public class FinanceController {
         return view;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/checkEmpNoandYearMonthIsExsit", method = RequestMethod.POST)
+    public void checkEmpNoandYearMonthIsExsit(EmpHours empHours, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            List<Employee> employees = new ArrayList<Employee>();
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            int isExsit = financeServ.checkEmpNoandYearMonthIsExsit(empHours);
+            if(isExsit==0) {
+                employee = personServ.getEmployeeByEmpno(empHours.getEmpNo());
+            }
+            employee.setType(isExsit);
+            employees.add(employee);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employees);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toaddpersonsalarypageappli", method = RequestMethod.GET)
+    public ModelAndView toaddpersonsalarypageappli(HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView view = new ModelAndView("addfinanceappli");
+        Employee employee = new Employee();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        view.addObject("employee", employee);
+        view.addObject("empList", empList);
+        return view;
+    }
+
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeSalaryByempNo", method = RequestMethod.GET)
     public ModelAndView toupdateEmployeeSalaryByempNo(String empNo,HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinance");
+        Employee employee = personServ.getEmployeeByEmpno(empNo);
+        view.addObject("employee", employee);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toaddpersonHourspage", method = RequestMethod.GET)
+    public ModelAndView toaddpersonHourspage(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("addemphours");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        view.addObject("empList", empList);
+        view.addObject("empHours", new EmpHours());
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toSetUp", method = RequestMethod.GET)
+    public ModelAndView toSetUp(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("financesetup");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        view.addObject("userInfo",userInfo);
+        FinanceSetUpData fsu = financeServ.findFinanceSetUpData();
+        view.addObject("fsu",fsu);
+        view.addObject("flag",0);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateEmpHoursToMysql", method = RequestMethod.POST)
+    public ModelAndView updateEmpHoursToMysql(EmpHours empHours,HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("emphours");
+        financeServ.updateEmpHoursByBean(empHours);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<EmpHours> empHoursList = financeServ.findAllEmpHours(new Employee());
+        int recordCount = financeServ.findAllEmpHoursHours();
+        Employee employee = new Employee();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("empHoursList", empHoursList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 3);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addEmpHoursToMysql", method = RequestMethod.POST)
+    public ModelAndView addEmpHoursToMysql(EmpHours empHours,HttpSession session) throws Exception {
+        Employee em = personServ.getEmployeeByEmpno(empHours.getEmpNo());
+        empHours.setName(em.getName());
+        ModelAndView view = new ModelAndView("emphours");
+        financeServ.addEmpHoursByBean(empHours);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<EmpHours> empHoursList = financeServ.findAllEmpHours(new Employee());
+        int recordCount = financeServ.findAllEmpHoursHours();
+        Employee employee = new Employee();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("empHoursList", empHoursList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 1);
+        return view;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/toupdateEmployeeHoursByempNo", method = RequestMethod.GET)
+    public ModelAndView toupdateEmployeeHoursByempNo(String empNo,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView view = new ModelAndView("updateemphours");
+        EmpHours empHours = financeServ.getEmpHoursByEmpNo(empNo);
+        view.addObject("empHours", empHours);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toupdateEmployeeSalaryByempNoAppli", method = RequestMethod.GET)
+    public ModelAndView toupdateEmployeeSalaryByempNoAppli(String empNo,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView view = new ModelAndView("updatefinanceappli");
         Employee employee = personServ.getEmployeeByEmpno(empNo);
         view.addObject("employee", employee);
         return view;
@@ -99,9 +259,81 @@ public class FinanceController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/deleteEmpHoursByBatch", method = RequestMethod.GET)
+    public  ModelAndView deleteEmpHoursByBatch(Employee employee,HttpSession session) throws Exception {
+        financeServ.deleteEmpHoursByBatch(employee);
+        ModelAndView view = new ModelAndView("emphours");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<EmpHours> empHoursList = financeServ.findAllEmpHours(new Employee());
+        int recordCount = financeServ.findAllEmpHoursHours();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("empHoursList", empHoursList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 2);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteEmpByBatchAppli", method = RequestMethod.GET)
+    public  ModelAndView deleteEmpByBatchAppli(Employee employee,HttpSession session) throws Exception {
+        financeServ.deleteEmpSalaryByBatch(employee);
+        ModelAndView view = new ModelAndView("financeappli");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<Employee> employeeList = personServ.findAllEmployeeFinance(new Employee());
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 2);
+        return view;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/addsalary", method = RequestMethod.POST)
     public ModelAndView addsalary(Employee employee,HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("finance");
+        financeServ.addSalaryByBean(employee);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<Employee> employeeList = personServ.findAllEmployeeFinance(new Employee());
+        int recordCount = personServ.findAllEmployeeCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("employeeList", employeeList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addsalaryappli", method = RequestMethod.POST)
+    public ModelAndView addsalaryappli(Employee employee,HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("financeappli");
+        employee.setState(0);
         financeServ.addSalaryByBean(employee);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Position> positionList = personServ.findAllPositionAll();
@@ -153,8 +385,85 @@ public class FinanceController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/deleteEmployeeHoursByEmpNo", method = RequestMethod.GET)
+    public ModelAndView deleteEmployeeHoursByEmpNo(String empNo, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            ModelAndView view = new ModelAndView("emphours");
+            financeServ.deleteEmployeeHoursByEmpno(empNo);
+            Employee employee = new Employee();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<EmpHours> empHoursList = financeServ.findAllEmpHours(employee);
+            int recordCount = financeServ.findAllEmpHoursHours();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("empHoursList", empHoursList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            view.addObject("userInfo", userInfo);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/queryEmployeeSalaryByCondition", method = RequestMethod.POST)
     public void queryEmployeeSalaryByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<Employee> employeeList = personServ.queryEmployeeSalaryByCondition(employee);
+            int recordCount = personServ.queryEmployeeSalaryByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (employeeList.size() > 0) {
+                employeeList.get(0).setMaxPage(maxPage);
+                employeeList.get(0).setRecordCount(recordCount);
+                employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+                employeeList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/saveFinanceSetUp", method = RequestMethod.POST)
+    public void saveFinanceSetUp(FinanceSetUpData financeSetUpData, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            financeServ.saveFinanceSetUp(financeSetUpData);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(1);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryEmployeeSalaryByConditionAppli", method = RequestMethod.POST)
+    public void queryEmployeeSalaryByConditionAppli(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryEmployeeSalaryByCondition(employee);
@@ -202,6 +511,56 @@ public class FinanceController {
         return view;
     }
 
+    @ResponseBody
+    @RequestMapping("/toEmpHours")
+    public ModelAndView toEmpHours(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("emphours");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<EmpHours> empHoursList = financeServ.findAllEmpHours(employee);
+        int recordCount = financeServ.findAllEmpHoursHours();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("empHoursList", empHoursList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryEmployeeHoursByCondition", method = RequestMethod.POST)
+    public void queryEmployeeHoursByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<EmpHours> empHoursList = financeServ.queryEmployeeHoursByCondition(employee);
+            int recordCount = financeServ.queryEmployeeHoursByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (empHoursList.size() > 0) {
+                empHoursList.get(0).setMaxPage(maxPage);
+                empHoursList.get(0).setRecordCount(recordCount);
+                empHoursList.get(0).setCurrentPage(employee.getCurrentPage());
+                empHoursList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(empHoursList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/dataInMysql", method = RequestMethod.POST)
@@ -221,4 +580,25 @@ public class FinanceController {
             return view;
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/dataInMysqlPerson", method = RequestMethod.POST)
+    public ModelAndView dataInMysqlPerson(@RequestParam("file2") MultipartFile file2, EmpHours empHours, HttpServletResponse response) throws Exception {
+        ModelAndView view = new ModelAndView("salaryimport");
+        String errorMessage;
+        try {
+            List<EmpHours> empHoursList = financeServ.translateExcelToBeanEmpHours(file2,empHours.getYearMonthStr());
+            financeServ.saveAllEmpHours(empHoursList,empHours.getYearMonthStr());
+            view.addObject("flag2", 1);
+            return view;
+        } catch (NumberFormatException e) {
+            view.addObject("flag2", 2);
+            view.addObject("empnoerror2", e.getMessage());
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            return view;
+        }
+    }
+
+
 }

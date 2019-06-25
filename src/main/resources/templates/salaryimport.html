@@ -17,10 +17,12 @@
 <script>
 
     $(function () {
+        $("#yearmonth").val(today());
         window.parent.document.getElementById('coverbehidepage').style.display = "none";
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
+        var flag2 = $("#flag2").val();
         if (flag == 1) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
@@ -33,7 +35,36 @@
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;工号为"+$("#empnoerror").val()+"的某个工资数据不是数字或者为空，请更正再导入!";
             errormessagediv.style.color = "red";
         }
+
+        if (flag2 == 1) {
+            $("#errormessage2").show();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;导入成功,可在财务员工工时模块查看!";
+            errormessagediv.style.color = "green";
+        }
+        if (flag2 == 2) {
+            $("#errormessage2").show();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;工号为"+$("#empnoerror2").val()+"的某个工资数据不是数字或者为空，请更正再导入!";
+            errormessagediv.style.color = "red";
+        }
     });
+
+    function today() {
+        var today = new Date();
+        var h = today.getFullYear();
+        var m = today.getMonth() + 1;
+        var d = today.getDate();
+        var hh = today.getHours();
+        var mm = today.getMinutes();
+        var ss = today.getSeconds();
+        m = m < 10 ? "0" + m : m;
+        d = d < 10 ? "0" + d : d;
+        hh = hh < 10 ? "0" + hh : hh;
+        mm = mm < 10 ? "0" + mm : mm;
+        ss = ss < 10 ? "0" + ss : ss;
+        return h + "-" + m ;
+    }
 
     function inDataToMysql() {
         var originFile = $("#originFile1").val();
@@ -51,6 +82,32 @@
             errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法计算!";
             errormessagediv1.style.color = "red";
         }
+    }
+
+    function inDataToMysqlPerson() {
+        var originFile = $("#originFile2").val();
+        var yearmonth = $("#yearmonth").val();
+        $("#yearmonthid").val(yearmonth);
+        if (originFile.trim().length > 0 && yearmonth.trim().length > 0) {
+            $("#errormessage2").show();
+            var errormessagediv1 = document.getElementById("errormessage2");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;导入中,请稍等!";
+            errormessagediv1.style.color = "green";
+            var form = document.getElementById('inData2');
+            form.submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        } else if (originFile.trim().length <= 0) {
+            $("#errormessage2").show();
+            var errormessagediv1 = document.getElementById("errormessage2");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法导入!";
+            errormessagediv1.style.color = "red";
+        }else if (yearmonth.trim().length <= 0) {
+            $("#errormessage2").show();
+            var errormessagediv1 = document.getElementById("errormessage2");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有选择数据时间，无法导入!";
+            errormessagediv1.style.color = "red";
+        }
+
     }
 
     function computeWorkTable() {
@@ -93,6 +150,7 @@
             return;
         }
 
+
         if(arr[arr.length - 1] == 'xls'||arr[arr.length - 1] == 'XLS') {
             $("#errormessage").hide();
             var errormessagediv = document.getElementById("errormessage");
@@ -105,6 +163,36 @@
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能选择xls文件!";
             errormessagediv.style.color = "red";
             $("#originFile1").val("");
+        }
+    }
+
+    function checkFileIsXlsOnly2() {
+        var selectRight = true;
+        var originFile1 = $("#originFile2").val();
+        var arr = originFile1.split(".");
+        if(arr.length>2) {
+            selectRight = false;
+            $("#errormessage2").show();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;文件名不能含.号!";
+            errormessagediv.style.color = "red";
+            $("#originFile2").val("");
+            return;
+        }
+
+
+        if(arr[arr.length - 1] == 'xls'||arr[arr.length - 1] == 'XLS') {
+            $("#errormessage2").hide();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "";
+            selectRight = true;
+        }else{
+            selectRight = false;
+            $("#errormessage2").show();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能选择xls文件!";
+            errormessagediv.style.color = "red";
+            $("#originFile2").val("");
         }
     }
 </script>
@@ -121,7 +209,7 @@
 <body>
 
 <div id='app'>
-    <form  id="inData" th:action="@{/finance/dataInMysql}" th:method="post" enctype="multipart/form-data" >
+    <form  id="inData" th:action="@{/finance/dataInMysql}" th:method="post" enctype="multipart/form-data">
         <input type="hidden" id="flag" th:value="${flag}">
         <input type="hidden" id="empnoerror" th:value="${empnoerror}">
         <div  >
@@ -157,6 +245,60 @@
                             <font size="2px" color="purple">
                                 *员工工资数据导入操作(工号，【综合技能+岗位工资+职务工资+绩效工资】)，将会清空工资结构旧数据。初次使用建议使用数据导入。
                                 二次使用建议使用手工录入。
+                            </font>
+                        </td>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <form  id="inData2" th:action="@{/finance/dataInMysqlPerson}" th:method="post" enctype="multipart/form-data"  th:object="${empHours}">
+        <input type="hidden" id="flag2" th:value="${flag2}">
+        <input type="hidden" id="yearmonthid" th:field="*{yearMonthStr}">
+        <input type="hidden" id="empnoerror2" th:value="${empnoerror2}">
+        <div  >
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">人事工时数据导入<font color="#00008b" size="2px">(仅支持xls格式)</font></h3>
+            </div>
+            <div class="panel-body form-inline">
+                <table class="table table-bordered table-hover table-striped">
+                    <tr>
+                        <td><label> 文件选择:</label></td>
+                        <td>
+                            <input type="file"   th:name="file2"  id="originFile2" onchange="checkFileIsXlsOnly2()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label> 月份选择:</label></td>
+                        <td>
+                            <input type="text" id="yearmonth"
+                            style="width:130px;height: 34px;text-align: center"
+                            class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>动作：</label></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" onclick="inDataToMysqlPerson()">导入执行</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label>结果提示：</label></td>
+                        <td>
+                            <div style="display: none;" id="errormessage2">
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <font size="2px" color="purple">
+                                *员工工时数据导入操作,执行一次将会清空选择的月份数据。
                             </font>
                         </td>
 

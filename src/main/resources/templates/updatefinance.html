@@ -283,6 +283,20 @@
                             </td>
                         </tr>
                         <tr>
+                            <td><label>审核状态：</label></td>
+                            <td style="width:200px">
+                                <select id="state"  class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true"
+                                        data-selected-text-format="count > 2" th:field="*{state}">
+                                    　　
+                                    <option  th:selected="${employee.state eq 0}" th:value="0">未审核</option>
+                                    <option  th:selected="${employee.state eq 0}" th:value="1">审核通过</option>
+                                    <option  th:selected="${employee.state eq 0}" th:value="2">审核未通过</option>
+
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
                             <td><label>工资合计(元)：</label></td>
                             <td style="width:200px">
                                 <input type="text" class="form-controlspan12 form-control"

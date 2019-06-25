@@ -19,8 +19,17 @@ public class Salary implements Serializable {
     private Double posSalary;
     private Double jobSalary;
     private Double meritSalary;
+    private Integer state;
 
     private String remark;
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public String getRemark() {
         return remark;

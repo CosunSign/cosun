@@ -41,14 +41,13 @@ public class Employee implements Serializable {
     private Integer positionAttrId;//职位
     private Integer type;
     private Integer workType;//0生产车间  1 办公区
-
+    private Integer state;
 
     private String remark;
 
     private String educationLeUrl;
     private String sateListAndLeaCertiUrl;
     private String otherCertiUrl;
-
 
 
     private String username;
@@ -84,6 +83,7 @@ public class Employee implements Serializable {
     private List<Integer> ids;
     private List<Integer> nameIds;
     private List<Integer> workTypes;
+    private List<String> empNos;
     private String startIncomDateStr;
     private String endIncomDateStr;
     private String deptIdsstr;
@@ -105,6 +105,40 @@ public class Employee implements Serializable {
 
     private Integer salaryId;
 
+    private String stateStr;
+
+    public List<String> getEmpNos() {
+        return empNos;
+    }
+
+    public void setEmpNos(List<String> empNos) {
+        this.empNos = empNos;
+    }
+
+    public String getStateStr() {
+        if(this.state!=null) {
+            if(this.state==0) {
+                return "未审核";
+            }else if(this.state==1) {
+                return "审核通过";
+            }else if(this.state==2) {
+                return "审核未通过";
+            }
+        }
+        return stateStr;
+    }
+
+    public void setStateStr(String stateStr) {
+        this.stateStr = stateStr;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
     public Integer getSalaryId() {
         return salaryId;
@@ -196,70 +230,70 @@ public class Employee implements Serializable {
     }
 
     public String getNativePlaStr() {
-        if(nativePla!=null) {
-            if (nativePla==1) {
+        if (nativePla != null) {
+            if (nativePla == 1) {
                 return "北京";
-            } else if (nativePla==2) {
+            } else if (nativePla == 2) {
                 return "上海";
-            } else if (nativePla==3) {
+            } else if (nativePla == 3) {
                 return "广东";
-            } else if (nativePla==4) {
+            } else if (nativePla == 4) {
                 return "河北";
-            } else if (nativePla==5) {
+            } else if (nativePla == 5) {
                 return "山西";
-            } else if (nativePla==6) {
+            } else if (nativePla == 6) {
                 return "辽宁";
-            } else if (nativePla==7) {
+            } else if (nativePla == 7) {
                 return "吉林";
-            } else if (nativePla==8) {
+            } else if (nativePla == 8) {
                 return "黑龙江";
-            } else if (nativePla==9) {
+            } else if (nativePla == 9) {
                 return "江苏";
-            } else if (nativePla==10) {
+            } else if (nativePla == 10) {
                 return "浙江";
-            } else if (nativePla==11) {
+            } else if (nativePla == 11) {
                 return "安徽";
-            } else if (nativePla==12) {
+            } else if (nativePla == 12) {
                 return "福建";
-            } else if (nativePla==13) {
+            } else if (nativePla == 13) {
                 return "江西";
-            } else if (nativePla==14) {
+            } else if (nativePla == 14) {
                 return "山东";
-            } else if (nativePla==15) {
+            } else if (nativePla == 15) {
                 return "河南";
-            } else if (nativePla==16) {
+            } else if (nativePla == 16) {
                 return "湖北";
-            } else if (nativePla==17) {
+            } else if (nativePla == 17) {
                 return "湖南";
-            } else if (nativePla==18) {
+            } else if (nativePla == 18) {
                 return "天津";
-            } else if (nativePla==19) {
+            } else if (nativePla == 19) {
                 return "陕西";
-            } else if (nativePla==20) {
+            } else if (nativePla == 20) {
                 return "四川";
-            } else if (nativePla==21) {
+            } else if (nativePla == 21) {
                 return "台湾";
-            } else if (nativePla==22) {
+            } else if (nativePla == 22) {
                 return "云南";
-            } else if (nativePla==23) {
+            } else if (nativePla == 23) {
                 return "青海";
-            } else if (nativePla==24) {
+            } else if (nativePla == 24) {
                 return "甘肃";
-            } else if (nativePla==25) {
+            } else if (nativePla == 25) {
                 return "海南";
-            } else if (nativePla==26) {
+            } else if (nativePla == 26) {
                 return "贵州";
-            } else if (nativePla==27) {
+            } else if (nativePla == 27) {
                 return "重庆";
-            } else if (nativePla==28) {
+            } else if (nativePla == 28) {
                 return "新疆";
-            } else if (nativePla==29) {
+            } else if (nativePla == 29) {
                 return "广西";
-            } else if (nativePla==30) {
+            } else if (nativePla == 30) {
                 return "宁夏";
-            } else if (nativePla==31) {
+            } else if (nativePla == 31) {
                 return "内蒙古";
-            } else if (nativePla==32) {
+            } else if (nativePla == 32) {
                 return "西藏";
             }
         }
@@ -310,7 +344,7 @@ public class Employee implements Serializable {
     }
 
     public Double getPosSalary() {
-        if(this.posSalary==null) {
+        if (this.posSalary == null) {
             return 0.0;
         }
         return posSalary;
@@ -321,7 +355,7 @@ public class Employee implements Serializable {
     }
 
     public Double getJobSalary() {
-        if(jobSalary==null) {
+        if (jobSalary == null) {
             return 0.0;
         }
         return jobSalary;
@@ -332,7 +366,7 @@ public class Employee implements Serializable {
     }
 
     public Double getMeritSalary() {
-        if(meritSalary==null) {
+        if (meritSalary == null) {
             return 0.0;
         }
         return meritSalary;
@@ -343,7 +377,7 @@ public class Employee implements Serializable {
     }
 
     public Double getCompreSalary() {
-        if(compreSalary==null) {
+        if (compreSalary == null) {
             return 0.0;
         }
         return compreSalary;
@@ -378,14 +412,14 @@ public class Employee implements Serializable {
     }
 
     public String getPositionAttrIdStr() {
-        if(positionAttrId!=null) {
-            if (positionAttrId==1) {
+        if (positionAttrId != null) {
+            if (positionAttrId == 1) {
                 return "经理";
-            } else if (positionAttrId==2) {
+            } else if (positionAttrId == 2) {
                 return "主管";
-            } else if (positionAttrId==3) {
+            } else if (positionAttrId == 3) {
                 return "组长";
-            } else if (positionAttrId==4) {
+            } else if (positionAttrId == 4) {
                 return "职员";
             }
         }

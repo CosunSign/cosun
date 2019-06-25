@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
-    <title>工资-新增</title>
+    <title>工资-编辑</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -41,7 +41,6 @@
                     $("#meritSalary").val(data[0].meritSalary)
                     $("#posSalary").val(data[0].posSalary)
                     $("#remark").val(data[0].remark)
-                    $('#state').selectpicker('val', data[0].state);
                      computeAllSalary();
                     $("#errormessage").hide();
                 },
@@ -216,34 +215,27 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/finance/addsalary}" th:method="post" th:object="${employee}">
+                <form id="addEmployee" th:action="@{/finance/addsalaryappli}" th:method="post" th:object="${employee}">
                     <input type="hidden" th:field="*{empNo}" id="empnono">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: auto;border-spacing:0px 3px;">
                         <tr>
                             <td><label>姓名：</label></td>
                             <td>
-                                <select id="nameId" class="selectpicker show-tick form-control"
-                                        data-live-search="true" onchange="showEmployeeData()">
-                                    　
-                                    <option th:value="0">请选择员工</option>
-                                    　
-                                    <option th:each="c:${empList}" th:value="${c.id}"
-                                            th:text="${c.name}"></option>
-                                </select>
-
+                                <input type="text" class="form-control" th:field="*{name}"
+                                       disabled="">
                             </td>
                         </tr>
 
                         <tr>
                             <td><label>工号：</label></td>
                             <td><input type="text" class="form-control"  id="employeeNo"
-                                       disabled="">
+                                       disabled="" th:field="*{empNo}">
                             </td>
                         </tr>
                         <tr>
                             <td><label>职位：</label></td>
                             <td>
-                                <input type="text" class="form-control" th:field="*{positionId}" id="positionId"
+                                <input type="text" class="form-control" th:field="*{positionName}" id="positionId"
                                        disabled="">
                             </td>
                             <td>&nbsp;&nbsp;&nbsp; <a href="/person/topositanddeptpage?">没有？新增职位</a></td>
@@ -251,7 +243,7 @@
                         <tr>
                             <td><label>部门：</label></td>
                             <td>
-                                <input type="text" class="form-control" th:field="*{deptId}" id="deptId"
+                                <input type="text" class="form-control" th:field="*{deptName}" id="deptId"
                                        disabled="">
 
                             </td>
@@ -294,21 +286,7 @@
                             <td><label>工资合计(元)：</label></td>
                             <td style="width:200px">
                                 <input type="text" class="form-controlspan12 form-control"
-                                       id="allSalary" readonly>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>审核状态：</label></td>
-                            <td style="width:200px">
-                                <select id="state"  class="selectpicker show-tick form-control"
-                                        data-live-search="true" data-actions-box="true"
-                                        data-selected-text-format="count > 2" th:field="*{state}">
-                                    　　
-                                    <option   th:value="0">未审核</option>
-                                    <option   th:value="1">审核通过</option>
-                                    <option   th:value="2">审核未通过</option>
-
-                                </select>
+                                       id="allSalary" readonly th:field="*{allMoney}">
                             </td>
                         </tr>
                         <tr>

@@ -41,7 +41,6 @@
                     $("#meritSalary").val(data[0].meritSalary)
                     $("#posSalary").val(data[0].posSalary)
                     $("#remark").val(data[0].remark)
-                    $('#state').selectpicker('val', data[0].state);
                      computeAllSalary();
                     $("#errormessage").hide();
                 },
@@ -216,7 +215,7 @@
         </div>
         <div class="panel-body form-inline">
             <div id="innerdiv">
-                <form id="addEmployee" th:action="@{/finance/addsalary}" th:method="post" th:object="${employee}">
+                <form id="addEmployee" th:action="@{/finance/addsalaryappli}" th:method="post" th:object="${employee}">
                     <input type="hidden" th:field="*{empNo}" id="empnono">
                     <table class="table table-hover table-striped text-center" style="text-align: right;width: auto;border-spacing:0px 3px;">
                         <tr>
@@ -295,20 +294,6 @@
                             <td style="width:200px">
                                 <input type="text" class="form-controlspan12 form-control"
                                        id="allSalary" readonly>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><label>审核状态：</label></td>
-                            <td style="width:200px">
-                                <select id="state"  class="selectpicker show-tick form-control"
-                                        data-live-search="true" data-actions-box="true"
-                                        data-selected-text-format="count > 2" th:field="*{state}">
-                                    　　
-                                    <option   th:value="0">未审核</option>
-                                    <option   th:value="1">审核通过</option>
-                                    <option   th:value="2">审核未通过</option>
-
-                                </select>
                             </td>
                         </tr>
                         <tr>
