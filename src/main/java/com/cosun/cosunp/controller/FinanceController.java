@@ -45,7 +45,8 @@ public class FinanceController {
         try {
             ModelAndView view = new ModelAndView("salaryimport");
             EmpHours empHours = new EmpHours();
-            view.addObject("empHours",empHours);
+            view.addObject("empHours", empHours);
+            view.addObject("financeImportData", new FinanceImportData());
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -91,6 +92,32 @@ public class FinanceController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/checkFinanceImportNoandYearMonthIsExsit", method = RequestMethod.POST)
+    public void checkFinanceImportNoandYearMonthIsExsit(EmpHours empHours, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            List<Employee> employees = new ArrayList<Employee>();
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            int isExsit = financeServ.checkFinanceImportNoandYearMonthIsExsit(empHours);
+            if (isExsit == 0) {
+                employee = personServ.getEmployeeByEmpno(empHours.getEmpNo());
+            }
+            employee.setType(isExsit);
+            employees.add(employee);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employees);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/checkEmpNoandYearMonthIsExsit", method = RequestMethod.POST)
     public void checkEmpNoandYearMonthIsExsit(EmpHours empHours, HttpServletResponse response, HttpSession session) throws Exception {
         try {
@@ -98,7 +125,7 @@ public class FinanceController {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             Employee employee = new Employee();
             int isExsit = financeServ.checkEmpNoandYearMonthIsExsit(empHours);
-            if(isExsit==0) {
+            if (isExsit == 0) {
                 employee = personServ.getEmployeeByEmpno(empHours.getEmpNo());
             }
             employee.setType(isExsit);
@@ -130,13 +157,26 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeSalaryByempNo", method = RequestMethod.GET)
-    public ModelAndView toupdateEmployeeSalaryByempNo(String empNo,HttpSession session) throws Exception {
+    public ModelAndView toupdateEmployeeSalaryByempNo(String empNo, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinance");
         Employee employee = personServ.getEmployeeByEmpno(empNo);
         view.addObject("employee", employee);
         return view;
     }
+
+    //toaddfinanceimportdata
+    @ResponseBody
+    @RequestMapping(value = "/toaddfinanceimportdata", method = RequestMethod.GET)
+    public ModelAndView toaddfinanceimportdata(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("addfinanceimportdata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        view.addObject("empList", empList);
+        view.addObject("financeImportData", new FinanceImportData());
+        return view;
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/toaddpersonHourspage", method = RequestMethod.GET)
@@ -154,16 +194,16 @@ public class FinanceController {
     public ModelAndView toSetUp(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("financesetup");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        view.addObject("userInfo",userInfo);
+        view.addObject("userInfo", userInfo);
         FinanceSetUpData fsu = financeServ.findFinanceSetUpData();
-        view.addObject("fsu",fsu);
-        view.addObject("flag",0);
+        view.addObject("fsu", fsu);
+        view.addObject("flag", 0);
         return view;
     }
 
     @ResponseBody
     @RequestMapping(value = "/updateEmpHoursToMysql", method = RequestMethod.POST)
-    public ModelAndView updateEmpHoursToMysql(EmpHours empHours,HttpSession session) throws Exception {
+    public ModelAndView updateEmpHoursToMysql(EmpHours empHours, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("emphours");
         financeServ.updateEmpHoursByBean(empHours);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -188,7 +228,7 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/addEmpHoursToMysql", method = RequestMethod.POST)
-    public ModelAndView addEmpHoursToMysql(EmpHours empHours,HttpSession session) throws Exception {
+    public ModelAndView addEmpHoursToMysql(EmpHours empHours, HttpSession session) throws Exception {
         Employee em = personServ.getEmployeeByEmpno(empHours.getEmpNo());
         empHours.setName(em.getName());
         ModelAndView view = new ModelAndView("emphours");
@@ -215,8 +255,60 @@ public class FinanceController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/updateFinanceImportDataToMysql", method = RequestMethod.POST)
+    public ModelAndView updateFinanceImportDataToMysql(FinanceImportData financeImportData, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("financeimportdata");
+        financeServ.updateFinanceImportDataByBean(financeImportData);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<FinanceImportData> financeImportDataList = financeServ.findAllFinanceImportData(new Employee());
+        int recordCount = financeServ.findAllFinanceImportDataCount();
+        Employee employee = new Employee();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 3);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addFinanceImportDataToMysql", method = RequestMethod.POST)
+    public ModelAndView addFinanceImportDataToMysql(FinanceImportData financeImportData, HttpSession session) throws Exception {
+        Employee em = personServ.getEmployeeByEmpno(financeImportData.getEmpNo());
+        financeImportData.setName(em.getName());
+        ModelAndView view = new ModelAndView("financeimportdata");
+        financeServ.addFinanceImportDataByBean(financeImportData);
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<FinanceImportData> financeImportDataList = financeServ.findAllFinanceImportData(new Employee());
+        int recordCount = financeServ.findAllFinanceImportDataCount();
+        Employee employee = new Employee();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("flag", 1);
+        return view;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeHoursByempNo", method = RequestMethod.GET)
-    public ModelAndView toupdateEmployeeHoursByempNo(String empNo,HttpSession session) throws Exception {
+    public ModelAndView toupdateEmployeeHoursByempNo(String empNo, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updateemphours");
         EmpHours empHours = financeServ.getEmpHoursByEmpNo(empNo);
@@ -224,9 +316,20 @@ public class FinanceController {
         return view;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/toupdateFinanceImportDataById", method = RequestMethod.GET)
+    public ModelAndView toupdateFinanceImportDataById(Integer id, HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView view = new ModelAndView("updatefinanceimportdata");
+        FinanceImportData financeImportData = financeServ.getFinanceImportDataById(id);
+        view.addObject("financeImportData", financeImportData);
+        return view;
+    }
+
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeSalaryByempNoAppli", method = RequestMethod.GET)
-    public ModelAndView toupdateEmployeeSalaryByempNoAppli(String empNo,HttpSession session) throws Exception {
+    public ModelAndView toupdateEmployeeSalaryByempNoAppli(String empNo, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinanceappli");
         Employee employee = personServ.getEmployeeByEmpno(empNo);
@@ -236,7 +339,7 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmpByBatch", method = RequestMethod.GET)
-    public  ModelAndView deleteEmpByBatch(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView deleteEmpByBatch(Employee employee, HttpSession session) throws Exception {
         financeServ.deleteEmpSalaryByBatch(employee);
         ModelAndView view = new ModelAndView("finance");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -258,9 +361,34 @@ public class FinanceController {
         return view;
     }
 
+@ResponseBody
+@RequestMapping(value = "/deleteFinanceImportDataByBatch", method = RequestMethod.GET)
+public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSession session) throws Exception {
+    financeServ.deleteFinanceImportDataByBatch(employee);
+    ModelAndView view = new ModelAndView("emphours");
+    UserInfo userInfo = (UserInfo) session.getAttribute("account");
+    List<Position> positionList = personServ.findAllPositionAll();
+    List<Dept> deptList = personServ.findAllDeptAll();
+    List<Employee> empList = personServ.findAllEmployeeAll();
+    List<FinanceImportData> financeImportDataList = financeServ.findAllFinanceImportData(employee);
+    int recordCount = financeServ.findAllFinanceImportDataCount();
+    int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+    employee.setMaxPage(maxPage);
+    employee.setRecordCount(recordCount);
+    view.addObject("financeImportDataList", financeImportDataList);
+    view.addObject("empList", empList);
+    view.addObject("employee", employee);
+    view.addObject("positionList", positionList);
+    view.addObject("deptList", deptList);
+    view.addObject("userInfo", userInfo);
+    view.addObject("flag", 2);
+    return view;
+}
+
+
     @ResponseBody
     @RequestMapping(value = "/deleteEmpHoursByBatch", method = RequestMethod.GET)
-    public  ModelAndView deleteEmpHoursByBatch(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView deleteEmpHoursByBatch(Employee employee, HttpSession session) throws Exception {
         financeServ.deleteEmpHoursByBatch(employee);
         ModelAndView view = new ModelAndView("emphours");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -284,7 +412,7 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmpByBatchAppli", method = RequestMethod.GET)
-    public  ModelAndView deleteEmpByBatchAppli(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView deleteEmpByBatchAppli(Employee employee, HttpSession session) throws Exception {
         financeServ.deleteEmpSalaryByBatch(employee);
         ModelAndView view = new ModelAndView("financeappli");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -308,7 +436,7 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/addsalary", method = RequestMethod.POST)
-    public ModelAndView addsalary(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView addsalary(Employee employee, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("finance");
         financeServ.addSalaryByBean(employee);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -331,7 +459,7 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/addsalaryappli", method = RequestMethod.POST)
-    public ModelAndView addsalaryappli(Employee employee,HttpSession session) throws Exception {
+    public ModelAndView addsalaryappli(Employee employee, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("financeappli");
         employee.setState(0);
         financeServ.addSalaryByBean(employee);
@@ -351,6 +479,37 @@ public class FinanceController {
         view.addObject("deptList", deptList);
         view.addObject("userInfo", userInfo);
         return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteFinanceImportData", method = RequestMethod.GET)
+    public ModelAndView deleteFinanceImportData(Integer id, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            ModelAndView view = new ModelAndView("financeimportdata");
+            financeServ.deleteFinanceImportDataById(id);
+            Employee employee = new Employee();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<FinanceImportData> financeImportDataList = financeServ.findAllFinanceImportData(employee);
+            int recordCount = financeServ.findAllFinanceImportDataCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            view.addObject("userInfo", userInfo);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @ResponseBody
@@ -512,6 +671,30 @@ public class FinanceController {
     }
 
     @ResponseBody
+    @RequestMapping("/toFinanceImportData")
+    public ModelAndView toFinanceImportData(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("financeimportdata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<FinanceImportData> financeImportDataList = financeServ.findAllFinanceImportData(employee);
+        int recordCount = financeServ.findAllFinanceImportDataCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+
+    @ResponseBody
     @RequestMapping("/toEmpHours")
     public ModelAndView toEmpHours(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("emphours");
@@ -562,6 +745,34 @@ public class FinanceController {
     }
 
 
+
+    @ResponseBody
+    @RequestMapping(value = "/queryFinanceImportDataByCondition", method = RequestMethod.POST)
+    public void queryFinanceImportDataByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<FinanceImportData> financeImportDataList = financeServ.queryFinanceImportDataByCondition(employee);
+            int recordCount = financeServ.queryFinanceImportDataByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (financeImportDataList.size() > 0) {
+                financeImportDataList.get(0).setMaxPage(maxPage);
+                financeImportDataList.get(0).setRecordCount(recordCount);
+                financeImportDataList.get(0).setCurrentPage(employee.getCurrentPage());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(financeImportDataList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
     @ResponseBody
     @RequestMapping(value = "/dataInMysql", method = RequestMethod.POST)
     public ModelAndView dataInMysql(@RequestParam("file1") MultipartFile file1, HttpServletResponse response) throws Exception {
@@ -587,13 +798,34 @@ public class FinanceController {
         ModelAndView view = new ModelAndView("salaryimport");
         String errorMessage;
         try {
-            List<EmpHours> empHoursList = financeServ.translateExcelToBeanEmpHours(file2,empHours.getYearMonthStr());
-            financeServ.saveAllEmpHours(empHoursList,empHours.getYearMonthStr());
+            List<EmpHours> empHoursList = financeServ.translateExcelToBeanEmpHours(file2, empHours.getYearMonthStr());
+            financeServ.saveAllEmpHours(empHoursList, empHours.getYearMonthStr());
             view.addObject("flag2", 1);
             return view;
         } catch (NumberFormatException e) {
             view.addObject("flag2", 2);
             view.addObject("empnoerror2", e.getMessage());
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            return view;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/dataInMysqlFinance", method = RequestMethod.POST)
+    public ModelAndView dataInMysqlFinance(@RequestParam("file3") MultipartFile file3, FinanceImportData financeImportData, HttpServletResponse response) throws Exception {
+        ModelAndView view = new ModelAndView("salaryimport");
+        String errorMessage;
+        try {
+            List<FinanceImportData> financeImportDataList = financeServ.translateExcelToBeanFinanceImportData(file3, financeImportData.getYearMonth());
+            financeServ.saveAllFinanceImportData(financeImportDataList, financeImportData.getYearMonth());
+            view.addObject("flag3", 1);
+            view.addObject("empHours", new EmpHours());
+            view.addObject("financeImportData", new FinanceImportData());
+            return view;
+        } catch (NumberFormatException e) {
+            view.addObject("flag3", 2);
+            view.addObject("empnoerror3", e.getMessage());
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             return view;

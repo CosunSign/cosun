@@ -1,9 +1,6 @@
 package com.cosun.cosunp.service.impl;
 
-import com.cosun.cosunp.entity.EmpHours;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.FinanceSetUpData;
-import com.cosun.cosunp.entity.Salary;
+import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.mapper.FinanceMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFinanceServ;
@@ -90,6 +87,31 @@ public class FinanceServiceImpl implements IFinanceServ {
     private String meritScoreTitle = "绩效分";//绩效分
     Integer meritScoreTitleIndex;
 
+
+
+    private String empNoTitle3 = "工号";//工号
+    Integer empNoTitle3Index;
+    private String nameTitle3 = "姓名";//姓名
+    Integer nameTitle3Index;
+    private String deptNameTitle3 = "部门";//部门
+    Integer deptNameTitle3Index;
+    private String legalHolidWorkHoursTitle = "法定节假日加班工时";//法定节假日加班工时
+    Integer legalHolidWorkHoursTitleIndex;
+    private String sellActualTitle = "业务实际";//业务实际
+    Integer sellActualTitleIndex;
+    private String sellThresholdTitle = "业务阈值";//业务阈值
+    Integer sellThresholdTitleIndex;
+    private String sellLevelSalaryTitle = "业务等级工资";//业务等级工资
+    Integer sellLevelSalaryTitleIndex;
+    private String houseSubsidyTitle = "房补";//房补
+    Integer houseSubsidyTitleIndex;
+    private String hotTempOrOtherAllowTitle = "高温等其它补贴";//高温等其它补贴
+    Integer hotTempOrOtherAllowTitleIndex;
+    private String workYearsSalaryTitle = "工龄工资";//工龄工资
+    Integer workYearsSalaryTitleIndex;
+    private String sellCommiTitle = "业务提成";//业务提成
+    Integer sellCommiTitleIndex;
+
     public List<Salary> translateExcelToBean(MultipartFile file) throws Exception {
         List<Salary> salaryList = new ArrayList<Salary>();
         String empNo = null;
@@ -155,6 +177,18 @@ public class FinanceServiceImpl implements IFinanceServ {
             financeMapper.saveSalary(sa);
         }
 
+    }
+
+   public List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception {
+        return financeMapper.queryFinanceImportDataByCondition(employee);
+   }
+
+   public int queryFinanceImportDataByConditionCount(Employee employee) throws Exception {
+        return financeMapper.queryFinanceImportDataByConditionCount(employee);
+   }
+
+    public int findAllFinanceImportDataCount() throws Exception {
+        return financeMapper.findAllFinanceImportDataCount();
     }
 
     public void addSalaryByBean(Employee employee) throws Exception {
@@ -292,6 +326,37 @@ public class FinanceServiceImpl implements IFinanceServ {
         return financeMapper.queryEmployeeHoursByCondition(employee);
     }
 
+    public void deleteFinanceImportDataByBatch(Employee employee) throws Exception {
+        financeMapper.deleteFinanceImportDataByBatch(employee.getIds());
+    }
+
+    public void deleteFinanceImportDataById(Integer id) throws Exception {
+         financeMapper.deleteFinanceImportDataById(id);
+    }
+
+    public int checkFinanceImportNoandYearMonthIsExsit(EmpHours empHours) throws Exception {
+        return financeMapper.checkFinanceImportNoandYearMonthIsExsit(empHours);
+    }
+
+    public void addFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception {
+        financeMapper.saveFinanceImportData(financeImportData);
+    }
+
+    public void updateFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception {
+        financeMapper.updateFinanceImportDataByBean(financeImportData);
+    }
+
+    public FinanceImportData getFinanceImportDataById(Integer id) throws Exception {
+        return financeMapper.getFinanceImportDataById(id);
+    }
+
+
+
+    public List<FinanceImportData> findAllFinanceImportData(Employee employee) throws Exception {
+        return financeMapper.findAllFinanceImportData(employee);
+    }
+
+
     public int queryEmployeeHoursByConditionCount(Employee employee) throws Exception {
         return financeMapper.queryEmployeeHoursByConditionCount(employee);
     }
@@ -323,6 +388,90 @@ public class FinanceServiceImpl implements IFinanceServ {
     public FinanceSetUpData findFinanceSetUpData() throws Exception {
         return financeMapper.findFinanceSetUpData();
     }
+
+    public List<FinanceImportData> translateExcelToBeanFinanceImportData(MultipartFile file1, String yearMonth) throws Exception {
+        List<FinanceImportData> financeImportDataList = new ArrayList<FinanceImportData>();
+        String empNo = null;
+        try {
+            WorkbookSettings ws = new WorkbookSettings();
+            jxl.Sheet xlsfSheet = null;
+            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file1.getInputStream(), ws);//它是专门读取.xls的
+            if (Workbook != null) {
+                jxl.Sheet[] sheets = Workbook.getSheets();
+                xlsfSheet = sheets[0];
+            }
+            FinanceImportData sa = null;
+            int rowNums = xlsfSheet.getRows();
+            jxl.Cell[] cell = null;
+            Cell cella;
+            if (rowNums > 0) {
+                cell = xlsfSheet.getRow(1);
+                int coloumNum = cell.length;
+                for (int ab = 0; ab < coloumNum; ab++) {
+                    cella = cell[ab];
+                    if (empNoTitle3.equals(cella.getContents().trim())) {
+                        empNoTitle3Index = ab;
+                    }else if(nameTitle3.equals(cella.getContents().trim())) {
+                        nameTitle3Index = ab;
+                    }else if(deptNameTitle3.equals(cella.getContents().trim())) {
+                        deptNameTitle3Index = ab;
+                    }else if(legalHolidWorkHoursTitle.equals(cella.getContents().trim())) {
+                        legalHolidWorkHoursTitleIndex = ab;
+                    }else if(sellActualTitle.equals(cella.getContents().trim())) {
+                        sellActualTitleIndex = ab;
+                    }else if(sellThresholdTitle.equals(cella.getContents().trim())) {
+                        sellThresholdTitleIndex = ab;
+                    }else if(sellLevelSalaryTitle.equals(cella.getContents().trim())) {
+                        sellLevelSalaryTitleIndex = ab;
+                    }else if(houseSubsidyTitle.equals(cella.getContents().trim())) {
+                        houseSubsidyTitleIndex = ab;
+                    }else if(hotTempOrOtherAllowTitle.equals(cella.getContents().trim())) {
+                        hotTempOrOtherAllowTitleIndex = ab;
+                    }else if(workYearsSalaryTitle.equals(cella.getContents().trim())) {
+                        workYearsSalaryTitleIndex = ab;
+                    }else if(sellCommiTitle.equals(cella.getContents().trim())) {
+                        sellCommiTitleIndex = ab;
+                    }
+                }
+            }
+
+            for (int i = 2; i < rowNums; i++) {
+                cell = xlsfSheet.getRow(i);
+                if (cell != null && cell.length > 0) {
+                    empNo = cell[empNoTitle3Index].getContents().trim();
+                    if (empNo.length() > 0) {
+                        sa = new FinanceImportData();
+                        sa.setName(cell[nameTitle3Index].getContents().trim());
+                        sa.setEmpNo(cell[empNoTitle3Index].getContents().trim());
+                        sa.setDeptName(cell[deptNameTitle3Index].getContents().trim());
+                        sa.setLegalHolidWorkHours(Double.valueOf(cell[legalHolidWorkHoursTitleIndex].getContents().trim()));
+                        sa.setSellActual(Double.valueOf(cell[sellActualTitleIndex].getContents().trim()));
+                        sa.setSellThreshold(Double.valueOf(cell[sellThresholdTitleIndex].getContents().trim()));
+                        sa.setSellLevelSalary(Double.valueOf(cell[sellLevelSalaryTitleIndex].getContents().trim()));
+                        sa.setHouseSubsidy(Double.valueOf(cell[houseSubsidyTitleIndex].getContents().trim()));
+                        sa.setHotTempOrOtherAllow(Double.valueOf(cell[hotTempOrOtherAllowTitleIndex].getContents().trim()));
+                        sa.setWorkYearsSalary(Double.valueOf(cell[workYearsSalaryTitleIndex].getContents().trim()));
+                        sa.setSellCommi(Double.valueOf(cell[sellCommiTitleIndex].getContents().trim()));
+                        sa.setYearMonth(yearMonth);
+                        financeImportDataList.add(sa);
+                    }
+                }
+            }
+            return financeImportDataList;
+        }catch (Exception e) {
+            throw new NumberFormatException(empNo);
+        }
+    }
+
+    public void saveAllFinanceImportData(List<FinanceImportData> financeImportDataList,String yearMonth) throws Exception {
+        financeMapper.deleteAllsaveAllFinanceImportDataByYearMonthData(yearMonth);
+        for(FinanceImportData fid : financeImportDataList) {
+            fid.setYearMonth(yearMonth);
+            financeMapper.saveFinanceImportData(fid);
+        }
+    }
+
+
 
 
     public void saveFinanceSetUp(FinanceSetUpData financeSetUpData) throws Exception {

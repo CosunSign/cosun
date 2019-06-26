@@ -1,9 +1,6 @@
 package com.cosun.cosunp.service;
 
-import com.cosun.cosunp.entity.EmpHours;
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.FinanceSetUpData;
-import com.cosun.cosunp.entity.Salary;
+import com.cosun.cosunp.entity.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -26,6 +23,22 @@ public interface IFinanceServ {
 
     List<EmpHours> findAllEmpHours(Employee employee) throws Exception;
 
+    List<FinanceImportData> findAllFinanceImportData(Employee employee) throws Exception;
+
+    void deleteFinanceImportDataById(Integer id) throws Exception;
+
+    void updateFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception;
+
+    void addFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception;
+
+    List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception;
+
+    int queryFinanceImportDataByConditionCount(Employee employee) throws Exception;
+
+    int findAllFinanceImportDataCount() throws Exception;
+
+    void deleteFinanceImportDataByBatch(Employee employee) throws Exception;
+
     void updateEmpHoursByBean(EmpHours empHours) throws Exception;
 
     int findAllEmpHoursHours() throws Exception;
@@ -38,6 +51,8 @@ public interface IFinanceServ {
 
     int checkEmpNoandYearMonthIsExsit(EmpHours empHours) throws Exception;
 
+    int checkFinanceImportNoandYearMonthIsExsit(EmpHours empHours) throws Exception;
+
     List<EmpHours> queryEmployeeHoursByCondition(Employee employee) throws Exception;
 
     int queryEmployeeHoursByConditionCount(Employee employee) throws Exception;
@@ -45,5 +60,11 @@ public interface IFinanceServ {
     void deleteEmployeeHoursByEmpno(String empNo) throws Exception;
 
     EmpHours getEmpHoursByEmpNo(String empNo) throws Exception;
+
+    FinanceImportData getFinanceImportDataById(Integer id) throws Exception;
+
+    void saveAllFinanceImportData(List<FinanceImportData> financeImportDataList,String yearMonth) throws Exception;
+
+    List<FinanceImportData> translateExcelToBeanFinanceImportData(MultipartFile file1,String yearMonth) throws Exception;
 
 }

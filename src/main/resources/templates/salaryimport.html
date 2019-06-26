@@ -23,6 +23,7 @@
         window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
         var flag2 = $("#flag2").val();
+        var flag3 = $("#flag3").val();
         if (flag == 1) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
@@ -46,6 +47,19 @@
             $("#errormessage2").show();
             var errormessagediv = document.getElementById("errormessage2");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;工号为"+$("#empnoerror2").val()+"的某个工资数据不是数字或者为空，请更正再导入!";
+            errormessagediv.style.color = "red";
+        }
+
+        if (flag3 == 1) {
+            $("#errormessage3").show();
+            var errormessagediv = document.getElementById("errormessage3");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;导入成功,可在财务员工工时模块查看!";
+            errormessagediv.style.color = "green";
+        }
+        if (flag3 == 2) {
+            $("#errormessage3").show();
+            var errormessagediv = document.getElementById("errormessage2");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;工号为"+$("#empnoerror3").val()+"的某个工资数据不是数字或者为空，请更正再导入!";
             errormessagediv.style.color = "red";
         }
     });
@@ -108,6 +122,32 @@
             errormessagediv1.style.color = "red";
         }
 
+    }
+
+
+    function inDataToMysqlFinance() {
+        var originFile = $("#originFile3").val();
+        var yearmonth = $("#yearmonth3").val();
+        $("#yearmonthid3").val(yearmonth);
+        if (originFile.trim().length > 0 && yearmonth.trim().length > 0) {
+            $("#errormessage3").show();
+            var errormessagediv1 = document.getElementById("errormessage3");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;导入中,请稍等!";
+            errormessagediv1.style.color = "green";
+            var form = document.getElementById('inData3');
+            form.submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        } else if (originFile.trim().length <= 0) {
+            $("#errormessage3").show();
+            var errormessagediv1 = document.getElementById("errormessage3");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法导入!";
+            errormessagediv1.style.color = "red";
+        }else if (yearmonth.trim().length <= 0) {
+            $("#errormessage3").show();
+            var errormessagediv1 = document.getElementById("errormessage3");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有选择数据时间，无法导入!";
+            errormessagediv1.style.color = "red";
+        }
     }
 
     function computeWorkTable() {
@@ -178,10 +218,7 @@
             errormessagediv.style.color = "red";
             $("#originFile2").val("");
             return;
-        }
-
-
-        if(arr[arr.length - 1] == 'xls'||arr[arr.length - 1] == 'XLS') {
+        }if(arr[arr.length - 1] == 'xls'||arr[arr.length - 1] == 'XLS') {
             $("#errormessage2").hide();
             var errormessagediv = document.getElementById("errormessage2");
             errormessagediv.innerHTML = "";
@@ -195,6 +232,22 @@
             $("#originFile2").val("");
         }
     }
+
+    function checkFileIsXlsOnly3() {
+        var selectRight = true;
+        var originFile1 = $("#originFile3").val();
+        var arr = originFile1.split(".");
+        if (arr.length > 2) {
+            selectRight = false;
+            $("#errormessage3").show();
+            var errormessagediv = document.getElementById("errormessage3");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;文件名不能含.号!";
+            errormessagediv.style.color = "red";
+            $("#originFile3").val("");
+            return;
+        }
+    }
+
 </script>
 <style type="text/css">
     a {
@@ -309,6 +362,60 @@
         </div>
     </form>
 
+
+    <form  id="inData3" th:action="@{/finance/dataInMysqlFinance}" th:method="post" enctype="multipart/form-data"  th:object="${financeImportData}">
+        <input type="hidden" id="flag3" th:value="${flag3}">
+        <input type="hidden" id="yearmonthid3" th:field="*{yearMonth}">
+        <input type="hidden" id="empnoerror3" th:value="${empnoerror3}">
+        <div  >
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">财务数据导入<font color="#00008b" size="2px">(仅支持xls格式)</font></h3>
+            </div>
+            <div class="panel-body form-inline">
+                <table class="table table-bordered table-hover table-striped">
+                    <tr>
+                        <td><label> 文件选择:</label></td>
+                        <td>
+                            <input type="file"   th:name="file3"  id="originFile3" onchange="checkFileIsXlsOnly3()">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label> 月份选择:</label></td>
+                        <td>
+                            <input type="text" id="yearmonth3"
+                                   style="width:130px;height: 34px;text-align: center"
+                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>动作：</label></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" onclick="inDataToMysqlFinance()">导入执行</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label>结果提示：</label></td>
+                        <td>
+                            <div style="display: none;" id="errormessage3">
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            <font size="2px" color="purple">
+                                *财务数据导入操作,执行一次将会清空选择的月份数据。
+                            </font>
+                        </td>
+
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </form>
 
 </div>
 
