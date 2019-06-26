@@ -75,8 +75,8 @@ public interface FinanceMapper {
             "\t where id = #{id}")
     void updateFinanceImportDataByBean(FinanceImportData financeImportData);
 
-    @Insert("insert into salary (empno,compresalary,possalary,jobsalary,meritsalary) " +
-            "values (#{empNo},#{compreSalary},#{posSalary},#{jobSalary},#{meritSalary})")
+    @Insert("insert into salary (empno,compresalary,possalary,jobsalary,meritsalary,state) " +
+            "values (#{empNo},#{compreSalary},#{posSalary},#{jobSalary},#{meritSalary},#{state})")
     void saveSalary(Salary salary);
 
 
@@ -99,11 +99,11 @@ public interface FinanceMapper {
             "\tunEmployeeInsur,\n" +
             "\taccumulaFund,\n" +
             "\terrorInWork,\n" +
-            "\tmeritScore,yearMonth) " +
+            "\tmeritScore,yearMonth,sixDeductions) " +
             "values (#{name},#{empNo},#{deptName},#{zhengbanHours},#{usualExtHours}," +
             "#{workendHours},#{chinaPaidLeave},#{otherPaidLeave},#{leaveOfAbsense},#{sickLeave}," +
             "#{otherAllo},#{fullWorkReword},#{foodExpense},#{roomOrWaterEleExpense},#{oldAgeINsuran}," +
-            "#{medicalInsuran},#{unEmployeeInsur},#{accumulaFund},#{errorInWork},#{meritScore},#{yearMonthStr})")
+            "#{medicalInsuran},#{unEmployeeInsur},#{accumulaFund},#{errorInWork},#{meritScore},#{yearMonthStr},#{sixDeductions})")
     void saveEmpHours(EmpHours eh);
 
     @Insert("insert into emphours (\tNAME,\n" +
@@ -125,11 +125,11 @@ public interface FinanceMapper {
             "\tunEmployeeInsur,\n" +
             "\taccumulaFund,\n" +
             "\terrorInWork,\n" +
-            "\tmeritScore,yearMonth,remark) " +
+            "\tmeritScore,yearMonth,remark,sixDeductions) " +
             "values (#{name},#{empNo},#{deptName},#{zhengbanHours},#{usualExtHours}," +
             "#{workendHours},#{chinaPaidLeave},#{otherPaidLeave},#{leaveOfAbsense},#{sickLeave}," +
             "#{otherAllo},#{fullWorkReword},#{foodExpense},#{roomOrWaterEleExpense},#{oldAgeINsuran}," +
-            "#{medicalInsuran},#{unEmployeeInsur},#{accumulaFund},#{errorInWork},#{meritScore},#{yearMonth},#{remark})")
+            "#{medicalInsuran},#{unEmployeeInsur},#{accumulaFund},#{errorInWork},#{meritScore},#{yearMonth},#{remark},#{sixDeductions})")
     void addEmpHoursByBean(EmpHours empHours);
 
 
@@ -149,18 +149,19 @@ public interface FinanceMapper {
             " unEmployeeInsur = #{unEmployeeInsur}, " +
             " accumulaFund = #{accumulaFund}, " +
             " errorInWork = #{errorInWork}, " +
-            " meritScore = #{meritScore},remark = #{remark} " +
+            " meritScore = #{meritScore},remark = #{remark},sixDeductions = #{sixDeductions} " +
             " where empNo = #{empNo} and  yearMonth = #{yearMonth}")
     void updateEmpHoursByBean(EmpHours empHours);
 
     @Insert("insert into financesetupdata " +
-            " (norAttendHoursSample,norAttendSalarySample,norExtraMutiple,weekEndWorkMutiple,legalWorkMutiple,meritScoreSample)" +
+            " (norAttendHoursSample,norAttendSalarySample,norExtraMutiple,weekEndWorkMutiple," +
+            "legalWorkMutiple,meritScoreSample,basicWorkHours)" +
             " values (#{norAttendHoursSample}," +
             "#{norAttendSalarySample}," +
             "#{norExtraMutiple}," +
             " #{weekEndWorkMutiple}," +
             "#{legalWorkMutiple}," +
-            " #{meritScoreSample})")
+            " #{meritScoreSample},#{basicWorkHours})")
     void saveFinanceSetUp(FinanceSetUpData financeSetUpData);
 
     @Update("update  financesetupdata " +
@@ -169,7 +170,7 @@ public interface FinanceMapper {
             "norExtraMutiple = #{norExtraMutiple}," +
             "weekEndWorkMutiple =  #{weekEndWorkMutiple}," +
             "legalWorkMutiple = #{legalWorkMutiple}," +
-            " meritScoreSample = #{meritScoreSample}")
+            " meritScoreSample = #{meritScoreSample},basicWorkHours = #{basicWorkHours}")
     void updateFinanceSetUp(FinanceSetUpData financeSetUpData);
 
     @Select("select count(*) from emphours where empNo = #{empNo} and yearMonth=#{yearMonth} ")
@@ -195,6 +196,9 @@ public interface FinanceMapper {
 
     @Select("select * from salary where empno = #{empno}")
     Salary getSalaryByEmpno(String empno);
+
+    @Select("select e.positionAttrId,n.positionName,e.name,e.incompdate from employee e left join position n on e.positionid = n.id where e.empno = #{empno}")
+    Employee getEmployeeByEmpno(String empno);
 
 
     @Select("SELECT count(*) " +
@@ -223,12 +227,40 @@ public interface FinanceMapper {
             "\taccumulaFund,\n" +
             "\terrorInWork,\n" +
             "\tmeritScore,\n" +
-            "\tyearMonth " +
+            "\tyearMonth,sixDeductions " +
             "\t\tFROM\n" +
             "\t\t\temphours " +
             "\t\tORDER BY\n" +
             "\t\t\t empNo asc limit #{currentPageTotalNum},#{pageSize}")
     List<EmpHours> findAllEmpHours(Employee employee);
+
+    @Select("SELECT id," +
+            "\tNAME,\n" +
+            "\tempNo,\n" +
+            "\tdeptName,\n" +
+            "\tzhengbanHours,\n" +
+            "\tusualExtHours,\n" +
+            "\tworkendHours,\n" +
+            "\tchinaPaidLeave,\n" +
+            "\totherPaidLeave,\n" +
+            "\tleaveOfAbsense,\n" +
+            "\tsickLeave,\n" +
+            "\totherAllo,\n" +
+            "\tfullWorkReword,\n" +
+            "\tfoodExpense,\n" +
+            "\troomOrWaterEleExpense,\n" +
+            "\toldAgeINsuran,\n" +
+            "\tmedicalInsuran,\n" +
+            "\tunEmployeeInsur,\n" +
+            "\taccumulaFund,\n" +
+            "\terrorInWork,\n" +
+            "\tmeritScore,\n" +
+            "\tyearMonth," +
+            "sixDeductions " +
+            "\t\tFROM\n" +
+            "\t\t\temphours " +
+            " where yearMonth = #{yearMonth}")
+    List<EmpHours> getAllEmpHoursByYearMonth(String yearMonth);
 
     @Select("SELECT\n" +
             "\tid,\n" +
@@ -271,6 +303,26 @@ public interface FinanceMapper {
             "\t where id = #{id}")
     FinanceImportData getFinanceImportDataById(Integer id);
 
+    @Select("SELECT\n" +
+            "\tid,\n" +
+            "\tempNo,\n" +
+            "\t`name`,\n" +
+            "\tdeptName,\n" +
+            "\tlegalHolidWorkHours,\n" +
+            "\tsellActual,\n" +
+            "\tsellThreshold,\n" +
+            "\tsellLevelSalary,\n" +
+            "\thouseSubsidy,\n" +
+            "\thotTempOrOtherAllow,\n" +
+            "\tworkYearsSalary,\n" +
+            "\tsellCommi,\n" +
+            "\tyearMonth,\n" +
+            "\tremark\n" +
+            "FROM\n" +
+            "\tfinanceimportdata " +
+            "\t where empNo = #{empNo} and yearMonth = #{yearMonth} ")
+    FinanceImportData getFinanceImportDataByEmpNoandYearMonth(String empNo,String yearMonth);
+
     @Select("SELECT id," +
             "\tNAME,\n" +
             "\tempNo,\n" +
@@ -292,7 +344,7 @@ public interface FinanceMapper {
             "\taccumulaFund,\n" +
             "\terrorInWork,\n" +
             "\tmeritScore,\n" +
-            "\tyearMonth " +
+            "\tyearMonth,sixDeductions " +
             "\t\tFROM\n" +
             "\t\t\temphours where empNo = #{empNo} ")
     EmpHours getEmpHoursByEmpNo(String empNo);
@@ -620,7 +672,7 @@ public interface FinanceMapper {
                     "\te.accumulaFund,\n" +
                     "\te.errorInWork,\n" +
                     "\te.meritScore,\n" +
-                    "\te.yearMonth " +
+                    "\te.yearMonth,e.sixDeductions " +
                     "\t\t FROM \n" +
                     "\temphours e\n" +
                     "LEFT JOIN employee ee ON ee.empno = e.empno\n" +
@@ -808,6 +860,13 @@ public interface FinanceMapper {
                     }
                 } else if ("remark".equals(employee.getSortByName())) {
                     sb.append(" order by e.remark ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("sixDeductions".equals(employee.getSortByName())) {
+                    sb.append(" order by e.sixDeductions ");
                     if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
                     } else if ("desc".equals(employee.getSortMethod())) {

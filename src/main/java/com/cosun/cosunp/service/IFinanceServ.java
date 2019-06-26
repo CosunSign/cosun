@@ -29,6 +29,8 @@ public interface IFinanceServ {
 
     void updateFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception;
 
+    List<SalaryDataOutPut> computeSalaryData(String yearMonth) throws Exception;
+
     void addFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception;
 
     List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception;

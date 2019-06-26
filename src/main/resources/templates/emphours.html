@@ -52,29 +52,29 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goPriPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function isNull(arg1) {
@@ -105,32 +105,32 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryEmployeeSalaryByCondition2();
+            queryEmployeeHoursByCondition();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeSalaryByCondition2();
+        queryEmployeeHoursByCondition();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryEmployeeSalaryByCondition2() {
+    function queryEmployeeHoursByCondition2() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -212,6 +212,7 @@
                         tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
                         tr.append("<td>" + data[num].accumulaFund + "</td>");
                         tr.append("<td>" + data[num].errorInWork + "</td>");
+                        tr.append("<td>" + data[num].sixDeductions + "</td>");
                         tr.append("<td>" + data[num].meritScore + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
@@ -373,6 +374,7 @@
                         tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
                         tr.append("<td>" + data[num].accumulaFund + "</td>");
                         tr.append("<td>" + data[num].errorInWork + "</td>");
+                        tr.append("<td>" + data[num].sixDeductions + "</td>");
                         tr.append("<td>" + data[num].meritScore + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
@@ -486,13 +488,13 @@
     function sortByAsc(titlename) {
         sortMethod = 'asc';
         sortByName = titlename;
-        queryEmployeeSalaryByCondition();
+        queryEmployeeHoursByCondition();
     }
 
     function sortByDesc(titlename) {
         sortMethod = 'desc';
         sortByName = titlename;
-        queryEmployeeSalaryByCondition();
+        queryEmployeeHoursByCondition();
     }
 
 </script>
@@ -726,6 +728,11 @@
                 <i class="fa fa-sort-desc" onclick="sortByDesc('errorInWork')" aria-hidden="true"></i>
             </th>
             <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('sixDeductions')" aria-hidden="true"></i>
+                六个代扣项
+                <i class="fa fa-sort-desc" onclick="sortByDesc('sixDeductions')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
                 <i class="fa fa-sort-asc" onclick="sortByAsc('meritScore')" aria-hidden="true"></i>
                 绩效分
                 <i class="fa fa-sort-desc" onclick="sortByDesc('meritScore')" aria-hidden="true"></i>
@@ -765,6 +772,7 @@
                     <td align="center" th:text="${empH.unEmployeeInsur}"></td>
                     <td align="center" th:text="${empH.accumulaFund}"></td>
                     <td align="center" th:text="${empH.errorInWork}"></td>
+                    <td align="center" th:text="${empH.sixDeductions}"></td>
                     <td align="center" th:text="${empH.meritScore}"></td>
                     <td align="center" th:text="${empH.remark}"></td>
 
@@ -784,7 +792,7 @@
         </div>
         <div th:if="${#lists.isEmpty(empHoursList)}">
             <tr>
-                <td colspan="24">
+                <td colspan="25">
                     查无数据
                 </td>
             </tr>
@@ -794,7 +802,7 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="24" align="center">
+            <td colspan="25" align="center">
                 <span>第</span>
                 <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
@@ -850,7 +858,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="24" align="center">
+            <td colspan="25" align="center">
                 查无数据
             </td>
         </tr>

@@ -3,10 +3,12 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFinanceServ;
 import com.cosun.cosunp.service.IPersonServ;
+import com.cosun.cosunp.tool.ExcelUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,9 @@ public class FinanceController {
     @Autowired
     IFinanceServ financeServ;
 
+    @Value("${spring.servlet.multipart.location}")
+    private String finalDirPath;
+
     @Autowired
     IPersonServ personServ;
 
@@ -47,6 +53,21 @@ public class FinanceController {
             EmpHours empHours = new EmpHours();
             view.addObject("empHours", empHours);
             view.addObject("financeImportData", new FinanceImportData());
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/toCompute")
+    public ModelAndView toCompute(HttpSession session) throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("salarycompute");
+            view.addObject("financeImportData",new FinanceImportData());
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -76,6 +97,58 @@ public class FinanceController {
         view.addObject("deptList", deptList);
         view.addObject("userInfo", userInfo);
         return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/computeSalary", method = RequestMethod.POST)
+    public ModelAndView computeSalary( FinanceImportData financeImportData,HttpServletResponse resp) throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("salarycompute");
+            List<SalaryDataOutPut> salaryDataOutPuts = financeServ.computeSalaryData(financeImportData.getYearMonth());
+            String outpathname = "计算完成，请下载查看!";
+            if(salaryDataOutPuts.size()>0) {
+                if (salaryDataOutPuts.get(0).getErrorMessage() == null || salaryDataOutPuts.get(0).getErrorMessage().trim().length() <= 0) {
+                    resp.setHeader("content-type", "application/octet-stream");
+                    resp.setContentType("application/octet-stream");
+                    List<String> pathName = ExcelUtil.writeExcelSalary(salaryDataOutPuts, financeImportData.getYearMonth(), finalDirPath);
+                    resp.setHeader("Content-Disposition", "attachment;filename=" + new String(pathName.get(0).getBytes(), "iso-8859-1"));
+                    byte[] buff = new byte[1024];
+                    BufferedInputStream bufferedInputStream = null;
+                    OutputStream outputStream = null;
+                    try {
+                        outputStream = resp.getOutputStream();
+                        File fi = new File(pathName.get(1));
+                        FileInputStream fis = new FileInputStream(fi);
+                        bufferedInputStream = new BufferedInputStream(fis);
+                        int num = bufferedInputStream.read(buff);
+                        while (num != -1) {
+                            outputStream.write(buff, 0, num);
+                            outputStream.flush();
+                            num = bufferedInputStream.read(buff);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e.getMessage());
+                    } finally {
+                        if (bufferedInputStream != null) {
+                            bufferedInputStream.close();
+                            outputStream.close();
+                        }
+                    }
+                }
+                view.addObject("flag", outpathname);
+                view.addObject("financeImportData",financeImportData );
+                view.addObject("errorMessage", salaryDataOutPuts.get(0).getErrorMessage());
+                return view;
+            }
+            view.addObject("flag", outpathname);
+            view.addObject("financeImportData",financeImportData );
+            view.addObject("errorMessage", "空文件");
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @ResponseBody
@@ -781,9 +854,13 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
         try {
             List<Salary> salaryList = financeServ.translateExcelToBean(file1);
             financeServ.saveAllSalaryData(salaryList);
+            view.addObject("financeImportData", new FinanceImportData());
+            view.addObject("empHours", new EmpHours());
             view.addObject("flag", 1);
             return view;
         } catch (NumberFormatException e) {
+            view.addObject("financeImportData", new FinanceImportData());
+            view.addObject("empHours", new EmpHours());
             view.addObject("flag", 2);
             view.addObject("empnoerror", e.getMessage());
             logger.error(e.getMessage(), e);
@@ -801,10 +878,18 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
             List<EmpHours> empHoursList = financeServ.translateExcelToBeanEmpHours(file2, empHours.getYearMonthStr());
             financeServ.saveAllEmpHours(empHoursList, empHours.getYearMonthStr());
             view.addObject("flag2", 1);
+            view.addObject("flag3", 0);
+            view.addObject("empnoerror3", "");
+            view.addObject("financeImportData", new FinanceImportData());
+            view.addObject("empHours", new EmpHours());
             return view;
         } catch (NumberFormatException e) {
             view.addObject("flag2", 2);
             view.addObject("empnoerror2", e.getMessage());
+            view.addObject("empnoerror3", "");
+            view.addObject("financeImportData", new FinanceImportData());
+            view.addObject("flag3", 0);
+            view.addObject("empnoerror3", "");
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             return view;
@@ -824,6 +909,8 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
             view.addObject("financeImportData", new FinanceImportData());
             return view;
         } catch (NumberFormatException e) {
+            view.addObject("empHours", new EmpHours());
+            view.addObject("financeImportData", new FinanceImportData());
             view.addObject("flag3", 2);
             view.addObject("empnoerror3", e.getMessage());
             logger.error(e.getMessage(), e);

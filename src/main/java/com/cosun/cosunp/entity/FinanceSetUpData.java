@@ -18,8 +18,16 @@ public class FinanceSetUpData implements Serializable {
     private Double weekEndWorkMutiple;//周末加班工时倍数
     private Double legalWorkMutiple;//法定节假时加班工时部数
     private Double meritScoreSample;//绩效满分标准
+    private Double basicWorkHours;//基本工时
 
 
+    public Double getBasicWorkHours() {
+        return basicWorkHours;
+    }
+
+    public void setBasicWorkHours(Double basicWorkHours) {
+        this.basicWorkHours = basicWorkHours;
+    }
 
     public Integer getId() {
         return id;

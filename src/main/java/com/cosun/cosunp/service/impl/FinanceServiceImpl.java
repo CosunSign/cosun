@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.SQLTransactionRollbackException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,11 +83,12 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer unEmployeeInsurTitleIndex;
     private String accumulaFundTitle = "扣代付公积金";//公积金
     Integer accumulaFundTitleIndex;
+    private String sixDeductionsTitle = "六个代扣项";//6个代扣项
+    Integer sixDeductionsTitleIndex;
     private String errorInWorkTitle = "工作失误";//工作失误
     Integer errorInWorkTitleIndex;
     private String meritScoreTitle = "绩效分";//绩效分
     Integer meritScoreTitleIndex;
-
 
 
     private String empNoTitle3 = "工号";//工号
@@ -111,6 +113,7 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer workYearsSalaryTitleIndex;
     private String sellCommiTitle = "业务提成";//业务提成
     Integer sellCommiTitleIndex;
+
 
     public List<Salary> translateExcelToBean(MultipartFile file) throws Exception {
         List<Salary> salaryList = new ArrayList<Salary>();
@@ -166,26 +169,27 @@ public class FinanceServiceImpl implements IFinanceServ {
                 }
             }
             return salaryList;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new NumberFormatException(empNo);
         }
     }
 
     public void saveAllSalaryData(List<Salary> salaryList) throws Exception {
         financeMapper.deleteAllSalaryData();
-        for(Salary sa : salaryList) {
+        for (Salary sa : salaryList) {
+            sa.setState(0);
             financeMapper.saveSalary(sa);
         }
 
     }
 
-   public List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception {
+    public List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception {
         return financeMapper.queryFinanceImportDataByCondition(employee);
-   }
+    }
 
-   public int queryFinanceImportDataByConditionCount(Employee employee) throws Exception {
+    public int queryFinanceImportDataByConditionCount(Employee employee) throws Exception {
         return financeMapper.queryFinanceImportDataByConditionCount(employee);
-   }
+    }
 
     public int findAllFinanceImportDataCount() throws Exception {
         return financeMapper.findAllFinanceImportDataCount();
@@ -193,9 +197,9 @@ public class FinanceServiceImpl implements IFinanceServ {
 
     public void addSalaryByBean(Employee employee) throws Exception {
         Salary sa = financeMapper.getSalaryByEmpno(employee.getEmpNo());
-        if(sa!=null) {
+        if (sa != null) {
             financeMapper.updateSalaryByBean(employee);
-        }else{
+        } else {
             financeMapper.addSalaryByBean(employee);
 
         }
@@ -206,7 +210,7 @@ public class FinanceServiceImpl implements IFinanceServ {
     }
 
 
-    public List<EmpHours> translateExcelToBeanEmpHours(MultipartFile file1,String yearMonth) throws Exception {
+    public List<EmpHours> translateExcelToBeanEmpHours(MultipartFile file1, String yearMonth) throws Exception {
         List<EmpHours> salaryList = new ArrayList<EmpHours>();
         String empNo = null;
         try {
@@ -228,44 +232,46 @@ public class FinanceServiceImpl implements IFinanceServ {
                     cella = cell[ab];
                     if (nameTitle.equals(cella.getContents().trim())) {
                         nameTitleIndex = ab;
-                    }else if(empNoTitle2.equals(cella.getContents().trim())) {
+                    } else if (empNoTitle2.equals(cella.getContents().trim())) {
                         empNoTitle2Index = ab;
-                    }else if(deptNameTitle.equals(cella.getContents().trim())) {
+                    } else if (deptNameTitle.equals(cella.getContents().trim())) {
                         deptNameTitleIndex = ab;
-                    }else if(zhengbanHoursTitle.equals(cella.getContents().trim())) {
+                    } else if (zhengbanHoursTitle.equals(cella.getContents().trim())) {
                         zhengbanHoursTitleIndex = ab;
-                    }else if(usualExtHoursTitle.equals(cella.getContents().trim())) {
+                    } else if (usualExtHoursTitle.equals(cella.getContents().trim())) {
                         usualExtHoursTitleIndex = ab;
-                    }else if(workendHoursTitle.equals(cella.getContents().trim())) {
+                    } else if (workendHoursTitle.equals(cella.getContents().trim())) {
                         workendHoursTitleIndex = ab;
-                    }else if(chinaPaidLeaveTitle.equals(cella.getContents().trim())) {
+                    } else if (chinaPaidLeaveTitle.equals(cella.getContents().trim())) {
                         chinaPaidLeaveTitleIndex = ab;
-                    }else if(otherPaidLeaveTitle.equals(cella.getContents().trim())) {
+                    } else if (otherPaidLeaveTitle.equals(cella.getContents().trim())) {
                         otherPaidLeaveTitleIndex = ab;
-                    }else if(leaveOfAbsenseTitle.equals(cella.getContents().trim())) {
+                    } else if (leaveOfAbsenseTitle.equals(cella.getContents().trim())) {
                         leaveOfAbsenseTitleIndex = ab;
-                    }else if(sickLeaveTitle.equals(cella.getContents().trim())) {
+                    } else if (sickLeaveTitle.equals(cella.getContents().trim())) {
                         sickLeaveTitleIndex = ab;
-                    }else if(otherAlloTitle.equals(cella.getContents().trim())) {
+                    } else if (otherAlloTitle.equals(cella.getContents().trim())) {
                         otherAlloTitleIndex = ab;
-                    }else if(fullWorkRewordTitle.equals(cella.getContents().trim())) {
+                    } else if (fullWorkRewordTitle.equals(cella.getContents().trim())) {
                         fullWorkRewordTitleIndex = ab;
-                    }else if(foodExpenseTitle.equals(cella.getContents().trim())) {
+                    } else if (foodExpenseTitle.equals(cella.getContents().trim())) {
                         foodExpenseTitleIndex = ab;
-                    }else if(roomOrWaterEleExpenseTitle.equals(cella.getContents().trim())) {
+                    } else if (roomOrWaterEleExpenseTitle.equals(cella.getContents().trim())) {
                         roomOrWaterEleExpenseTitleIndex = ab;
-                    }else if(oldAgeINsuranTitle.equals(cella.getContents().trim())) {
+                    } else if (oldAgeINsuranTitle.equals(cella.getContents().trim())) {
                         oldAgeINsuranTitleIndex = ab;
-                    }else if(medicalInsuranTitle.equals(cella.getContents().trim())) {
+                    } else if (medicalInsuranTitle.equals(cella.getContents().trim())) {
                         medicalInsuranTitleIndex = ab;
-                    }else if(unEmployeeInsurTitle.equals(cella.getContents().trim())) {
+                    } else if (unEmployeeInsurTitle.equals(cella.getContents().trim())) {
                         unEmployeeInsurTitleIndex = ab;
-                    }else if(accumulaFundTitle.equals(cella.getContents().trim())) {
+                    } else if (accumulaFundTitle.equals(cella.getContents().trim())) {
                         accumulaFundTitleIndex = ab;
-                    }else if(errorInWorkTitle.equals(cella.getContents().trim())) {
+                    } else if (errorInWorkTitle.equals(cella.getContents().trim())) {
                         errorInWorkTitleIndex = ab;
-                    }else if(meritScoreTitle.equals(cella.getContents().trim())) {
+                    } else if (meritScoreTitle.equals(cella.getContents().trim())) {
                         meritScoreTitleIndex = ab;
+                    } else if (sixDeductionsTitle.equals(cella.getContents().trim())) {
+                        sixDeductionsTitleIndex = ab;
                     }
                 }
             }
@@ -296,20 +302,21 @@ public class FinanceServiceImpl implements IFinanceServ {
                         sa.setAccumulaFund(Double.valueOf(cell[accumulaFundTitleIndex].getContents().trim()));
                         sa.setErrorInWork(Double.valueOf(cell[errorInWorkTitleIndex].getContents().trim()));
                         sa.setMeritScore(Double.valueOf(cell[meritScoreTitleIndex].getContents().trim()));
+                        sa.setSixDeductions(Double.valueOf(cell[sixDeductionsTitleIndex].getContents().trim()));
                         sa.setYearMonthStr(yearMonth);
                         salaryList.add(sa);
                     }
                 }
             }
             return salaryList;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new NumberFormatException(empNo);
         }
     }
 
-    public void saveAllEmpHours(List<EmpHours> empHoursList,String yearMonth) throws Exception {
+    public void saveAllEmpHours(List<EmpHours> empHoursList, String yearMonth) throws Exception {
         financeMapper.deleteAllEmpHoursByYearMonthData(yearMonth);
-        for(EmpHours em : empHoursList) {
+        for (EmpHours em : empHoursList) {
             financeMapper.saveEmpHours(em);
         }
     }
@@ -319,7 +326,7 @@ public class FinanceServiceImpl implements IFinanceServ {
     }
 
     public int findAllEmpHoursHours() throws Exception {
-       return financeMapper.findAllEmpHoursHours();
+        return financeMapper.findAllEmpHoursHours();
     }
 
     public List<EmpHours> queryEmployeeHoursByCondition(Employee employee) throws Exception {
@@ -331,7 +338,7 @@ public class FinanceServiceImpl implements IFinanceServ {
     }
 
     public void deleteFinanceImportDataById(Integer id) throws Exception {
-         financeMapper.deleteFinanceImportDataById(id);
+        financeMapper.deleteFinanceImportDataById(id);
     }
 
     public int checkFinanceImportNoandYearMonthIsExsit(EmpHours empHours) throws Exception {
@@ -349,7 +356,6 @@ public class FinanceServiceImpl implements IFinanceServ {
     public FinanceImportData getFinanceImportDataById(Integer id) throws Exception {
         return financeMapper.getFinanceImportDataById(id);
     }
-
 
 
     public List<FinanceImportData> findAllFinanceImportData(Employee employee) throws Exception {
@@ -370,7 +376,7 @@ public class FinanceServiceImpl implements IFinanceServ {
     }
 
     public EmpHours getEmpHoursByEmpNo(String empNo) throws Exception {
-        return  financeMapper.getEmpHoursByEmpNo(empNo);
+        return financeMapper.getEmpHoursByEmpNo(empNo);
     }
 
     public void updateEmpHoursByBean(EmpHours empHours) throws Exception {
@@ -411,25 +417,25 @@ public class FinanceServiceImpl implements IFinanceServ {
                     cella = cell[ab];
                     if (empNoTitle3.equals(cella.getContents().trim())) {
                         empNoTitle3Index = ab;
-                    }else if(nameTitle3.equals(cella.getContents().trim())) {
+                    } else if (nameTitle3.equals(cella.getContents().trim())) {
                         nameTitle3Index = ab;
-                    }else if(deptNameTitle3.equals(cella.getContents().trim())) {
+                    } else if (deptNameTitle3.equals(cella.getContents().trim())) {
                         deptNameTitle3Index = ab;
-                    }else if(legalHolidWorkHoursTitle.equals(cella.getContents().trim())) {
+                    } else if (legalHolidWorkHoursTitle.equals(cella.getContents().trim())) {
                         legalHolidWorkHoursTitleIndex = ab;
-                    }else if(sellActualTitle.equals(cella.getContents().trim())) {
+                    } else if (sellActualTitle.equals(cella.getContents().trim())) {
                         sellActualTitleIndex = ab;
-                    }else if(sellThresholdTitle.equals(cella.getContents().trim())) {
+                    } else if (sellThresholdTitle.equals(cella.getContents().trim())) {
                         sellThresholdTitleIndex = ab;
-                    }else if(sellLevelSalaryTitle.equals(cella.getContents().trim())) {
+                    } else if (sellLevelSalaryTitle.equals(cella.getContents().trim())) {
                         sellLevelSalaryTitleIndex = ab;
-                    }else if(houseSubsidyTitle.equals(cella.getContents().trim())) {
+                    } else if (houseSubsidyTitle.equals(cella.getContents().trim())) {
                         houseSubsidyTitleIndex = ab;
-                    }else if(hotTempOrOtherAllowTitle.equals(cella.getContents().trim())) {
+                    } else if (hotTempOrOtherAllowTitle.equals(cella.getContents().trim())) {
                         hotTempOrOtherAllowTitleIndex = ab;
-                    }else if(workYearsSalaryTitle.equals(cella.getContents().trim())) {
+                    } else if (workYearsSalaryTitle.equals(cella.getContents().trim())) {
                         workYearsSalaryTitleIndex = ab;
-                    }else if(sellCommiTitle.equals(cella.getContents().trim())) {
+                    } else if (sellCommiTitle.equals(cella.getContents().trim())) {
                         sellCommiTitleIndex = ab;
                     }
                 }
@@ -458,36 +464,104 @@ public class FinanceServiceImpl implements IFinanceServ {
                 }
             }
             return financeImportDataList;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new NumberFormatException(empNo);
         }
     }
 
-    public void saveAllFinanceImportData(List<FinanceImportData> financeImportDataList,String yearMonth) throws Exception {
+    public void saveAllFinanceImportData(List<FinanceImportData> financeImportDataList, String yearMonth) throws Exception {
         financeMapper.deleteAllsaveAllFinanceImportDataByYearMonthData(yearMonth);
-        for(FinanceImportData fid : financeImportDataList) {
+        for (FinanceImportData fid : financeImportDataList) {
             fid.setYearMonth(yearMonth);
             financeMapper.saveFinanceImportData(fid);
         }
     }
 
 
-
-
     public void saveFinanceSetUp(FinanceSetUpData financeSetUpData) throws Exception {
         int count = financeMapper.findFinanceSetUpDataCount();
-        if(count==0) {
+        if (count == 0) {
             financeMapper.saveFinanceSetUp(financeSetUpData);
-        }else {
+        } else {
             financeMapper.updateFinanceSetUp(financeSetUpData);
 
         }
     }
 
 
+    public List<SalaryDataOutPut> computeSalaryData(String yearMonth) throws Exception {
+        List<SalaryDataOutPut> salaryDataOutPutList = new ArrayList<SalaryDataOutPut>();
+        SalaryDataOutPut sdo;
+        List<EmpHours> ehList = financeMapper.getAllEmpHoursByYearMonth(yearMonth);
+        FinanceSetUpData fsu = financeMapper.findFinanceSetUpData();
+        Salary salary;
+        Employee ee;
+        FinanceImportData fid;
+        Double extWorkFee;
+        Double after = 0.0;
+        for (EmpHours eh : ehList) {
+            salary = financeMapper.getSalaryByEmpno(eh.getEmpNo());
+            ee = financeMapper.getEmployeeByEmpno(eh.getEmpNo());
+            fid = financeMapper.getFinanceImportDataByEmpNoandYearMonth(eh.getEmpNo(), yearMonth);
 
+            if (salary != null && fid != null) {
+                sdo = new SalaryDataOutPut();
+                sdo.setDeptName(eh.getDeptName());
+                sdo.setPositionName(ee.getPositionName());
+                sdo.setPositionAttrName(ee.getPositionAttrIdStr());
+                sdo.setName(ee.getName());
+                sdo.setInCompDate(ee.getIncompdateStr());
+                sdo.setBasickWorkHours(fsu.getBasicWorkHours());
+                sdo.setNorAttenHours(eh.getZhengbanHours());
+                sdo.setNorAttendSalary(fsu.getNorAttendSalarySample() / fsu.getBasicWorkHours() * eh.getZhengbanHours());
+                sdo.setChinaPailLeavHours(eh.getChinaPaidLeave());
+                sdo.setChinaPaidLeavSalary(fsu.getNorAttendSalarySample() / fsu.getNorAttendHoursSample() * eh.getChinaPaidLeave());
+                sdo.setOtherPaidLeavHours(eh.getOtherPaidLeave());
+                sdo.setOtherPaidLeavSalary(fsu.getNorAttendSalarySample() / fsu.getNorAttendHoursSample() * eh.getOtherPaidLeave());
+                sdo.setBasicSalarySubTotal(sdo.getChinaPaidLeavSalary() + sdo.getNorAttendSalary() + sdo.getOtherPaidLeavSalary());
 
+                sdo.setUsualExtraHours(eh.getUsualExtHours());
+                sdo.setUsralExtraSalary(fsu.getNorAttendSalarySample() / fsu.getNorAttendHoursSample() * sdo.getUsualExtraHours() * fsu.getNorExtraMutiple());
+                sdo.setWeekendWorkHours(eh.getWorkendHours());
+                sdo.setWeekendWorkSalary(fsu.getNorAttendSalarySample() / fsu.getNorAttendHoursSample() * sdo.getWeekendWorkHours() * fsu.getWeekEndWorkMutiple());
+                sdo.setChinaHoliWorkHours(fid.getLegalHolidWorkHours());
+                sdo.setChinaHoliWorkSalary(fsu.getNorAttendSalarySample() / fsu.getNorAttendHoursSample() * sdo.getChinaHoliWorkHours() * fsu.getLegalWorkMutiple());
+                sdo.setCompressSalary(salary.getCompreSalary());
+                sdo.setJobSalary(salary.getJobSalary());
+                sdo.setPositionSalary(salary.getPosSalary());
+                sdo.setMeritSalary(salary.getMeritSalary());
+                sdo.setMeritScore(eh.getMeritScore());
+                sdo.setSubbonusTotal(sdo.getCompressSalary() + sdo.getJobSalary() + sdo.getPositionSalary() + sdo.getMeritSalary() / fsu.getMeritScoreSample() * sdo.getMeritScore());
+                extWorkFee = sdo.getUsralExtraSalary() + sdo.getWeekendWorkSalary() + sdo.getChinaHoliWorkSalary();
+                sdo.setSalorLevelSalary(fid.getSellLevelSalary());
+                after = fid.getSellActual() / fid.getSellThreshold();
+                sdo.setSalrActuGetSalary((after < 1 ? after : 1) * sdo.getSalorLevelSalary());
+                sdo.setHouseOrTELSubsidy(fid.getHouseSubsidy());
+                sdo.setHotTempOrOtherAllow(fid.getHotTempOrOtherAllow());
+                sdo.setFullWorkReword(eh.getFullWorkReword());
+                sdo.setWorkYearsSalary(fid.getWorkYearsSalary());
+                sdo.setSellCommi(fid.getSellCommi());
+                sdo.setCompreSalary(sdo.getBasicSalarySubTotal() + sdo.getSubbonusTotal()+sdo.getSalrActuGetSalary() +
+                        sdo.getHouseOrTELSubsidy() + sdo.getHotTempOrOtherAllow() + sdo.getFullWorkReword() + sdo.getWorkYearsSalary()+extWorkFee);
+                sdo.setBuckFoodCost(eh.getFoodExpense());
+                sdo.setBuckWaterEleCost(eh.getRoomOrWaterEleExpense());
+                sdo.setBuckOldAgeInsurCost(eh.getOldAgeINsuran());
+                sdo.setBuckMedicInsurCost(eh.getMedicalInsuran());
+                sdo.setBuckUnEmployCost(eh.getUnEmployeeInsur());
+                sdo.setBuckAccumCost(eh.getAccumulaFund());
+                sdo.setOtherBuckCost(eh.getErrorInWork());
+                sdo.setSixDeducCost(eh.getSixDeductions());
+                sdo.setPersonIncomTaxCost(0.0);
+                sdo.setNetPaySalary(sdo.getCompreSalary() - sdo.getBuckFoodCost() - sdo.getBuckWaterEleCost()
+                        - sdo.getBuckOldAgeInsurCost() - sdo.getBuckMedicInsurCost() - sdo.getBuckUnEmployCost()
+                        - sdo.getBuckAccumCost() - sdo.getOtherBuckCost() - sdo.getPersonIncomTaxCost());
 
+                salaryDataOutPutList.add(sdo);
+            }
+        }
+
+        return salaryDataOutPutList;
+    }
 
 
 }

@@ -32,6 +32,7 @@ public class EmpHours implements Serializable {
     private Double unEmployeeInsur;//失业险
     private Double accumulaFund;//公积金
     private Double errorInWork;//工作失误
+    private Double sixDeductions;//6个代扣项
     private Double meritScore;//绩效分
     private String yearMonth;
     private String yearMonthStr;
@@ -45,6 +46,14 @@ public class EmpHours implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public Double getSixDeductions() {
+        return sixDeductions;
+    }
+
+    public void setSixDeductions(Double sixDeductions) {
+        this.sixDeductions = sixDeductions;
+    }
 
     public Integer getType() {
         return type;

@@ -63,6 +63,7 @@
         formData.append("weekEndWorkMutiple", $("#weekEndWorkMutiple").val());
         formData.append("legalWorkMutiple", $("#legalWorkMutiple").val());
         formData.append("meritScoreSample", $("#meritScoreSample").val());
+        formData.append("basicWorkHours", $("#basicWorkHours").val());
         $.ajax({
             data: formData,
             type: "POST",
@@ -108,6 +109,15 @@
             </div>
             <div class="panel-body form-inline">
                 <table class="table table-bordered table-hover table-striped" style="text-align: right">
+
+                    <tr>
+                        <td style="width: 200px;"><label>基本工时设置</label></td>
+                        <td style="text-align: left">
+                            <input type="text" onblur="validateDouble('basicWorkHours')" id="basicWorkHours"
+                                   class="form-control" th:field="*{basicWorkHours}"
+                            >
+                        </td>
+                    </tr>
                     <tr>
                         <td style="width: 200px;"><label>月正常出勤工时标准</label></td>
                         <td style="text-align: left">

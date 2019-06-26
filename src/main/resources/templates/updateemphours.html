@@ -55,6 +55,7 @@
         var accumulaFund = $("#accumulaFund").val();
         var errorInWork = $("#errorInWork").val();
         var meritScore = $("#meritScore").val();
+        var sixDeductions = $("#sixDeductions").val();
         var usualExtHours = $("#usualExtHours").val();
         var chinaPaidLeave = $("#chinaPaidLeave").val();
         var otherPaidLeave = $("#otherPaidLeave").val();
@@ -178,6 +179,13 @@
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;病假不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }else if (sixDeductions.trim().length == 0) {
+            isflag = false;
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;六个代扣项不能为空!";
             errormessagediv.style.color = "red";
             return;
         }
@@ -743,6 +751,14 @@
                                 <td colspan="1">
                                     <input type="text" class="form-control" onblur="validateDouble('meritScore')" id="meritScore" th:field="*{meritScore}">
                                 </td>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;六个代扣项：</label></td>
+                                <td colspan="1">
+                                    <input type="text" class="form-control" onblur="validateDouble('sixDeductions')" id="sixDeductions"
+                                           th:field="*{sixDeductions}">
+                                </td>
+                            </tr>
+                            <tr>
+
                                 <td><label><font color="#FF0000" size="2">*</font>&nbsp;备注：</label></td>
                                 <td colspan="1">
                                     <input type="text" class="form-control" id="remark" th:field="*{remark}">
