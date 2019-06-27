@@ -27,6 +27,9 @@ public interface FinanceMapper {
     @Delete("delete from emphours where yearMonth = #{yearMonth} ")
     void deleteAllEmpHoursByYearMonthData(String yearMonth);
 
+    @Delete("delete from salarydataoutput where yearMonth = #{yearMonth} ")
+    void deleteSalaryDataOutPutByYearMonth(String yearMonth);
+
     @Delete("delete from financeimportdata where id = #{id} ")
     void deleteFinanceImportDataById(Integer id);
 
@@ -47,7 +50,7 @@ public interface FinanceMapper {
             "\thotTempOrOtherAllow,\n" +
             "\tworkYearsSalary,\n" +
             "\tsellCommi,\n" +
-            "\tyearMonth,remark) " +
+            "\tyearMonth,speciAddDeductCost,remark) " +
             "values (" +
             "#{empNo},\n" +
             "\t#{name},\n" +
@@ -60,7 +63,7 @@ public interface FinanceMapper {
             "\t#{hotTempOrOtherAllow},\n" +
             "\t#{workYearsSalary},\n" +
             "\t#{sellCommi},\n" +
-            "\t#{yearMonth},#{remark}" +
+            "\t#{yearMonth},#{speciAddDeductCost},#{remark}" +
             ")")
     void saveFinanceImportData(FinanceImportData financeImportData);
 
@@ -71,7 +74,7 @@ public interface FinanceMapper {
             "\t houseSubsidy = #{houseSubsidy},\n" +
             "\t hotTempOrOtherAllow = #{hotTempOrOtherAllow},\n" +
             "\t workYearsSalary = #{workYearsSalary},\n" +
-            "\t sellCommi = #{sellCommi},remark = #{remark} \n" +
+            "\t sellCommi = #{sellCommi},speciAddDeductCost = #{speciAddDeductCost},remark = #{remark} \n" +
             "\t where id = #{id}")
     void updateFinanceImportDataByBean(FinanceImportData financeImportData);
 
@@ -163,6 +166,159 @@ public interface FinanceMapper {
             "#{legalWorkMutiple}," +
             " #{meritScoreSample},#{basicWorkHours})")
     void saveFinanceSetUp(FinanceSetUpData financeSetUpData);
+
+    @Insert("insert into salarydataoutput " +
+            " (\tdeptName,\n" +
+            "\tpositionName,\n" +
+            "\tpositionAttrName,\n" +
+            "\tempNo,\n" +
+            "\t`name`,\n" +
+            "\tinCompDate,\n" +
+            "\tbasickWorkHours,\n" +
+            "\tnorAttenHours,\n" +
+            "\tnorAttendSalary,\n" +
+            "\tchinaPailLeavHours,\n" +
+            "\tchinaPaidLeavSalary,\n" +
+            "\totherPaidLeavHours,\n" +
+            "\totherPaidLeavSalary,\n" +
+            "\tbasicSalarySubTotal,\n" +
+            "\tusualExtraHours,\n" +
+            "\tusralExtraSalary,\n" +
+            "\tweekendWorkHours,\n" +
+            "\tweekendWorkSalary,\n" +
+            "\tchinaHoliWorkHours,\n" +
+            "\tchinaHoliWorkSalary,\n" +
+            "\tcompressSalary,\n" +
+            "\tjobSalary,\n" +
+            "\tpositionSalary,\n" +
+            "\tmeritSalary,\n" +
+            "\tmeritScore,\n" +
+            "\tsubbonusTotal,\n" +
+            "\tsalorLevelSalary,\n" +
+            "\tsalrActuGetSalary,\n" +
+            "\thouseOrTELSubsidy,\n" +
+            "\thotTempOrOtherAllow,\n" +
+            "\tfullWorkReword,\n" +
+            "\tworkYearsSalary,\n" +
+            "\tsellCommi,\n" +
+            "\tcompreSalary,\n" +
+            "\tbuckFoodCost,\n" +
+            "\tbuckWaterEleCost,\n" +
+            "\tbuckOldAgeInsurCost,\n" +
+            "\tbuckMedicInsurCost,\n" +
+            "\tbuckUnEmployCost,\n" +
+            "\tbuckAccumCost,\n" +
+            "\totherBuckCost,\n" +
+            "\tsixDeducCost,\n" +
+            "\tpersonIncomTaxCost,\n" +
+            "\tnetPaySalary,\n" +
+            "\tyearMonth )" +
+            " values (\t" +
+            " #{deptName},\n" +
+            "\t#{positionName},\n" +
+            "\t#{positionAttrName},\n" +
+            "\t#{empNo},\n" +
+            "\t#{name},\n" +
+            "\t#{inCompDate},\n" +
+            "\t#{basickWorkHours},\n" +
+            "\t#{norAttenHours},\n" +
+            "\t#{norAttendSalary},\n" +
+            "\t#{chinaPailLeavHours},\n" +
+            "\t#{chinaPaidLeavSalary},\n" +
+            "\t#{otherPaidLeavHours},\n" +
+            "\t#{otherPaidLeavSalary},\n" +
+            "\t#{basicSalarySubTotal},\n" +
+            "\t#{usualExtraHours},\n" +
+            "\t#{usralExtraSalary},\n" +
+            "\t#{weekendWorkHours},\n" +
+            "\t#{weekendWorkSalary},\n" +
+            "\t#{chinaHoliWorkHours},\n" +
+            "\t#{chinaHoliWorkSalary},\n" +
+            "\t#{compressSalary},\n" +
+            "\t#{jobSalary},\n" +
+            "\t#{positionSalary},\n" +
+            "\t#{meritSalary},\n" +
+            "\t#{meritScore},\n" +
+            "\t#{subbonusTotal},\n" +
+            "\t#{salorLevelSalary},\n" +
+            "\t#{salrActuGetSalary},\n" +
+            "\t#{houseOrTELSubsidy},\n" +
+            "\t#{hotTempOrOtherAllow},\n" +
+            "\t#{fullWorkReword},\n" +
+            "\t#{workYearsSalary},\n" +
+            "\t#{sellCommi},\n" +
+            "\t#{compreSalary},\n" +
+            "\t#{buckFoodCost},\n" +
+            "\t#{buckWaterEleCost},\n" +
+            "\t#{buckOldAgeInsurCost},\n" +
+            "\t#{buckMedicInsurCost},\n" +
+            "\t#{buckUnEmployCost},\n" +
+            "\t#{buckAccumCost},\n" +
+            "\t#{otherBuckCost},\n" +
+            "\t#{sixDeducCost},\n" +
+            "\t#{personIncomTaxCost},\n" +
+            "\t#{netPaySalary},\n" +
+            "\t#{yearMonth} )")
+    void saveSalaryDataOutPut(SalaryDataOutPut salaryDataOutPut);
+
+
+    @Select("SELECT \n" +
+            "\tdeptName,\n" +
+            "\tpositionName,\n" +
+            "\tpositionAttrName,\n" +
+            "\tempNo,\n" +
+            "\t`name`,\n" +
+            "\tinCompDate,\n" +
+            "\tbasickWorkHours,\n" +
+            "\tnorAttenHours,\n" +
+            "\tnorAttendSalary,\n" +
+            "\tchinaPailLeavHours,\n" +
+            "\tchinaPaidLeavSalary,\n" +
+            "\totherPaidLeavHours,\n" +
+            "\totherPaidLeavSalary,\n" +
+            "\tbasicSalarySubTotal,\n" +
+            "\tusualExtraHours,\n" +
+            "\tusralExtraSalary,\n" +
+            "\tweekendWorkHours,\n" +
+            "\tweekendWorkSalary,\n" +
+            "\tchinaHoliWorkHours,\n" +
+            "\tchinaHoliWorkSalary,\n" +
+            "\tcompressSalary,\n" +
+            "\tjobSalary,\n" +
+            "\tpositionSalary,\n" +
+            "\tmeritSalary,\n" +
+            "\tmeritScore,\n" +
+            "\tsubbonusTotal,\n" +
+            "\tsalorLevelSalary,\n" +
+            "\tsalrActuGetSalary,\n" +
+            "\thouseOrTELSubsidy,\n" +
+            "\thotTempOrOtherAllow,\n" +
+            "\tfullWorkReword,\n" +
+            "\tworkYearsSalary,\n" +
+            "\tsellCommi,\n" +
+            "\tcompreSalary,\n" +
+            "\tbuckFoodCost,\n" +
+            "\tbuckWaterEleCost,\n" +
+            "\tbuckOldAgeInsurCost,\n" +
+            "\tbuckMedicInsurCost,\n" +
+            "\tbuckUnEmployCost,\n" +
+            "\tbuckAccumCost,\n" +
+            "\totherBuckCost,\n" +
+            "\tsixDeducCost,\n" +
+            "\tpersonIncomTaxCost,\n" +
+            "\tnetPaySalary,\n" +
+            "\tyearMonth \n" +
+            "FROM\n" +
+            "\tsalarydataoutput " +
+            "\t\tORDER BY\n" +
+            "\t\t\t empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<SalaryDataOutPut> findAllSalaryDataOutPut(Employee employee);
+
+    @Select("SELECT count(*) \n" +
+            "FROM\n" +
+            "\tsalarydataoutput")
+    int findAllSalaryDataOutPutCount();
+
 
     @Update("update  financesetupdata " +
             " set norAttendHoursSample = #{norAttendHoursSample}," +
@@ -275,7 +431,7 @@ public interface FinanceMapper {
             "\thotTempOrOtherAllow,\n" +
             "\tworkYearsSalary,\n" +
             "\tsellCommi,\n" +
-            "\tyearMonth,\n" +
+            "\tyearMonth,speciAddDeductCost, \n" +
             "\tremark\n" +
             "FROM\n" +
             "\tfinanceimportdata " +
@@ -296,7 +452,7 @@ public interface FinanceMapper {
             "\thotTempOrOtherAllow,\n" +
             "\tworkYearsSalary,\n" +
             "\tsellCommi,\n" +
-            "\tyearMonth,\n" +
+            "\tyearMonth,speciAddDeductCost,\n" +
             "\tremark\n" +
             "FROM\n" +
             "\tfinanceimportdata " +
@@ -316,7 +472,7 @@ public interface FinanceMapper {
             "\thotTempOrOtherAllow,\n" +
             "\tworkYearsSalary,\n" +
             "\tsellCommi,\n" +
-            "\tyearMonth,\n" +
+            "\tyearMonth,speciAddDeductCost,\n" +
             "\tremark\n" +
             "FROM\n" +
             "\tfinanceimportdata " +
@@ -399,6 +555,12 @@ public interface FinanceMapper {
     @SelectProvider(type = FinanceMapper.FinanceDaoProvider.class, method = "queryEmployeeHoursByCondition")
     List<EmpHours> queryEmployeeHoursByCondition(Employee employee);
 
+    @SelectProvider(type = FinanceMapper.FinanceDaoProvider.class, method = "querySalaryDataOutPutByCondition")
+    List<SalaryDataOutPut> querySalaryDataOutPutByCondition(Employee employee);
+
+    @SelectProvider(type = FinanceMapper.FinanceDaoProvider.class, method = "querySalaryDataOutPutByConditionCount")
+    int querySalaryDataOutPutByConditionCount(Employee employee);
+
     @SelectProvider(type = FinanceMapper.FinanceDaoProvider.class, method = "queryEmployeeHoursByConditionCount")
     int queryEmployeeHoursByConditionCount(Employee employee);
 
@@ -460,7 +622,7 @@ public interface FinanceMapper {
                     "\tf.hotTempOrOtherAllow,\n" +
                     "\tf.workYearsSalary,\n" +
                     "\tf.sellCommi,\n" +
-                    "\tf.yearMonth,\n" +
+                    "\tf.yearMonth,f.speciAddDeductCost,\n" +
                     "\tf.remark\n" +
                     "FROM\n" +
                     "\tfinanceimportdata f " +
@@ -598,6 +760,13 @@ public interface FinanceMapper {
                     } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
+                } else if ("speciAddDeductCost".equals(employee.getSortByName())) {
+                    sb.append(" order by f.speciAddDeductCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
                 }
 
             } else {
@@ -647,6 +816,457 @@ public interface FinanceMapper {
                 sb.append(" and ee.incompdate <= #{endIncomDateStr}");
             }
 
+            return sb.toString();
+        }
+
+
+        public String querySalaryDataOutPutByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT count(*)  " +
+                    "\t\t FROM \n" +
+                    "\tsalarydataoutput s \n" +
+                    "LEFT JOIN employee ee ON ee.empno = s.empno\n" +
+                    "LEFT JOIN dept d ON ee.deptId = d.id\n" +
+                    "LEFT JOIN position n ON ee.positionId = n.id where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and ee.sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and s.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate  >= #{startIncomDateStr} and ee.incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate <= #{endIncomDateStr}");
+            }
+            return sb.toString();
+        }
+
+        public String querySalaryDataOutPutByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT s.deptName,\n" +
+                    "\ts.positionName,\n" +
+                    "\ts.positionAttrName,\n" +
+                    "\ts.empNo,\n" +
+                    "\ts.`name`,\n" +
+                    "\ts.inCompDate,\n" +
+                    "\ts.basickWorkHours,\n" +
+                    "\ts.norAttenHours,\n" +
+                    "\ts.norAttendSalary,\n" +
+                    "\ts.chinaPailLeavHours,\n" +
+                    "\ts.chinaPaidLeavSalary,\n" +
+                    "\ts.otherPaidLeavHours,\n" +
+                    "\ts.otherPaidLeavSalary,\n" +
+                    "\ts.basicSalarySubTotal,\n" +
+                    "\ts.usualExtraHours,\n" +
+                    "\ts.usralExtraSalary,\n" +
+                    "\ts.weekendWorkHours,\n" +
+                    "\ts.weekendWorkSalary,\n" +
+                    "\ts.chinaHoliWorkHours,\n" +
+                    "\ts.chinaHoliWorkSalary,\n" +
+                    "\ts.compressSalary,\n" +
+                    "\ts.jobSalary,\n" +
+                    "\ts.positionSalary,\n" +
+                    "\ts.meritSalary,\n" +
+                    "\ts.meritScore,\n" +
+                    "\ts.subbonusTotal,\n" +
+                    "\ts.salorLevelSalary,\n" +
+                    "\ts.salrActuGetSalary,\n" +
+                    "\ts.houseOrTELSubsidy,\n" +
+                    "\ts.hotTempOrOtherAllow,\n" +
+                    "\ts.fullWorkReword,\n" +
+                    "\ts.workYearsSalary,\n" +
+                    "\ts.sellCommi,\n" +
+                    "\ts.compreSalary,\n" +
+                    "\ts.buckFoodCost,\n" +
+                    "\ts.buckWaterEleCost,\n" +
+                    "\ts.buckOldAgeInsurCost,\n" +
+                    "\ts.buckMedicInsurCost,\n" +
+                    "\ts.buckUnEmployCost,\n" +
+                    "\ts.buckAccumCost,\n" +
+                    "\ts.otherBuckCost,\n" +
+                    "\ts.sixDeducCost,\n" +
+                    "\ts.personIncomTaxCost,\n" +
+                    "\ts.netPaySalary,\n" +
+                    "\ts.yearMonth  " +
+                    "\t\t FROM \n" +
+                    "\tsalarydataoutput s \n" +
+                    "LEFT JOIN employee ee ON ee.empno = s.empno\n" +
+                    "LEFT JOIN dept d ON ee.deptId = d.id\n" +
+                    "LEFT JOIN position n ON ee.positionId = n.id where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and ee.sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and s.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate  >= #{startIncomDateStr} and ee.incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate <= #{endIncomDateStr}");
+            }
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by s.deptName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by s.positionName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("positionAttrName".equals(employee.getSortByName())) {
+                    sb.append(" order by s.positionAttrName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by s.empNo ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("name".equals(employee.getSortByName())) {
+                    sb.append(" order by s.name ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("inCompDate".equals(employee.getSortByName())) {
+                    sb.append(" order by s.inCompDate ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("basickWorkHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.basickWorkHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("norAttenHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.norAttenHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("norAttendSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.norAttendSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("chinaPailLeavHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.chinaPailLeavHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("chinaPaidLeavSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.chinaPaidLeavSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("otherPaidLeavHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.otherPaidLeavHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("otherPaidLeavSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.otherPaidLeavSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("basicSalarySubTotal".equals(employee.getSortByName())) {
+                    sb.append(" order by s.basicSalarySubTotal ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("usualExtraHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.usualExtraHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("usralExtraSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.usralExtraSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("weekendWorkHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.weekendWorkHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("weekendWorkSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.weekendWorkSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("chinaHoliWorkHours".equals(employee.getSortByName())) {
+                    sb.append(" order by s.chinaHoliWorkHours ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("chinaHoliWorkSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.chinaHoliWorkSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("compressSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.compressSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("jobSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.jobSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("positionSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.positionSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("meritSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.meritSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("meritScore".equals(employee.getSortByName())) {
+                    sb.append(" order by s.meritScore ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("subbonusTotal".equals(employee.getSortByName())) {
+                    sb.append(" order by s.subbonusTotal ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("salorLevelSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.salorLevelSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("salrActuGetSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.salrActuGetSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("houseOrTELSubsidy".equals(employee.getSortByName())) {
+                    sb.append(" order by s.houseOrTELSubsidy ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("hotTempOrOtherAllow".equals(employee.getSortByName())) {
+                    sb.append(" order by s.hotTempOrOtherAllow ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("fullWorkReword".equals(employee.getSortByName())) {
+                    sb.append(" order by s.fullWorkReword ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("workYearsSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.workYearsSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("sellCommi".equals(employee.getSortByName())) {
+                    sb.append(" order by s.sellCommi ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("compreSalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.compreSalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckFoodCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckFoodCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckWaterEleCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckWaterEleCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckOldAgeInsurCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckOldAgeInsurCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckMedicInsurCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckMedicInsurCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckUnEmployCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckUnEmployCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("buckAccumCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.buckAccumCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("otherBuckCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.otherBuckCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("sixDeducCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.sixDeducCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("personIncomTaxCost".equals(employee.getSortByName())) {
+                    sb.append(" order by s.personIncomTaxCost ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("netPaySalary".equals(employee.getSortByName())) {
+                    sb.append(" order by s.netPaySalary ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if ("yearMonth".equals(employee.getSortByName())) {
+                    sb.append(" order by s.yearMonth ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+
+            } else {
+                sb.append(" order by s.empno asc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
         }
 

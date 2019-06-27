@@ -212,7 +212,7 @@
                         tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
                         tr.append("<td>" + data[num].accumulaFund + "</td>");
                         tr.append("<td>" + data[num].errorInWork + "</td>");
-                        tr.append("<td>" + data[num].sixDeductions + "</td>");
+                        // tr.append("<td>" + data[num].sixDeductions + "</td>");
                         tr.append("<td>" + data[num].meritScore + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
@@ -374,7 +374,7 @@
                         tr.append("<td>" + data[num].unEmployeeInsur + "</td>");
                         tr.append("<td>" + data[num].accumulaFund + "</td>");
                         tr.append("<td>" + data[num].errorInWork + "</td>");
-                        tr.append("<td>" + data[num].sixDeductions + "</td>");
+                        // tr.append("<td>" + data[num].sixDeductions + "</td>");
                         tr.append("<td>" + data[num].meritScore + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
@@ -727,11 +727,11 @@
                 工作失误
                 <i class="fa fa-sort-desc" onclick="sortByDesc('errorInWork')" aria-hidden="true"></i>
             </th>
-            <th style="text-align: center">
-                <i class="fa fa-sort-asc" onclick="sortByAsc('sixDeductions')" aria-hidden="true"></i>
-                六个代扣项
-                <i class="fa fa-sort-desc" onclick="sortByDesc('sixDeductions')" aria-hidden="true"></i>
-            </th>
+            <!--<th style="text-align: center">-->
+                <!--<i class="fa fa-sort-asc" onclick="sortByAsc('sixDeductions')" aria-hidden="true"></i>-->
+                <!--六个代扣项-->
+                <!--<i class="fa fa-sort-desc" onclick="sortByDesc('sixDeductions')" aria-hidden="true"></i>-->
+            <!--</th>-->
             <th style="text-align: center">
                 <i class="fa fa-sort-asc" onclick="sortByAsc('meritScore')" aria-hidden="true"></i>
                 绩效分
@@ -772,7 +772,7 @@
                     <td align="center" th:text="${empH.unEmployeeInsur}"></td>
                     <td align="center" th:text="${empH.accumulaFund}"></td>
                     <td align="center" th:text="${empH.errorInWork}"></td>
-                    <td align="center" th:text="${empH.sixDeductions}"></td>
+                    <!--<td align="center" th:text="${empH.sixDeductions}"></td>-->
                     <td align="center" th:text="${empH.meritScore}"></td>
                     <td align="center" th:text="${empH.remark}"></td>
 
@@ -792,7 +792,7 @@
         </div>
         <div th:if="${#lists.isEmpty(empHoursList)}">
             <tr>
-                <td colspan="25">
+                <td colspan="24">
                     查无数据
                 </td>
             </tr>
@@ -802,7 +802,7 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="25" align="center">
+            <td colspan="24" align="center">
                 <span>第</span>
                 <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
@@ -858,7 +858,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="25" align="center">
+            <td colspan="24" align="center">
                 查无数据
             </td>
         </tr>

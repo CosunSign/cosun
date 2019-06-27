@@ -51,7 +51,7 @@ public class WordToPDF {
 
         // 转换
         DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
-        converter.convert(inputFile, outputFile);
+        converter.convert(inputFile , outputFile);
 
         // 关闭连接
         connection.disconnect();

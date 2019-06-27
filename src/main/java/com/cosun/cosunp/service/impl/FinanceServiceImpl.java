@@ -477,6 +477,14 @@ public class FinanceServiceImpl implements IFinanceServ {
         }
     }
 
+    public List<SalaryDataOutPut> querySalaryDataOutPutByCondition(Employee employee) throws Exception {
+        return financeMapper.querySalaryDataOutPutByCondition(employee);
+    }
+
+    public int querySalaryDataOutPutByConditionCount(Employee employee) throws Exception {
+        return financeMapper.querySalaryDataOutPutByConditionCount(employee);
+    }
+
 
     public void saveFinanceSetUp(FinanceSetUpData financeSetUpData) throws Exception {
         int count = financeMapper.findFinanceSetUpDataCount();
@@ -485,6 +493,21 @@ public class FinanceServiceImpl implements IFinanceServ {
         } else {
             financeMapper.updateFinanceSetUp(financeSetUpData);
 
+        }
+    }
+
+    public List<SalaryDataOutPut> findAllSalaryDataOutPut(Employee employee) throws Exception {
+        return financeMapper.findAllSalaryDataOutPut(employee);
+    }
+
+    public int findAllSalaryDataOutPutCount() throws Exception {
+        return financeMapper.findAllSalaryDataOutPutCount();
+    }
+
+    public void saveSalaryDataOutPutsList(List<SalaryDataOutPut> salaryDataOutPutList, String yearMonth) throws Exception {
+        financeMapper.deleteSalaryDataOutPutByYearMonth(yearMonth);
+        for (SalaryDataOutPut sdo : salaryDataOutPutList) {
+            financeMapper.saveSalaryDataOutPut(sdo);
         }
     }
 
@@ -506,6 +529,8 @@ public class FinanceServiceImpl implements IFinanceServ {
 
             if (salary != null && fid != null) {
                 sdo = new SalaryDataOutPut();
+                sdo.setEmpNo(salary.getEmpNo());
+                sdo.setYearMonth(yearMonth);
                 sdo.setDeptName(eh.getDeptName());
                 sdo.setPositionName(ee.getPositionName());
                 sdo.setPositionAttrName(ee.getPositionAttrIdStr());
@@ -541,8 +566,8 @@ public class FinanceServiceImpl implements IFinanceServ {
                 sdo.setFullWorkReword(eh.getFullWorkReword());
                 sdo.setWorkYearsSalary(fid.getWorkYearsSalary());
                 sdo.setSellCommi(fid.getSellCommi());
-                sdo.setCompreSalary(sdo.getBasicSalarySubTotal() + sdo.getSubbonusTotal()+sdo.getSalrActuGetSalary() +
-                        sdo.getHouseOrTELSubsidy() + sdo.getHotTempOrOtherAllow() + sdo.getFullWorkReword() + sdo.getWorkYearsSalary()+extWorkFee);
+                sdo.setCompreSalary(sdo.getBasicSalarySubTotal() + sdo.getSubbonusTotal() + sdo.getSalrActuGetSalary() +
+                        sdo.getHouseOrTELSubsidy() + sdo.getHotTempOrOtherAllow() + sdo.getFullWorkReword() + sdo.getWorkYearsSalary() + extWorkFee);
                 sdo.setBuckFoodCost(eh.getFoodExpense());
                 sdo.setBuckWaterEleCost(eh.getRoomOrWaterEleExpense());
                 sdo.setBuckOldAgeInsurCost(eh.getOldAgeINsuran());
@@ -550,7 +575,7 @@ public class FinanceServiceImpl implements IFinanceServ {
                 sdo.setBuckUnEmployCost(eh.getUnEmployeeInsur());
                 sdo.setBuckAccumCost(eh.getAccumulaFund());
                 sdo.setOtherBuckCost(eh.getErrorInWork());
-                sdo.setSixDeducCost(eh.getSixDeductions());
+                sdo.setSixDeducCost(fid.getSpeciAddDeductCost());
                 sdo.setPersonIncomTaxCost(0.0);
                 sdo.setNetPaySalary(sdo.getCompreSalary() - sdo.getBuckFoodCost() - sdo.getBuckWaterEleCost()
                         - sdo.getBuckOldAgeInsurCost() - sdo.getBuckMedicInsurCost() - sdo.getBuckUnEmployCost()

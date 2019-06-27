@@ -33,12 +33,19 @@ public class ExcelUtil {
         Sheet sheet1 = workbook.createSheet("sheet1");
         Date d = new Date();
         String str = sdf.format(d);
+
+        String mkdir = finalDirPath + "/linshi/";
         String pathname = finalDirPath + "/linshi/" + yearMonth+str + "工资计算表" + ".xlsx";
         returnArray.add( yearMonth+str + "工资计算表" + ".xlsx");
         File file = new File(pathname);
         if (file.exists()) {
             //如果文件存在就删除
             file.delete();
+        }
+        File targetFile = new File(mkdir);
+        //：判断目录是否存在   不存在：创建目录
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
         }
         try {
             file.createNewFile();

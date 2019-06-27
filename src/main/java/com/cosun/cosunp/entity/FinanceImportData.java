@@ -26,6 +26,8 @@ public class FinanceImportData implements Serializable {
     private Double workYearsSalary;//工龄工资
     private Double sellCommi;//业务提成
     private String remark;
+    private Double speciAddDeductCost;//专项附加扣除
+
     private String yearMonth;
 
 
@@ -38,6 +40,15 @@ public class FinanceImportData implements Serializable {
 
     private List<Integer> ids;
     private Integer type;
+
+
+    public Double getSpeciAddDeductCost() {
+        return speciAddDeductCost;
+    }
+
+    public void setSpeciAddDeductCost(Double speciAddDeductCost) {
+        this.speciAddDeductCost = speciAddDeductCost;
+    }
 
     public Integer getType() {
         return type;

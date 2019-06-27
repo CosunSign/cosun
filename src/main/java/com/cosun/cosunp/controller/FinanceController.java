@@ -108,6 +108,7 @@ public class FinanceController {
             String outpathname = "计算完成，请下载查看!";
             if(salaryDataOutPuts.size()>0) {
                 if (salaryDataOutPuts.get(0).getErrorMessage() == null || salaryDataOutPuts.get(0).getErrorMessage().trim().length() <= 0) {
+                    financeServ.saveSalaryDataOutPutsList(salaryDataOutPuts,financeImportData.getYearMonth());
                     resp.setHeader("content-type", "application/octet-stream");
                     resp.setContentType("application/octet-stream");
                     List<String> pathName = ExcelUtil.writeExcelSalary(salaryDataOutPuts, financeImportData.getYearMonth(), finalDirPath);
@@ -768,6 +769,30 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
 
 
     @ResponseBody
+    @RequestMapping("/toAfterSalary")
+    public ModelAndView toAfterSalary(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("aftersalary");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<SalaryDataOutPut> salaryDataOutPutList = financeServ.findAllSalaryDataOutPut(employee);
+        int recordCount = financeServ.findAllSalaryDataOutPutCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("salaryDataOutPutList", salaryDataOutPutList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+
+    @ResponseBody
     @RequestMapping("/toEmpHours")
     public ModelAndView toEmpHours(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("emphours");
@@ -789,6 +814,34 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
         view.addObject("userInfo", userInfo);
         return view;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/querySalaryDataOutPutByCondition", method = RequestMethod.POST)
+    public void querySalaryDataOutPutByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<SalaryDataOutPut> salaryDataOutPutList = financeServ.querySalaryDataOutPutByCondition(employee);
+            int recordCount = financeServ.querySalaryDataOutPutByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (salaryDataOutPutList.size() > 0) {
+                salaryDataOutPutList.get(0).setMaxPage(maxPage);
+                salaryDataOutPutList.get(0).setRecordCount(recordCount);
+                salaryDataOutPutList.get(0).setCurrentPage(employee.getCurrentPage());
+                salaryDataOutPutList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(salaryDataOutPutList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/queryEmployeeHoursByCondition", method = RequestMethod.POST)

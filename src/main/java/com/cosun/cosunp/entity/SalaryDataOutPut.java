@@ -14,6 +14,7 @@ public class SalaryDataOutPut implements Serializable {
     private String deptName;//部门
     private String positionName;//职务
     private String positionAttrName;//职位
+    private String empNo;//工号
     private String name;//姓名
     private String inCompDate;//入职时间
     private Double basickWorkHours;//基本工时
@@ -54,7 +55,83 @@ public class SalaryDataOutPut implements Serializable {
     private Double sixDeducCost;//专项附加扣除
     private Double personIncomTaxCost;//个税
     private Double netPaySalary;//实发工资
+    private String yearMonth;//年月
     private String errorMessage;
+
+    private Integer type;
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 10;
+    private int currentPageTotalNum;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPageTotalNum() {
+        if (this.currentPage != 0)
+            return (currentPage - 1) * pageSize;
+        return 0;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
+
+    public String getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(String empNo) {
+        this.empNo = empNo;
+    }
+
+    public String getYearMonth() {
+        return yearMonth;
+    }
+
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
+    }
 
     public String getErrorMessage() {
         return errorMessage;

@@ -30,6 +30,7 @@
         var hotTempOrOtherAllow = $("#hotTempOrOtherAllow").val();
         var workYearsSalary = $("#workYearsSalary").val();
         var sellCommi = $("#sellCommi").val();
+        var speciAddDeductCost = $("#speciAddDeductCost").val();
         var yearMonth = $("#yearmonth").val();
 
         if (yearMonth.trim().length == 0) {
@@ -95,7 +96,15 @@
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;业务提成不能为空!";
             errormessagediv.style.color = "red";
             return;
+        }else if (speciAddDeductCost.trim().length == 0) {
+            isflag = false;
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;专项附加扣除不能为空!";
+            errormessagediv.style.color = "red";
+            return;
         }
+
 
         if (isflag) {
             $("#errormessage").hide();
@@ -647,10 +656,18 @@
                                 </td>
 
 
+
+
                             </tr>
                             <tr>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;专项附加扣除：</label></td>
+                                <td>
+                                    <input type="text" class="form-control" onblur="validateDouble('speciAddDeductCost')"
+                                           id="speciAddDeductCost" th:field="*{speciAddDeductCost}"
+                                    >
+                                </td>
                                 <td><label>&nbsp;备注：</label></td>
-                                <td colspan="3">
+                                <td colspan="1">
                                     <input type="text" style="width: 100%;" class="form-control" id="remark" th:field="*{remark}">
                                 </td>
                             </tr>

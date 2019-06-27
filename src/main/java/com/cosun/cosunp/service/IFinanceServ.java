@@ -9,6 +9,10 @@ public interface IFinanceServ {
 
     List<Salary> translateExcelToBean(MultipartFile file1) throws Exception;
 
+    List<SalaryDataOutPut> querySalaryDataOutPutByCondition(Employee employee) throws Exception;
+
+    int querySalaryDataOutPutByConditionCount(Employee employee) throws Exception;
+
     void saveAllSalaryData(List<Salary> salaryList) throws Exception;
 
     void addSalaryByBean(Employee employee) throws Exception;
@@ -31,6 +35,8 @@ public interface IFinanceServ {
 
     List<SalaryDataOutPut> computeSalaryData(String yearMonth) throws Exception;
 
+    void saveSalaryDataOutPutsList(List<SalaryDataOutPut> salaryDataOutPutList,String yearMonth) throws Exception;
+
     void addFinanceImportDataByBean(FinanceImportData financeImportData) throws Exception;
 
     List<FinanceImportData> queryFinanceImportDataByCondition(Employee employee) throws Exception;
@@ -38,6 +44,10 @@ public interface IFinanceServ {
     int queryFinanceImportDataByConditionCount(Employee employee) throws Exception;
 
     int findAllFinanceImportDataCount() throws Exception;
+
+    List<SalaryDataOutPut> findAllSalaryDataOutPut(Employee employee) throws Exception;
+
+    int findAllSalaryDataOutPutCount() throws Exception;
 
     void deleteFinanceImportDataByBatch(Employee employee) throws Exception;
 

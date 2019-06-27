@@ -21,7 +21,7 @@ public class Leave implements Serializable {
     private Double leaveLong;
     private String leaveDescrip;
     private String remark;
-    private Integer type; //0.代表正常请假  //1.因公外出
+    private Integer type; //0.代表正常请假  //1.因公外出  //2.代表带薪年假
 
 
     //回显信息
@@ -56,6 +56,8 @@ public class Leave implements Serializable {
                 return "正常请假";
             } else if (type == 1) {
                 return "因公外出";
+            }else if (type == 2) {
+                return "带薪年假";
             }
         }
         return "";
