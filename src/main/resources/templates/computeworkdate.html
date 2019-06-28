@@ -72,6 +72,50 @@
         }
     });
 
+    function delCookie(name)
+    {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null)
+            document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString() + ";path=/";
+    }
+
+    // 定义一个函数，用来读取特定的cookie值。
+    function getCookie(cookie_name) {
+        var allcookies = document.cookie;
+        //索引长度，开始索引的位置
+        var cookie_pos = allcookies.indexOf(cookie_name);
+
+        // 如果找到了索引，就代表cookie存在,否则不存在
+        if (cookie_pos != -1) {
+            // 把cookie_pos放在值的开始，只要给值加1即可
+            //计算取cookie值得开始索引，加的1为“=”
+            cookie_pos = cookie_pos + cookie_name.length + 1;
+            //计算取cookie值得结束索引
+            var cookie_end = allcookies.indexOf(";", cookie_pos);
+
+            if (cookie_end == -1) {
+                cookie_end = allcookies.length;
+
+            }
+            //得到想要的cookie的值
+            var value = unescape(allcookies.substring(cookie_pos, cookie_end));
+        }
+        return value;
+    }
+
+    function listenEnd() {//定时监听
+        var loop = setInterval(function() {
+            var cookievalue = getCookie("downloadstatus");
+            // alert(cookievalue)
+            if(cookievalue.trim().length>0) {
+                clearInterval(loop);//停止定时任务
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+            }
+        }, 1000);//单位毫秒  注意：如果导出页面很慢时，建议循环时间段稍长一点
+    }
+
     function inDataToMysql() {
         var originFile = $("#originFile1").val();
         if (originFile.trim().length > 0 ) {
@@ -82,6 +126,7 @@
             var form = document.getElementById('inData');
             form.submit();
             window.parent.document.getElementById('coverbehidepage').style.display = "block";
+
         } else if (originFile.trim().length <= 0) {
             $("#errormessage1").show();
             var errormessagediv1 = document.getElementById("errormessage1");
@@ -90,7 +135,10 @@
         }
     }
 
-    function computeWorkTable() {
+
+
+    function computeWorkEmpHours() {
+        delCookie("downloadstatus");
         var originFile = $("#originFile").val();
         // var filelocat = $("#filelocat").val();
         // if (filelocat.trim().length <= 0) {
@@ -101,9 +149,34 @@
             var errormessagediv = document.getElementById("errormessagee");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算中,请稍等!";
             errormessagediv.style.color = "green";
-            var form = document.getElementById('computeForm');
-            form.submit();
+            $('form[id=computeForm]').attr('action','/person/computeWorkEmpHours');
+            $("#computeForm").submit();
             window.parent.document.getElementById('coverbehidepage').style.display = "block";
+            listenEnd();
+        } else if (originFile.trim().length <= 0) {
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法计算!";
+            errormessagediv.style.color = "red";
+        }
+    }
+
+    function computeWorkTable() {
+        delCookie("downloadstatus");
+        var originFile = $("#originFile").val();
+        // var filelocat = $("#filelocat").val();
+        // if (filelocat.trim().length <= 0) {
+        //     $("#filelocat").val($("#orginLcation").val());
+        // }
+        if (originFile.trim().length > 0) {
+            $("#errormessagee").show();
+            var errormessagediv = document.getElementById("errormessagee");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算中,请稍等!";
+            errormessagediv.style.color = "green";
+            $('form[id=computeForm]').attr('action','/person/computeWorkTable');
+            $("#computeForm").submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+            listenEnd();
         } else if (originFile.trim().length <= 0) {
             $("#errormessagee").show();
             var errormessagediv = document.getElementById("errormessagee");
@@ -129,7 +202,7 @@
 <body>
 
 <div id='app'>
-    <form  id="computeForm" th:action="@{/person/computeWorkTable}" th:method="post" enctype="multipart/form-data" >
+    <form  id="computeForm" action="/person/computeWorkTable" th:method="post" enctype="multipart/form-data" >
         <input type="hidden" id="flag" th:value="${flag}">
         <input type="hidden" id="flag2" th:value="${flag2}">
         <input type="hidden" id="errorMessage" th:value="${errorMessage}">
@@ -156,7 +229,10 @@
                     <tr>
                         <td><label>动作：</label></td>
                         <td>
-                            <button type="button" class="btn btn-primary" onclick="computeWorkTable()">计算</button>
+                            <button type="button" class="btn btn-primary" onclick="computeWorkTable()">打卡计算</button>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn-primary" onclick="computeWorkEmpHours()">工时计算</button>
+
                         </td>
                     </tr>
 
@@ -173,6 +249,8 @@
             </div>
         </div>
     </form>
+
+
 
 
     <form  id="inData" th:action="@{/person/dataInMysql}" th:method="post" enctype="multipart/form-data" >

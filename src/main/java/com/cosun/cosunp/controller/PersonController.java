@@ -3,6 +3,7 @@ package com.cosun.cosunp.controller;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.ExcelUtil;
+import com.cosun.cosunp.tool.MathUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.filechooser.FileSystemView;
@@ -327,10 +330,93 @@ public class PersonController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/computeWorkEmpHours", method = RequestMethod.POST)
+    public ModelAndView computeWorkEmpHours(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        if (null==cookies) {
+            System.out.println("没有cookie==============");
+        } else {
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("downloadstatus")){
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);// 立即销毁cookie
+                    cookie.setPath("/");
+                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    resp.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+        try {
+            ModelAndView view = new ModelAndView("computeworkdate");
+            Compute compute = new Compute();
+            List<ClockInOrgin> clockInOrginList = personServ.translateTabletoBean(file);
+            List<OutPutWorkData> outPutWorkDataList = personServ.computeTableListData(clockInOrginList);
+            List<Employee> employeeList = personServ.findAllEmployeeAll();
+            List<SubEmphours> subEmphoursList = MathUtil.computeSubEmpHours(outPutWorkDataList,employeeList);
+            String outpathname = "计算完成，请下载查看!";
+            if (outPutWorkDataList.get(0).getErrorMessage() == null || outPutWorkDataList.get(0).getErrorMessage().trim().length() <= 0) {
+                resp.setHeader("content-type", "application/octet-stream");
+                resp.setContentType("application/octet-stream");
+                List<String> pathName = ExcelUtil.writeExcel(outPutWorkDataList, finalDirPath);
+                resp.setHeader("Content-Disposition", "attachment;filename=" + new String(pathName.get(0).getBytes(), "iso-8859-1"));
+                byte[] buff = new byte[1024];
+                BufferedInputStream bufferedInputStream = null;
+                OutputStream outputStream = null;
+                Cookie cookie = new Cookie("downloadstatus", String.valueOf(new Date().getTime()));
+                cookie.setMaxAge(5 * 60);// 设置为30min
+                cookie.setPath("/");
+                resp.addCookie(cookie);
+                try {
+                    outputStream = resp.getOutputStream();
+                    File fi = new File(pathName.get(1));
+                    FileInputStream fis = new FileInputStream(fi);
+                    bufferedInputStream = new BufferedInputStream(fis);
+                    int num = bufferedInputStream.read(buff);
+                    while (num != -1) {
+                        outputStream.write(buff, 0, num);
+                        outputStream.flush();
+                        num = bufferedInputStream.read(buff);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage());
+                } finally {
+                    if (bufferedInputStream != null) {
+                        bufferedInputStream.close();
+                        outputStream.close();
+                    }
+                }
+            }
+            view.addObject("flag2", outpathname);
+            view.addObject("errorMessage", outPutWorkDataList.get(0).getErrorMessage());
+            view.addObject("compute", compute);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/computeWorkTable", method = RequestMethod.POST)
-    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse resp) throws Exception {
+    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        if (null==cookies) {
+            System.out.println("没有cookie==============");
+        } else {
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("downloadstatus")){
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);// 立即销毁cookie
+                    cookie.setPath("/");
+                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    resp.addCookie(cookie);
+                    break;
+                }
+            }
+        }
         try {
             ModelAndView view = new ModelAndView("computeworkdate");
             Compute compute = new Compute();
@@ -345,6 +431,10 @@ public class PersonController {
                 byte[] buff = new byte[1024];
                 BufferedInputStream bufferedInputStream = null;
                 OutputStream outputStream = null;
+                Cookie cookie = new Cookie("downloadstatus", String.valueOf(new Date().getTime()));
+                cookie.setMaxAge(5 * 60);// 设置为30min
+                cookie.setPath("/");
+                resp.addCookie(cookie);
                 try {
                     outputStream = resp.getOutputStream();
                     File fi = new File(pathName.get(1));

@@ -342,6 +342,8 @@ public class ExcelUtil {
             cell.setCellValue("请假时间止");
             cell = row.createCell(34);
             cell.setCellValue("备注");
+            cell = row.createCell(35);
+            cell.setCellValue("上班类型");
             for (int i = 0; i < outDatas.size(); i++) {
                 opw = outDatas.get(i);
                 row = sheet1.createRow(i + 1);
@@ -416,6 +418,8 @@ public class ExcelUtil {
                 cell.setCellValue(opw.getLeaveDateEnd());
                 cell = row.createCell(34);
                 cell.setCellValue(opw.getRemark());
+                cell = row.createCell(35);
+                cell.setCellValue(opw.getWorkType());
             }
             OutputStream stream = new FileOutputStream(file);
             workbook.write(stream);

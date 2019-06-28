@@ -13,6 +13,7 @@ import java.util.List;
 public class FinanceImportData implements Serializable {
 
 
+    private static final long serialVersionUID = -8356527306598925137L;
     private Integer id;
     private String empNo;//工号
     private String name;//姓名

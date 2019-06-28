@@ -20,6 +20,15 @@ public class WorkDate implements Serializable {
     private String positionLevel;
     private String[] workDates;
     private String[] workDatess;
+    private Integer type;//0代表正班  1代表周末加班  2代表法定带薪假
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
     public String[] getWorkDatess() {
         if (workDate != null) {

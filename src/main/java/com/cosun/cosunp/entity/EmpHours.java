@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class EmpHours implements Serializable {
 
+    private static final long serialVersionUID = -867843563737764233L;
     private Integer id;
     private String name; //姓名
     private String empNo; //工号

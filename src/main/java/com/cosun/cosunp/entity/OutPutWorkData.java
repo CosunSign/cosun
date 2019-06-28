@@ -65,6 +65,16 @@ public class OutPutWorkData implements Serializable {
     private String isLeaveOrOther;
     private String errorMessage;
 
+    private Integer workType;//0 正常上班 1.周末加班 2.法定节假日
+
+    public Integer getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(Integer workType) {
+        this.workType = workType;
+    }
+
     public String getWorkSetAonFroml() {
         return workSetAonFroml;
     }

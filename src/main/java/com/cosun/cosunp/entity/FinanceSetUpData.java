@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 public class FinanceSetUpData implements Serializable {
 
+    private static final long serialVersionUID = -4539469468195439633L;
     private  Integer id;
     private Double norAttendHoursSample;//月正常出勤工时
     private Double norAttendSalarySample;//月正常工时工资

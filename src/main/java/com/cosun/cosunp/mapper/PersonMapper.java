@@ -301,6 +301,12 @@ public interface PersonMapper {
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
     WorkDate getWorkDateByMonthAnPositionLevel(int month, String positionLevel);
 
+    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} or (month = #{month} and type = 2)")
+    List<WorkDate> getWorkDateByMonthAnPositionLevelList(int month, String positionLevel);
+
+    @Select("select group_concat(workDate,',') as workDate from workdate where month = #{month} and positionLevel = #{positionLevel} and type in(0,1) ")
+    WorkDate getWorkDateByMonthAnPositionLevelandType(int month, String positionLevel);
+
     @Select("select * from workdate where month = #{month}")
     List<WorkDate> findAllWorkDateListByMonth(int month);
 
@@ -366,8 +372,13 @@ public interface PersonMapper {
     void deleteDeptById(Integer id);
 
 
-    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
+    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} " +
+            " and type = #{type} ")
     WorkDate getWorkDateByMonth(WorkDate workDate);
+
+    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} " +
+            " limit 1 ")
+    WorkDate getWorkDateByMonth2(WorkDate workDate);
 
     @Insert("insert into dept (deptname) values(#{deptName})")
     void addDeptByDeptName(String deptName);
@@ -414,8 +425,8 @@ public interface PersonMapper {
     void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
-            "INSERT into workdate (month,positionLevel,workDate,remark)\n" +
-            " values(#{month},#{positionLevel},#{workDate},#{remark})\n")
+            "INSERT into workdate (month,positionLevel,workDate,remark,type)\n" +
+            " values(#{month},#{positionLevel},#{workDate},#{remark},#{type})\n")
     void saveWorkData(WorkDate workDate);
 
     @Insert("\n" +
@@ -428,7 +439,7 @@ public interface PersonMapper {
     void addWorkSetData(WorkSet workSet);
 
 
-    @Update("update workdate set workDate =  #{workDate},remark = #{remark} where month = #{month} and positionLevel = #{positionLevel} ")
+    @Update("update workdate set workDate =  #{workDate},remark = #{remark} ,type=#{type} where month = #{month} and positionLevel = #{positionLevel} and type = #{type} ")
     void updateWorkData(WorkDate workDate);
 
     @Delete("delete from employee where id = #{id}")

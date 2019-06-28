@@ -10,6 +10,7 @@ import java.io.Serializable;
  * @Modified-date:
  */
 public class SalaryDataOutPut implements Serializable {
+    private static final long serialVersionUID = -6881009009574748691L;
     private Integer id;//序号
     private String deptName;//部门
     private String positionName;//职务
