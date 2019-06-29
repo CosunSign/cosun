@@ -49,6 +49,10 @@ public class Employee implements Serializable {
     private String sateListAndLeaCertiUrl;
     private String otherCertiUrl;
 
+    private Integer educationLeUrlInt;
+    private Integer sateListAndLeaCertiUrlInt;
+    private Integer otherCertiUrlInt;
+
 
     private String username;
     private String passowrd;
@@ -107,6 +111,40 @@ public class Employee implements Serializable {
 
     private String stateStr;
 
+
+    public Integer getEducationLeUrlInt() {
+        if (this.getEducationLeUrl().trim().length()<=0) {
+            return 0;
+        }
+        return 1;
+    }
+
+    public void setEducationLeUrlInt(Integer educationLeUrlInt) {
+        this.educationLeUrlInt = educationLeUrlInt;
+    }
+
+    public Integer getSateListAndLeaCertiUrlInt() {
+        if (this.getSateListAndLeaCertiUrl().trim().length()<=0) {
+            return 0;
+        }
+        return 1;
+    }
+
+    public void setSateListAndLeaCertiUrlInt(Integer sateListAndLeaCertiUrlInt) {
+        this.sateListAndLeaCertiUrlInt = sateListAndLeaCertiUrlInt;
+    }
+
+    public Integer getOtherCertiUrlInt() {
+        if (this.getOtherCertiUrl().trim().length()<=0) {
+            return 0;
+        }
+        return 1;
+    }
+
+    public void setOtherCertiUrlInt(Integer otherCertiUrlInt) {
+        this.otherCertiUrlInt = otherCertiUrlInt;
+    }
+
     public List<String> getEmpNos() {
         return empNos;
     }
@@ -116,12 +154,12 @@ public class Employee implements Serializable {
     }
 
     public String getStateStr() {
-        if(this.state!=null) {
-            if(this.state==0) {
+        if (this.state != null) {
+            if (this.state == 0) {
                 return "未审核";
-            }else if(this.state==1) {
+            } else if (this.state == 1) {
                 return "审核通过";
-            }else if(this.state==2) {
+            } else if (this.state == 2) {
                 return "审核未通过";
             }
         }
@@ -581,7 +619,7 @@ public class Employee implements Serializable {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (this.incompdate != null)
             return formatter.format(this.incompdate);
-        return this.conExpDateStr;
+        return this.incompdateStr;
     }
 
     public void setIncompdateStr(String incompdateStr) {

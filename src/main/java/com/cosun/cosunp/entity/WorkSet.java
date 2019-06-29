@@ -19,7 +19,7 @@ public class WorkSet implements Serializable {
     private Integer id;
     private String workLevel;
     private String workLevelStr;
-    private Integer month;
+    private String month;
     private Date updateDate;
     private Time morningOn;
     private Time morningOnFrom;
@@ -263,11 +263,11 @@ public class WorkSet implements Serializable {
         this.workLevel = workLevel;
     }
 
-    public Integer getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 

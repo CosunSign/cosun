@@ -194,24 +194,34 @@
                                 <option th:value="E">E</option>
                             </select>
                         </td>
-                        <td style="text-align: right">
-                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<label>月份：</label>
+
+                        <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
+                        <td>
+                            <input type="text" id="monthId"
+                                   style="width:130px;height: 34px;text-align: center" th:field="*{month}"
+                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
+                                   onchange="showDateByWorkLevelAndMonth()"
+                            />
                         </td>
-                        <td style="width: 120px">
-                            <select id="monthId" class="selectpicker show-tick form-control"
-                                    data-live-search="true" th:field="*{month}" onchange="showDateByWorkLevelAndMonth()">
-                                <option th:value="3">3</option>
-                                <option th:value="4">4</option>
-                                <option th:value="5">5</option>
-                                <option th:value="6">6</option>
-                                <option th:value="7">7</option>
-                                <option th:value="8">8</option>
-                                <option th:value="9">9</option>
-                                <option th:value="10">10</option>
-                                <option th:value="11">11</option>
-                                <option th:value="12">12</option>
-                            </select>
-                        </td>
+
+                        <!--<td style="text-align: right">-->
+                            <!--&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<label>月份：</label>-->
+                        <!--</td>-->
+                        <!--<td style="width: 120px">-->
+                            <!--<select id="monthId" class="selectpicker show-tick form-control"-->
+                                    <!--data-live-search="true" th:field="*{month}" onchange="showDateByWorkLevelAndMonth()">-->
+                                <!--<option th:value="3">3</option>-->
+                                <!--<option th:value="4">4</option>-->
+                                <!--<option th:value="5">5</option>-->
+                                <!--<option th:value="6">6</option>-->
+                                <!--<option th:value="7">7</option>-->
+                                <!--<option th:value="8">8</option>-->
+                                <!--<option th:value="9">9</option>-->
+                                <!--<option th:value="10">10</option>-->
+                                <!--<option th:value="11">11</option>-->
+                                <!--<option th:value="12">12</option>-->
+                            <!--</select>-->
+                        <!--</td>-->
                     </tr>
                     <tr>
                         <td><label>职位类别信息：</label></td>

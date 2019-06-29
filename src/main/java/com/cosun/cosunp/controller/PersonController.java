@@ -128,6 +128,7 @@ public class PersonController {
             ModelAndView view = new ModelAndView("leave");
             Leave leave = new Leave();
             List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
             List<Dept> deptList = personServ.findAllDeptAll();
             List<Leave> leaveList = personServ.findAllLeave(leave);
             int recordCount = personServ.findAllLeaveCount();
@@ -135,6 +136,7 @@ public class PersonController {
             leave.setMaxPage(maxPage);
             leave.setRecordCount(recordCount);
             view.addObject("leaveList", leaveList);
+            view.addObject("empList",empList);
             view.addObject("leave", leave);
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
@@ -359,7 +361,7 @@ public class PersonController {
             if (outPutWorkDataList.get(0).getErrorMessage() == null || outPutWorkDataList.get(0).getErrorMessage().trim().length() <= 0) {
                 resp.setHeader("content-type", "application/octet-stream");
                 resp.setContentType("application/octet-stream");
-                List<String> pathName = ExcelUtil.writeExcel(outPutWorkDataList, finalDirPath);
+                List<String> pathName = ExcelUtil.writeExcelSubWorkHours(subEmphoursList,outPutWorkDataList.get(0).getYearMonth(), finalDirPath);
                 resp.setHeader("Content-Disposition", "attachment;filename=" + new String(pathName.get(0).getBytes(), "iso-8859-1"));
                 byte[] buff = new byte[1024];
                 BufferedInputStream bufferedInputStream = null;
@@ -516,7 +518,7 @@ public class PersonController {
             WorkSet workSet = personServ.getWorkSetByMonthAndPositionLevel(workDate);
             String workDatesAndPositionNames;
             if (workSet == null) {
-                WorkDate workDate1 = personServ.getWorkDateByMonth(workDate);
+                WorkDate workDate1 = personServ.getWorkDateByMonth2(workDate);
                 String positionStr = personServ.getPositionNamesByPositionLevel(workDate.getPositionLevel());
                 if (workDate1 != null && positionStr != null) {
                     workDatesAndPositionNames = workDate1.getWorkDate() + "$" + positionStr;
@@ -534,6 +536,44 @@ public class PersonController {
             } else {
                 workDatesAndPositionNames = "系统中已存在" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，不可重复增加;";
 
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+
+            str1 = x.writeValueAsString(workDatesAndPositionNames);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/getWorkDatesAndPositionsByData2", method = RequestMethod.POST)
+    public void getWorkDatesAndPositionsByData2(WorkDate workDate, HttpServletResponse response) throws Exception {
+        try {
+            WorkSet workSet = personServ.getWorkSetByMonthAndPositionLevel(workDate);
+            String workDatesAndPositionNames = "";
+            if (workSet != null) {
+                WorkDate workDate1 = personServ.getWorkDateByMonth2(workDate);
+                String positionStr = personServ.getPositionNamesByPositionLevel(workDate.getPositionLevel());
+                if (workDate1 != null && positionStr != null) {
+                    workDatesAndPositionNames = workDate1.getWorkDate() + "$" + positionStr;
+                } else {
+                    if (workDate1 != null) {
+                        workDatesAndPositionNames = "您所有的职位信息没有" + workDate.getPositionLevel() + "职位类别的数据，请前往职位模块设置;";
+                    } else if (positionStr != null) {
+                        workDatesAndPositionNames = "您的排单表中没有" + workDate.getMonth() + "月份" + workDate.getPositionLevel() + "职位类别的数据，请前往排单设置新增;";
+                    } else {
+                        workDatesAndPositionNames = "您的排单表中没有" + workDate.getMonth() + "月份和" + workDate.getPositionLevel() + "职位类别的数据，请前往排单设置新增;";
+                        workDatesAndPositionNames += "您所有的职位信息没有" + workDate.getPositionLevel() + "职位类别的数据，请前往职位模块设置;";
+
+                    }
+                }
             }
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -1119,7 +1159,7 @@ public class PersonController {
             WorkDate a = new WorkDate();
             a.setMonth(workSet.getMonth());
             a.setPositionLevel(workSet.getWorkLevel());
-            a = personServ.getWorkDateByMonth(a);
+            a = personServ.getWorkDateByMonth2(a);
             workSet.setWorkDate(a.getWorkDate());
             workSet.setWorkLevelStr(personServ.getPositionNamesByPositionLevel(workSet.getWorkLevel()));
             view.addObject("workSet", workSet);

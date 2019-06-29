@@ -25,6 +25,8 @@ public interface IPersonServ {
 
     String getPositionNamesByPositionLevel(String positionLevel) throws Exception;
 
+    WorkDate getWorkDateByMonth2(WorkDate workDate) throws Exception;
+
     void saveOrUpdateWorkData(WorkDate workDate) throws Exception;
 
     int checkAndSaveDept(String deptName) throws Exception;

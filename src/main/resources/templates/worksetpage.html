@@ -115,6 +115,55 @@
         queryWorkSetByCondition();
     }
 
+    function showDateByWorkLevelAndMonth() {
+        var positionLevel = $("#positionLevel").val();
+        var monthId = $("#monthId").val();
+        if (positionLevel != 0) {
+            var formData = new FormData();
+            formData.append('positionLevel', $("#positionLevel").val());
+            formData.append('month', monthId);
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: "/person/getWorkDatesAndPositionsByData2",
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (msg) {
+                    var data = eval(msg);//将msg化为数;
+                    if (data.includes("$")) {
+                        flag = true;
+                        $("#errormessage").show();
+                        var errormessagediv = document.getElementById("errormessage");
+                        errormessagediv.innerHTML = "";
+                        var arr = data.split("$")
+                        $("#workDateStr").val(arr[0]);
+                        $("#positionLevelId").val(arr[1]);
+                    } else {
+                        flag = false;
+                        $("#errormessage").show();
+                        var errormessagediv = document.getElementById("errormessage");
+                        errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;" + data;
+                        errormessagediv.style.color = "red";
+                        $("#workDateStr").val("");
+                        $("#positionLevelId").val("");
+                    }
+                },
+                error: function (msg) {
+                    flag = false;
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                    errormessagediv.style.color = "red";
+                    $("#workDateStr").val("");
+                    $("#positionLevelId").val("");
+                }
+            });
+        }
+
+    }
+
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
@@ -277,8 +326,9 @@
                             <label>职位类别：</label>
                         </td>
                         <td>
-                            <select id="positionLevel" multiple class="selectpicker show-tick form-control"
-                                    data-live-search="true" onchange="showDateByMonth()" data-selected-text-format="count > 5">
+                            <!---->
+                            <select id="positionLevel"  class="selectpicker show-tick form-control"
+                                    data-live-search="true" onchange="showDateByWorkLevelAndMonth()" data-selected-text-format="count > 5">
                                 <option th:value="A">A</option>
                                 <option th:value="B">B</option>
                                 <option th:value="C">C</option>
@@ -286,24 +336,14 @@
                                 <option th:value="E">E</option>
                             </select>
                         </td>
-                        <td style="text-align: right">
-                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<label>月份：</label>
+                        <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
+                        <td>
+                            <input type="text" id="monthId" onchange="showDateByWorkLevelAndMonth()"
+                                   style="width:130px;height: 34px;text-align: center"
+                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
+                                   />
                         </td>
-                        <td style="width: 120px">
-                            <select id="monthId" multiple class="selectpicker show-tick form-control"
-                                    data-live-search="true" onchange="showDateByMonth()" data-selected-text-format="count > 5">
-                                <option th:value="3">3</option>
-                                <option th:value="4">4</option>
-                                <option th:value="5">5</option>
-                                <option th:value="6">6</option>
-                                <option th:value="7">7</option>
-                                <option th:value="8">8</option>
-                                <option th:value="9">9</option>
-                                <option th:value="10">10</option>
-                                <option th:value="11">11</option>
-                                <option th:value="12">12</option>
-                            </select>
-                        </td>
+                            <!--onchange="showDateByMonth()"-->
                         <td style="text-align: right">
                             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a class="btn btn-primary"
                                                                  href="javascript:void(0);"
@@ -325,7 +365,7 @@
                             <label>职位：</label>
                         </td>
                         <td colspan="5">
-                            <input type="text" class="form-control" disabled style="width:900px"/>
+                            <input type="text" id="workDateStr" class="form-control" disabled style="width:900px"/>
 
                         </td>
                     </tr>
@@ -334,7 +374,7 @@
                             <label>工作日：</label>
                         </td>
                         <td colspan="5">
-                            <input type="text" class="form-control" disabled style="width:900px"/>
+                            <input type="text" id="positionLevelId" class="form-control" disabled style="width:900px"/>
 
                         </td>
 

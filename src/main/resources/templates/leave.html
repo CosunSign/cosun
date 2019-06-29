@@ -127,8 +127,8 @@
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
-        formData.append('name', $("#name").val());
-        formData.append('sex', $("#sexId").val());
+        formData.append('names', $("#name").val());
+        formData.append('sexs', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
@@ -293,7 +293,13 @@
                             <label>姓名：</label>
                         </td>
                         <td>
-                            <label><input type="text" id="name" class="form-control" style="width:130px"></label>
+                            <select id="name" multiple class="selectpicker show-tick form-control"
+                                    data-live-search="true" data-actions-box="true"
+                                    data-selected-text-format="count > 2">
+                                　　
+                                <option th:each="c:${empList}" th:value="${c.id}"
+                                        th:text="${c.name}"></option>
+                            </select>
                         </td>
                         <td style="text-align: right">
                             <label>性别：</label>
@@ -346,7 +352,7 @@
                             <input type="text" id="startLeaveId"
                                    style="width:130px;height: 34px;text-align: center"
                                    class="Wdate"
-                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
+                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endLeaveId\')}'})"/>
 
                         </td>
                         <td>
@@ -355,7 +361,7 @@
                         <td>
                             <input type="text" id="endLeaveId"
                                    style="width:140px;height: 34px;text-align: center" class="Wdate"
-                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
+                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startLeaveId\')}'})"/>
 
                         </td>
                         <td><label>请假类别：</label></td>

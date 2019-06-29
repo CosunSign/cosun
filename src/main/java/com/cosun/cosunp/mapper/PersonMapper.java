@@ -299,16 +299,16 @@ public interface PersonMapper {
     List<Employee> findAllEmployeeAll();
 
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
-    WorkDate getWorkDateByMonthAnPositionLevel(int month, String positionLevel);
+    WorkDate getWorkDateByMonthAnPositionLevel(String month, String positionLevel);
 
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} or (month = #{month} and type = 2)")
-    List<WorkDate> getWorkDateByMonthAnPositionLevelList(int month, String positionLevel);
+    List<WorkDate> getWorkDateByMonthAnPositionLevelList(String month, String positionLevel);
 
     @Select("select group_concat(workDate,',') as workDate from workdate where month = #{month} and positionLevel = #{positionLevel} and type in(0,1) ")
-    WorkDate getWorkDateByMonthAnPositionLevelandType(int month, String positionLevel);
+    WorkDate getWorkDateByMonthAnPositionLevelandType(String month, String positionLevel);
 
     @Select("select * from workdate where month = #{month}")
-    List<WorkDate> findAllWorkDateListByMonth(int month);
+    List<WorkDate> findAllWorkDateListByMonth(String month);
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryPositionByNameA")
     List<Position> queryPositionByNameA(Position position);
@@ -321,6 +321,9 @@ public interface PersonMapper {
 
     @Select("select count(*) from employee ")
     int findAllEmployeeCount();
+
+    @Select("select * from userinfo  where empno = #{empNo} limit 1 ")
+    UserInfo getUserInfoByEmpno(String empNo);
 
 
     @Select("select *,#{currentPage} as currentPage from dept where deptname like  CONCAT('%',#{deptname},'%') order by deptname desc limit #{currentPageTotalNum},#{pageSize}")
@@ -376,7 +379,10 @@ public interface PersonMapper {
             " and type = #{type} ")
     WorkDate getWorkDateByMonth(WorkDate workDate);
 
-    @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} " +
+
+
+
+    @Select("select *,GROUP_CONCAT(workdate) from workdate where month = #{month} and positionLevel = #{positionLevel} " +
             " limit 1 ")
     WorkDate getWorkDateByMonth2(WorkDate workDate);
 
@@ -405,7 +411,7 @@ public interface PersonMapper {
     WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate);
 
     @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
-    WorkSet getWorkSetByMonthAndPositionLevel2(int month, String positionLevel);
+    WorkSet getWorkSetByMonthAndPositionLevel2(String month, String positionLevel);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s') as beginLeaveStr ,date_format(endleave, '%Y-%m-%d %h:%i:%s') as endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type  " +
             "from leavedata where employeeid = #{employeeId} and  beginleave<= #{dataStrStart} and endleave>= #{dataEnd} limit 1 ")
@@ -681,8 +687,17 @@ public interface PersonMapper {
 
         public String queryWorkSetByCondition(WorkSet workSet) {
             StringBuilder sb = new StringBuilder("SELECT * from workset where 1=1 ");
+
             if (workSet.getMonths() != null && workSet.getMonths().size() > 0) {
-                sb.append(" and month in (" + StringUtils.strip(workSet.getMonths().toString(), "[]") + ")");
+                if (workSet.getWorkLevels().size() == 1) {
+                    sb.append(" and month in ('" + workSet.getMonths().get(0) + "')");
+                } else if (workSet.getWorkLevels().size() >= 2) {
+                    sb.append(" and month in (");
+                    for (int i = 0; i < workSet.getMonths().size() - 1; i++) {
+                        sb.append("'" + workSet.getMonths().get(i) + "'" + ",");
+                    }
+                    sb.append("'" + workSet.getMonths().get(workSet.getMonths().size() - 1) + "')");
+                }
             }
             if (workSet.getWorkLevels() != null && workSet.getWorkLevels().size() > 0) {
                 if (workSet.getWorkLevels().size() == 1) {
@@ -702,7 +717,15 @@ public interface PersonMapper {
         public String queryWorkSetByConditionCount(WorkSet workSet) {
             StringBuilder sb = new StringBuilder("SELECT count(*) from workset where 1=1 ");
             if (workSet.getMonths() != null && workSet.getMonths().size() > 0) {
-                sb.append(" and month in (" + StringUtils.strip(workSet.getMonths().toString(), "[]") + ")");
+                if (workSet.getWorkLevels().size() == 1) {
+                    sb.append(" and month in ('" + workSet.getMonths().get(0) + "')");
+                } else if (workSet.getWorkLevels().size() >= 2) {
+                    sb.append(" and month in (");
+                    for (int i = 0; i < workSet.getMonths().size() - 1; i++) {
+                        sb.append("'" + workSet.getMonths().get(i) + "'" + ",");
+                    }
+                    sb.append("'" + workSet.getMonths().get(workSet.getMonths().size() - 1) + "')");
+                }
             }
             if (workSet.getWorkLevels() != null && workSet.getWorkLevels().size() > 0) {
                 if (workSet.getWorkLevels().size() == 1) {
@@ -784,7 +807,7 @@ public interface PersonMapper {
             }
 
             if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
-                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+                sb.append(" and n.id in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
             }
 
             if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
@@ -1124,15 +1147,16 @@ public interface PersonMapper {
                     "\t leavedata a join  employee e on a.employeeid = e.id \n" +
                     "JOIN dept t ON e.deptId = t.id\n" +
                     "JOIN position n ON e.positionId = n.id where 1=1");
-            if (leave.getName() != "" && leave.getName() != null && leave.getName().trim().length() > 0) {
-                sb.append(" and e.name like  CONCAT('%',#{name},'%') ");
+
+            if (leave.getNames() != null && leave.getNames().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(leave.getNames().toString(), "[]") + ") ");
             }
-            if (leave.getSex() != null) {
-                sb.append(" and e.sex = #{sex} ");
+            if (leave.getSexs() != null && leave.getSexs().size() > 0) {
+                sb.append(" and e.sex in (" + StringUtils.strip(leave.getSexs().toString(), "[]") + ") ");
             }
 
             if (leave.getEmpNo() != null && leave.getEmpNo() != "" && leave.getEmpNo().trim().length() > 0) {
-                sb.append(" and e.empno  like  CONCAT('%',#{empno},'%') ");
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
             }
 
             if (leave.getDeptIds() != null && leave.getDeptIds().size() > 0) {
@@ -1164,14 +1188,14 @@ public interface PersonMapper {
                     "\t leavedata a join  employee e on a.employeeid = e.id \n" +
                     "JOIN dept t ON e.deptId = t.id\n" +
                     "JOIN position n ON e.positionId = n.id where 1=1");
-            if (leave.getName() != "" && leave.getName() != null && leave.getName().trim().length() > 0) {
-                sb.append(" and e.name like  CONCAT('%',#{name},'%') ");
+            if (leave.getNames() != null && leave.getNames().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(leave.getNames().toString(), "[]") + ") ");
             }
-            if (leave.getSex() != null) {
-                sb.append(" and e.sex = #{sex} ");
+            if (leave.getSexs() != null && leave.getSexs().size() > 0) {
+                sb.append(" and e.sex in (" + StringUtils.strip(leave.getSexs().toString(), "[]") + ") ");
             }
             if (leave.getEmpNo() != null && leave.getEmpNo() != "" && leave.getEmpNo().trim().length() > 0) {
-                sb.append(" and e.empno  like  CONCAT('%',#{empno},'%') ");
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
             }
 
             if (leave.getDeptIds() != null && leave.getDeptIds().size() > 0) {

@@ -1,6 +1,7 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -14,13 +15,22 @@ public class WorkDate implements Serializable {
     private static final long serialVersionUID = 5202823010119902688L;
 
     private Integer id;
-    private Integer month;
+    private String month;
     private String workDate;
     private String remark;
     private String positionLevel;
     private String[] workDates;
     private String[] workDatess;
     private Integer type;//0代表正班  1代表周末加班  2代表法定带薪假
+    private List<String> positionLevels;
+
+    public List<String> getPositionLevels() {
+        return positionLevels;
+    }
+
+    public void setPositionLevels(List<String> positionLevels) {
+        this.positionLevels = positionLevels;
+    }
 
     public Integer getType() {
         return type;
@@ -65,11 +75,11 @@ public class WorkDate implements Serializable {
         this.id = id;
     }
 
-    public Integer getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 

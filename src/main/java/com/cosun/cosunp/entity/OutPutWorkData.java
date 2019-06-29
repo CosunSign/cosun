@@ -54,6 +54,7 @@ public class OutPutWorkData implements Serializable {
     private String isExtOffOk;
 
     private String remark;
+    private String yearMonth;
 
     private String orginClockInStr;
 
@@ -66,6 +67,15 @@ public class OutPutWorkData implements Serializable {
     private String errorMessage;
 
     private Integer workType;//0 正常上班 1.周末加班 2.法定节假日
+
+
+    public String getYearMonth() {
+        return yearMonth;
+    }
+
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
+    }
 
     public Integer getWorkType() {
         return workType;

@@ -2,6 +2,7 @@ package com.cosun.cosunp.tool;
 
 import com.cosun.cosunp.entity.OutPutWorkData;
 import com.cosun.cosunp.entity.SalaryDataOutPut;
+import com.cosun.cosunp.entity.SubEmphours;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,6 +25,100 @@ import java.util.List;
  * @Modified-date:
  */
 public class ExcelUtil {
+
+
+    public static List<String> writeExcelSubWorkHours(List<SubEmphours> outDatas, String yearMonth, String finalDirPath) {
+        List<String> returnArray = new ArrayList<String>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        SubEmphours opw;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet1");
+        Date d = new Date();
+        String str = sdf.format(d);
+
+        String mkdir = finalDirPath + "/linshi/";
+        String pathname = finalDirPath + "/linshi/" + yearMonth+str + "工资计算表" + ".xlsx";
+        returnArray.add( yearMonth+str + "工时统计表" + ".xlsx");
+        File file = new File(pathname);
+        if (file.exists()) {
+            //如果文件存在就删除
+            file.delete();
+        }
+        File targetFile = new File(mkdir);
+        //：判断目录是否存在   不存在：创建目录
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+        try {
+            file.createNewFile();
+            Row row = null;
+            Cell cell = null;
+            //将内容写入指定的行号中
+            row = sheet1.createRow(0);
+            //根据行指定列坐标j,然后在单元格中写入数据
+            cell = row.createCell(0);
+            cell.setCellValue("序号");
+            cell = row.createCell(1);
+            cell.setCellValue("年月");
+            cell = row.createCell(2);
+            cell.setCellValue("姓名");
+            cell = row.createCell(3);
+            cell.setCellValue("工号");
+            cell = row.createCell(4);
+            cell.setCellValue("部门");
+            cell = row.createCell(5);
+            cell.setCellValue("职位");
+            cell = row.createCell(6);
+            cell.setCellValue("正常出勤工时");
+            cell = row.createCell(7);
+            cell.setCellValue("平常加班工时");
+            cell = row.createCell(8);
+            cell.setCellValue("周末加班工时");
+            cell = row.createCell(9);
+            cell.setCellValue("法定有薪假");
+            cell = row.createCell(10);
+            cell.setCellValue("法定节假日加班工时");
+            cell = row.createCell(11);
+            cell.setCellValue("其它有薪假工时");
+            for (int i = 0; i < outDatas.size(); i++) {
+                opw = outDatas.get(i);
+                row = sheet1.createRow(i + 1);
+                //根据行指定列坐标j,然 后在单元格中写入数据
+                cell = row.createCell(0);
+                cell.setCellValue(i + 1);
+                cell = row.createCell(1);
+                cell.setCellValue(opw.getMonth());
+                cell = row.createCell(2);
+                cell.setCellValue(opw.getName());
+                cell = row.createCell(3);
+                cell.setCellValue(opw.getEmpNo());
+                cell = row.createCell(4);
+                cell.setCellValue(opw.getDeptName() );
+                cell = row.createCell(5);
+                cell.setCellValue(opw.getPositionName());
+                cell = row.createCell(6);
+                cell.setCellValue(opw.getZhengbanWorkHours());
+                cell = row.createCell(7);
+                cell.setCellValue(opw.getUsualExtWorkHoursl());
+                cell = row.createCell(8);
+                cell.setCellValue(opw.getWeekendWorkHours());
+                cell = row.createCell(9);
+                cell.setCellValue(opw.getLegalPaidLeaveHours());
+                cell = row.createCell(10);
+                cell.setCellValue(opw.getLegalDayWorkHours());
+                cell = row.createCell(11);
+                cell.setCellValue(opw.getOtherpaidLeaveHours());
+            }
+            OutputStream stream = new FileOutputStream(file);
+            workbook.write(stream);
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        returnArray.add(pathname);
+        return returnArray;
+
+    }
 
     public static List<String> writeExcelSalary(List<SalaryDataOutPut> outDatas,String yearMonth,String finalDirPath) {
         List<String> returnArray = new ArrayList<String>();

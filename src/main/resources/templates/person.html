@@ -191,9 +191,9 @@
                     var safeLe;
                     var otherLe;
                     $.each(data, function (num) {
-                        eduLe = data[num].educationLe;
-                        safeLe = data[num].sateListAndLeaCerti;
-                        otherLe = data[num].otherCerti;
+                        eduLe = data[num].educationLeUrlInt;
+                        safeLe = data[num].sateListAndLeaCertiUrlInt;
+                        otherLe = data[num].otherCertiUrlInt;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -208,7 +208,7 @@
                         tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
 
                         td2 = "";
-                        if (eduLe <= 7) {
+                        if (eduLe <= 0) {
                             td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
                         } else {
                             td2 += " <td><a href='javascript:void(0)';" +
@@ -368,9 +368,9 @@
                     var safeLe;
                     var otherLe;
                     $.each(data, function (num) {
-                        eduLe = data[num].educationLe;
-                        safeLe = data[num].sateListAndLeaCerti;
-                        otherLe = data[num].otherCerti;
+                        eduLe = data[num].educationLeUrlInt;
+                        safeLe = data[num].sateListAndLeaCertiUrlInt;
+                        otherLe = data[num].otherCertiUrlInt;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
@@ -385,7 +385,7 @@
                         tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
 
                         td2 = "";
-                        if (eduLe <= 7) {
+                        if (eduLe <= 0) {
                             td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
                         } else {
                             td2 += " <td><a href='javascript:void(0)';" +
@@ -741,36 +741,36 @@
                     <td align="center" th:text="${employ.incomdateStr}"></td>
                     <td align="center" th:text="${employ.nativePlaStr}"></td>
                     <td align="center" th:text="${employ.contactPhone}"></td>
-                    <div th:if="${employ.educationLe gt 7}">
+                    <div th:if="${employ.educationLeUrlInt eq 1}">
                         <td align="center">
                             <a href="javascript:void(0);"
                                th:onclick="showPNG([[${employ.id}]],1);"
                                th:text="${employ.educationLeStr}"></a>
                         </td>
                     </div>
-                    <div th:if="${employ.educationLe le 7}">
+                    <div th:if="${employ.educationLeUrlInt eq 0}">
                         <td align="center" th:text="${employ.educationLeStr}"></td>
                     </div>
 
-                    <div th:if="${employ.sateListAndLeaCerti gt 0}">
+                    <div th:if="${employ.sateListAndLeaCertiUrlInt eq 1}">
                         <td align="center">
                             <a href="javascript:void(0);"
                                th:onclick="showPNG([[${employ.id}]],2);"
                                th:text="${employ.sateListAndLeaCertiStr}"></a>
                         </td>
                     </div>
-                    <div th:if="${employ.sateListAndLeaCerti le 0}">
+                    <div th:if="${employ.sateListAndLeaCertiUrlInt eq 0}">
                         <td align="center" th:text="${employ.sateListAndLeaCertiStr}"></td>
                     </div>
 
-                    <div th:if="${employ.otherCerti gt 0}">
+                    <div th:if="${employ.otherCertiUrlInt eq 1}">
                         <td align="center">
                             <a href="javascript:void(0);"
                                th:onclick="showPNG([[${employ.id}]],3);"
                                th:text="${employ.otherCertiStr}"></a>
                         </td>
                     </div>
-                    <div th:if="${employ.otherCerti le 0}">
+                    <div th:if="${employ.otherCertiUrlInt eq 0}">
                         <td align="center" th:text="${employ.otherCertiStr}"></td>
                     </div>
 

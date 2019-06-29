@@ -41,6 +41,8 @@ public class Leave implements Serializable {
     private List<Integer> deptIds;
     private List<Integer> positionIds;
     private List<Integer> types;
+    private List<Integer> names;
+    private List<Integer> sexs;
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -49,6 +51,23 @@ public class Leave implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+
+    public List<Integer> getSexs() {
+        return sexs;
+    }
+
+    public void setSexs(List<Integer> sexs) {
+        this.sexs = sexs;
+    }
+
+    public List<Integer> getNames() {
+        return names;
+    }
+
+    public void setNames(List<Integer> names) {
+        this.names = names;
+    }
 
     public String getTypeStr() {
         if (type != null) {
