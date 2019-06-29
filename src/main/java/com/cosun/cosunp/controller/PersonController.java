@@ -50,6 +50,8 @@ public class PersonController {
     @RequestMapping("/toworkdatepage")
     public ModelAndView toworkdatepage() throws Exception {
         ModelAndView view = new ModelAndView("workdatepage");
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        view.addObject("empList",empList);
         return view;
     }
 

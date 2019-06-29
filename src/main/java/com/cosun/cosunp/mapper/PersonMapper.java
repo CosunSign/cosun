@@ -290,7 +290,7 @@ public interface PersonMapper {
             "  n.positionName as positionName,\n" +
             "  n.positionLevel as positionLevel,\n" +
             "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "  e.empno as empNo\n" +
+            "  e.empno as empNo,worktype as workType \n" +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
@@ -431,8 +431,8 @@ public interface PersonMapper {
     void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
-            "INSERT into workdate (month,positionLevel,workDate,remark,type)\n" +
-            " values(#{month},#{positionLevel},#{workDate},#{remark},#{type})\n")
+            "INSERT into workdate (month,positionLevel,workDate,remark,type,empNostr)\n" +
+            " values(#{month},#{positionLevel},#{workDate},#{remark},#{type},#{empNostr})\n")
     void saveWorkData(WorkDate workDate);
 
     @Insert("\n" +
@@ -445,7 +445,9 @@ public interface PersonMapper {
     void addWorkSetData(WorkSet workSet);
 
 
-    @Update("update workdate set workDate =  #{workDate},remark = #{remark} ,type=#{type} where month = #{month} and positionLevel = #{positionLevel} and type = #{type} ")
+    @Update("update workdate set workDate =  #{workDate},remark = #{remark} " +
+            ",type=#{type},empNostr = #{empNostr} where month = #{month} and positionLevel = #{positionLevel} and" +
+            " type = #{type} ")
     void updateWorkData(WorkDate workDate);
 
     @Delete("delete from employee where id = #{id}")

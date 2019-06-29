@@ -19,6 +19,9 @@
 <script>
 
     $(function () {
+        $('#name').selectpicker({
+            'selectedText': 'cat'
+        });
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
@@ -56,8 +59,8 @@
             processData: false,
             success: function (msg) {
                 // if (largeMonth.includes(month)) {
-                    $("#date31Title").show();
-                    $("#date31").show();
+                $("#date31Title").show();
+                $("#date31").show();
                 // } else {
                 //     $("#date31Title").hide();
                 //     $("#date31").hide();
@@ -249,7 +252,7 @@
                 } else {
                     // if (largeMonth.includes(month)) {
 
-                        tr.append("<td id='date31' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates\"></td>");
+                    tr.append("<td id='date31' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates\"></td>");
                     // }
                 }
                 tr.appendTo(tbody);
@@ -275,7 +278,7 @@
         var smallMonth = new Array('4', '6', '9', '11');
         formData.append('month', month);
         formData.append('positionLevel', positionLevel);
-        formData.append('type',1);
+        formData.append('type', 1);
         $.ajax({
             data: formData,
             type: "POST",
@@ -286,8 +289,8 @@
             processData: false,
             success: function (msg) {
                 // if (largeMonth.includes(month)) {
-                    $("#date31Title2").show();
-                    $("#date312").show();
+                $("#date31Title2").show();
+                $("#date312").show();
                 // } else {
                 //     $("#date31Title2").hide();
                 //     $("#date312").hide();
@@ -300,6 +303,26 @@
                 var data = eval(msg);//将msg化为数;
                 var tr = "";
                 var td = "";
+                var selectArr = []
+                var empNostr = data[0].empNostr;
+                empNostr = empNostr.substring(1, empNostr.length - 1);
+                var arr = empNostr.split(',');
+                for (var i = 0; i < arr.length; i++) {
+                    selectArr.push(arr[i].trim());
+                }
+
+                // var rtype=document.getElementById("name");
+                // for(var i=0;i<rtype.options.length;i++){
+                //     for(var j=0;j<selectArr.length;j++){
+                //         if(rtype.options[i].value.trim()==arr[j].trim()){
+                //             rtype.options[i].selected=true;
+                //             // $('#name').selectpicker('val', arr[j].trim());
+                //
+                //         }
+                //     }
+                // }
+                // $('#name').selectpicker('val', "CS2019031102,CS2013082701");
+                $('#name').selectpicker('val', selectArr);
                 var workDates = data[0].workDate.split(',');
                 var remark = data[0].remark;
                 $("#remark2").val(remark)
@@ -479,7 +502,7 @@
                 } else {
                     // if (largeMonth.includes(month)) {
 
-                        tr.append("<td id='date312' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates2\"></td>");
+                    tr.append("<td id='date312' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates2\"></td>");
                     // }
                 }
                 tr.appendTo(tbody);
@@ -505,7 +528,7 @@
         var smallMonth = new Array('4', '6', '9', '11');
         formData.append('month', month);
         formData.append('positionLevel', positionLevel);
-        formData.append('type',2);
+        formData.append('type', 2);
         $.ajax({
             data: formData,
             type: "POST",
@@ -516,8 +539,8 @@
             processData: false,
             success: function (msg) {
                 // if (largeMonth.includes(month)) {
-                    $("#date31Title3").show();
-                    $("#date313").show();
+                $("#date31Title3").show();
+                $("#date313").show();
                 // } else {
                 //     $("#date31Title3").hide();
                 //     $("#date313").hide();
@@ -709,7 +732,7 @@
                 } else {
                     // if (largeMonth.includes(month)) {
 
-                        tr.append("<td id='date313' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates3\"></td>");
+                    tr.append("<td id='date313' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates3\"></td>");
                     // }
                 }
                 tr.appendTo(tbody);
@@ -948,7 +971,7 @@
                     } else {
                         // if (largeMonth.includes(month)) {
 
-                            tr.append("<td id='date31' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates\"></td>");
+                        tr.append("<td id='date31' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates\"></td>");
                         // }
                     }
                     tr.appendTo(tbody);
@@ -969,6 +992,7 @@
     function saveOrUpdateWorkDate2() {
         var isRight = true;
         var month = $("#monthId2").val();
+        var name = $("#name").val();
         var positionLevel = $("#positionLevel2").val();
         var remark = $("#remark2").val();
         var chk_value = [];//定义一个数组
@@ -983,6 +1007,7 @@
         formData.append('remark', remark);
         formData.append('workDates', chk_value);
         formData.append('type', 1);
+        formData.append('empNos', name);
         if (positionLevel == 0) {
             $("#errormessage2").show();
             var errormessagediv = document.getElementById("errormessage2");
@@ -1189,7 +1214,7 @@
                     } else {
                         // if (largeMonth.includes(month)) {
 
-                            tr.append("<td id='date312' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates2\"></td>");
+                        tr.append("<td id='date312' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates2\"></td>");
                         // }
                     }
                     tr.appendTo(tbody);
@@ -1429,7 +1454,7 @@
                         tr.append("<td id='date313' style='display: block;'><input type=\"checkbox\" value=\"31\"  checked name=\"workDates3\"></td>");
                     } else {
                         // if (largeMonth.includes(month)) {
-                            tr.append("<td id='date313' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates3\"></td>");
+                        tr.append("<td id='date313' style='display: block;'><input type=\"checkbox\" value=\"31\"  name=\"workDates3\"></td>");
                         // }
                     }
                     tr.appendTo(tbody);
@@ -1470,29 +1495,30 @@
                 <table>
                     <tr>
                         <!--<td style="text-align: right">-->
-                            <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
+                        <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
                         <!--</td>-->
                         <!--<td style="width: 150px">-->
-                            <!--<select id="monthId" class="selectpicker show-tick form-control"-->
-                                    <!--data-live-search="true" onchange="showDateByMonth()">-->
-                                <!--<option th:value="3">3</option>-->
-                                <!--<option th:value="4">4</option>-->
-                                <!--<option th:value="5">5</option>-->
-                                <!--<option th:value="6">6</option>-->
-                                <!--<option th:value="7">7</option>-->
-                                <!--<option th:value="8">8</option>-->
-                                <!--<option th:value="9">9</option>-->
-                                <!--<option th:value="10">10</option>-->
-                                <!--<option th:value="11">11</option>-->
-                                <!--<option th:value="12">12</option>-->
-                            <!--</select>-->
+                        <!--<select id="monthId" class="selectpicker show-tick form-control"-->
+                        <!--data-live-search="true" onchange="showDateByMonth()">-->
+                        <!--<option th:value="3">3</option>-->
+                        <!--<option th:value="4">4</option>-->
+                        <!--<option th:value="5">5</option>-->
+                        <!--<option th:value="6">6</option>-->
+                        <!--<option th:value="7">7</option>-->
+                        <!--<option th:value="8">8</option>-->
+                        <!--<option th:value="9">9</option>-->
+                        <!--<option th:value="10">10</option>-->
+                        <!--<option th:value="11">11</option>-->
+                        <!--<option th:value="12">12</option>-->
+                        <!--</select>-->
                         <!--</td>-->
 
                         <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
                         <td>
                             <input type="text" id="monthId"
                                    style="width:130px;height: 34px;text-align: center"
-                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})" onchange="showDateByMonth()"/>
+                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
+                                   onchange="showDateByMonth()"/>
                         </td>
 
                         <td style="text-align: right">
@@ -1619,28 +1645,29 @@
                 <table>
                     <tr>
                         <!--<td style="text-align: right">-->
-                            <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
+                        <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
                         <!--</td>-->
                         <!--<td style="width: 150px">-->
-                            <!--<select id="monthId2" class="selectpicker show-tick form-control"-->
-                                    <!--data-live-search="true" onchange="showDateByMonth2()">-->
-                                <!--<option th:value="3">3</option>-->
-                                <!--<option th:value="4">4</option>-->
-                                <!--<option th:value="5">5</option>-->
-                                <!--<option th:value="6">6</option>-->
-                                <!--<option th:value="7">7</option>-->
-                                <!--<option th:value="8">8</option>-->
-                                <!--<option th:value="9">9</option>-->
-                                <!--<option th:value="10">10</option>-->
-                                <!--<option th:value="11">11</option>-->
-                                <!--<option th:value="12">12</option>-->
-                            <!--</select>-->
+                        <!--<select id="monthId2" class="selectpicker show-tick form-control"-->
+                        <!--data-live-search="true" onchange="showDateByMonth2()">-->
+                        <!--<option th:value="3">3</option>-->
+                        <!--<option th:value="4">4</option>-->
+                        <!--<option th:value="5">5</option>-->
+                        <!--<option th:value="6">6</option>-->
+                        <!--<option th:value="7">7</option>-->
+                        <!--<option th:value="8">8</option>-->
+                        <!--<option th:value="9">9</option>-->
+                        <!--<option th:value="10">10</option>-->
+                        <!--<option th:value="11">11</option>-->
+                        <!--<option th:value="12">12</option>-->
+                        <!--</select>-->
 
                         <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
                         <td>
                             <input type="text" id="monthId2"
                                    style="width:130px;height: 34px;text-align: center"
-                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})" onchange="showDateByMonth2()"/>
+                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
+                                   onchange="showDateByMonth2()"/>
                         </td>
 
                         <td style="text-align: right">
@@ -1657,6 +1684,24 @@
                                 <option th:value="E">E</option>
                             </select>
                         </td>
+                        <!--员工-->
+
+                        <td style="text-align: right">
+                            <label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;员工选择：</label>
+                        </td>
+                        <td>
+                            <label>
+                                <select id="name" name="name" multiple class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true"
+                                        data-selected-text-format="count > 2">
+                                    　　
+                                    <option th:each="c:${empList}" th:value="${c.empNo}"
+                                            th:text="${c.name}"></option>
+                                </select>
+                            </label>
+                        </td>
+
+
                         <td>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-primary"
                                                                          href="javascript:void(0);"
@@ -1765,22 +1810,22 @@
             <table>
                 <tr>
                     <!--<td style="text-align: right">-->
-                        <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
+                    <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月份：</label>-->
                     <!--</td>-->
                     <!--<td style="width: 150px">-->
-                        <!--<select id="monthId3" class="selectpicker show-tick form-control"-->
-                                <!--data-live-search="true" onchange="showDateByMonth3()">-->
-                            <!--<option th:value="3">3</option>-->
-                            <!--<option th:value="4">4</option>-->
-                            <!--<option th:value="5">5</option>-->
-                            <!--<option th:value="6">6</option>-->
-                            <!--<option th:value="7">7</option>-->
-                            <!--<option th:value="8">8</option>-->
-                            <!--<option th:value="9">9</option>-->
-                            <!--<option th:value="10">10</option>-->
-                            <!--<option th:value="11">11</option>-->
-                            <!--<option th:value="12">12</option>-->
-                        <!--</select>-->
+                    <!--<select id="monthId3" class="selectpicker show-tick form-control"-->
+                    <!--data-live-search="true" onchange="showDateByMonth3()">-->
+                    <!--<option th:value="3">3</option>-->
+                    <!--<option th:value="4">4</option>-->
+                    <!--<option th:value="5">5</option>-->
+                    <!--<option th:value="6">6</option>-->
+                    <!--<option th:value="7">7</option>-->
+                    <!--<option th:value="8">8</option>-->
+                    <!--<option th:value="9">9</option>-->
+                    <!--<option th:value="10">10</option>-->
+                    <!--<option th:value="11">11</option>-->
+                    <!--<option th:value="12">12</option>-->
+                    <!--</select>-->
 
                     <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
                     <td>

@@ -19,10 +19,28 @@ public class WorkDate implements Serializable {
     private String workDate;
     private String remark;
     private String positionLevel;
+    private String empNostr;
     private String[] workDates;
     private String[] workDatess;
+    private List<String> empNos;
     private Integer type;//0代表正班  1代表周末加班  2代表法定带薪假
     private List<String> positionLevels;
+
+    public String getEmpNostr() {
+        return empNostr;
+    }
+
+    public void setEmpNostr(String empNostr) {
+        this.empNostr = empNostr;
+    }
+
+    public List<String> getEmpNos() {
+        return empNos;
+    }
+
+    public void setEmpNos(List<String> empNos) {
+        this.empNos = empNos;
+    }
 
     public List<String> getPositionLevels() {
         return positionLevels;

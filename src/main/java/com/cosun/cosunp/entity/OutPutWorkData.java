@@ -68,6 +68,24 @@ public class OutPutWorkData implements Serializable {
 
     private Integer workType;//0 正常上班 1.周末加班 2.法定节假日
 
+    private String yearMonthDay;
+    private Integer workArea;
+
+    public Integer getWorkArea() {
+        return workArea;
+    }
+
+    public void setWorkArea(Integer workArea) {
+        this.workArea = workArea;
+    }
+
+    public String getYearMonthDay() {
+        return yearMonthDay;
+    }
+
+    public void setYearMonthDay(String yearMonthDay) {
+        this.yearMonthDay = yearMonthDay;
+    }
 
     public String getYearMonth() {
         return yearMonth;

@@ -3,6 +3,7 @@ package com.cosun.cosunp.tool;
 import com.cosun.cosunp.entity.Employee;
 import com.cosun.cosunp.entity.OutPutWorkData;
 import com.cosun.cosunp.entity.SubEmphours;
+import org.omg.CORBA.DATA_CONVERSION;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -98,46 +99,59 @@ public class MathUtil {
             otherpaidLeaveHours = 0.0;
             empNo = ee.getEmpNo();
             for (OutPutWorkData opw : outPutWorkDataList) {
-                if(empNo.equals(opw.getEmpNo())) {
+                if (empNo.equals(opw.getEmpNo())) {
                     yearMonth = opw.getYearMonth();
-                    if(opw.getWorkType()==0 &&opw.getExtHours()!=null) {
+                    if (opw.getWorkType() == 0 && opw.getWorkArea()==0 && opw.getExtHours() != null && !DateUtil.isWeekend(opw.getYearMonthDay())) {
                         usualExtWorkHours += opw.getExtHours();
                     }
-                    if(opw.getWorkType()==0 && opw.getIsAonOk().equals("正常")&&opw.getIsAoffOk().equals("正常")) {
+                    if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("正常") && opw.getIsAoffOk().equals("正常")) {
                         zhengbanWorkHours += 4;
                     }
-                    if(opw.getWorkType()==0 && opw.getIsPOnOk().equals("正常")&&opw.getIsPOffOk().equals("正常")) {
-                        zhengbanWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==1 &&opw.getExtHours()!=null) {
-                        weekendWorkHours += opw.getExtHours();
-                    }
-                    if(opw.getWorkType()==1 && opw.getIsAonOk().equals("周末加班")&&opw.getIsAoffOk().equals("周末加班")) {
-                        weekendWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==1 && opw.getIsPOnOk().equals("周末加班")&&opw.getIsPOffOk().equals("周末加班")) {
-                        weekendWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==2 ) {
-                        legalPaidLeaveHours += 8;
-                    }
-                    if(opw.getWorkType()==2 && opw.getIsAonOk().equals("正常")&&opw.getIsAoffOk().equals("正常")) {
-                        legalDayWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==2 && opw.getIsPOnOk().equals("正常")&&opw.getIsPOffOk().equals("正常")) {
-                        legalDayWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==0 && opw.getIsAonOk().equals("因公外出")&&opw.getIsAoffOk().equals("因公外出")) {
-                        zhengbanWorkHours += 4;
-                    }
-                    if(opw.getWorkType()==0 && opw.getIsPOnOk().equals("因公外出")&&opw.getIsPOffOk().equals("因公外出")) {
+                    if (opw.getWorkType() == 0 && opw.getIsPOnOk().equals("正常") && opw.getIsPOffOk().equals("正常")) {
                         zhengbanWorkHours += 4;
                     }
 
-                    if(opw.getWorkType()==0 && opw.getIsAonOk().equals("带薪年假")&&opw.getIsAoffOk().equals("带薪年假")) {
+                    if (opw.getWorkType() == 0 && opw.getExtHours() != null && opw.getWorkArea()==1) {
+                        usualExtWorkHours += opw.getExtHours();
+                    }
+                    if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("周六加班") && opw.getIsAoffOk().equals("周六加班")) {
+                        weekendWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 0 && opw.getIsPOnOk().equals("周六加班") && opw.getIsPOffOk().equals("周六加班")) {
+                        weekendWorkHours += 4;
+                    }
+
+                    if (opw.getWorkArea()==0 && DateUtil.isWeekend(opw.getYearMonthDay())){
+                        if (opw.getExtHours() != null)
+                            weekendWorkHours += opw.getExtHours();
+                    }
+
+                    if (opw.getWorkType() == 1 && opw.getIsAonOk().equals("周末加班") && opw.getIsAoffOk().equals("周末加班")) {
+                        weekendWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 1 && opw.getIsPOnOk().equals("周末加班") && opw.getIsPOffOk().equals("周末加班")) {
+                        weekendWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 2) {
+                        legalPaidLeaveHours += 8;
+                    }
+                    if (opw.getWorkType() == 2 && opw.getIsAonOk().equals("正常") && opw.getIsAoffOk().equals("正常")) {
+                        legalDayWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 2 && opw.getIsPOnOk().equals("正常") && opw.getIsPOffOk().equals("正常")) {
+                        legalDayWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("因公外出") && opw.getIsAoffOk().equals("因公外出")) {
+                        zhengbanWorkHours += 4;
+                    }
+                    if (opw.getWorkType() == 0 && opw.getIsPOnOk().equals("因公外出") && opw.getIsPOffOk().equals("因公外出")) {
+                        zhengbanWorkHours += 4;
+                    }
+
+                    if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("带薪年假") && opw.getIsAoffOk().equals("带薪年假")) {
                         otherpaidLeaveHours += 4;
                     }
-                    if(opw.getWorkType()==0 && opw.getIsPOnOk().equals("带薪年假")&&opw.getIsPOffOk().equals("带薪年假")) {
+                    if (opw.getWorkType() == 0 && opw.getIsPOnOk().equals("带薪年假") && opw.getIsPOffOk().equals("带薪年假")) {
                         otherpaidLeaveHours += 4;
                     }
 
