@@ -44,7 +44,7 @@
 <!--[if (gt IE 9)|!(IE)]><!-->
 
 <!--<![endif]-->
-
+<input type="hidden" id="usertype" th:field="${userInfo.webPrivi}">
 <div class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -109,12 +109,17 @@
                 <li><a href="#"><span class="fa fa-caret-right"></span> 学习性文件</a></li>
             </ul>
         </li>
+
+
+        <div id="caiwudiv" style="display: none">
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforcaiwu"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>财务<i
-                class="fa fa-collapse"></i></a></li>
+            rel="popover" data-placement="right">
+
+            <a href="#" data-target=".premium-menuforcaiwu"
+               class="nav-header collapsed"
+               data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>财务<i
+                    class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforcaiwu nav nav-list collapse">
                 <li>
@@ -141,6 +146,9 @@
             </ul>
         </li>
 
+        </div>
+
+<div id="renshidiv" style="display: none">
         <li data-popover="false"
             data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
             rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfilea"
@@ -173,7 +181,7 @@
             </ul>
         </li>
 
-
+</div>
         <li data-popover="false"
             rel="popover" data-placement="right"><a th:href="@{/rules/torulespage}" target="targetText"
                                                     data-target=".premium-menuforfileab"
@@ -216,7 +224,8 @@
 
 
         <li data-popover="false"
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuabab" class="nav-header collapsed"
+            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuabab"
+                                                    class="nav-header collapsed"
                                                     data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i> 权限<i
                 class="fa fa-collapse"></i></a></li>
         <li>
@@ -262,7 +271,7 @@
         <div th:if="${showflaga==1}">
 
             <iframe class="iframecontentnew" src="/pdfjs/web/viewer.html?file=/rules/previewFirst"
-             style="float: left;" name="targetText"></iframe>
+                    style="float: left;" name="targetText"></iframe>
         </div>
     </div>
 
@@ -759,6 +768,13 @@
 
 <script type="text/javascript">
     $(function () {
+        var type = $("#usertype").val();
+        if(type.includes("1")) {
+            $("#caiwudiv").show();
+        }
+        if(type.includes("2")) {
+            $("#renshidiv").show()
+        }
         var uls = $('.sidebar-nav > ul > *').clone();
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
@@ -766,6 +782,8 @@
             window.top.location.href = window.self.location.href;
         }
     });
+
+
 
 </script>
 <script type="text/javascript">

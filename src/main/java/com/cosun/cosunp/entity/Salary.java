@@ -22,9 +22,18 @@ public class Salary implements Serializable {
     private Integer state;
 
     private String remark;
+    private String name;
 
     public Integer getState() {
         return state;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setState(Integer state) {

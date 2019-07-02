@@ -42,6 +42,8 @@ public class Employee implements Serializable {
     private Integer type;
     private Integer workType;//0生产车间  1 办公区
     private Integer state;
+    private Integer isQuit;//0在职  1离职
+    private String isQuitStr;
 
     private String remark;
 
@@ -112,8 +114,29 @@ public class Employee implements Serializable {
     private String stateStr;
 
 
+    public Integer getIsQuit() {
+        return isQuit;
+    }
+
+    public void setIsQuit(Integer isQuit) {
+        this.isQuit = isQuit;
+    }
+
+    public String getIsQuitStr() {
+        if(this.isQuit==0) {
+            return "在职";
+        }else if(this.isQuit==1) {
+            return "离职";
+        }
+        return isQuitStr;
+    }
+
+    public void setIsQuitStr(String isQuitStr) {
+        this.isQuitStr = isQuitStr;
+    }
+
     public Integer getEducationLeUrlInt() {
-        if (this.getEducationLeUrl().trim().length()<=0) {
+        if (this.getEducationLeUrl().trim().length()<=0 || "0".equals(this.getEducationLeUrl().trim())) {
             return 0;
         }
         return 1;
@@ -124,7 +147,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getSateListAndLeaCertiUrlInt() {
-        if (this.getSateListAndLeaCertiUrl().trim().length()<=0) {
+        if (this.getSateListAndLeaCertiUrl().trim().length()<=0 || "0".equals(this.getSateListAndLeaCertiUrl().trim())) {
             return 0;
         }
         return 1;
@@ -135,10 +158,13 @@ public class Employee implements Serializable {
     }
 
     public Integer getOtherCertiUrlInt() {
-        if (this.getOtherCertiUrl().trim().length()<=0) {
-            return 0;
+        if(this.otherCerti!=null) {
+            if (this.getOtherCertiUrl().trim().length() <= 0 || "0".equals(this.getOtherCertiUrl().trim())) {
+                return 0;
+            }
+            return 1;
         }
-        return 1;
+        return 0;
     }
 
     public void setOtherCertiUrlInt(Integer otherCertiUrlInt) {

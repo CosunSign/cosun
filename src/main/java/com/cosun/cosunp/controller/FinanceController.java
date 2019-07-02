@@ -382,10 +382,10 @@ public class FinanceController {
 
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeHoursByempNo", method = RequestMethod.GET)
-    public ModelAndView toupdateEmployeeHoursByempNo(String empNo, HttpSession session) throws Exception {
+    public ModelAndView toupdateEmployeeHoursByempNo(Integer id, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updateemphours");
-        EmpHours empHours = financeServ.getEmpHoursByEmpNo(empNo);
+        EmpHours empHours = financeServ.getEmpHoursByEmpNo(id);
         view.addObject("empHours", empHours);
         return view;
     }
@@ -619,11 +619,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
 
     @ResponseBody
     @RequestMapping(value = "/deleteEmployeeHoursByEmpNo", method = RequestMethod.GET)
-    public ModelAndView deleteEmployeeHoursByEmpNo(String empNo, HttpSession session) throws Exception {
+    public ModelAndView deleteEmployeeHoursByEmpNo(Integer id, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView view = new ModelAndView("emphours");
-            financeServ.deleteEmployeeHoursByEmpno(empNo);
+            financeServ.deleteEmployeeHoursByEmpno(id);
             Employee employee = new Employee();
             List<Employee> empList = personServ.findAllEmployeeAll();
             List<Position> positionList = personServ.findAllPositionAll();

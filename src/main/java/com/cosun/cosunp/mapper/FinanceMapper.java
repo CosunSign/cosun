@@ -36,8 +36,8 @@ public interface FinanceMapper {
     @Delete("delete from financeimportdata where yearMonth = #{yearMonth} ")
     void deleteAllsaveAllFinanceImportDataByYearMonthData(String yearMonth);
 
-    @Delete("delete from emphours where empNo = #{empNo} ")
-    void deleteEmployeeHoursByEmpno(String empNo);
+    @Delete("delete from emphours where id = #{id} ")
+    void deleteEmployeeHoursByEmpno(Integer id);
 
     @Insert("insert into financeimportdata (empNo,\n" +
             "\t`name`,\n" +
@@ -356,6 +356,9 @@ public interface FinanceMapper {
     @Select("select e.positionAttrId,n.positionName,e.name,e.incompdate from employee e left join position n on e.positionid = n.id where e.empno = #{empno}")
     Employee getEmployeeByEmpno(String empno);
 
+    @Select("select * from employee  where empno = #{empNo} and name = #{name} limit 1 ")
+    Employee getEmployeeByEmpNoAndName(String empNo,String name);
+
 
     @Select("SELECT count(*) " +
             "\t\tFROM\n" +
@@ -502,8 +505,8 @@ public interface FinanceMapper {
             "\tmeritScore,\n" +
             "\tyearMonth,sixDeductions " +
             "\t\tFROM\n" +
-            "\t\t\temphours where empNo = #{empNo} ")
-    EmpHours getEmpHoursByEmpNo(String empNo);
+            "\t\t\temphours where id = #{id} ")
+    EmpHours getEmpHoursByEmpNo(Integer id);
 
     @Select("SELECT count(*) " +
             "\t\tFROM\n" +

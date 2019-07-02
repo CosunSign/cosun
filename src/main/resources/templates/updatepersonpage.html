@@ -50,6 +50,7 @@
         var employeeName = $("#employeeName").val();
         var ID_NO = $("#ID_NO").val();
         var sexV = $('input[name="sex"]:checked').val();
+        var isQuit = $('input[name="isQuit"]:checked').val();
         var birthDay = $("#birthDay").val();
         var marriaged = $('input[name="marriaged"]:checked').val();
         var screAgreement = $('input[name="screAgreement"]:checked').val();
@@ -217,6 +218,7 @@
             $("#sexId").val(sexV);
             $("#marriagedId").val(marriaged);
             $("#screAgreementId").val(screAgreement);
+            $("#isQuitId").val(isQuit);
             document.forms[0].submit();
         } else {
             $("#errormessage").show();
@@ -632,6 +634,7 @@
                         <input type="hidden" id="deptIdId" th:field="*{deptId}">
                         <input type="hidden" id="sexId" th:field="*{sex}">
                         <input type="hidden" id="screAgreementId" th:field="*{screAgreement}">
+                        <input type="hidden" id="isQuitId" th:field="*{isQuit}">
                         <input type="hidden" id="marriagedId" th:field="*{marriaged}">
                         <table class="table table-hover table-striped text-center"
                                style="text-align: right;width: 100%">
@@ -997,8 +1000,15 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td><label><font color="#FF0000" size="2">*</font>&nbsp;是否在职：</label></td>
+                                <td colspan="1" align="center">
+                                    <label><input type="radio" th:value="0" th:attr="checked=*{isQuit == 0}" name="isQuit">在职</label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label><input type="radio" th:value="1" th:attr="checked=*{isQuit == 1}" name="isQuit" >离职</label>
+                                </td>
+                                <td></td>
                                 <td><label><font color="#FF0000" size="2">*</font>&nbsp;家庭住址：</label></td>
-                                <td colspan="4">
+                                <td colspan="1">
                                     <input type="text" class="form-control" id="homeAddr" th:field="*{homeAddr}">
                                 </td>
                             </tr>

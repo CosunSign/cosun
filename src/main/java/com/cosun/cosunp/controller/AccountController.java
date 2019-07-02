@@ -201,6 +201,7 @@ public class AccountController {
 //                    }
 //                }
 //                mav.addObject("htmlStr", htmlContent);
+                mav.addObject("userInfo",userInfo);
                 mav.addObject("showflaga", rules == null ? 0 : 1);
                 return mav;
             }else if(userInfo !=null && userInfo.getState()!=1) {
@@ -208,12 +209,14 @@ public class AccountController {
                 view.setUserName(userInfo.getUserName());
                 view.setFlag(userInfo.getState().toString());
                 mav.addObject("view", view);
+                mav.addObject("userInfo",userInfo);
                 return mav;
             }
             mav = new ModelAndView(INDEX);
             view.setUserName(null);
             view.setPassword(null);
             view.setFlag("false");
+            mav.addObject("userInfo",userInfo);
             mav.addObject("view", view);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -310,6 +313,7 @@ public class AccountController {
             }
             view.addObject("view", v);
             view.addObject("menuList", menuList);
+            view.addObject("userInfo",userInfo);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

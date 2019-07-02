@@ -45,6 +45,8 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer jobSalaryTitleIndex;
     String meritSalaryTitle = "绩效工资";
     Integer meritSalaryTitleIndex;
+    String salaryNameTitle = "姓名";
+    Integer salaryNameTitleIndex;
 
 
     private String nameTitle = "姓名"; //
@@ -83,8 +85,6 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer unEmployeeInsurTitleIndex;
     private String accumulaFundTitle = "扣代付公积金";//公积金
     Integer accumulaFundTitleIndex;
-    private String sixDeductionsTitle = "六个代扣项";//6个代扣项
-    Integer sixDeductionsTitleIndex;
     private String errorInWorkTitle = "工作失误";//工作失误
     Integer errorInWorkTitleIndex;
     private String meritScoreTitle = "绩效分";//绩效分
@@ -113,6 +113,8 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer workYearsSalaryTitleIndex;
     private String sellCommiTitle = "业务提成";//业务提成
     Integer sellCommiTitleIndex;
+    private String speciAddDeductCostTitle = "专项附加扣除";
+    private Integer speciAddDeductCostTitleIndex;
 
 
     public List<Salary> translateExcelToBean(MultipartFile file) throws Exception {
@@ -131,7 +133,7 @@ public class FinanceServiceImpl implements IFinanceServ {
             jxl.Cell[] cell = null;
             Cell cella;
             if (rowNums > 0) {
-                cell = xlsfSheet.getRow(1);
+                cell = xlsfSheet.getRow(0);
                 int coloumNum = cell.length;
                 for (int ab = 0; ab < coloumNum; ab++) {
                     cella = cell[ab];
@@ -150,10 +152,13 @@ public class FinanceServiceImpl implements IFinanceServ {
                     if (meritSalaryTitle.equals(cella.getContents().trim())) {
                         meritSalaryTitleIndex = ab;
                     }
+                    if (salaryNameTitle.equals(cella.getContents().trim())) {
+                        salaryNameTitleIndex = ab;
+                    }
                 }
             }
 
-            for (int i = 2; i < rowNums; i++) {
+            for (int i = 1; i < rowNums; i++) {
                 cell = xlsfSheet.getRow(i);
                 if (cell != null && cell.length > 0) {
                     empNo = cell[empNoTitleIndex].getContents().trim();
@@ -164,6 +169,7 @@ public class FinanceServiceImpl implements IFinanceServ {
                         sa.setPosSalary(Double.valueOf(cell[posSalaryTitleIndex].getContents().trim()));
                         sa.setJobSalary(Double.valueOf(cell[jobSalaryTitleIndex].getContents().trim()));
                         sa.setMeritSalary(Double.valueOf(cell[meritSalaryTitleIndex].getContents().trim()));
+                        sa.setName(cell[salaryNameTitleIndex].getContents().trim());
                         salaryList.add(sa);
                     }
                 }
@@ -176,9 +182,13 @@ public class FinanceServiceImpl implements IFinanceServ {
 
     public void saveAllSalaryData(List<Salary> salaryList) throws Exception {
         financeMapper.deleteAllSalaryData();
+        Employee employee;
         for (Salary sa : salaryList) {
-            sa.setState(0);
-            financeMapper.saveSalary(sa);
+            employee = financeMapper.getEmployeeByEmpNoAndName(sa.getEmpNo(), sa.getName());
+            if (employee != null) {
+                sa.setState(0);
+                financeMapper.saveSalary(sa);
+            }
         }
 
     }
@@ -226,7 +236,7 @@ public class FinanceServiceImpl implements IFinanceServ {
             jxl.Cell[] cell = null;
             Cell cella;
             if (rowNums > 0) {
-                cell = xlsfSheet.getRow(1);
+                cell = xlsfSheet.getRow(0);
                 int coloumNum = cell.length;
                 for (int ab = 0; ab < coloumNum; ab++) {
                     cella = cell[ab];
@@ -270,13 +280,11 @@ public class FinanceServiceImpl implements IFinanceServ {
                         errorInWorkTitleIndex = ab;
                     } else if (meritScoreTitle.equals(cella.getContents().trim())) {
                         meritScoreTitleIndex = ab;
-                    } else if (sixDeductionsTitle.equals(cella.getContents().trim())) {
-                        sixDeductionsTitleIndex = ab;
                     }
                 }
             }
 
-            for (int i = 2; i < rowNums; i++) {
+            for (int i = 1; i < rowNums; i++) {
                 cell = xlsfSheet.getRow(i);
                 if (cell != null && cell.length > 0) {
                     empNo = cell[empNoTitle2Index].getContents().trim();
@@ -302,7 +310,6 @@ public class FinanceServiceImpl implements IFinanceServ {
                         sa.setAccumulaFund(Double.valueOf(cell[accumulaFundTitleIndex].getContents().trim()));
                         sa.setErrorInWork(Double.valueOf(cell[errorInWorkTitleIndex].getContents().trim()));
                         sa.setMeritScore(Double.valueOf(cell[meritScoreTitleIndex].getContents().trim()));
-                        sa.setSixDeductions(Double.valueOf(cell[sixDeductionsTitleIndex].getContents().trim()));
                         sa.setYearMonthStr(yearMonth);
                         salaryList.add(sa);
                     }
@@ -316,8 +323,12 @@ public class FinanceServiceImpl implements IFinanceServ {
 
     public void saveAllEmpHours(List<EmpHours> empHoursList, String yearMonth) throws Exception {
         financeMapper.deleteAllEmpHoursByYearMonthData(yearMonth);
+        Employee employee;
         for (EmpHours em : empHoursList) {
-            financeMapper.saveEmpHours(em);
+            employee = financeMapper.getEmployeeByEmpNoAndName(em.getEmpNo(), em.getName());
+            if (employee != null) {
+                financeMapper.saveEmpHours(em);
+            }
         }
     }
 
@@ -367,16 +378,16 @@ public class FinanceServiceImpl implements IFinanceServ {
         return financeMapper.queryEmployeeHoursByConditionCount(employee);
     }
 
-    public void deleteEmployeeHoursByEmpno(String empNo) throws Exception {
-        financeMapper.deleteEmployeeHoursByEmpno(empNo);
+    public void deleteEmployeeHoursByEmpno(Integer id) throws Exception {
+        financeMapper.deleteEmployeeHoursByEmpno(id);
     }
 
     public void deleteEmpHoursByBatch(Employee employee) throws Exception {
         financeMapper.deleteEmpHoursByBatch(employee.getIds());
     }
 
-    public EmpHours getEmpHoursByEmpNo(String empNo) throws Exception {
-        return financeMapper.getEmpHoursByEmpNo(empNo);
+    public EmpHours getEmpHoursByEmpNo(Integer id) throws Exception {
+        return financeMapper.getEmpHoursByEmpNo(id);
     }
 
     public void updateEmpHoursByBean(EmpHours empHours) throws Exception {
@@ -411,7 +422,7 @@ public class FinanceServiceImpl implements IFinanceServ {
             jxl.Cell[] cell = null;
             Cell cella;
             if (rowNums > 0) {
-                cell = xlsfSheet.getRow(1);
+                cell = xlsfSheet.getRow(0);
                 int coloumNum = cell.length;
                 for (int ab = 0; ab < coloumNum; ab++) {
                     cella = cell[ab];
@@ -437,11 +448,13 @@ public class FinanceServiceImpl implements IFinanceServ {
                         workYearsSalaryTitleIndex = ab;
                     } else if (sellCommiTitle.equals(cella.getContents().trim())) {
                         sellCommiTitleIndex = ab;
+                    } else if (speciAddDeductCostTitle.equals(cella.getContents().trim())) {
+                        speciAddDeductCostTitleIndex = ab;
                     }
                 }
             }
 
-            for (int i = 2; i < rowNums; i++) {
+            for (int i = 1; i < rowNums; i++) {
                 cell = xlsfSheet.getRow(i);
                 if (cell != null && cell.length > 0) {
                     empNo = cell[empNoTitle3Index].getContents().trim();
@@ -458,6 +471,7 @@ public class FinanceServiceImpl implements IFinanceServ {
                         sa.setHotTempOrOtherAllow(Double.valueOf(cell[hotTempOrOtherAllowTitleIndex].getContents().trim()));
                         sa.setWorkYearsSalary(Double.valueOf(cell[workYearsSalaryTitleIndex].getContents().trim()));
                         sa.setSellCommi(Double.valueOf(cell[sellCommiTitleIndex].getContents().trim()));
+                        sa.setSpeciAddDeductCost(Double.valueOf(cell[speciAddDeductCostTitleIndex].getContents().trim()));
                         sa.setYearMonth(yearMonth);
                         financeImportDataList.add(sa);
                     }
@@ -471,9 +485,13 @@ public class FinanceServiceImpl implements IFinanceServ {
 
     public void saveAllFinanceImportData(List<FinanceImportData> financeImportDataList, String yearMonth) throws Exception {
         financeMapper.deleteAllsaveAllFinanceImportDataByYearMonthData(yearMonth);
+        Employee employee;
         for (FinanceImportData fid : financeImportDataList) {
-            fid.setYearMonth(yearMonth);
-            financeMapper.saveFinanceImportData(fid);
+            employee = financeMapper.getEmployeeByEmpNoAndName(fid.getEmpNo(), fid.getName());
+            if (employee != null) {
+                fid.setYearMonth(yearMonth);
+                financeMapper.saveFinanceImportData(fid);
+            }
         }
     }
 

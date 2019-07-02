@@ -185,10 +185,10 @@ public interface PersonMapper {
 
     @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
             "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,educationLeUrl,\n" +
-            "screAgreement,healthCerti,sateListAndLeaCerti,sateListAndLeaCertiUrl,otherCerti,otherCertiUrl,positionAttrId)" +
+            "screAgreement,healthCerti,sateListAndLeaCerti,sateListAndLeaCertiUrl,otherCerti,otherCertiUrl,positionAttrId,isQuit)" +
             "values (#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incomdateStr},#{conExpDateStr},#{birthDayStr},#{ID_NO}," +
             "#{nativePla},#{homeAddr},#{valiPeriodOfIDStr},#{nation},#{marriaged},#{contactPhone},#{educationLe},#{educationLeUrl}," +
-            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{sateListAndLeaCertiUrl},#{otherCerti},#{otherCertiUrl},#{positionAttrId})")
+            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{sateListAndLeaCertiUrl},#{otherCerti},#{otherCertiUrl},#{positionAttrId},#{isQuit})")
     void addEmployeeData(Employee employee);
 
 
@@ -230,7 +230,7 @@ public interface PersonMapper {
             "\td.deptname AS deptName,\n" +
             "\tn.positionName AS positionName,\n" +
             "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "\te.empno AS empNo" +
+            "\te.empno AS empNo,e.isQuit " +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
@@ -274,7 +274,7 @@ public interface PersonMapper {
             "\tIFNULL(s.jobSalary,0) AS jobSalary," +
             "\tIFNULL(s.meritSalary,0) AS meritSalary," +
             "\ts.id AS salaryId, " +
-            "\ts.state AS state " +
+            "\ts.state AS state,e.isQuit " +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id  left join salary s on e.empno = s.empno  \n" +
@@ -290,7 +290,7 @@ public interface PersonMapper {
             "  n.positionName as positionName,\n" +
             "  n.positionLevel as positionLevel,\n" +
             "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "  e.empno as empNo,worktype as workType \n" +
+            "  e.empno as empNo,worktype as workType,e.isQuit \n" +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
@@ -424,10 +424,10 @@ public interface PersonMapper {
 
     @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
             "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,\n" +
-            "screAgreement,healthCerti,sateListAndLeaCerti,otherCerti,positionAttrId,worktype)" +
+            "screAgreement,healthCerti,sateListAndLeaCerti,otherCerti,positionAttrId,worktype,isQuit)" +
             "values (#{name},#{sex},#{deptId},#{empNo},#{positionId},#{incompdateStr},#{conExpDateStr},#{birthDayStr},#{ID_NO}," +
             "#{nativePla},#{homeAddr},#{valiPeriodOfIDStr},#{nation},#{marriaged},#{contactPhone},#{educationLe}," +
-            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{otherCerti},#{positionAttrId},#{workType})")
+            "#{screAgreement},#{healthCerti},#{sateListAndLeaCerti},#{otherCerti},#{positionAttrId},#{workType},#{isQuit})")
     void saveEmployeeByBean(Employee employee);
 
     @Insert("\n" +
@@ -498,7 +498,7 @@ public interface PersonMapper {
             "\tn.positionname,\n" +
             "\tt.deptname,\n" +
             "\ts.remark,\n" +
-            "\ts.state\n" +
+            "\ts.state,e.isQuit \n" +
             "FROM\n" +
             "\temployee e\n" +
             "LEFT JOIN salary s ON e.empno = s.empno\n" +
@@ -544,7 +544,7 @@ public interface PersonMapper {
             "\tn.positionname,\n" +
             "\tt.deptname,\n" +
             "\ts.remark,\n" +
-            "\ts.state\n" +
+            "\ts.state,e.isQuit \n" +
             "FROM\n" +
             "\temployee e\n" +
             "LEFT JOIN salary s ON e.empno = s.empno\n" +
@@ -573,7 +573,8 @@ public interface PersonMapper {
             "\ta.leavelong as leaveLong,\n" +
             "\ta.leaveDescrip as leaveDescrip,\n" +
             "\ta.remark as remark,\n" +
-            "\ta.type as type\n" +
+            "\ta.type as type,e.isQuit " +
+            "\n" +
             "FROM\n" +
             "\tleavedata a\n" +
             "LEFT JOIN employee e ON a.employeeid = e.id\n" +
@@ -609,7 +610,7 @@ public interface PersonMapper {
             "marriaged=#{marriaged},contactPhone=#{contactPhone},educationLe=#{educationLe},educationLeUrl=#{educationLeUrl},\n" +
             "screAgreement=#{screAgreement},healthCerti=#{healthCerti},sateListAndLeaCerti=#{sateListAndLeaCerti}," +
             "sateListAndLeaCertiUrl=#{sateListAndLeaCertiUrl},otherCerti=#{otherCerti},otherCertiUrl=#{otherCertiUrl}," +
-            "positionAttrId=#{positionAttrId} " +
+            "positionAttrId=#{positionAttrId},isQuit = #{isQuit} " +
             "where empno = #{empNo}")
     void updateEmployeeData(Employee employee);
 
@@ -780,7 +781,7 @@ public interface PersonMapper {
                     "\tIFNULL(s.jobSalary,0) AS jobSalary," +
                     "\tIFNULL(s.meritSalary,0) AS meritSalary," +
                     "\ts.id AS salaryId, " +
-                    "\ts.state AS state " +
+                    "\ts.state AS state,e.isQuit  " +
                     "\t\t FROM \n" +
                     "\temployee e\n" +
                     "LEFT JOIN dept d ON e.deptId = d.id\n" +
@@ -953,6 +954,13 @@ public interface PersonMapper {
                     }else if("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
+                } else if("isQuit".equals(employee.getSortByName())) {
+                    sb.append(" order by isQuit ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
                 }
             } else {
                 sb.append(" order by e.empno asc ");
@@ -991,7 +999,7 @@ public interface PersonMapper {
                     "\td.deptname AS deptName,\n" +
                     "\tn.positionName AS positionName,\n" +
                     "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-                    "\te.empno AS empNo" +
+                    "\te.empno AS empNo,e.isQuit" +
                     "\t\t FROM \n" +
                     "\temployee e\n" +
                     "LEFT JOIN dept d ON e.deptId = d.id\n" +
@@ -1120,6 +1128,13 @@ public interface PersonMapper {
                     }else if("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
+                }else if("isQuit".equals(employee.getSortByName())) {
+                    sb.append(" order by e.isQuit ");
+                    if("asc".equals(employee.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
                 }
             } else {
                 sb.append(" order by e.empno asc ");
@@ -1143,7 +1158,7 @@ public interface PersonMapper {
                     "\ta.remark AS remark,\n" +
                     "\ta.leaveDescrip AS leaveDescrip,\n" +
                     "\ta.leavelong AS leaveLong," +
-                    "\ta.type AS type" +
+                    "\ta.type AS type,e.isQuit" +
                     "\n" +
                     "FROM\n" +
                     "\t leavedata a join  employee e on a.employeeid = e.id \n" +

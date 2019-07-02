@@ -221,17 +221,17 @@
                         td = "<td>";
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].id + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].id + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].id + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].id + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
                                 "  </td>";
@@ -383,17 +383,17 @@
                         td = "<td>";
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].id + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].id + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployeeHours('" + data[num].empNo + "');\">编辑</a>\n" +
+                                "onclick=\"updateEmployeeHours('" + data[num].id + "');\">编辑</a>\n" +
                                 "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployeeHours('" + data[num].empNo + "');\">删除</a>\n" +
+                                " onclick=\"deleteEmployeeHours('" + data[num].id + "');\">删除</a>\n" +
                                 " &nbsp;&nbsp;&nbsp;\n" +
                                 "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].salaryId + "\">" +
                                 "  </td>";
@@ -454,12 +454,12 @@
     }
 
     function updateEmployeeHours(empNo) {
-        window.location.href = "/finance/toupdateEmployeeHoursByempNo?empNo=" + empNo;
+        window.location.href = "/finance/toupdateEmployeeHoursByempNo?id=" + empNo;
 
     }
 
     function deleteEmployeeHours(empNo) {
-        window.location.href = "/finance/deleteEmployeeHoursByEmpNo?empNo=" + empNo;
+        window.location.href = "/finance/deleteEmployeeHoursByEmpNo?id=" + empNo;
     }
 
     function deleteEmpHoursByBatch() {
@@ -782,10 +782,10 @@
                     <td align="center">
                         <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
-                           th:onclick="updateEmployeeHours([[${empH.empNo}]]);">编辑</a>
+                           th:onclick="updateEmployeeHours([[${empH.id}]]);">编辑</a>
                         <a class="btn btn-xs btn-primary"
                            th:disabled="${userInfo.type ne 1}"
-                           th:onclick="deleteEmployeeHours([[${empH.empNo}]]);">删除</a>
+                           th:onclick="deleteEmployeeHours([[${empH.id}]]);">删除</a>
                         &nbsp;&nbsp;&nbsp;
                         <input type="checkbox" name="deleteBatch" th:value="${empH.id}">
 

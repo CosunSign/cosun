@@ -69,9 +69,9 @@ public interface IFinanceServ {
 
     int queryEmployeeHoursByConditionCount(Employee employee) throws Exception;
 
-    void deleteEmployeeHoursByEmpno(String empNo) throws Exception;
+    void deleteEmployeeHoursByEmpno(Integer id) throws Exception;
 
-    EmpHours getEmpHoursByEmpNo(String empNo) throws Exception;
+    EmpHours getEmpHoursByEmpNo(Integer id) throws Exception;
 
     FinanceImportData getFinanceImportDataById(Integer id) throws Exception;
 

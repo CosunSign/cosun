@@ -252,6 +252,7 @@ public class PersonServiceImpl implements IPersonServ {
             userInfo.setUserActor(employee.getPositionAttrId());//默认普通员工
             userInfoMapper.saveUserInfoByBean(userInfo);
         }
+        employee.setIsQuit(0);
         personMapper.addEmployeeData(employee);
         personMapper.addSalaryData(employee.getEmpNo(), employee.getCompreSalary(), employee.getPosSalary(), employee.getJobSalary(), employee.getMeritSalary());
     }
@@ -354,10 +355,12 @@ public class PersonServiceImpl implements IPersonServ {
     public void saveOrUpdateWorkData(WorkDate workDate) throws Exception {
         WorkDate num = personMapper.getWorkDateByMonth(workDate);
         if (num == null) {//save
-            workDate.setEmpNostr(workDate.getEmpNos().toString());
+            if (workDate.getEmpNos() != null && workDate.getEmpNos().size() > 0)
+                workDate.setEmpNostr(workDate.getEmpNos().toString());
             personMapper.saveWorkData(workDate);
         } else {//update
-            workDate.setEmpNostr(workDate.getEmpNos().toString());
+            if (workDate.getEmpNos() != null && workDate.getEmpNos().size() > 0)
+                workDate.setEmpNostr(workDate.getEmpNos().toString());
             personMapper.updateWorkData(workDate);
         }
 
@@ -652,6 +655,7 @@ public class PersonServiceImpl implements IPersonServ {
                     }
                     em.setWorkType(0);
                     em.setPositionLevel("B");
+                    em.setIsQuit(0);
                     employeeList.add(em);
                 }
             }
@@ -782,6 +786,7 @@ public class PersonServiceImpl implements IPersonServ {
                     }
                     em.setWorkType(1);
                     em.setPositionLevel("A");
+                    em.setIsQuit(0);
                     employeeList.add(em);
                 }
             }
@@ -1236,16 +1241,17 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setWorkSetAOnEnd(workSet.getMorningOnEnd().toString());
                                                         otw.setClockAOn(time.toString());
                                                         if (type == 0) {
-                                                            if(isWeekEnd && em.getWorkType()==0) {
+                                                            if (isWeekEnd && em.getWorkType() == 0) {
                                                                 otw.setIsAonOk("周六加班");
-                                                            }else {
+                                                            } else {
                                                                 otw.setIsAonOk("正常");
                                                             }
-                                                        } else if (type == 1 ) {
-                                                            if(workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                        } else if (type == 1) {
+                                                            if (workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                 otw.setIsAonOk("周末加班");
-                                                            }else{
-                                                                otw.setIsAonOk("周末不上班"); }
+                                                            } else {
+                                                                otw.setIsAonOk("周末不上班");
+                                                            }
                                                         } else if (type == 2) {
                                                             otw.setIsAonOk("法定假日加班");
                                                         }
@@ -1272,16 +1278,17 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setWorkSetAOffEnd(workSet.getMorningOffEnd().toString());
                                                         otw.setClockAOff(time.toString());
                                                         if (type == 0) {
-                                                            if(isWeekEnd&& em.getWorkType()==0) {
+                                                            if (isWeekEnd && em.getWorkType() == 0) {
                                                                 otw.setIsAoffOk("周六加班");
-                                                            }else {
+                                                            } else {
                                                                 otw.setIsAoffOk("正常");
                                                             }
                                                         } else if (type == 1) {
-                                                            if(workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                            if (workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                 otw.setIsAoffOk("周末加班");
-                                                            }else{
-                                                                otw.setIsAoffOk("周末不上班"); }
+                                                            } else {
+                                                                otw.setIsAoffOk("周末不上班");
+                                                            }
                                                         } else if (type == 2) {
                                                             otw.setIsAoffOk("法定假日加班");
                                                         }
@@ -1310,16 +1317,17 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setWorkSetPOnEnd(workSet.getNoonOnEnd().toString());
                                                         otw.setClockPOn(time.toString());
                                                         if (type == 0) {
-                                                            if(isWeekEnd&& em.getWorkType()==0) {
+                                                            if (isWeekEnd && em.getWorkType() == 0) {
                                                                 otw.setIsPOnOk("周六加班");
-                                                            }else {
+                                                            } else {
                                                                 otw.setIsPOnOk("正常");
                                                             }
                                                         } else if (type == 1) {
-                                                            if(workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                            if (workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                 otw.setIsPOnOk("周末加班");
-                                                            }else{
-                                                                otw.setIsPOnOk("周末不上班"); }
+                                                            } else {
+                                                                otw.setIsPOnOk("周末不上班");
+                                                            }
                                                         } else if (type == 2) {
                                                             otw.setIsPOnOk("法定假日加班");
                                                         }
@@ -1348,16 +1356,17 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setWorkSetPOffEnd(workSet.getNoonOffEnd().toString());
                                                         otw.setClockPOff(time.toString());
                                                         if (type == 0) {
-                                                            if(isWeekEnd && em.getWorkType()==0) {
+                                                            if (isWeekEnd && em.getWorkType() == 0) {
                                                                 otw.setIsPOffOk("周六加班");
-                                                            }else {
+                                                            } else {
                                                                 otw.setIsPOffOk("正常");
                                                             }
                                                         } else if (type == 1) {
-                                                            if(workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                            if (workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                 otw.setIsPOffOk("周末加班");
-                                                            }else{
-                                                                otw.setIsPOffOk("周末不上班"); }
+                                                            } else {
+                                                                otw.setIsPOffOk("周末不上班");
+                                                            }
                                                         } else if (type == 2) {
                                                             otw.setIsPOffOk("法定假日加班");
                                                         }
@@ -1402,7 +1411,9 @@ public class PersonServiceImpl implements IPersonServ {
                                                     }
                                                     otw.setWorkSetExtOn(time.toString());
                                                     otw.setWorkSetExtOff(lastT.toString());
-                                                    otw.setExtHours(extHours);
+                                                    if (extHours >= 0) {
+                                                        otw.setExtHours(extHours);
+                                                    }
                                                 }
                                             }
                                         }

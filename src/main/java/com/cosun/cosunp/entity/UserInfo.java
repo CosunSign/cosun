@@ -22,6 +22,7 @@ public class UserInfo implements Serializable {
     private String positionName;
     private String deptName;
     private String newestlogintime;
+    private String webPrivi;
 
 
     private String stateStr;
@@ -50,6 +51,13 @@ public class UserInfo implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+    public String getWebPrivi() {
+        return webPrivi;
+    }
+
+    public void setWebPrivi(String webPrivi) {
+        this.webPrivi = webPrivi;
+    }
 
     public String getNewestlogintime() {
         return newestlogintime;
