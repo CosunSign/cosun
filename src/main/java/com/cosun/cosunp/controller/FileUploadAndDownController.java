@@ -3275,6 +3275,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
+           //
             Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);

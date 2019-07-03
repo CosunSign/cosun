@@ -49,12 +49,12 @@
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
             errormessagediv.style.color = "green";
-        }else if (aflag == 5) {
+        } else if (aflag == 5) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;只能上传doc或docx格式的文件!";
             errormessagediv.style.color = "red";
-        }else if (aflag == 6) {
+        } else if (aflag == 6) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;同一部门系统中已存在此名称的文件,不能添加或改名后添加!";
@@ -194,17 +194,17 @@
                         tr.append("<td>" + isNull(data[num].uploadDateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
-                        if(userActor==1) {
+                        if (userActor == 1) {
                             td += "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
                                 "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
                                 "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
                                 "onclick=\"updateRules(" + data[num].id + ");\">编辑</button>\n" +
                                 "  <button type=\"button\" class=\"btn btn-primary btn-sm\"" +
                                 " onclick=\"deleteRules(" + data[num].id + ");\">删除</button>\n" +
-                                    "  &nbsp;&nbsp;&nbsp;\n" +
-                                "   <input type=\"checkbox\" name=\"deleteBatch\" value=\""+data[num].id+"\">"+
+                                "  &nbsp;&nbsp;&nbsp;\n" +
+                                "   <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
-                        }else {
+                        } else {
                             td += "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
                                 "onclick=\"downloadRules(" + data[num].id + ");\">下载</button>\n" +
                                 "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
@@ -212,7 +212,7 @@
                                 "  <button type=\"button\" disabled='disabled' class=\"btn btn-primary btn-sm\"" +
                                 " onclick=\"deleteRules(" + data[num].id + ");\">删除</button>\n" +
                                 "  &nbsp;&nbsp;&nbsp;\n" +
-                                "   <input type=\"checkbox\" disabled='disabled' name=\"deleteBatch\" value=\""+data[num].id+"\">"+
+                                "   <input type=\"checkbox\" disabled='disabled' name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
                                 "  </td>";
                         }
                         tr.append(td);
@@ -304,17 +304,19 @@
         return;
     }
 
-    function onLineReadPDFSmall(rulesId,fileName) {
-        localStorage.setItem("fileName",fileName)
-        window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D"+rulesId);
+    function onLineReadPDFSmall(rulesId, fileName) {
+        localStorage.setItem("fileName", fileName)
+        window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D" + rulesId);
     }
+
+
 
 </script>
 <body>
-<form id="showMain" th:action="@{/rules/deleteRulesById}"   th:method="post">
+<form id="showMain" th:action="@{/rules/deleteRulesById}" th:method="post">
     <input type="hidden" value="" name="id" id="deleteid">
 </form>
-<form id="showMain2" th:action="@{/rules/deleteRulesByBatch}"  th:method="post">
+<form id="showMain2" th:action="@{/rules/deleteRulesByBatch}" th:method="post">
     <input type="hidden" value="" name="ids" id="deleteids">
 </form>
 <div id='app'>
@@ -329,14 +331,14 @@
                         <td style="text-align: right">
                             <label>部门：</label>
                         </td>
-                        <td style="width: 300px;text-align: left;" >
+                        <td style="width: 300px;text-align: left;">
                             <label>
                                 <select id="dept" multiple class="selectpicker show-tick form-control"
                                         data-live-search="true" data-actions-box="true"
                                         data-selected-text-format="count > 5">
                                     　　
                                     <!--<option th:each="c:${deptList}" th:value="${c.id}"-->
-                                            <!--th:text="${c.deptname}"></option>-->
+                                    <!--th:text="${c.deptname}"></option>-->
 
                                     <option value="1">总经办</option>
                                     <option value="2">财务部</option>
@@ -351,9 +353,10 @@
                             </label>
                         </td>
 
-                        <td  style="text-align: left">
+                        <td style="text-align: left">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryRulesByCondition()"
+                                                                         href="javascript:void(0);"
+                                                                         onclick="queryRulesByCondition()"
                         >查找</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
@@ -399,21 +402,25 @@
                     <td align="center" th:text="${rule.titleName}"></td>
                     <td>
                         <a href="javascript:void(0);"
-                           th:onclick="onLineReadPDFSmall([[${rule.id}]],[[${rule.fileName}]]);" th:text="${rule.fileName}"></a>
+                           th:onclick="onLineReadPDFSmall([[${rule.id}]],[[${rule.fileName}]]);"
+                           th:text="${rule.fileName}"></a>
                     </td>
                     <td align="center" th:text="${rule.uploaderName}"></td>
                     <td align="center" th:text="${rule.uploadDateStr}"></td>
                     <td align="center" th:text="${rule.remark}"></td>
                     <td align="center" th:disabled="${userInfo.userActor ne 1}">
                         <button type="button" class="btn btn-primary btn-sm"
-                           th:disabled="${userInfo.userActor ne 1}"
-                           th:onclick="downloadRules([[${rule.id}]]);">下载</button>
+                                th:disabled="${userInfo.userActor ne 1}"
+                                th:onclick="downloadRules([[${rule.id}]]);">下载
+                        </button>
                         <button type="button" class="btn btn-primary btn-sm"
-                           th:disabled="${userInfo.userActor ne 1}"
-                                th:onclick="updateRules([[${rule.id}]]);">编辑</button>
+                                th:disabled="${userInfo.userActor ne 1}"
+                                th:onclick="updateRules([[${rule.id}]]);">编辑
+                        </button>
                         <button th:type="button" class="btn btn-primary btn-sm"
-                           th:disabled="${userInfo.userActor ne 1}"
-                                th:onclick="deleteRules([[${rule.id}]]);">删除</button>
+                                th:disabled="${userInfo.userActor ne 1}"
+                                th:onclick="deleteRules([[${rule.id}]]);">删除
+                        </button>
                         &nbsp;&nbsp;&nbsp;
                         <input type="checkbox" name="deleteBatch" th:value="${rule.id}">
                     </td>
@@ -429,7 +436,7 @@
         </div>
         </tbody>
 
-        <tfoot id="s_tfoot" >
+        <tfoot id="s_tfoot">
         <tr id="showdiv">
 
             <td colspan="8" align="center">
@@ -490,9 +497,9 @@
 
 
         <!--<tr style="display:none;" id="nodatadiv">-->
-            <!--<td colspan=8" align="center">-->
-                <!--查无数据-->
-            <!--</td>-->
+        <!--<td colspan=8" align="center">-->
+        <!--查无数据-->
+        <!--</td>-->
         <!--</tr>-->
         <tr style="display:none;" id="nodatadiv">
             <td colspan="7" align="center">
