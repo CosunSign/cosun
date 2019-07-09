@@ -232,45 +232,6 @@
     var filePathName1 = "";
     var filePathName = "";
     $(function () {
-        // var test = document.getElementById('filefolder');
-        // test.addEventListener('change', function () {
-        //     isFilePathRight = 1;
-        //     filePathName = "";
-        //     var t_files = this.files;
-        //     for (var i = 0, len = t_files.length; i < len; i++) {
-        //         if (t_files[i].webkitRelativePath.indexOf(",") == -1) {
-        //             filePathName += t_files[i].webkitRelativePath + ",";
-        //         } else {
-        //             isFilePathRight = 0;
-        //             return;
-        //         }
-        //     }
-        //     ;
-        //     $("#filePathName").val(filePathName);
-        // }, false);
-        //
-        // var test1 = document.getElementById('file');
-        // test1.addEventListener('change', function () {
-        //     isFilePathRight = 1;
-        //     filePathName1 = "";
-        //     var t_files1 = this.files;
-        //     for (var i = 0, len = t_files1.length; i < len; i++) {
-        //         if (t_files1[i].name.indexOf(",") == -1) {
-        //             if (t_files1[i].name.indexOf(".") != -1) {
-        //                 filePathName1 += t_files1[i].name + ",";
-        //             } else {
-        //                 alert("文件名必须要有扩展名,如:" + t_files1[i].name + "就没有扩展名!");
-        //                 isFilePathRight = 2;
-        //                 return;
-        //             }
-        //         } else {
-        //             isFilePathRight = 0;
-        //             return;
-        //         }
-        //     }
-        //     ;
-        //     $("#filePathName").val(filePathName1);
-        // }, false);
 
         $("#uploadprogress").hide();
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
@@ -392,7 +353,7 @@
         //dnd: '#dndArea',
         //paste: '#uploader',
         //fileVal: 'fileFolder',
-        accept:null,
+        accept: null,
         swf: 'js/Uploader.swf',
         chunked: true,
         chunkSize: chunkSize, // 字节 1M分块
@@ -436,7 +397,7 @@
         auto: false,
         compress: false,//不压缩图片
 
-        accept:null,
+        accept: null,
         // 禁掉全局的拖拽功能。这样不会出现图片拖进页面的时候，把图片打开。
         disableGlobalDnd: true,
         fileNumLimit: 1024,
@@ -525,6 +486,8 @@
         $("#showfiletotalnum").html(totalFileNum);
         $("#showtotalnumspan").show();
     });
+
+
 
     //当某个文件的分块在发送前触发，主要用来询问是否要添加附带参数，大文件在开起分片上传的前提下此事件可能会触发多次。
     uploader.onUploadBeforeSend = function (obj, data) {
@@ -684,8 +647,9 @@
                     window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     if (msg != '"OK"') {
                         alert(msg);
-                        flaggg = false;
-                        clearUploder()
+                        //flaggg = false;
+                        //clearUploder()
+
                         return flaggg;
                     } else {
                         flaggg = true;
@@ -889,7 +853,7 @@
 
     function clearUploder() {
         $("#innerfolderdiv").html("");
-        if($("#salorid").val()=="" || $("#orderno").val()=="") {
+        if ($("#salorid").val() == "" || $("#orderno").val() == "") {
             $("#urltbody ").html("<tr><td colspan='7'>暂无数据</td></tr>")
             $("#foldershow").removeAttr("checked");
             $("#listshow").prop("checked", 'checked');

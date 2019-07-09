@@ -1110,14 +1110,27 @@ public class PersonServiceImpl implements IPersonServ {
                 emm.setHealthCerti(0);
             }
 
-            if ("经理".equals(emm.getPositionAttrIdStr())) {
+            //总监
+            //总经理
+            //副总经理
+            //经理
+            //主管
+            //组长
+            //职员
+            if ("总监".equals(emm.getPositionAttrIdStr())) {
                 emm.setPositionAttrId(1);
-            } else if ("主管".equals(emm.getPositionAttrIdStr())) {
+            } else if ("总经理".equals(emm.getPositionAttrIdStr())) {
                 emm.setPositionAttrId(2);
-            } else if ("组长".equals(emm.getPositionAttrIdStr())) {
+            } else if ("副总经理".equals(emm.getPositionAttrIdStr())) {
                 emm.setPositionAttrId(3);
-            } else if ("职员".equals(emm.getPositionAttrIdStr())) {
+            } else if ("经理".equals(emm.getPositionAttrIdStr())) {
                 emm.setPositionAttrId(4);
+            }else if ("主管".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(5);
+            }else if ("组长".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(6);
+            }else if ("职员".equals(emm.getPositionAttrIdStr())) {
+                emm.setPositionAttrId(7);
             }
             UserInfo userInfo = personMapper.getUserInfoByEmpno(emm.getEmpNo());
             if (userInfo == null) {

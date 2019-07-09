@@ -1820,6 +1820,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
     }
 
+
+    public List<Employee> findAllSalorByDeptName() throws Exception {
+        return fileUploadAndDownMapper.findAllSalorByDeptName();
+    }
+
     /**
      * 检查并修改文件上传进度
      *

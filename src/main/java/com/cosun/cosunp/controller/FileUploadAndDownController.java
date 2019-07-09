@@ -128,7 +128,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllFileUrlByConditionCount(userInfo.getuId());
@@ -2513,7 +2513,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         view.setPageSize(pageSize);
         view.setType(userInfo.getType());
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
@@ -2596,7 +2596,7 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setFlag(flag);
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());
@@ -2657,7 +2657,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
@@ -2692,7 +2692,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
@@ -3103,7 +3103,7 @@ public class FileUploadAndDownController {
         DownloadView view = new DownloadView();
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
-        List<Employee> employees = fileUploadAndDownServ.findAllSalor();
+        List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());

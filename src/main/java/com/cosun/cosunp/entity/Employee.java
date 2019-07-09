@@ -476,15 +476,22 @@ public class Employee implements Serializable {
     }
 
     public String getPositionAttrIdStr() {
+
         if (positionAttrId != null) {
             if (positionAttrId == 1) {
-                return "经理";
+                return "总监级别";
             } else if (positionAttrId == 2) {
-                return "主管";
+                return "总经理级别";
             } else if (positionAttrId == 3) {
-                return "组长";
+                return "副总经理级别";
             } else if (positionAttrId == 4) {
-                return "职员";
+                return "经理级别";
+            }else if (positionAttrId == 5) {
+                return "主管级别";
+            }else if (positionAttrId == 6) {
+                return "组长级别";
+            }else if (positionAttrId == 7) {
+                return "职员级别";
             }
         }
         return positionAttrIdStr;

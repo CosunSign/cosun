@@ -259,6 +259,10 @@ public interface FileUploadAndDownMapper {
     @Select(" select * from employee ")
     List<Employee> findAllSalor();
 
+    @Select(" select e.* from employee e LEFT JOIN  dept d on e.deptId = d.id\n" +
+            " where d.deptname in (\"销售中心\",\"项目中心\") ")
+    List<Employee> findAllSalorByDeptName();
+
     @Select("select * from filemanright where id = #{fileurlid}  and uid = #{uid} ")
     FilemanRight findFileRightByUserIdandFileUrlId(Integer uid, Integer fileurlid);
 

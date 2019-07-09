@@ -50,6 +50,8 @@ public interface IFileUploadAndDownServ {
 
     DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param,UserInfo info) throws Exception;
 
+    List<Employee> findAllSalorByDeptName() throws Exception;
+
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
     void modifyFolderByMappedByteBuffer(MultipartFileParam param,UserInfo info) throws Exception;

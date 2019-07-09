@@ -180,15 +180,22 @@ public class UserInfo implements Serializable {
     }
 
     public String getUserActorStr() {
+
         if(this.userActor!=null) {
             if(userActor==1) {
                 return "总监级别";
             }else if(userActor==2) {
-                return "经理级别";
+                return "总经理级别";
             }else if(userActor==3) {
+                return "副总经理级别";
+            }else if(userActor==4) {
+                return "经理级别";
+            }else if(userActor==5) {
+                return "主管级别";
+            }else if(userActor==6) {
                 return "组长级别";
             }else{
-                return "普通员工";
+                return "普通员工级别";
             }
         }
         return userActorStr;
