@@ -40,7 +40,7 @@ public interface IFileUploadAndDownServ {
 
     void addFilesData(DownloadView view, UserInfo userInfo) throws Exception;
 
-    String isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
+    FolderUpdateList isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception;
 
     List<String> findAllUrlOnlyByParamManyOrNo(DownloadView dv) throws Exception;
 

@@ -1746,15 +1746,15 @@ public class FileUploadAndDownController {
     @RequestMapping(value = "/downloadfileorfolderforzip")
     public void downloadfileorfolderforzip(String urlsStr, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
-        if (null==cookies) {
+        if (null == cookies) {
             System.out.println("没有cookie==============");
         } else {
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("downloadstatus")){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
                     cookie.setMaxAge(0);// 立即销毁cookie
                     cookie.setPath("/");
-                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    System.out.println("被删除的cookie名字为:" + cookie.getName());
                     response.addCookie(cookie);
                     break;
                 }
@@ -1762,7 +1762,7 @@ public class FileUploadAndDownController {
         }
         String[] urlss = urlsStr.split(",");
         List<String> urls = new ArrayList<String>();
-        for(String str : urlss) {
+        for (String str : urlss) {
             urls.add(str);
         }
         String filename = new Date().getTime() + ".zip";
@@ -2836,14 +2836,15 @@ public class FileUploadAndDownController {
     }
 
 
-    @RequestMapping(value = "/checkmessagefolder", method = RequestMethod.POST)
+    @RequestMapping(value = "/checkmessagefolder")
     public void checkMessageFolder(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
         FileManFileInfo info = null;
-        String returnmessage = "OK";
+        FolderUpdateList ful = new FolderUpdateList();
+        List<FolderUpdateList> fuls = new ArrayList<FolderUpdateList>();
         if (userInfo.getUseruploadright() == 1) {
             boolean isFolderNameForEngDateOrderNoSalor = true;
             isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(view.getFilePathName());//文件夹名验证，文件夹名不能有订单，业务员，设计师命名
@@ -2851,25 +2852,39 @@ public class FileUploadAndDownController {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
                     if (info.getExtInfo1().equals(view.getSalor()) && info.getuId().equals(view.getuId())) {//查看订单编号有没有被占用  原始设计师与现设计师相同，原业务员与现业务员相同，则可存储，否则不可存储
-                        returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
+                        //0710修改
+                        ful = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
                     } else {
-                        returnmessage = "您输入的订单编号系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
+                        ful.setIsSameFileUploadFolderName("您输入的订单编号系统中已存在，请另换一个订单号!" +
+                                "或检查您填写的订单信息!");
+
                     }
                 } else {
-                    returnmessage = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
+                    //0710修改
+                    ful = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, view.getFilePathName());//同一订单下文件夹重名验证
                 }
             } else {
-                returnmessage = "您的文件夹名有问题,不能以设计师名,订单编号,业务员,日期作为命名!";
+                ful.setIsSameFileUploadFolderName("您的文件夹名有问题,不能以设计师名," +
+                        "订单编号,业务员,日期作为命名!");
             }
         } else {
-            returnmessage = "您没有上传权限!";
+            ful.setIsSameFileUploadFolderName("您没有上传权限!");
         }
+        List<String> allNewPath = new ArrayList<String>();
+        String[] arr;
 
+        if (ful != null && ful.getUrlAfterUpdateForNoRepeat() !=null && ful.getUrlAfterUpdateForNoRepeat().size() > 0) {
+            for (int i = 0; i < ful.getUrlAfterUpdateForNoRepeat().size(); i++) {
+                arr = ful.getUrlAfterUpdateForNoRepeat().get(i);
+                allNewPath.add(StringUtils.join(arr, "/"));
+            }
+        }
+        ful.setAllPath(allNewPath);
+        fuls.add(ful);
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(returnmessage);
-
+            str1 = x.writeValueAsString(fuls);
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
@@ -3230,7 +3245,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
@@ -3245,7 +3260,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
         } catch (Exception e) {
@@ -3261,7 +3276,7 @@ public class FileUploadAndDownController {
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             fileUploadAndDownServ.saveFileMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -3275,8 +3290,8 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-           //
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {
@@ -3430,6 +3445,7 @@ public class FileUploadAndDownController {
         requestFactory.setBufferRequestBody(false);
         RestTemplate rest = new RestTemplate(requestFactory);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        FolderUpdateList ful;
         if (userInfo.getUseruploadright() == 1) {
             MultipartHttpServletRequest params = ((MultipartHttpServletRequest) request);
             List<MultipartFile> files = params.getFiles("fileFolder");     //fileFolder为文件项的name值
@@ -3437,7 +3453,8 @@ public class FileUploadAndDownController {
             view.setUserName(userInfo.getUserName());
             view.setPassword(userInfo.getUserPwd());
             view.setuId(userInfo.getuId());
-            String isSameFolderNameorFileName = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
+            ful = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
+            String isSameFolderNameorFileName = ful.getIsSameFileUploadFolderName();
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(null);
 
 //            if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {

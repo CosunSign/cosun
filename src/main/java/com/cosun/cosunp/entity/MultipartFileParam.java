@@ -27,6 +27,7 @@ public class MultipartFileParam implements Serializable {
     private String fileNames;
     private String randomNum;
     private  String saveFolderName;
+    private String filefolderNames;
     // 用户id
     private String uid;
     //任务ID
@@ -43,6 +44,14 @@ public class MultipartFileParam implements Serializable {
     private MultipartFile file;
     // MD5
 
+
+    public String getFilefolderNames() {
+        return filefolderNames;
+    }
+
+    public void setFilefolderNames(String filefolderNames) {
+        this.filefolderNames = filefolderNames;
+    }
 
     public String getModifyreason() {
         return modifyreason;

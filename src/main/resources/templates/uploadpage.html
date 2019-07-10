@@ -488,7 +488,6 @@
     });
 
 
-
     //当某个文件的分块在发送前触发，主要用来询问是否要添加附带参数，大文件在开起分片上传的前提下此事件可能会触发多次。
     uploader.onUploadBeforeSend = function (obj, data) {
         console.log("onUploadBeforeSend");
@@ -499,6 +498,7 @@
         data.orderNo = $("#orderno").val().trim();
         data.salor = $("#salorid").val();
         data.projectName = $("#projectno").val().trim();
+        data.filefolderNames = filePathName;
         data.webkitRelativePaths = allurls;
         data.randomNum = arr;
     };
@@ -526,14 +526,15 @@
     });
     var flagg = true;
     var flaggg = false;
-
-
+    var newUrlArray;
+    var filePathName = "";
     function checkMessageBeforeUpload() {
+        filePathName = "";
+        newUrlArray = new Array();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var salorid = $("#salorid").val();
         var orderno = $("#orderno").val().trim();
         var projecto = $("#projectno").val().trim();
-        var filePathName = "";
         var fileName = "";
         var reg = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g);
         var filesaveselect = $('input[name="filesaveselect"]:checked').val();
@@ -541,23 +542,6 @@
         var formData = new FormData();
         formData.append('orderNo', $("#orderno").val());
         formData.append('salor', $("#salorid").val());
-        // if (typeof (filesaveselect) == "undefined") {
-        //     if (totalFileNum1 != 0) {
-        //         $("#folderselect").val("");
-        //         showfolderdiv();
-        //         $("#listshow").removeAttr("checked");
-        //         $("#foldershow").prop("checked", 'checked');
-        //         $("#listdiv").attr("style", "display:none;")
-        //         $("#folderdiv").attr("style", "display:block;")
-        //         alert("您没有指定文件夹,系统将默认存放在以订单为名和目录下!");
-        //         window.parent.document.getElementById('coverbehidepage').style.display="none";
-        //     }
-        // } else {
-        //     $("#folderselect").val(filesaveselect);
-        //     if (reg.test(filesaveselect)) {
-        //         $("#folderselect").val("");
-        //     }
-        // }
         if (salorid == "" || salorid == null) {
             alert("请选择业务人员！");
             window.parent.document.getElementById('coverbehidepage').style.display = "none";
@@ -645,13 +629,18 @@
                 processData: false,
                 success: function (msg) {
                     window.parent.document.getElementById('coverbehidepage').style.display = "none";
-                    if (msg != '"OK"') {
-                        alert(msg);
-                        //flaggg = false;
-                        //clearUploder()
-
+                    var dataa = eval(msg)
+                    var i = 0;
+                    if (dataa[0].isSameFileUploadFolderName != 'OK') {
+                        alert(dataa[0].isSameFileUploadFolderName);
+                        flaggg = false;
+                        clearUploder()
                         return flaggg;
                     } else {
+                        newUrlArray = dataa[0].allPath;
+                        if(newUrlArray.length>0) {
+                            updateFilePathBeforeSave(filePathName);
+                        }
                         flaggg = true;
                         return flaggg;
                     }
@@ -667,6 +656,43 @@
             });
         }
         window.parent.document.getElementById('coverbehidepage').style.display = "none";
+    }
+    Array.prototype.indexOf = function(val) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == val) return i;
+        }
+        return -1;
+    };
+
+    Array.prototype.remove = function(val) {
+        var index = this.indexOf(val);
+        if (index > -1) {
+            this.splice(index, 1);
+        }
+    };
+
+    function updateFilePathBeforeSave(filePathNames) {
+        var arrr = filePathNames.split(",");
+        for(var ab = 0;ab < arrr.length;ab++) {
+            if(arrr[ab].trim().length<=0) {
+                arrr.remove(arrr[ab]);
+            }
+        }
+        var folderFileArr;
+        var folderFileArra;
+        for(var i = 0;i < arrr.length;i++) {
+            folderFileArr = arrr[i].split("/");
+            for(var a = 0;a < newUrlArray.length;a++) {
+                folderFileArra = newUrlArray[a].split("/");
+                if(folderFileArr[folderFileArr.length-1]==folderFileArra[folderFileArra.length-1]) {
+                    arrr.remove(arrr[i]);
+                    arrr.push(newUrlArray[a]);
+                }
+            }
+        }
+        filePathName = arrr.join(",");
+        $("#filePathName").val(filePathName);
+        allurls = arrr;
     }
 
     //url = "/fileupdown/checkmessage";
