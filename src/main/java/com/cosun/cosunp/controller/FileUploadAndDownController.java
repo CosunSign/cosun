@@ -129,7 +129,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
-        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllFileUrlByConditionCount(userInfo.getuId());
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
@@ -2658,7 +2658,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
-        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
@@ -2693,7 +2693,7 @@ public class FileUploadAndDownController {
         view.setCurrentPage(currentPage);
         UserInfo userInfo = (UserInfo) session.getAttribute("account");//查看权限用
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
-        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;

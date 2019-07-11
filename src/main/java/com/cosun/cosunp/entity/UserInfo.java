@@ -23,6 +23,8 @@ public class UserInfo implements Serializable {
     private String deptName;
     private String newestlogintime;
     private String webPrivi;
+    private String sortMethod;
+    private String sortByName;
 
 
     private String stateStr;
@@ -50,6 +52,22 @@ public class UserInfo implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public String getSortMethod() {
+        return sortMethod;
+    }
+
+    public void setSortMethod(String sortMethod) {
+        this.sortMethod = sortMethod;
+    }
+
+    public String getSortByName() {
+        return sortByName;
+    }
+
+    public void setSortByName(String sortByName) {
+        this.sortByName = sortByName;
+    }
 
     public String getWebPrivi() {
         return webPrivi;

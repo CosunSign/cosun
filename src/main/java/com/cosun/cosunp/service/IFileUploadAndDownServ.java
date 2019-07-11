@@ -44,6 +44,8 @@ public interface IFileUploadAndDownServ {
 
     List<String> findAllUrlOnlyByParamManyOrNo(DownloadView dv) throws Exception;
 
+    List<UserInfo> findAllUserOnlyDesigner() throws Exception;
+
     List<UserInfo> findAllUser() throws Exception;
 
     DownloadView uploadFileByMappedByteBuffer(MultipartFileParam param,UserInfo info) throws Exception;

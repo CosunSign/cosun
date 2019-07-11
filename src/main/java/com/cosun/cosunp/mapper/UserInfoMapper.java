@@ -22,6 +22,10 @@ public interface UserInfoMapper {
     @Select("SELECT * FROM userinfo ")
     List<UserInfo> findAllUser();
 
+    @Select("select o.* from userinfo o left join employee e on o.empno = e.empno\n" +
+            "left join dept t on e.deptId = t.id where deptname in ( \"研发中心\" ,\"技术部\") ")
+    List<UserInfo> findAllUserOnlyDesigner();
+
     @Select("SELECT count(*) FROM userinfo ")
     int findAllUserCount();
 
@@ -170,7 +174,77 @@ public interface UserInfoMapper {
             } else if (userInfo.getEndIncomDateStr() != null && userInfo.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            sb.append(" order by e.name desc limit #{currentPageTotalNum},#{pageSize}");
+
+            if (userInfo.getSortMethod() != null && !"undefined".equals(userInfo.getSortMethod())&& !"undefined".equals(userInfo.getSortByName()) && userInfo.getSortByName() != null) {
+                if("name".equals(userInfo.getSortByName())){
+                    sb.append(" order by e.name ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("empNo".equals(userInfo.getSortByName())) {
+                    sb.append(" order by e.empNo ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("detpName".equals(userInfo.getSortByName())) {
+                    sb.append(" order by t.detpName ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("positionName".equals(userInfo.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("userName".equals(userInfo.getSortByName())) {
+                    sb.append(" order by u.username  ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("state".equals(userInfo.getSortByName())) {
+                    sb.append(" order by u.state ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("userActor".equals(userInfo.getSortByName())) {
+                    sb.append(" order by u.userActor ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("uploadPrivi".equals(userInfo.getSortByName())) {
+                    sb.append(" order by u.useruploadright ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }else if("newestLoginTime".equals(userInfo.getSortByName())) {
+                    sb.append(" order by u.newestlogintime ");
+                    if("asc".equals(userInfo.getSortMethod())){
+                        sb.append(" asc ");
+                    }else if("desc".equals(userInfo.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" order by e.empno asc ");
+            }
+
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
         }
 

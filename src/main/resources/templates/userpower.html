@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap.css">
     <script src="/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="/lib/bootstrap/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap-select.min.js"></script>
     <script src="/lib/WdatePicker.js" type="text/javascript"></script>
@@ -136,6 +137,8 @@
         formData.append('useruploadrights', $("#useruploadrightId").val());
         formData.append('userActors', $("#userActorId").val());
         formData.append('states', $("#stateId").val());
+        formData.append('sortMethod',sortMethod);
+        formData.append('sortByName', sortByName);
         // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
         // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('currentPage', currentpage);
@@ -253,7 +256,8 @@
         });
     }
 
-
+    var sortMethod;
+    var sortByName;
     function queryUserByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
@@ -267,6 +271,8 @@
         formData.append('useruploadrights', $("#useruploadrightId").val());
         formData.append('userActors', $("#userActorId").val());
         formData.append('states', $("#stateId").val());
+        formData.append('sortMethod',sortMethod);
+        formData.append('sortByName', sortByName);
         // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
         // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('currentPage', 1);
@@ -423,6 +429,18 @@
         }
     }
 
+    function sortByAsc(titlename) {
+        sortMethod = 'asc';
+        sortByName = titlename;
+        queryUserByCondition();
+    }
+
+    function sortByDesc(titlename) {
+        sortMethod = 'desc';
+        sortByName = titlename;
+        queryUserByCondition();
+    }
+
 </script>
 <body>
 
@@ -564,15 +582,51 @@
         <thead style="background-color:lightsteelblue">
         <tr>
             <th style="text-align: center">序号</th>
-            <th style="text-align: center">姓名</th>
-            <th style="text-align: center">工号</th>
-            <th style="text-align: center">部门</th>
-            <th style="text-align: center">职位</th>
-            <th style="text-align: center">用户名</th>
-            <th style="text-align: center">审核状态</th>
-            <th style="text-align: center">用户角色</th>
-            <th style="text-align: center">上传权限</th>
-            <th style="text-align: center">最近登录时间</th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('name')" aria-hidden="true"></i>
+                姓名
+                <i class="fa fa-sort-desc" onclick="sortByDesc('name')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('empNo')" aria-hidden="true"></i>
+                工号
+                <i class="fa fa-sort-desc" onclick="sortByDesc('empNo')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('detpName')" aria-hidden="true"></i>
+                部门
+                <i class="fa fa-sort-desc" onclick="sortByDesc('deptName')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('positionName')" aria-hidden="true"></i>
+                职位
+                <i class="fa fa-sort-desc" onclick="sortByDesc('positionName')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('userName')" aria-hidden="true"></i>
+                用户名
+                <i class="fa fa-sort-desc" onclick="sortByDesc('userName')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('state')" aria-hidden="true"></i>
+                审核状态
+                <i class="fa fa-sort-desc" onclick="sortByDesc('state')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('userActor')" aria-hidden="true"></i>
+                用户角色
+                <i class="fa fa-sort-desc" onclick="sortByDesc('userActor')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('uploadPrivi')" aria-hidden="true"></i>
+                上传权限
+                <i class="fa fa-sort-desc" onclick="sortByDesc('uploadPrivi')" aria-hidden="true"></i>
+            </th>
+            <th style="text-align: center">
+                <i class="fa fa-sort-asc" onclick="sortByAsc('newestLoginTime')" aria-hidden="true"></i>
+                最近登录时间
+                <i class="fa fa-sort-desc" onclick="sortByDesc('newestLoginTime')" aria-hidden="true"></i>
+            </th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>

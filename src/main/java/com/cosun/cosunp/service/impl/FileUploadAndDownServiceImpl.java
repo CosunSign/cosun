@@ -145,6 +145,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     @Transactional
+    public List<UserInfo> findAllUserOnlyDesigner() throws Exception {
+        return userInfoMapper.findAllUserOnlyDesigner();
+    }
+
+    @Override
+    @Transactional
     public List<UserInfo> findAllUser() throws Exception {
         return userInfoMapper.findAllUser();
     }
