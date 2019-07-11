@@ -2885,17 +2885,10 @@ public class FileUploadAndDownController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str1 = x.writeValueAsString(fuls);
-        } catch (JsonProcessingException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-        try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
+        } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
@@ -2903,53 +2896,45 @@ public class FileUploadAndDownController {
     }
 
 
-    @RequestMapping(value = "/checkmessage", method = RequestMethod.POST)
+    @RequestMapping(value = "/checkmessage")
     public void checkMessage(DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setuId(userInfo.getuId());
+        FolderUpdateList ful = new FolderUpdateList();
+        List<FolderUpdateList> fuls = new ArrayList<FolderUpdateList>();
         boolean isExsitFileName = false;
         FileManFileInfo info = null;
-        String returnMessage = "OK";
         if (userInfo.getUseruploadright() == 1) {//有无权限
-            returnMessage = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
+           ful = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
             //上传的文件或文件夹有无重复，有无存在
-            if (returnMessage.equals("OK")) {
+            if (ful.getIsSameFileUploadFolderName().equals("OK")) {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
                 if (info != null) {
                     if (!info.getExtInfo1().equals(view.getSalor())) {
-                        returnMessage = "您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!";
+                        ful.setIsSameFileUploadFolderName("您输入的订单系统中已存在，请另换一个订单号!或检查您填写的订单信息!");
                     }
                 }
             }
 
         } else {
-            returnMessage = "您没有上传权限，如需要请向上级申请!";
+            ful.setIsSameFileUploadFolderName("您没有上传权限，如需要请向上级申请!");
         }
 
+        fuls.add(ful);
         String str1 = null;
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
-            str1 = x.writeValueAsString(returnMessage);
-
+            str1 = x.writeValueAsString(fuls);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
         } catch (JsonProcessingException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
         }
-
-
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
     }
 
     /**

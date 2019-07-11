@@ -1151,8 +1151,9 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception {
+    public FolderUpdateList checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception {
         //第一步，查看上传文件们的是否有重复
+        FolderUpdateList ful = new FolderUpdateList();
         String[] names = null;
         if (filePathName.contains(",")) {
             names = filePathName.split(",");
@@ -1161,10 +1162,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
         List<String> originNames = new ArrayList<String>();
         String isSameFileUpload = "OK";//代表没有
+        ful.setIsSameFileUploadFolderName(isSameFileUpload);
         for (int i = 0; i < names.length; i++) {
             if (originNames.contains(names[i])) {
                 isSameFileUpload = "您要上传的文件文件名有重复,如:" + names[i];//有，即刻返回
-                return isSameFileUpload;
+                ful.setIsSameFileUploadFolderName(isSameFileUpload);
+                return ful;
             } else {
                 originNames.add(names[i]);
             }
@@ -1176,11 +1179,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
         for (String s : originNames) {
             if (urls.contains(s)) {
-                isSameFileUpload = "同一订单下您的文件已上传过,如:" + s;//有重复,即刻返回
-                return isSameFileUpload;
+                isSameFileUpload = "同一订单下您的文件已上传过,如:" + s;//有重复,即刻返回\
+                ful.setIsSameFileUploadFolderName(isSameFileUpload);
+                return ful;
             }
         }
-        return isSameFileUpload;
+        return ful;
 
     }
 

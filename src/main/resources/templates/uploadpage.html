@@ -637,9 +637,11 @@
                         clearUploder()
                         return flaggg;
                     } else {
-                        newUrlArray = dataa[0].allPath;
-                        if(newUrlArray.length>0) {
-                            updateFilePathBeforeSave(filePathName);
+                        if(url=="/fileupdown/checkmessagefolder") {
+                            newUrlArray = dataa[0].allPath;
+                            if (newUrlArray.length > 0) {
+                                updateFilePathBeforeSave(filePathName);
+                            }
                         }
                         flaggg = true;
                         return flaggg;

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface IFileUploadAndDownServ {
 
-    String checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
+    FolderUpdateList checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception;
 
     List<DownloadView> findAllUploadFileByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
