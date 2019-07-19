@@ -270,6 +270,8 @@ public class FinanceController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         view.addObject("userInfo", userInfo);
         FinanceSetUpData fsu = financeServ.findFinanceSetUpData();
+        if(fsu==null)
+            fsu = new FinanceSetUpData();
         view.addObject("fsu", fsu);
         view.addObject("flag", 0);
         return view;
@@ -932,7 +934,7 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
             financeServ.saveAllEmpHours(empHoursList, empHours.getYearMonthStr());
             view.addObject("flag2", 1);
             view.addObject("flag3", 0);
-            view.addObject("empnoerror3", "");
+            view.addObject("empnoerror3", empHours.getMedicalInsuran());
             view.addObject("financeImportData", new FinanceImportData());
             view.addObject("empHours", new EmpHours());
             return view;
@@ -942,7 +944,7 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
             view.addObject("empnoerror3", "");
             view.addObject("financeImportData", new FinanceImportData());
             view.addObject("flag3", 0);
-            view.addObject("empnoerror3", "");
+            view.addObject("empnoerror3", e.getMessage());
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             return view;

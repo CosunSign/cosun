@@ -12,6 +12,9 @@ import java.io.Serializable;
 public class SalaryDataOutPut implements Serializable {
     private static final long serialVersionUID = -6881009009574748691L;
     private Integer id;//序号
+    private String yearMonth;//年月
+    private String bigDeptName;//大部门
+    private String incomDate;//入厂日期
     private String deptName;//部门
     private String positionName;//职务
     private String positionAttrName;//职位
@@ -56,9 +59,8 @@ public class SalaryDataOutPut implements Serializable {
     private Double sixDeducCost;//专项附加扣除
     private Double personIncomTaxCost;//个税
     private Double netPaySalary;//实发工资
-    private String yearMonth;//年月
-    private String errorMessage;
 
+    private String errorMessage;
     private Integer type;
 
     // 分页属性
@@ -67,6 +69,22 @@ public class SalaryDataOutPut implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public String getBigDeptName() {
+        return bigDeptName;
+    }
+
+    public void setBigDeptName(String bigDeptName) {
+        this.bigDeptName = bigDeptName;
+    }
+
+    public String getIncomDate() {
+        return incomDate;
+    }
+
+    public void setIncomDate(String incomDate) {
+        this.incomDate = incomDate;
+    }
 
     public Integer getType() {
         return type;

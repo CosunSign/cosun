@@ -55,29 +55,29 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goPriPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function isNull(arg1) {
@@ -108,25 +108,25 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryEmployeeHoursByCondition();
+            queryEmployeeHoursByCondition2();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeHoursByCondition();
+        queryEmployeeHoursByCondition2();
     }
 
     var currentPage; //当前页

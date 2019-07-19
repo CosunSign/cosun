@@ -146,7 +146,7 @@
         formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
         formData.append('workTypes', $("#workType").val());
-        formData.append('currentPage', 1);
+        formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",

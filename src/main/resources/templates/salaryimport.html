@@ -60,7 +60,7 @@
         if (flag3 == 2) {
             $("#errormessage3").show();
             var errormessagediv = document.getElementById("errormessage2");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;工号为"+$("#empnoerror3").val()+"的某个工资数据不是数字或者为空，请更正再导入!";
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;"+$("#empnoerror3").val();
             errormessagediv.style.color = "red";
         }
     });

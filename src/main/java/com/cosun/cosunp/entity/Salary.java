@@ -14,15 +14,24 @@ public class Salary implements Serializable {
     private static final long serialVersionUID = 3941220683407513988L;
 
 
+    private String name;
     private String empNo;
+    private String inComDate;//入职日期
     private Double compreSalary;
     private Double posSalary;
     private Double jobSalary;
     private Double meritSalary;
     private Integer state;
-
     private String remark;
-    private String name;
+
+
+    public String getInComDate() {
+        return inComDate;
+    }
+
+    public void setInComDate(String inComDate) {
+        this.inComDate = inComDate;
+    }
 
     public Integer getState() {
         return state;

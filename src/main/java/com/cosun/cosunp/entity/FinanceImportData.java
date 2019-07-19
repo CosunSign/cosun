@@ -15,8 +15,10 @@ public class FinanceImportData implements Serializable {
 
     private static final long serialVersionUID = -8356527306598925137L;
     private Integer id;
+    private String yearMonth;
     private String empNo;//工号
     private String name;//姓名
+    private String bigDeptName;//大部门
     private String deptName;//部门
     private Double legalHolidWorkHours;//法定节假日加班工时
     private Double sellActual;//业务实际
@@ -26,11 +28,10 @@ public class FinanceImportData implements Serializable {
     private Double hotTempOrOtherAllow;//高温等其它补贴
     private Double workYearsSalary;//工龄工资
     private Double sellCommi;//业务提成
-    private String remark;
     private Double speciAddDeductCost;//专项附加扣除
-
-    private String yearMonth;
-
+    private Double personIncomTax;//个税
+    private Double basicWorkHours;//基本工时
+    private String remark;
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -42,6 +43,30 @@ public class FinanceImportData implements Serializable {
     private List<Integer> ids;
     private Integer type;
 
+
+    public Double getBasicWorkHours() {
+        return basicWorkHours;
+    }
+
+    public void setBasicWorkHours(Double basicWorkHours) {
+        this.basicWorkHours = basicWorkHours;
+    }
+
+    public String getBigDeptName() {
+        return bigDeptName;
+    }
+
+    public void setBigDeptName(String bigDeptName) {
+        this.bigDeptName = bigDeptName;
+    }
+
+    public Double getPersonIncomTax() {
+        return personIncomTax;
+    }
+
+    public void setPersonIncomTax(Double personIncomTax) {
+        this.personIncomTax = personIncomTax;
+    }
 
     public Double getSpeciAddDeductCost() {
         return speciAddDeductCost;

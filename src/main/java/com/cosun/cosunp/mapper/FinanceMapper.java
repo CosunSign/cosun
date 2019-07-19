@@ -50,7 +50,7 @@ public interface FinanceMapper {
             "\thotTempOrOtherAllow,\n" +
             "\tworkYearsSalary,\n" +
             "\tsellCommi,\n" +
-            "\tyearMonth,speciAddDeductCost,remark) " +
+            "\tyearMonth,speciAddDeductCost,remark,basicWorkHours) " +
             "values (" +
             "#{empNo},\n" +
             "\t#{name},\n" +
@@ -63,7 +63,7 @@ public interface FinanceMapper {
             "\t#{hotTempOrOtherAllow},\n" +
             "\t#{workYearsSalary},\n" +
             "\t#{sellCommi},\n" +
-            "\t#{yearMonth},#{speciAddDeductCost},#{remark}" +
+            "\t#{yearMonth},#{speciAddDeductCost},#{remark},#{basicWorkHours}" +
             ")")
     void saveFinanceImportData(FinanceImportData financeImportData);
 
@@ -78,8 +78,8 @@ public interface FinanceMapper {
             "\t where id = #{id}")
     void updateFinanceImportDataByBean(FinanceImportData financeImportData);
 
-    @Insert("insert into salary (empno,compresalary,possalary,jobsalary,meritsalary,state) " +
-            "values (#{empNo},#{compreSalary},#{posSalary},#{jobSalary},#{meritSalary},#{state})")
+    @Insert("insert into salary (empno,name,inComDate,compresalary,possalary,jobsalary,meritsalary,state) " +
+            "values (#{empNo},#{name},#{inComDate},#{compreSalary},#{posSalary},#{jobSalary},#{meritSalary},#{state})")
     void saveSalary(Salary salary);
 
 
@@ -168,7 +168,8 @@ public interface FinanceMapper {
     void saveFinanceSetUp(FinanceSetUpData financeSetUpData);
 
     @Insert("insert into salarydataoutput " +
-            " (\tdeptName,\n" +
+            " (\t bigDeptName," +
+            "deptName,\n" +
             "\tpositionName,\n" +
             "\tpositionAttrName,\n" +
             "\tempNo,\n" +
@@ -214,7 +215,8 @@ public interface FinanceMapper {
             "\tnetPaySalary,\n" +
             "\tyearMonth )" +
             " values (\t" +
-            " #{deptName},\n" +
+            " #{bigDeptName}," +
+            "#{deptName},\n" +
             "\t#{positionName},\n" +
             "\t#{positionAttrName},\n" +
             "\t#{empNo},\n" +
@@ -350,10 +352,16 @@ public interface FinanceMapper {
             " where empno = #{empNo} ")
     void updateSalaryByBean(Employee employee);
 
-    @Select("select * from salary where empno = #{empno}")
-    Salary getSalaryByEmpno(String empno);
+    @Select("select * from salary where empno = #{empno} and name = #{name}")
+    Salary getSalaryByEmpno(String empno,String name);
 
-    @Select("select e.positionAttrId,n.positionName,e.name,e.incompdate from employee e left join position n on e.positionid = n.id where e.empno = #{empno}")
+
+    @Select("select * from salary where empno = #{empno} limit 1  ")
+    Salary getSalaryByEmpnoA(String empno);
+
+
+    @Select("select e.positionAttrId,n.positionName,e.name,e.incompdate from employee e" +
+            " left join position n on e.positionid = n.id where e.empno = #{empno}")
     Employee getEmployeeByEmpno(String empno);
 
     @Select("select * from employee  where empno = #{empNo} and name = #{name} limit 1 ")
@@ -467,7 +475,7 @@ public interface FinanceMapper {
             "\tempNo,\n" +
             "\t`name`,\n" +
             "\tdeptName,\n" +
-            "\tlegalHolidWorkHours,\n" +
+            "\tlegalHolidWorkHours,basicWorkHours,\n" +
             "\tsellActual,\n" +
             "\tsellThreshold,\n" +
             "\tsellLevelSalary,\n" +
@@ -479,8 +487,8 @@ public interface FinanceMapper {
             "\tremark\n" +
             "FROM\n" +
             "\tfinanceimportdata " +
-            "\t where empNo = #{empNo} and yearMonth = #{yearMonth} ")
-    FinanceImportData getFinanceImportDataByEmpNoandYearMonth(String empNo,String yearMonth);
+            "\t where empNo = #{empNo} and yearMonth = #{yearMonth} and name = #{name} ")
+    FinanceImportData getFinanceImportDataByEmpNoandYearMonth(String empNo,String name,String yearMonth);
 
     @Select("SELECT id," +
             "\tNAME,\n" +
