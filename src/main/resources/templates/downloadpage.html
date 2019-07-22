@@ -888,7 +888,7 @@
                     alert("您要下载的文件没有下载权限，请向上级申请!")
                     return false;
                 }
-                var datastr = data.join(",");
+                var datastr = data.join("*");
                 isCover = 1;
                 window.parent.document.getElementById('coverbehidepage').style.display = "block";
                 window.location.href = "/fileupdown/downloadfileorfolderforzip?urlsStr=" + datastr;

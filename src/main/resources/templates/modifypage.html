@@ -53,7 +53,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
                                                       size="2"><u><strong>温馨小贴士</strong></u></font></a>
 
@@ -611,10 +611,10 @@
 
         if (totalFileNum != 0) {
             for (var i = 0; i < allurls.length; i++) {
-                if (allurls[i].indexOf(",") == -1) {
-                    filePathName += allurls[i] + ",";
+                if (allurls[i].indexOf(":") == -1) {
+                    filePathName += allurls[i] + ":";
                 } else {
-                    alert("您选择的文件名或者文件夹名含有,符号,如:" + allurls[i]);
+                    alert("您选择的文件名或者文件夹名含有:符号,如:" + allurls[i]);
                     flagg = false;
                     clearUploder()
                     return false;
@@ -625,15 +625,15 @@
         } else if (totalFileNum1 != 0) {
             for (var i = 0; i < allurls1.length; i++) {
                 if (allurls1[i].indexOf(".") != -1) {
-                    fileName += allurls1[i] + ",";
+                    fileName += allurls1[i] + ":";
                 } else {
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
                     flagg = false;
                     clearUploder()
                     return false;
                 }
-                if (allurls1[i].indexOf(",") != -1) {
-                    alert("文件名不能有,符号,如:" + allurls1[i]);
+                if (allurls1[i].indexOf(":") != -1) {
+                    alert("文件名不能有:符号,如:" + allurls1[i]);
                     flagg = false;
                     clearUploder()
                     return false;
@@ -694,7 +694,7 @@
         formData.append('projectName', $("#projectno").val().trim());
         formData.append('modifyReason', $("#modifyreason").val());
         if (totalFileNum != 0) {
-            formData.append('filePathNames', allurls);
+            formData.append('filePathNames', allurls.join(":"));
             $.ajax({
                 data: formData,
                 type: "POST",
@@ -710,7 +710,7 @@
                 }
             });
         } else if (totalFileNum1 != 0) {
-            formData.append('filePathNames', allurls1);
+            formData.append('filePathNames', allurls1.join(":"));
             $.ajax({
                 data: formData,
                 type: "POST",

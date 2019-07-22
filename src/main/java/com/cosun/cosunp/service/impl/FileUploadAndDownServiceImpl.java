@@ -263,9 +263,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional
     @Override
     public String checkIsExistFilesforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
+        pathName = pathName.replace("*",",");
         String[] names = null;
-        if (pathName.contains(",")) {
-            names = pathName.split(",");
+        if (pathName.contains(":")) {
+            names = pathName.split(":");
         } else {
             names[0] = pathName;
         }
@@ -375,9 +376,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean isFolderNameForEngDateOrderNoSalor(String filePathName) throws Exception {
+        filePathName  = filePathName.replace("*", ",");
         String[] pathName = null;
-        if (filePathName.contains(",")) {
-            pathName = filePathName.split(",");
+        if (filePathName.contains(":")) {
+            pathName = filePathName.split(":");
         } else {
             pathName = new String[1];
             pathName[0] = filePathName;
@@ -441,10 +443,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String checkIsExistFilesFolderforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
+        pathName = pathName.replace("*",",");
         String returnMessage = "OK";
         String[] urlPaths = null;
-        if (pathName.contains(",")) {
-            urlPaths = pathName.split(",");
+        if (pathName.contains(":")) {
+            urlPaths = pathName.split(":");
         } else {
             urlPaths[0] = pathName;
         }
@@ -537,9 +540,10 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public String checkFileUpdateRight(String pathName, DownloadView view, UserInfo userInfo) throws Exception {
+        pathName  = pathName.replace("*", ",");
         String[] pathNames = null;
-        if (pathName.contains(",")) {
-            pathNames = pathName.split(",");
+        if (pathName.contains(":")) {
+            pathNames = pathName.split(":");
         } else {
             pathNames[0] = pathName;
         }
@@ -594,7 +598,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public void updateFilesDataFolder(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
-        String[] splitPathNames = view.getFilePathNames().split(",");
+        String[] splitPathNames = view.getFilePathNames().split(":");
         FileManFileInfo ffi = null;
         FilemanUrl filemanUrl;
         FilemanUpdateRecord record = null;
@@ -629,7 +633,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public void addFilesDatabyFolder(DownloadView view, UserInfo userInfo) throws Exception {
-        String splitPaths[] = view.getFilePathNames().split(",");
+        String splitPaths[] = view.getFilePathNames().split(":");
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
         List<FilemanRight> filemanRights = new ArrayList<FilemanRight>();
         FileManFileInfo fileManFileInfo;
@@ -787,7 +791,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
-        String[] splitNames = view.getFilePathNames().split(",");
+        String[] splitNames = view.getFilePathNames().split(":");
         FilemanUpdateRecord record = null;
         FilemanUrl filemanUrl;
         if (fileManFileInfo != null && fileManFileInfo.size() > 0) {
@@ -828,7 +832,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     public void addOFilesByPointFile(DownloadView view, UserInfo userInfo, String pointpath,
                                      List<FileManFileInfo> fileManFileInfos) throws Exception {
-        String[] splitNames = view.getFilePathNames().split(",");
+        String[] splitNames = view.getFilePathNames().split(":");
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
@@ -874,7 +878,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     public void addOldOrderNoNewFiles(DownloadView view, UserInfo userInfo, List<String> oldPaths,
                                       List<FileManFileInfo> fileManFileInfos) throws Exception {
-        String[] splitNames = view.getFilePathNames().split(",");
+        String[] splitNames = view.getFilePathNames().split(":");
         String oldPath = null;
         Integer pointindex = null;
         String oldsPath = null;
@@ -930,7 +934,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void addFilesData(DownloadView view, UserInfo userInfo) throws Exception {
-        String[] splitNames = view.getFilePathNames().split(",");
+        String[] splitNames = view.getFilePathNames().split(":");
         String randomNum = MathUtil.getRandom620(8);
         String orginname = "";//原始文件名
         String deskName = "";//程序自定义文件名
@@ -1158,11 +1162,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FolderUpdateList checkFileisSame(DownloadView view, UserInfo userInfo, String filePathName) throws Exception {
+        filePathName = filePathName.replace("*", ",");
         //第一步，查看上传文件们的是否有重复
         FolderUpdateList ful = new FolderUpdateList();
         String[] names = null;
-        if (filePathName.contains(",")) {
-            names = filePathName.split(",");
+        if (filePathName.contains(":")) {
+            names = filePathName.split(":");
         } else {
             names[0] = filePathName;
         }
@@ -1197,10 +1202,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String checkFileisSame1(DownloadView view, UserInfo userInfo, String filePathName) throws Exception {
+        filePathName = filePathName.replace("*", ",");
         //第一步，查看上传文件们的是否有重复
         String[] names = null;
-        if (filePathName.contains(",")) {
-            names = filePathName.split(",");
+        if (filePathName.contains(":")) {
+            names = filePathName.split(":");
         } else {
             names[0] = filePathName;
         }
@@ -1231,12 +1237,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FolderUpdateList isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception {
+        filePathName  = filePathName.replace("*", ",");
         FolderUpdateList ful = new FolderUpdateList();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String dateStr = sDateFormat.format(new Date());
         String[] paths = null;
-        if (filePathName.contains(",")) {
-            paths = filePathName.split(",");
+        if (filePathName.contains(":")) {
+            paths = filePathName.split(":");
         } else {
             paths = new String[1];
             paths[0] = filePathName;
@@ -1248,8 +1255,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         String[] splitArray = null;
         List<String> urlss = fileUploadAndDownMapper.findAllFileUrlNameByCondition(userInfo.getuId(), view.getSalor(), view.getOrderNo());
         for (int ii = 0; ii < paths.length; ii++) {
-            if (paths[ii].contains(",")) {
-                isSameFileUploadFolderName = "文件夹或文件名不能包含,号!如:" + paths[ii];//表示上传文件夹中,存在
+            if (paths[ii].contains(":")) {
+                isSameFileUploadFolderName = "文件夹或文件名不能包含:号!如:" + paths[ii];//表示上传文件夹中,存在
                 ful.setIsSameFileUploadFolderName(isSameFileUploadFolderName);
                 return ful;
             } else {
@@ -1553,7 +1560,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public DownloadView uploadFileByMappedByteBuffer(MultipartFileParam param, UserInfo userInfo) throws Exception {
-        String[] newArrayFileFolderName = param.getFilefolderNames().split(",");
+        param.setFilefolderNames(param.getFilefolderNames().replace("*",","));
+        String[] newArrayFileFolderName = param.getFilefolderNames().split(":");
         String fileNameNew;
         String filePathName = "";
         for(int i = 0; i < newArrayFileFolderName.length;i++) {
@@ -1621,6 +1629,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param, UserInfo userInfo) throws Exception {
         File tmpDir = null;
         String uploadDirPath = finalDirPath;
+        param.setName(param.getName().replace("*",","));
         String fileName = param.getName();
         //根据业务员订单号设计师看有没有文件夹
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
@@ -1702,6 +1711,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     public void modifyFolderByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
+        param.setName(param.getName().replace("*",","));
         String fileName = param.getName();
         String uploadDirPath = finalDirPath;
         String filePathName = StringUtil.subMyString(param.getWebkitRelativePath(), "/");
@@ -1725,6 +1735,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if (tmpDir.exists()) {
                 FileUtil.delFile(tmpDir + "/" + fileName);
                 File tmpFile = new File(tmpDir, fileName);
+                if (!tmpFile.exists()) {
+                    // 先得到文件的上级目录，并创建上级目录，在创建文件
+                    tmpFile.getParentFile().mkdir();
+                    tmpFile.createNewFile();
+                }
                 RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
                 FileChannel fileChannel = tempRaf.getChannel();
                 //写入该分片数据
@@ -1755,6 +1770,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     public void modifyFileByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
+        param.setName(param.getName().replace("*",","));
         String fileName = param.getName();
         String uploadDirPath = finalDirPath;
         String oldsPath = null;
@@ -1771,6 +1787,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         if (tmpDir.exists()) {
             FileUtil.delFile(tmpDir + "/" + fileName);
             File tmpFile = new File(tmpDir, fileName);
+            if (!tmpFile.exists()) {
+                // 先得到文件的上级目录，并创建上级目录，在创建文件
+                tmpFile.getParentFile().mkdir();
+                tmpFile.createNewFile();
+            }
             RandomAccessFile tempRaf = new RandomAccessFile(tmpFile, "rw");
             FileChannel fileChannel = tempRaf.getChannel();
             //写入该分片数据

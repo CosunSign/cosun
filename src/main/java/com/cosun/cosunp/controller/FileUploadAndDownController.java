@@ -1760,7 +1760,7 @@ public class FileUploadAndDownController {
                 }
             }
         }
-        String[] urlss = urlsStr.split(",");
+        String[] urlss = urlsStr.split("\\*");
         List<String> urls = new ArrayList<String>();
         for (String str : urlss) {
             urls.add(str);
@@ -3233,6 +3233,8 @@ public class FileUploadAndDownController {
            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            view.setFilePathName(view.getFilePathName().replace("*", ","));
+            view.setFilePathNames(view.getFilePathNames().replace("*",","));
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -3247,6 +3249,8 @@ public class FileUploadAndDownController {
         try {
             //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            view.setFilePathName(view.getFilePathName().replace("*", ","));
+            view.setFilePathNames(view.getFilePathNames().replace("*",","));
             fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -3260,8 +3264,10 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
-           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            view.setFilePathName(view.getFilePathName().replace("*", ","));
+            view.setFilePathNames(view.getFilePathNames().replace("*",","));
             fileUploadAndDownServ.saveFileMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -3275,8 +3281,9 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            //
             //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            view.setFilePathName(view.getFilePathName().replace("*", ","));
+            view.setFilePathNames(view.getFilePathNames().replace("*",","));
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {

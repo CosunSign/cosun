@@ -568,11 +568,12 @@
             for (var i = 0; i < allurls.length; i++) {
                 var index = allurls[i].lastIndexOf('/');
                 var centerurl = allurls[i].substr(0, index);
-                if (allurls[i].indexOf(",") == -1 && centerurl.indexOf(".") == -1) {
-                    filePathName += allurls[i] + ",";
+                if (allurls[i].indexOf(":") == -1 && centerurl.indexOf(".") == -1 ) {
+                    allurls[i] = allurls[i].replace(/,/g,'*');
+                    filePathName += allurls[i] + ":";
                 } else {
-                    if (allurls[i].indexOf(",") != -1) {
-                        alert("您选择的文件夹名含有,符号,如:" + allurls[i]);
+                    if (allurls[i].indexOf(":") != -1) {
+                        alert("您选择的文件夹名含有:符号,如:" + allurls[i]);
                         window.parent.document.getElementById('coverbehidepage').style.display = "none";
                         flagg = false;
                         clearUploder()
@@ -591,7 +592,8 @@
         } else if (totalFileNum1 != 0) {
             for (var i = 0; i < allurls1.length; i++) {
                 if (allurls1[i].indexOf(".") != -1) {
-                    fileName += allurls1[i] + ",";
+                    allurls1[i] = allurls1[i].replace(/,/g,'*');
+                    fileName += allurls1[i] + ":";
                 } else {
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
                     window.parent.document.getElementById('coverbehidepage').style.display = "none";
@@ -599,8 +601,8 @@
                     clearUploder()
                     return false;
                 }
-                if (allurls1[i].indexOf(",") != -1) {
-                    alert("文件名不能有,符号,如:" + allurls1[i]);
+                if (allurls1[i].indexOf(":") != -1) {
+                    alert("文件名不能有:符号,如:" + allurls1[i]);
                     window.parent.document.getElementById('coverbehidepage').style.display = "none";
                     flagg = false;
                     clearUploder()
@@ -674,7 +676,7 @@
     };
 
     function updateFilePathBeforeSave(filePathNames) {
-        var arrr = filePathNames.split(",");
+        var arrr = filePathNames.split(":");
         for(var ab = 0;ab < arrr.length;ab++) {
             if(arrr[ab].trim().length<=0) {
                 arrr.remove(arrr[ab]);
@@ -692,7 +694,7 @@
                 }
             }
         }
-        filePathName = arrr.join(",");
+        filePathName = arrr.join(":");
         $("#filePathName").val(filePathName);
         allurls = arrr;
     }
@@ -709,7 +711,7 @@
         formData.append('remark', $("#remark").val());
         formData.append('saveFolderName', $("#folderselect").val());
         if (totalFileNum != 0) {
-            formData.append('filePathNames', allurls);
+            formData.append('filePathNames', allurls.join(":"));
             $.ajax({
                 data: formData,
                 type: "POST",
@@ -728,7 +730,7 @@
                 }
             });
         } else if (totalFileNum1 != 0) {
-            formData.append('filePathNames', allurls1);
+            formData.append('filePathNames', allurls1.join(":"));
             $.ajax({
                 data: formData,
                 type: "POST",

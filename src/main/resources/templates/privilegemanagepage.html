@@ -113,7 +113,7 @@
 
         #titlename {
             border: 1px solid #9AC0CD;
-            width: 99%;
+            width: 100%;
             height: 20px;
             margin-left: 10px;
             margin-right: 10px;
@@ -211,8 +211,8 @@
         }
 
         #innerfolderdiv {
-            border: 2px solid #9AC0CD;
-            width: 99%;
+            border: 1px solid #9AC0CD;
+            width: 100%;
             height: 438px;
             margin-left: 10px;
             margin-right: 10px;
@@ -1338,28 +1338,28 @@
                             if (num < 12) {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    folderhtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
+                                    folderhtml += "<td width=\"3%\" align=\"center\">" + (num + 1) + "</td> ";
                                     // if (vililegeflags.indexOf("1") > -1) {
                                     //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
                                     // } else {
                                     //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
                                     // }
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
-                                    folderhtml += " <td width=\"155px\" align=\"center\">\n" +
+                                    folderhtml += " <td width=\"3%\" align=\"center\">\n" +
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
                                         " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
@@ -1725,7 +1725,7 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
             <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
@@ -1840,60 +1840,60 @@
                         &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
                                                        onclick="backFolder3();">
                     <div id="titlename">
-                        <table class="grid" style="width: 100%" id="tablecsshead">
+                        <table class="grid" style="width: 100%" id="tablecsshead" >
                             <thead style="background-color: #E0EEEE" align="center" id="urlthead">
-                            <th width="5%">序号</th>
-                            <th width="5%">更新</th>
-                            <th width="5%">下载</th>
-                            <th width="5%">删除</th>
+                            <th width="3%">序号</th>
+                            <th width="3%">更新</th>
+                            <th width="3%">下载</th>
+                            <th width="3%">删除</th>
                             <th width="10%">订单编号</th>
-                            <th width="10%">业务员</th>
-                            <th width="10%">设计师</th>
-                            <th width="10%">权限者</th>
+                            <th width="4%">业务员</th>
+                            <th width="4%">设计师</th>
+                            <th width="4%">权限者</th>
                             <th width="10%">最新上传/更新时间</th>
-                            <th width="30%">文件夹或文件名</th>
+                            <th width="25%">文件夹或文件名</th>
                             </thead>
                         </table>
                     </div>
 
                     <div id="innerfolderdiv">
-                        <table class="grid" id="showlistbody" style="width: 100%">
+                        <table class="grid" id="showlistbody" style="width: 100%" >
                             <tbody id="showdatatable">
                             <div th:unless="${#lists.isEmpty(views)}" id="innerfolderdivforTable">
                                 <div th:each="view ,iterStat: ${views}">
                                     <tr th:id="${view.orderNo}+${view.orderNo}">
-                                        <td width="5%" align="center" th:text="${iterStat.count}">
+                                        <td width="3%" align="center" th:text="${iterStat.count}">
                                         </td>
-                                        <td width="5%" align="center">
+                                        <td width="3%" align="center">
                                             <input type="checkbox" th:value="2"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.updatePrivilege eq '2' }">
                                         </td>
-                                        <td width="5%" align="center">
+                                        <td width="3%" align="center">
                                             <input type="checkbox" th:value="3"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.downloadPrivilege eq '3' }">
                                         </td>
-                                        <td width="5%" align="center">
+                                        <td width="3%" align="center">
                                             <input type="checkbox" th:value="4"
                                                    th:name="'privilegenum'+${view.orderNo}+${view.orderNo}"
                                                    th:checked="${view.deletePrivilege eq '4' }">
                                         </td>
-                                        <td width="10%" align="center">
+                                        <td width="3%" align="center">
                                             <span style="width:150px;height:50px;" th:text="${view.orderNo}"></span>
                                         </td>
-                                        <td width="10%" align="center">
+                                        <td width="4%" align="center">
                                             <i th:text="${view.salor}"></i>
                                         </td>
-                                        <td width="10%" align="center">
+                                        <td width="4%" align="center">
                                             <i th:text="${view.engineer}"></i>
                                         </td>
-                                        <td width="10%" align="center" th:text="${view.oprighter}">
+                                        <td width="4%" align="center" th:text="${view.oprighter}">
                                         </td>
-                                        <td width="10%" align="center">
+                                        <td width="6%" align="center">
                                             <i th:text="${view.createTime}"></i>
                                         </td>
-                                        <td width="30%" align="left" th:id="${view.orderNo}">
+                                        <td width="25%" align="left" th:id="${view.orderNo}">
                                             <img src="/images/icon/Folder.png" align="middle" border="0"
                                                  th:value="${view.orderNo}" ondblclick="shownextfolderorfiles(this)"
                                                  style="width: 30px; height: 30px; vertical-align: middle"
