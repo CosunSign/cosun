@@ -2519,7 +2519,7 @@ public class FileUploadAndDownController {
         view.setPageSize(pageSize);
         view.setType(userInfo.getType());
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
-        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
         JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         view.setUserName(userInfo.getUserName());
@@ -2725,24 +2725,6 @@ public class FileUploadAndDownController {
         mav.addObject("extensionList", extensionList);
         return mav;
     }
-//    @ResponseBody
-//    @RequestMapping(value = "/download", method = RequestMethod.GET)
-//    public ModelAndView toFileDownPage(String userName, String password, int currentPage, HttpServletResponse response) throws Exception {
-//        ModelAndView mav = new ModelAndView("downloadpage");
-//        DownloadView view = new DownloadView();
-//        view.setCurrentPage(currentPage);
-//        UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(userName, password);
-//        List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllUploadFileByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
-//        int recordCount = fileUploadAndDownServ.findAllUploadFileCountByUserId(userInfo.getuId());
-//        int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-//        view.setMaxPage(maxPage);
-//        view.setRecordCount(recordCount);
-//        view.setUserName(userInfo.getUserName());
-//        view.setPassword(userInfo.getUserPwd());
-//        mav.addObject("view", view);
-//        mav.addObject("downloadViewList", downloadViewList);
-//        return mav;
-//    }
 
 
     /**
@@ -3468,48 +3450,6 @@ public class FileUploadAndDownController {
             ful = fileUploadAndDownServ.isSameFolderNameorFileNameMethod(userInfo, view, null);//同一订单下文件夹重名验证
             String isSameFolderNameorFileName = ful.getIsSameFileUploadFolderName();
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(null);
-
-//            if (isFolderNameForEngDateOrderNoSalor && isSameFolderNameorFileName == 0) {
-//                //if (isFileLarge && isSameFolderNameorFileName == 0) {
-//                view = fileUploadAndDownServ.findIsExistFilesFolder(files, view, userInfo);
-//            } else {
-////                if (files.size() >= 200) {
-////                    view.setFlag("-369");
-////                }
-////                if (!isFileLarge) {
-////                    view.setFlag("-2");
-////                } else
-//                if (isSameFolderNameorFileName == -1) {
-//                    view.setFlag("-9999");//代表上传的文件中有同名
-//                }
-//                if (isSameFolderNameorFileName == -2) {
-//                    view.setFlag("-666");//代表上传的文件与数据库对应的订单有重名
-//                }
-//                if (isSameFolderNameorFileName == -3) {
-//                    view.setFlag("-777");//代表上传过来的文件夹有重名
-//                }
-//                if (isSameFolderNameorFileName == -4) {
-//                    view.setFlag("-888");//代表上传过来的文件夹与数据库的文件夹发生重名
-//                }
-//                if (isSameFolderNameorFileName == -5) {
-//                    view.setFlag("-123");
-//                }
-//                if (isSameFolderNameorFileName == -6) {
-//                    view.setFlag("-789");
-//                }
-//                if (isSameFolderNameorFileName == -7) {
-//                    view.setFlag("-678");
-//                }
-//                if (isSameFolderNameorFileName == -8) {
-//                    view.setFlag("-987");
-//                }
-//                if (!isFolderNameForEngDateOrderNoSalor) {
-//                    view.setFlag("-162");//代表文件夹结构中有订单名，日期，业务员，设计师
-//                }
-//            }
-//        } else {
-//            view.setFlag("-258");//代表没有权限
-//        }
         }
         return new ModelAndView("uploadpage");
     }
