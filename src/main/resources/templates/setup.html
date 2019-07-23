@@ -65,6 +65,30 @@
         });
     }
 
+
+    function saveSetUp1() {
+        $.ajax({
+            type: "POST",
+            url: "/setup/saveExtension",
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (msg) {
+                $("#errormessagee1").show();
+                var errormessagediv = document.getElementById("errormessagee1");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;执行成功!";
+                errormessagediv.style.color = "green";
+            },
+            error: function (msg) {
+                $("#errormessagee1").show();
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
+            }
+
+        });
+    }
+
     String.prototype.trim = function () {
         return this.replace(/(^\s*)|(\s*$)/g, "");
     }
@@ -119,6 +143,38 @@
                         <td><label>结果提示：</label></td>
                         <td>
                             <div style="display: none;" id="errormessagee">
+
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </form>
+
+
+    <form id="setupForm1" th:action="@{/setup/saveExtension}" th:method="post">
+        <input type="hidden" id="flag1" th:value="${flag1}">
+        <div>
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">扩展名设置<font color="#00008b" size="2px">(仅总监级别以上操作)</font></h3>
+            </div>
+            <div class="panel-body form-inline">
+                <table class="table table-bordered table-hover table-striped">
+                    <tr>
+                        <td><label>动作：</label></td>
+                        <td>
+                            <button type="button" class="btn btn-primary"
+                                    th:disabled="${userInfo.userActor ne 1}"
+                                    onclick="saveSetUp1()">执行</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label>结果提示：</label></td>
+                        <td>
+                            <div style="display: none;" id="errormessagee1">
 
                             </div>
                         </td>

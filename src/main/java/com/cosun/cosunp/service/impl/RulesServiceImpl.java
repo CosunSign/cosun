@@ -1,5 +1,6 @@
 package com.cosun.cosunp.service.impl;
 
+import com.cosun.cosunp.entity.Extension;
 import com.cosun.cosunp.entity.Rules;
 import com.cosun.cosunp.mapper.RulesMapper;
 import com.cosun.cosunp.service.IrulesServ;
@@ -44,6 +45,15 @@ public class RulesServiceImpl implements IrulesServ {
 
     public Rules getRulesByName(String name) throws Exception {
         return rulesMapper.getRulesByName(name);
+    }
+
+    public void saveExtension(List<Extension> exts) throws Exception {
+        for(Extension ex : exts) {
+            Extension ext = rulesMapper.getExtensionByName(ex.getExtension());
+            if(ext==null) {
+                rulesMapper.saveExtensionByBean(ex);
+            }
+        }
     }
 
 

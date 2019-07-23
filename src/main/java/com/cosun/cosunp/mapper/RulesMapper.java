@@ -1,5 +1,6 @@
 package com.cosun.cosunp.mapper;
 
+import com.cosun.cosunp.entity.Extension;
 import com.cosun.cosunp.entity.Rules;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
@@ -14,9 +15,15 @@ public interface RulesMapper {
     @Select("select count(*) from rules where deptId = #{deptId} ")
     int getRulesByDeptId(Integer deptId);
 
+    @Select("select * from extension where extension = #{name}")
+    Extension getExtensionByName(String name);
+
     @Insert("INSERT into rules(deptId,uploaderId,uploadDate,titleName,filename,filedir,remark,ftpdir)\n" +
             "values(#{deptId},#{uploaderId},#{uploadDate},#{titleName},#{fileName},#{fileDir},#{remark},#{ftpDir} )\n ")
     void saveRulesBean(Rules rules);
+
+    @Insert("INSERT into extension(extension) values (#{extension})")
+    void saveExtensionByBean(Extension ext);
 
     @Update("update rules set " +
             "uploaderId = #{uploaderId}," +

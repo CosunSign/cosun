@@ -1,5 +1,6 @@
 package com.cosun.cosunp.service;
 
+import com.cosun.cosunp.entity.Extension;
 import com.cosun.cosunp.entity.Rules;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,8 @@ public interface IrulesServ {
     int queryRulesByConditionCount(Rules rules) throws Exception;
 
     List<Rules> findAllRulesByDeptId(Rules rules) throws Exception;
+
+    void saveExtension(List<Extension> exts) throws Exception;
 
     int findAllRulesByDeptIdCount(Rules rules) throws Exception;
 

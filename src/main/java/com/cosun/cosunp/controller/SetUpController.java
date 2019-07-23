@@ -1,9 +1,11 @@
 package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.Dept;
+import com.cosun.cosunp.entity.Extension;
 import com.cosun.cosunp.entity.Rules;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IrulesServ;
+import com.cosun.cosunp.tool.ReadTextUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,6 +62,26 @@ public class SetUpController {
     public void saveSetUp(Rules rules, HttpServletResponse response) throws Exception {
         try {
             rulesServ.saveFirstShowById(rules);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(1);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/saveExtension", method = RequestMethod.POST)
+    public void saveExtension(HttpServletResponse response) throws Exception {
+        try {
+            List<Extension> exs = new ReadTextUtil().readTxtUtil("C:\\Users\\Administrator\\Desktop\\扩展名.txt");
+            rulesServ.saveExtension(exs);
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             str1 = x.writeValueAsString(1);
