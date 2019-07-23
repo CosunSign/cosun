@@ -32,6 +32,7 @@
 <input type="hidden" th:value="${view.flag}" id="uploadflag">
 <input type="hidden" th:value="${view.existFileMessage}" id="existFileMessage">
 <input type="hidden" th:value="${view.isExistNum}" id="isExistNum">
+<input type="hidden" th:value="${extensionList}" id="extension">
 <input type="hidden" id="foldername">
 <div style="width: 100%">
     <input type="hidden" name="saveFolderName" id="folderselect">
@@ -231,8 +232,11 @@
     var isFilePathRight = 1;
     var filePathName1 = "";
     var filePathName = "";
+    var extensionarrays;
+    var extensionarray;
     $(function () {
-
+        extensionarrays = $("#extension").val();
+        extensionarray = eval("(" + extensionarrays + ")");
         $("#uploadprogress").hide();
         var flag = $("#uploadflag").val();//-1 文件上传失败，1文件上传成功  0 文件为空
         var isMessage = $("#existFileMessage").val();
@@ -528,6 +532,7 @@
     var flaggg = false;
     var newUrlArray;
     var filePathName = "";
+
     function checkMessageBeforeUpload() {
         filePathName = "";
         newUrlArray = new Array();
@@ -564,22 +569,53 @@
             return false;
         }
         $("#folderselect").val(filesaveselect);
+        var splitArray;
+        var folderArray;
         if (totalFileNum != 0) {
             for (var i = 0; i < allurls.length; i++) {
+                folderArray = allurls[i].split("/");
+                //文件夹名不能有带有扩展名为后缀但允许有一个或多个/.
+                for (var a = 0; a < folderArray.length - 1; a++) {
+                    if (folderArray[a].indexOf(".") != -1) {
+                        var indexc = folderArray[a].lastIndexOf('.');
+                        var centerurlc = folderArray[a].substr(indexc + 1, folderArray[a].length);
+                        if (extensionarray.includes(centerurlc)) {
+                            alert("您选择的文件夹名不能以有效扩展名结尾,如:" + allurls[i]);
+                            window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                            flagg = false;
+                            clearUploder()
+                            return false;
+                        }
+                    }
+                }
+
+
                 var index = allurls[i].lastIndexOf('/');
                 var centerurl = allurls[i].substr(0, index);
-                if (allurls[i].indexOf(":") == -1 && centerurl.indexOf(".") == -1 ) {
-                    allurls[i] = allurls[i].replace(/,/g,'*');
-                    filePathName += allurls[i] + ":";
-                } else {
-                    if (allurls[i].indexOf(":") != -1) {
-                        alert("您选择的文件夹名含有:符号,如:" + allurls[i]);
+                var centerurla = allurls[i].substr(index + 1, allurls[i].length);
+                if (centerurla.indexOf(".") == -1) {
+                    alert("您选择的文件夹内的文件名没有扩展名,如:" + allurls[i]);
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                    flagg = false;
+                    clearUploder()
+                    return false;
+                }
+                if (allurls[i].indexOf(":") == -1) {
+                    var indexa = centerurla.lastIndexOf('.');
+                    var extenName = centerurla.substr(indexa + 1, centerurla.length);
+                    if (extensionarray.includes(extenName)) {
+                        allurls[i] = allurls[i].replace(/,/g, '*');
+                        filePathName += allurls[i] + ":";
+                    } else {
+                        alert("您选择的文件夹内的文件名没有有效扩展名,如:" + allurls[i]);
                         window.parent.document.getElementById('coverbehidepage').style.display = "none";
                         flagg = false;
                         clearUploder()
                         return false;
-                    } else if (centerurl.indexOf(".") != -1) {
-                        alert("您选择的文件夹名含有.符号,如:" + allurls[i]);
+                    }
+                } else {
+                    if (allurls[i].indexOf(":") != -1) {
+                        alert("您选择的文件夹名含有:符号,如:" + allurls[i]);
                         window.parent.document.getElementById('coverbehidepage').style.display = "none";
                         flagg = false;
                         clearUploder()
@@ -592,8 +628,18 @@
         } else if (totalFileNum1 != 0) {
             for (var i = 0; i < allurls1.length; i++) {
                 if (allurls1[i].indexOf(".") != -1) {
-                    allurls1[i] = allurls1[i].replace(/,/g,'*');
-                    fileName += allurls1[i] + ":";
+                    var indexa = allurls1[i].lastIndexOf('.');
+                    var extenName = allurls1[i].substr(indexa + 1, allurls1[i].length);
+                    if (extensionarray.includes(extenName)) {
+                        allurls1[i] = allurls1[i].replace(/,/g, '*');
+                        fileName += allurls1[i] + ":";
+                    } else {
+                        alert("您选择的文件名没有有效扩展名,如:" + allurls1[i]);
+                        window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                        flagg = false;
+                        clearUploder()
+                        return false;
+                    }
                 } else {
                     alert("文件名必须要有扩展名,如:" + allurls1[i] + "就没有扩展名!");
                     window.parent.document.getElementById('coverbehidepage').style.display = "none";
@@ -639,7 +685,7 @@
                         clearUploder()
                         return flaggg;
                     } else {
-                        if(url=="/fileupdown/checkmessagefolder") {
+                        if (url == "/fileupdown/checkmessagefolder") {
                             newUrlArray = dataa[0].allPath;
                             if (newUrlArray.length > 0) {
                                 updateFilePathBeforeSave(filePathName);
@@ -661,14 +707,15 @@
         }
         window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
-    Array.prototype.indexOf = function(val) {
+
+    Array.prototype.indexOf = function (val) {
         for (var i = 0; i < this.length; i++) {
             if (this[i] == val) return i;
         }
         return -1;
     };
 
-    Array.prototype.remove = function(val) {
+    Array.prototype.remove = function (val) {
         var index = this.indexOf(val);
         if (index > -1) {
             this.splice(index, 1);
@@ -677,18 +724,18 @@
 
     function updateFilePathBeforeSave(filePathNames) {
         var arrr = filePathNames.split(":");
-        for(var ab = 0;ab < arrr.length;ab++) {
-            if(arrr[ab].trim().length<=0) {
+        for (var ab = 0; ab < arrr.length; ab++) {
+            if (arrr[ab].trim().length <= 0) {
                 arrr.remove(arrr[ab]);
             }
         }
         var folderFileArr;
         var folderFileArra;
-        for(var i = 0;i < arrr.length;i++) {
+        for (var i = 0; i < arrr.length; i++) {
             folderFileArr = arrr[i].split("/");
-            for(var a = 0;a < newUrlArray.length;a++) {
+            for (var a = 0; a < newUrlArray.length; a++) {
                 folderFileArra = newUrlArray[a].split("/");
-                if(folderFileArr[folderFileArr.length-1]==folderFileArra[folderFileArra.length-1]) {
+                if (folderFileArr[folderFileArr.length - 1] == folderFileArra[folderFileArra.length - 1]) {
                     arrr.remove(arrr[i]);
                     arrr.push(newUrlArray[a]);
                 }
@@ -1335,7 +1382,9 @@
             success: function (msg) {
                 var data = eval(msg); //data为URLS
                 $.each(data, function (num) {
-                    if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
+                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                         $("#foldername").val(data[num]);
                         if (reg.test(data[num])) {
                             $("#backfolder").attr("disabled", "disabled");
@@ -1358,10 +1407,12 @@
 
                         }
                     } else {//代表为文件
-                        fileshtml += "<li><img src=\"/images/icon/File.png\" " +
-                            " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                        if (cominone2 == 0) {//代表没有文件夹
-                            $("#foldername").val(data[num]);
+                        if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            fileshtml += "<li><img src=\"/images/icon/File.png\" " +
+                                " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            if (cominone2 == 0) {//代表没有文件夹
+                                $("#foldername").val(data[num]);
+                            }
                         }
                     }
                 });
@@ -1430,7 +1481,9 @@
             success: function (msg) {
                 var data = eval(msg); //data为URLS
                 $.each(data, function (num) {
-                    if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
+                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                         $("#foldername").val(data[num]);
                         if (fileInput != "") {
                             if (cominone == 0) {
@@ -1449,11 +1502,14 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
                     } else {//代表为文件
-                        fileshtml += "<li><img src=\"/images/icon/File.png\" " +
-                            " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                        if (cominone == 0) {
-                            $("#foldername").val(data[num]);
+                        if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            fileshtml += "<li><img src=\"/images/icon/File.png\" " +
+                                " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                            if (cominone == 0) {
+                                $("#foldername").val(data[num]);
+                            }
                         }
+
                     }
                 });
                 if (folderhtml == "" && fileshtml == "") {

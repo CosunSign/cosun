@@ -1,6 +1,7 @@
 package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -80,6 +81,9 @@ public interface FileUploadAndDownMapper {
 
     @Select("select count(*) from filemanurl where fileInfoId = #{id}")
     int getItemCountByHeadId(Integer id);
+
+    @Select("select extension from extension order by extension asc ")
+    List<String> findAllExtension();
 
     @Delete("delete from filemanfileinfo where id = #{id}")
     void deleteFileManFileInfo(Integer id);

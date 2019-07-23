@@ -5,6 +5,7 @@ import com.cosun.cosunp.mapper.FileUploadAndDownMapper;
 import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.tool.*;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -1957,6 +1958,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         //修改文件名
         return toBeRenamed.renameTo(newFile);
     }
+
+    public List<String> findAllExtension() throws Exception {
+        return fileUploadAndDownMapper.findAllExtension();
+    }
+
 
     /**
      * 功能描述:删除业务

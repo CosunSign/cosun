@@ -31,7 +31,12 @@
 
 <script src="//open.thunderurl.com/thunder-link.js"></script>
 <script type="text/javascript">
+    var extensionarrays;
+    var extensionarray;
     $(function () {
+        extensionarrays = $("#extension").val();
+        extensionarray = eval("(" + extensionarrays + ")");
+        s
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         var flag = $("#flag").val();
@@ -41,7 +46,7 @@
             alert("您单次要删除的文件个数已超过200个,不能超过200个.");
         } else if (flag == "-369") {
             //$("#some-element").busyLoad("hide");//遮罩层关闭
-            window.parent.document.getElementById('coverbehidepage').style.display="none";
+            window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
         } else if (flag == "-258") {
             alert("您要删除的文件没有权限,可联系上级帮你申请!")
@@ -236,8 +241,8 @@
             var cookieValue = getCookie('ccc');
             if (cookieValue == token) {
                 // alert("文件下载中，弹出下载框后再关闭此窗口!")
-               // $("#some-element").busyLoad("hide");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                // $("#some-element").busyLoad("hide");
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
                 finishDownload();
             }
@@ -245,22 +250,22 @@
     }
 
     function alertMessageDiv() {
-       // $("#coverbehidepage").show();
+        // $("#coverbehidepage").show();
         var ojb = window.parent.document.getElementById('innershowMessageDiv12');
-        ojb.innerHTML="<p>\n" +
+        ojb.innerHTML = "<p>\n" +
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">一,您得需要有您准备删除的文件(夹)的删除权限.</font>\n" +
-          "  <p>\n" +
-        "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,本删除功能为物理删除，一旦执行删除操作，永不恢复。请谨慎操作.</font>\n";
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
-        window.parent.document.getElementById('showMessageDiv').style.display="block";
+            "  <p>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,本删除功能为物理删除，一旦执行删除操作，永不恢复。请谨慎操作.</font>\n";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        window.parent.document.getElementById('showMessageDiv').style.display = "block";
         //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
         //$("#coverbehidepage").hide();
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
-       // $("#showMessageDiv").hide();
+        // $("#showMessageDiv").hide();
     }
 
     // 定义一个函数，用来读取特定的cookie值。
@@ -313,12 +318,12 @@
         var folderhtml = "";
         var fileshtml = "";
         var cominone2 = 0;
-        if(orderNo=="" || orderNo==null) {
+        if (orderNo == "" || orderNo == null) {
             alert("点击返回的时候，订单编号不能为空！请不要删空它。")
             return;
         }
         //$("#some-element").busyLoad("show");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
 
         var jsonarray = {
             "salor": salor, //业务员
@@ -336,10 +341,11 @@
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
                 $.each(data, function (num) {
-
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
                     if (num < totalnum - 1 && totalnum > 1) {
                         if (num < 15) {
-                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
                                     $("#backfolder").attr("disabled", "disabled");
@@ -350,15 +356,17 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone2 = 1;
                             } else {//代表为文件
-                                fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
-                                    + data[num] + "</li>";
-                                if (cominone2 == 0) {//代表没有文件夹
-                                    $("#foldername").val(data[num]);
+                                if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
+                                        + data[num] + "</li>";
+                                    if (cominone2 == 0) {//代表没有文件夹
+                                        $("#foldername").val(data[num]);
+                                    }
                                 }
                             }
                         } else {
-                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
                                     $("#backfolder").attr("disabled", "disabled");
@@ -369,11 +377,13 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone2 = 1;
                             } else {//代表为文件
-                                fileshtml += "<li style='display: none;'><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" +
-                                    data[num] + "</li>";
-                                if (cominone2 == 0) {//代表没有文件夹
-                                    $("#foldername").val(data[num]);
+                                if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    fileshtml += "<li style='display: none;'><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" +
+                                        data[num] + "</li>";
+                                    if (cominone2 == 0) {//代表没有文件夹
+                                        $("#foldername").val(data[num]);
+                                    }
                                 }
                             }
                         }
@@ -401,14 +411,14 @@
             },
             error: function (msg) {
                 //$("#some-element").busyLoad("hide");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
                 alert("查询失败");
             }
         });
 
-       // $("#some-element").busyLoad("hide");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        // $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
     }
 
@@ -424,7 +434,7 @@
                 orderNo = foldername;
             }
         }
-        if(orderNo=="") {
+        if (orderNo == "") {
             alert("进行点击文件夹操作,请不要删除输入框的订单编号!");
             return;
         }
@@ -433,7 +443,7 @@
         var fileshtml = "";
         var cominone = 0;
         //$("#some-element").busyLoad("show");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
 
         var jsonarray = {
             "salor": salor, //业务员
@@ -451,9 +461,11 @@
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
                 $.each(data, function (num) {
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
                     if (num < totalnum - 1 && totalnum > 1) {
                         if (num < 15) {
-                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                 $("#foldername").val(data[num]);
 
                                 folderhtml += "<li ><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
@@ -463,15 +475,17 @@
                                 cominone = 1;
 
                             } else {//代表为文件
-                                fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
-                                    + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
-                                    + data[num] + "</li>";
-                                if (cominone == 0) {
-                                    $("#foldername").val(data[num]);
+                                if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
+                                        + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
+                                        + data[num] + "</li>";
+                                    if (cominone == 0) {
+                                        $("#foldername").val(data[num]);
+                                    }
                                 }
                             }
                         } else {
-                            if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                 $("#foldername").val(data[num]);
 
                                 folderhtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
@@ -481,11 +495,13 @@
                                 cominone = 1;
 
                             } else {//代表为文件
-                                fileshtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
-                                    + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
-                                    + data[num] + "</li>";
-                                if (cominone == 0) {
-                                    $("#foldername").val(data[num]);
+                                if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    fileshtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
+                                        + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
+                                        + data[num] + "</li>";
+                                    if (cominone == 0) {
+                                        $("#foldername").val(data[num]);
+                                    }
                                 }
                             }
                         }
@@ -516,14 +532,14 @@
             },
             error: function (msg) {
                 //$("#some-element").busyLoad("hide");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
                 alert("查询失败");
             }
         });
 
-       // $("#some-element").busyLoad("hide");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        // $("#some-element").busyLoad("hide");//遮罩层开启
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
 
     }
@@ -541,7 +557,7 @@
         var fileshtml = "";
         var cominone2 = 0;
         // $("#some-element").busyLoad("show");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="block";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var jsonarray = {
             "salor": $("#salor").val(), //业务员
             "engineer": $("#engineer").val(),//设计师
@@ -657,14 +673,14 @@
             error: function (msg) {
                 // 隐藏loading
                 //$("#some-element").busyLoad("hide");
-                window.parent.document.getElementById('coverbehidepage').style.display="none";
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
                 alert("失败");
             }
 
         });
         //$("#some-element").busyLoad("hide");//遮罩层开启
-        window.parent.document.getElementById('coverbehidepage').style.display="none";
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
 
     }
 
@@ -836,7 +852,7 @@
         }
 
         var isDeleteConfirm = confirm("确定要删除?删除后将无法撤销!");
-        if(isDeleteConfirm) {
+        if (isDeleteConfirm) {
             var orderno = $("#orderno").val();
             //$("#coverbehidepage").show();
             window.parent.document.getElementById('coverbehidepage').style.display = "block";
@@ -884,184 +900,183 @@
 
             //$("#some-element").busyLoad("hide");
             blockUIForDownload();
-        }else{
+        } else {
             return false;
         }
     }
 </script>
 
 <!--<div id="coverbehidepage" style="display: none" th:align="center">请耐心等待...</div>-->
-<div >
-        <div id="tabs">
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}">上传</a>
-            <a class="btn  btn-default"
-               th:href="@{/fileupdown/tomodifypage(currentPage=${view.currentPage})}">更新</a>
+<div>
+    <div id="tabs">
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/tomainpage(currentPage=${view.currentPage})}">上传</a>
+        <a class="btn  btn-default"
+           th:href="@{/fileupdown/tomodifypage(currentPage=${view.currentPage})}">更新</a>
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/download(currentPage=${view.currentPage})}">
-                下载</a>
-            <a class="btn btn-primary"
-               th:href="@{/fileupdown/todeletepage(currentPage=${view.currentPage})}">删除</a>
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/tobroserfilepage(currentPage=${view.currentPage})}">查找</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/download(currentPage=${view.currentPage})}">
+            下载</a>
+        <a class="btn btn-primary"
+           th:href="@{/fileupdown/todeletepage(currentPage=${view.currentPage})}">删除</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/tobroserfilepage(currentPage=${view.currentPage})}">查找</a>
 
-            <a class="btn btn-default"
-               th:href="@{/fileupdown/toprivilmanagepage(pageSize=12,currentPage=${view.currentPage})}">管理</a>
+        <a class="btn btn-default"
+           th:href="@{/fileupdown/toprivilmanagepage(pageSize=12,currentPage=${view.currentPage})}">管理</a>
 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
-                                                          size="2"><u><strong>温馨小贴士</strong></u></font></a>
-
-
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
+                                                      size="2"><u><strong>温馨小贴士</strong></u></font></a>
 
 
-            <p>
+        <p>
 
-                <div id="">
-                    <form id="queryform" th:action="@{/fileupdown/deletebyquerycondition}" method="post"
-                          style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
+            <div id="">
+                <form id="queryform" th:action="@{/fileupdown/deletebyquerycondition}" method="post"
+                      style="margin-left: 0px;margin-top: 15px;margin-right: 35px;margin-bottom: 15px;">
 
 
-                        <div>
-                            <fieldset>
-                                <!--<legend>查询条件</legend>-->
-                                <table width="100%">
-                                    <tr>
-                                        <td align="right">
-                                            业务员:
-                                        </td>
-                                        <td>
-                                            <select id="salor" style="width: 120px" name="view.salor" form="form0">
-                                                <option value="" selected="selected"
-                                                >
-                                                    请选择业务员
-                                                </option>
-                                                <option th:each="c:${employees}" th:value="${c.name}"
-                                                        th:text="${c.name}"></option>
-
-                                            </select>
-                                        </td>
-                                        <td align="right">订单编号:</td>
-                                        <td><input type="text" id="orderno" name="view.orderNo" style="width:180px"
-                                                   form="form0"
-                                                   onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                        </td>
-                                        <td align="right"> 顶目名称:</td>
-                                        <td><input type="text" id="projectname" name="view.projectName"
-                                                   style="width:200px"
-                                                   form="form0"
-                                                   onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                        </td>
-                                        <td></td>
-                                        <td></td>
-
-                                    </tr>
-                                    <tr>
-                                        <td align="right">设计师:</td>
-                                        <td>
-                                            <select id="engineer" style="width: 120px" name="view.engineer">
-                                                <option value="" selected="selected">
-                                                    请选择设计师
-                                                </option>
-                                                <option th:each="c:${userInfos}" th:value="${c.uId}"
-                                                        th:text="${c.fullName}"></option>
-                                            </select>
-
-                                        </td>
-                                        <td align="right">文件名称:</td>
-                                        <td><input type="text" id="filename" name="view.fileName" style="width:180px"
-                                                   form="form0"
-                                                   onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
-                                        </td>
-                                        <td align="right">最新上传时间:</td>
-                                        <td colspan="2" th:align="left">
-                                            <input type="text" style="width:120px" id="startnewestsavedate"
-                                                   readOnly="true"
-                                                   name="view.startNewestSaveDate" class="Wdate" form="form0"
-                                                   onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
-                                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
-                                            至：
-                                            <input type="text" id="endnewestsavedate" style="width:120px"
-                                                   name="view.endnewestsavedate" class="Wdate" form="form0"
-                                                   onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
-                                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
-                                        </td>
-
-                                        <td th:align="right">
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input type="button" id="submitQueryByConditionbutton"
-                                                   onclick="submitQueryByCondition()" value="查询"/>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input type="button" onclick="deleteBySelect()" value="删除"/>
-                                            <!--<input type="button" onclick="showcookie()" value="cookie"/>-->
-                                    </tr>
-                                </table>
-                            </fieldset>
-                        </div>
-                    </form>
-
-            <p>
-            <div id="downloadpage">
-                <form th:action="@{/fileupdown/deletebyquerycondition}" method="post" id="form0">
-                    <input type="hidden" id="maxPage" th:value="${view.maxPage}">
-                    <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
-                    <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
-                    <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
-                    <input type="hidden" id="flag" name="view.flag" th:value="${view.flag}">
-                    <input type="hidden" id="foldername">
-
-                    <!--FOLDER形式展示DIV-->
-                    <div id="folderdiv" style="display: block">
-
-                        &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
-                                                       onclick="backFolder3();">
-
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <div id="innerfolderdiv">
+                    <div>
+                        <fieldset>
+                            <!--<legend>查询条件</legend>-->
                             <table width="100%">
-                                <tbody id="showdatatable">
-                                <div th:unless="${#lists.isEmpty(orderNumFolders)}">
-                                    <tr th:each="folderName ,iterStat: ${orderNumFolders}" align="left">
-                                        <td>
-                                            <input type="checkbox" th:value="${folderName}" th:id="${folderName}"
-                                                   name="downloadlist">
-                                            <img src="/images/icon/Folder.png" align="middle" border="0"
-                                                 th:value="${folderName}" ondblclick="shownextfolderorfiles(this)"
-                                                 style="width: 30px; height: 30px; vertical-align: middle"
-                                                 th:text="${folderName}">
+                                <tr>
+                                    <td align="right">
+                                        业务员:
+                                    </td>
+                                    <td>
+                                        <select id="salor" style="width: 120px" name="view.salor" form="form0">
+                                            <option value="" selected="selected"
+                                            >
+                                                请选择业务员
+                                            </option>
+                                            <option th:each="c:${employees}" th:value="${c.name}"
+                                                    th:text="${c.name}"></option>
 
-                                        </td>
-                                    </tr>
-                                </div>
-                                <div th:if="${#lists.isEmpty(orderNumFolders)}">
-                                    <tr>
-                                        <td align="center">暂无文件清单信息</td>
-                                    </tr>
-                                </div>
-                                </tbody>
+                                        </select>
+                                    </td>
+                                    <td align="right">订单编号:</td>
+                                    <td><input type="text" id="orderno" name="view.orderNo" style="width:180px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td align="right"> 顶目名称:</td>
+                                    <td><input type="text" id="projectname" name="view.projectName"
+                                               style="width:200px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
 
-                                <tfoot id="s_tfoot">  <!-- 分页-->
+                                </tr>
+                                <tr>
+                                    <td align="right">设计师:</td>
+                                    <td>
+                                        <select id="engineer" style="width: 120px" name="view.engineer">
+                                            <option value="" selected="selected">
+                                                请选择设计师
+                                            </option>
+                                            <option th:each="c:${userInfos}" th:value="${c.uId}"
+                                                    th:text="${c.fullName}"></option>
+                                        </select>
 
-                                <tr id="showdiv">
+                                    </td>
+                                    <td align="right">文件名称:</td>
+                                    <td><input type="text" id="filename" name="view.fileName" style="width:180px"
+                                               form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"/>
+                                    </td>
+                                    <td align="right">最新上传时间:</td>
+                                    <td colspan="2" th:align="left">
+                                        <input type="text" style="width:120px" id="startnewestsavedate"
+                                               readOnly="true"
+                                               name="view.startNewestSaveDate" class="Wdate" form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                               onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endnewestsavedate\')}'})"/>
+                                        至：
+                                        <input type="text" id="endnewestsavedate" style="width:120px"
+                                               name="view.endnewestsavedate" class="Wdate" form="form0"
+                                               onkeypress="if(event.keyCode==13) {submitQueryByConditionbutton.click();return false;}"
+                                               onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startnewestsavedate\')}'})"/>
+                                    </td>
 
-                                    <td align="center">
-                                        <span>第</span>
-                                        <span th:text="${view.currentPage}" id="currentpagespan"> </span>
-                                        <span>页|共</span>
-                                        <span th:text="${view.maxPage}" id="maxpagespan"> </span>
-                                        <span>页|共</span>
-                                        <span th:text="${view.recordCount}" id="recordcountspan"> </span>
-                                        <span>条记录 </span>
-                                        <span id="image01">
+                                    <td th:align="right">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="button" id="submitQueryByConditionbutton"
+                                               onclick="submitQueryByCondition()" value="查询"/>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="button" onclick="deleteBySelect()" value="删除"/>
+                                        <!--<input type="button" onclick="showcookie()" value="cookie"/>-->
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                </form>
+
+        <p>
+        <div id="downloadpage">
+            <form th:action="@{/fileupdown/deletebyquerycondition}" method="post" id="form0">
+                <input type="hidden" id="maxPage" th:value="${view.maxPage}">
+                <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
+                <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
+                <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
+                <input type="hidden" id="flag" name="view.flag" th:value="${view.flag}">
+                <input type="hidden" th:value="${extensionList}" id="extension">
+                <input type="hidden" id="foldername">
+
+                <!--FOLDER形式展示DIV-->
+                <div id="folderdiv" style="display: block">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="backfolder" disabled value="返回上一级"
+                                                   onclick="backFolder3();">
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div id="innerfolderdiv">
+                        <table width="100%">
+                            <tbody id="showdatatable">
+                            <div th:unless="${#lists.isEmpty(orderNumFolders)}">
+                                <tr th:each="folderName ,iterStat: ${orderNumFolders}" align="left">
+                                    <td>
+                                        <input type="checkbox" th:value="${folderName}" th:id="${folderName}"
+                                               name="downloadlist">
+                                        <img src="/images/icon/Folder.png" align="middle" border="0"
+                                             th:value="${folderName}" ondblclick="shownextfolderorfiles(this)"
+                                             style="width: 30px; height: 30px; vertical-align: middle"
+                                             th:text="${folderName}">
+
+                                    </td>
+                                </tr>
+                            </div>
+                            <div th:if="${#lists.isEmpty(orderNumFolders)}">
+                                <tr>
+                                    <td align="center">暂无文件清单信息</td>
+                                </tr>
+                            </div>
+                            </tbody>
+
+                            <tfoot id="s_tfoot">  <!-- 分页-->
+
+                            <tr id="showdiv">
+
+                                <td align="center">
+                                    <span>第</span>
+                                    <span th:text="${view.currentPage}" id="currentpagespan"> </span>
+                                    <span>页|共</span>
+                                    <span th:text="${view.maxPage}" id="maxpagespan"> </span>
+                                    <span>页|共</span>
+                                    <span th:text="${view.recordCount}" id="recordcountspan"> </span>
+                                    <span>条记录 </span>
+                                    <span id="image01">
                             <span th:if="${view.currentPage gt 1}">
                                     <img src="/images/page/sy-2.jpg" align="middle" border="0"
                                          style="width: 20px; height: 20px; vertical-align: middle"
@@ -1070,7 +1085,7 @@
                                          style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
                                 </span>
                                 </span>
-                                        <span id="image02">
+                                    <span id="image02">
                             <span th:if="${view.currentPage le 1}">
                                 <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
@@ -1078,7 +1093,7 @@
                                      style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;
                             </span>
                             </span>
-                                        <span id="image03">
+                                    <span id="image03">
                             <span th:if="${view.currentPage lt view.maxPage}">
                                     <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>
@@ -1086,7 +1101,7 @@
                                          style="width: 20px; height: 20px; vertical-align: middle"/>
                             </span>
                                 </span>
-                                        <span id="image04">
+                                    <span id="image04">
                             <span th:if="${view.currentPage ge view.maxPage}">
                                 <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
@@ -1095,45 +1110,45 @@
                             </span>
                             </span>
 
-                                        |&nbsp;到第
-                                        <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
-                                               style="width: 50px"
-                                               id="_tp" th:name="currentPage" type="text"
-                                               th:value="${view.currentPage}"/>
-                                        页&nbsp;
-                                        <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
-                                             style="width:20px;height:20px;vertical-align:middle">
-                                    </td>
+                                    |&nbsp;到第
+                                    <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
+                                           style="width: 50px"
+                                           id="_tp" th:name="currentPage" type="text"
+                                           th:value="${view.currentPage}"/>
+                                    页&nbsp;
+                                    <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
+                                         style="width:20px;height:20px;vertical-align:middle">
+                                </td>
 
-                                </tr>
+                            </tr>
 
 
-                                <tr style="display:none;" id="nodatadiv">
-                                    <td align="center">
-                                        查无数据
-                                    </td>
-                                </tr>
+                            <tr style="display:none;" id="nodatadiv">
+                                <td align="center">
+                                    查无数据
+                                </td>
+                            </tr>
 
-                                <tr class="page_btn clear" style="display:none;" id="pagetfoottr" align="center">
-                                    <td align="center">
+                            <tr class="page_btn clear" style="display:none;" id="pagetfoottr" align="center">
+                                <td align="center">
                                        <span class="page_box">
                                            <a class="prev">上一页</a>
                                        <span class="num"><span class="current_page">1</span>
                                        <span style="padding:0 3px;">/</span>
                                            <span class="total"></span></span>
                                            <a class="next">下一页</a></span>
-                                    </td>
-                                </tr>
+                                </td>
+                            </tr>
 
-                                </tfoot>
-                            </table>
-                        </div>
+                            </tfoot>
+                        </table>
                     </div>
+                </div>
 
-                </form>
+            </form>
 
-            </div>
         </div>
+    </div>
 
 
 </div>
@@ -1155,7 +1170,6 @@
         </div>
     </div>
 </div>
-
 
 
 </div>

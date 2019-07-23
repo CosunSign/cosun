@@ -7,7 +7,9 @@ import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.xdevapi.JsonArray;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import net.sf.json.JSONArray;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -130,6 +132,8 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         List<DownloadView> downloadViewList = fileUploadAndDownServ.findAllFileUrlByCondition(userInfo.getuId(), view.getCurrentPageTotalNum(), view.getPageSize());
         int recordCount = fileUploadAndDownServ.findAllFileUrlByConditionCount(userInfo.getuId());
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
@@ -142,6 +146,7 @@ public class FileUploadAndDownController {
         mav.addObject("downloadViewList", downloadViewList);
         mav.addObject("userInfos", userInfos);
         mav.addObject("employees", employees);
+        mav.addObject("extensionList", extensionList);
         return mav;
     }
 
@@ -2515,6 +2520,8 @@ public class FileUploadAndDownController {
         view.setType(userInfo.getType());
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         List<DownloadView> views = new ArrayList<DownloadView>();
@@ -2537,6 +2544,7 @@ public class FileUploadAndDownController {
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("employees", employees);
+        modelAndView.addObject("extensionList", extensionList);
         modelAndView.addObject("views", views);
         return modelAndView;
     }
@@ -2597,12 +2605,15 @@ public class FileUploadAndDownController {
         view.setFlag(flag);
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("employees", employees);
+        modelAndView.addObject("extensionList", extensionList);
         return modelAndView;
     }
 
@@ -2660,6 +2671,8 @@ public class FileUploadAndDownController {
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         view.setMaxPage(maxPage);
@@ -2671,6 +2684,7 @@ public class FileUploadAndDownController {
         mav.addObject("view", view);
         mav.addObject("employees", employees);
         mav.addObject("userInfos", userInfos);
+        mav.addObject("extensionList", extensionList);
         return mav;
     }
 
@@ -2695,6 +2709,8 @@ public class FileUploadAndDownController {
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUserOnlyDesigner();
         List<String> orderNumFolders = fileUploadAndDownServ.findAllOrderNum(view.getCurrentPageTotalNum(), view.getPageSize());
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         int recordCount = fileUploadAndDownServ.findAllOrderNumCount();
         int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
         view.setMaxPage(maxPage);
@@ -2706,6 +2722,7 @@ public class FileUploadAndDownController {
         mav.addObject("view", view);
         mav.addObject("employees", employees);
         mav.addObject("userInfos", userInfos);
+        mav.addObject("extensionList", extensionList);
         return mav;
     }
 //    @ResponseBody
@@ -3104,6 +3121,8 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<UserInfo> userInfos = fileUploadAndDownServ.findAllUser();
         List<Employee> employees = fileUploadAndDownServ.findAllSalorByDeptName();
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         view.setUserName(userInfo.getUserName());
         view.setPassword(userInfo.getUserPwd());
         view.setFullName(userInfo.getFullName());
@@ -3111,6 +3130,7 @@ public class FileUploadAndDownController {
         modelAndView.addObject("view", view);
         modelAndView.addObject("userInfos", userInfos);
         modelAndView.addObject("employees", employees);
+        modelAndView.addObject("extensionList", extensionList);
         return modelAndView;
     }
 

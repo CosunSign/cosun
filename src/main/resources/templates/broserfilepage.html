@@ -18,7 +18,11 @@
 </head>
 <body class=" theme-blue">
 <script type="text/javascript">
+    var extensionarrays;
+    var extensionarray;
     $(function () {
+        extensionarrays = $("#extension").val();
+        extensionarray = eval("(" + extensionarrays + ")");
         window.parent.document.getElementById('content').style.display = "block";
         window.parent.document.getElementById('contentnew').style.display = "none";
         var match = document.cookie.match(new RegExp('color=([^;]+)'));
@@ -232,11 +236,13 @@
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
                 $.each(data, function (num) {
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
                     if (reg.test(data[totalnum])) {
                         $("#orderno").val(data[totalnum]);
                     }
                     if (num < 15) {
-                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
@@ -248,16 +254,18 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                            if (cominone2 == 0) {//代表没有文件夹
-                                $("#foldername").val(data[num]);
+                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                    "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (cominone2 == 0) {//代表没有文件夹
+                                    $("#foldername").val(data[num]);
+                                }
                             }
                         }
 
                     } else {
-                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
@@ -269,11 +277,14 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                            if (cominone2 == 0) {//代表没有文件夹
-                                $("#foldername").val(data[num]);
+                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+
+                                fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                    "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (cominone2 == 0) {//代表没有文件夹
+                                    $("#foldername").val(data[num]);
+                                }
                             }
                         }
                     }
@@ -328,7 +339,7 @@
                     var trnum2 = 0;
                     var data = eval(msg);//将msg化为数;
                     $.each(data, function (num) {
-                        if (data[num].typeK==0) {
+                        if (data[num].typeK == 0) {
                             trnum = trnum + 1;
                             tr += "<tr>";
                             tr += ("<td align='center' width=\"32px\">" + (trnum) + "</td>");
@@ -343,7 +354,7 @@
                             tr2 += ("<td align='center' width=\"32px\">" + (trnum2) + "</td>");
                             tr2 += ("<td align='center' width=\"170px\">" + isNull(data[num].fileName) + "</td>");
                             tr2 += ("<td align='center' width=\"70px\">" + isNull(data[num].downFullName) + "</td>");
-                            tr2 += ("<td align='center' width=\"152px\">" + isNull(data[num].downDateStr)+ "</td>");
+                            tr2 += ("<td align='center' width=\"152px\">" + isNull(data[num].downDateStr) + "</td>");
                             tr2 += ("<td width=\"180px\" align='center'>" + isNull(data[num].ipAddr) + "</td>");
                             tr2 += ("<td align='center'  width=\"135px\">" + isNull(data[num].ipName) + "</td>");
                             tr2 += "</tr>";
@@ -387,30 +398,6 @@
         //做好文件夹切割容器 文件夹层数不能超过9层
         var folderhtml = "";
         var fileshtml = "";
-        // if (salor == "") {
-        //     alert("请选择业务人员!");
-        //     $("#foldershow").removeAttr("checked");
-        //     $("#listshow").prop("checked", 'checked');
-        //     $("#listdiv").attr("style", "display:block;")
-        //     $("#folderdiv").attr("style", "display:none;")
-        //     return false;
-        // }
-        // if (engineer == 0) {
-        //     alert("请选择设计师!");
-        //     $("#foldershow").removeAttr("checked");
-        //     $("#listshow").prop("checked", 'checked');
-        //     $("#listdiv").attr("style", "display:block;")
-        //     $("#folderdiv").attr("style", "display:none;")
-        //     return false;
-        // }
-        // if (orderNo == "") {
-        //     alert("请填写订单编号!");
-        //     $("#foldershow").removeAttr("checked");
-        //     $("#listshow").prop("checked", 'checked');
-        //     $("#listdiv").attr("style", "display:block;")
-        //     $("#folderdiv").attr("style", "display:none;")
-        //     return false;
-        // }
         $("#folderdiv").attr("style", "display:block;")
         $("#listdiv").attr("style", "display:none;")
         //$("#some-element").busyLoad("show");//遮罩层开启
@@ -556,11 +543,13 @@
                 var data = eval(msg); //data为URLS
                 var totalnum = data.length;
                 $.each(data, function (num) {
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
                     if (reg.test(data[totalnum])) {
                         $("#orderno").val(data[totalnum]);
                     }
                     if (num < 15) {
-                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             folderhtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -569,15 +558,18 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                            if (cominone == 0) {
-                                $("#foldername").val(data[num]);
+                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+
+                                fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                    "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (cominone == 0) {
+                                    $("#foldername").val(data[num]);
+                                }
                             }
                         }
                     } else {
-                        if (data[num].indexOf(".") <= 0) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             folderhtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -586,11 +578,13 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
-                            if (cominone == 0) {
-                                $("#foldername").val(data[num]);
+                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                    "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (cominone == 0) {
+                                    $("#foldername").val(data[num]);
+                                }
                             }
                         }
                     }
@@ -738,6 +732,7 @@
                     <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${view.currentPage}"/>
                     <input type="hidden" id="userName" name="view.userName" th:value="${view.userName}">
                     <input type="hidden" id="passWord" name="view.password" th:value="${view.password}">
+                    <input type="hidden" th:value="${extensionList}" id="extension">
                     <input type="hidden" id="foldername">
                     <table class="grid" style="width: 100%">
                         <thead style="background-color: #E0EEEE" align="center" id="urlthead">
@@ -914,7 +909,7 @@
                 var trnum2 = 0;
                 var data = eval(msg);//将msg化为数;
                 $.each(data, function (num) {
-                    if (data[num].typeK==0) {
+                    if (data[num].typeK == 0) {
                         trnum = trnum + 1;
                         tr += "<tr>";
                         tr += ("<td align='center' width=\"32px\">" + (trnum) + "</td>");
@@ -929,7 +924,7 @@
                         tr2 += ("<td align='center' width=\"32px\">" + (trnum2) + "</td>");
                         tr2 += ("<td align='center' width=\"170px\">" + isNull(data[num].fileName) + "</td>");
                         tr2 += ("<td align='center' width=\"70px\">" + isNull(data[num].downFullName) + "</td>");
-                        tr2 += ("<td align='center' width=\"152px\">" + isNull(data[num].downDateStr)+ "</td>");
+                        tr2 += ("<td align='center' width=\"152px\">" + isNull(data[num].downDateStr) + "</td>");
                         tr2 += ("<td width=\"180px\" align='center'>" + isNull(data[num].ipAddr) + "</td>");
                         tr2 += ("<td align='center'  width=\"135px\">" + isNull(data[num].ipName) + "</td>");
                         tr2 += "</tr>";

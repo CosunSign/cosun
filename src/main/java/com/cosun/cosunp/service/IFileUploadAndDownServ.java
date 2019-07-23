@@ -1,6 +1,7 @@
 package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.*;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -53,6 +54,8 @@ public interface IFileUploadAndDownServ {
     DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param,UserInfo info) throws Exception;
 
     List<Employee> findAllSalorByDeptName() throws Exception;
+
+    List<String> findAllExtension() throws Exception;
 
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize) throws Exception;
 
