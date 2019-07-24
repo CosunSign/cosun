@@ -264,7 +264,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional
     @Override
     public String checkIsExistFilesforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
-        pathName = pathName.replace("*",",");
+        pathName = pathName.replace("*", ",");
         String[] names = null;
         if (pathName.contains(":")) {
             names = pathName.split(":");
@@ -377,7 +377,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean isFolderNameForEngDateOrderNoSalor(String filePathName) throws Exception {
-        filePathName  = filePathName.replace("*", ",");
+        filePathName = filePathName.replace("*", ",");
         String[] pathName = null;
         if (filePathName.contains(":")) {
             pathName = filePathName.split(":");
@@ -444,7 +444,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String checkIsExistFilesFolderforUpdate(String pathName, DownloadView view, UserInfo info) throws Exception {
-        pathName = pathName.replace("*",",");
+        pathName = pathName.replace("*", ",");
         String returnMessage = "OK";
         String[] urlPaths = null;
         if (pathName.contains(":")) {
@@ -541,7 +541,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public String checkFileUpdateRight(String pathName, DownloadView view, UserInfo userInfo) throws Exception {
-        pathName  = pathName.replace("*", ",");
+        pathName = pathName.replace("*", ",");
         String[] pathNames = null;
         if (pathName.contains(":")) {
             pathNames = pathName.split(":");
@@ -694,7 +694,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     public void addOldOrderNoNewFilesByFolder(DownloadView view, UserInfo userInfo, String oldPath, List<FileManFileInfo> fileManFileInfos) throws Exception {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
-        String[] splitPaths = view.getFilePathNames().split(",");
+        String[] splitPaths = view.getFilePathNames().split(":");
         Integer pointindex = StringUtils.ordinalIndexOf(oldPath, "/", 5);
         String oldsPath = oldPath.substring(0, pointindex + 1);
         List<FilemanUrl> filemanUrls = new ArrayList<FilemanUrl>();
@@ -1238,7 +1238,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FolderUpdateList isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception {
-        filePathName  = filePathName.replace("*", ",");
+        filePathName = filePathName.replace("*", ",");
         FolderUpdateList ful = new FolderUpdateList();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
         String dateStr = sDateFormat.format(new Date());
@@ -1298,14 +1298,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         List<String> singleFolder = new ArrayList<String>();
         for (int a = 0; a < foldernameLists.size(); a++) {
             aa = foldernameLists.get(a);
-            for (int b = 0; b < aa.length-1; b++) {
+            for (int b = 0; b < aa.length - 1; b++) {
                 if (singleFolder.contains(aa[b])) {
                     aa[b] = aa[b] + dateStr + folderNum++;
                     foldernameLists.remove(a);
                     foldernameLists.add(aa);
                     // isSameFileUploadFolderName = "您的文件夹内有重复文件夹名,如:" + aa[b];
                     // return isSameFileUploadFolderName;
-                }else {
+                } else {
                     singleFolder.add(aa[b]);
                 }
 
@@ -1321,13 +1321,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             centerfolderone1 = foldernameLists.get(i);
             for (int j = 1; j < foldernameLists.size(); j++) {
                 centerfoldertwo2 = foldernameLists.get(j);
-                for (int k = 0; k < centerfolderone1.length-1; k++) {
-                    for (int f = 0; f < centerfoldertwo2.length-1; f++) {
+                for (int k = 0; k < centerfolderone1.length - 1; k++) {
+                    for (int f = 0; f < centerfoldertwo2.length - 1; f++) {
                         //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
                         if (k == f && centerfolderone1[k].equals(centerfoldertwo2[f])) {
                             for (int o = 0; o <= k; o++) {
                                 if (!centerfolderone1[o].equals(centerfoldertwo2[o])) {
-                                    centerfolderone1[k] = centerfolderone1[k]+dateStr+folderNum++;
+                                    centerfolderone1[k] = centerfolderone1[k] + dateStr + folderNum++;
                                     foldernameLists.remove(i);
                                     foldernameLists.add(centerfolderone1);
                                     //isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:" + centerfolderone1[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
@@ -1337,11 +1337,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                         } else {
                             if (centerfolderone1[k].equals(centerfoldertwo2[f])) {
                                 {//如果不是同一层次的文件夹名字一样.即视重复
-                                    centerfolderone1[k] = centerfolderone1[k]+dateStr+folderNum++;
+                                    centerfolderone1[k] = centerfolderone1[k] + dateStr + folderNum++;
                                     foldernameLists.remove(i);
                                     foldernameLists.add(centerfolderone1);
                                     //isSameFileUploadFolderName = "您的文件夹有重复的文件夹名,如:" + centerfolderone1[k];//有重复,即刻返回
-                                   // return isSameFileUploadFolderName;
+                                    // return isSameFileUploadFolderName;
 
                                 }
                             }
@@ -1364,7 +1364,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             if (pointindex > 0) {
                 olderCenterstr = urladdr.substring(0, pointindex + 1);
                 centerstr = urladdr.substring(pointindex + 1, urladdr.length());
-               // centerstr = subMyString(centerstr, "/");
+                // centerstr = subMyString(centerstr, "/");
                 if (centerstr != null && centerstr != "") {
                     if (centerstr.contains("/")) {
                         mysqlcenterurls.add(centerstr.split("/"));
@@ -1373,37 +1373,69 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             }
         }
 
+
+        //对mysql里的url做标记,每个文件夹+ * 符号
+        String[] marrray;
+        for (int m = 0; m < mysqlcenterurls.size(); m++) {
+            marrray = mysqlcenterurls.get(m);
+            for (int n = 0; n < marrray.length; n++) {
+                marrray[n] = marrray[n].concat("*");
+            }
+        }
+
         String[] centerfolderone = null;
         String[] centerfoldertwo = null;
         mysqlcenterurlsAll.addAll(foldernameLists);//集合为数据库的文件夹名与上传过来的文件夹名
         mysqlcenterurlsAll.addAll(mysqlcenterurls);
+
+        //长在下
+        String[] bigOne;
+        for (int i = 0; i < mysqlcenterurlsAll.size() - 1; i++) {
+            for (int j = 1; j < mysqlcenterurlsAll.size() - i; j++) {
+                if (mysqlcenterurlsAll.get(j - 1).length > mysqlcenterurlsAll.get(j).length) { // 比较两个整数的大小
+                    bigOne = mysqlcenterurlsAll.get(j - 1);
+                    mysqlcenterurlsAll.set((j - 1), mysqlcenterurlsAll.get(j));
+                    mysqlcenterurlsAll.set(j, bigOne);
+                }
+            }
+        }
+
+
         //查找数据文件夹与上传过来的文件夹有没有重名
         for (int i = 0; i < mysqlcenterurlsAll.size(); i++) {
             centerfolderone = mysqlcenterurlsAll.get(i);
             for (int j = 1; j < mysqlcenterurlsAll.size(); j++) {
                 centerfoldertwo = mysqlcenterurlsAll.get(j);
-                for (int k = 0; k < centerfolderone.length-1; k++) {
-                    for (int f = 0; f < centerfoldertwo.length-1; f++) {
+                for (int k = 0; k < centerfolderone.length - 1; k++) {
+                    for (int f = 0; f < centerfoldertwo.length - 1; f++) {
                         //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
-                        if (k == f && centerfolderone[k].equals(centerfoldertwo[f])) {
+                        if (k == f && centerfolderone[k].replace("*","").equals(centerfoldertwo[f].replace("*",""))) {
                             for (int o = 0; o <= k; o++) {
-                                if (!centerfolderone[o].equals(centerfoldertwo[o])) {
-                                   //如上传文件夹名与系统中存在文件夹名相同，只改上传的文件夹名，系统中存在的文件夹名不动
-                                    centerfolderone[k] = centerfolderone[k]+dateStr+folderNum++;
-                                    mysqlcenterurlsAll.remove(i);
-                                    mysqlcenterurlsAll.add(centerfolderone);
-                                   // isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:" + centerfolderone[k];//代表同一层次是一样,但往前追溯有些层次不一样,视为重命名文件夹
-                                   // return isSameFileUploadFolderName;
+                                if (!centerfolderone[o].replace("*","").equals(centerfoldertwo[o].replace("*",""))) {
+                                    //如上传文件夹名与系统中存在文件夹名相同，只改上传的文件夹名，系统中存在的文件夹名不动
+                                    if(!centerfolderone[k].contains("*")) {
+                                        centerfolderone[k] = centerfolderone[k].replace("*", "") + dateStr + folderNum++;
+                                        mysqlcenterurlsAll.remove(j);
+                                        mysqlcenterurlsAll.add(centerfolderone);
+                                    } else {
+                                        centerfoldertwo[o] = centerfoldertwo[o].replace("*", "") + dateStr + folderNum++;
+                                        mysqlcenterurlsAll.remove(j);
+                                        mysqlcenterurlsAll.add(centerfoldertwo);
+                                    }
                                 }
                             }
                         } else {
-                            if (centerfolderone[k].equals(centerfoldertwo[f])) {
+                            if (centerfolderone[k].replace("*","").equals(centerfoldertwo[f].replace("*",""))) {
                                 {//如果不是同一层次的文件夹名字一样.即视重复
-                                    centerfolderone[k] = centerfolderone[k]+dateStr+folderNum++;
-                                    mysqlcenterurlsAll.remove(i);
-                                    mysqlcenterurlsAll.add(centerfolderone);
-                                   // isSameFileUploadFolderName = "您订单下的的文件夹名与系统中的文件夹名重复,如:" + centerfoldertwo[f];//有重复,即刻返回
-                                    //return isSameFileUploadFolderName;
+                                    if(!centerfolderone[k].contains("*")) {
+                                        centerfolderone[k] = centerfolderone[k].replace("*", "") + dateStr + folderNum++;
+                                        mysqlcenterurlsAll.remove(j);
+                                        mysqlcenterurlsAll.add(centerfolderone);
+                                    }else {
+                                        centerfoldertwo[f] = centerfoldertwo[f].replace("*", "") + dateStr + folderNum++;
+                                        mysqlcenterurlsAll.remove(j);
+                                        mysqlcenterurlsAll.add(centerfoldertwo);
+                                    }
 
                                 }
                             }
@@ -1412,6 +1444,14 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 }
             }
 
+        }
+        //对mysql里的url做标记,每个文件夹+ * 符号
+        String[] marrray1;
+        for (int m = 0; m < mysqlcenterurlsAll.size(); m++) {
+            marrray1 = mysqlcenterurlsAll.get(m);
+            for (int n = 0; n < marrray1.length; n++) {
+                marrray1[n] = marrray1[n].replace("*","");
+            }
         }
         ful.setIsSameFileUploadFolderName(isSameFileUploadFolderName);
         ful.setUrlAfterUpdateForNoRepeat(mysqlcenterurlsAll);
@@ -1561,12 +1601,12 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Transactional(rollbackFor = Exception.class)
     public DownloadView uploadFileByMappedByteBuffer(MultipartFileParam param, UserInfo userInfo) throws Exception {
-        param.setFilefolderNames(param.getFilefolderNames().replace("*",","));
+        param.setFilefolderNames(param.getFilefolderNames().replace("*", ","));
         String[] newArrayFileFolderName = param.getFilefolderNames().split(":");
         String fileNameNew;
         String filePathName = "";
-        for(int i = 0; i < newArrayFileFolderName.length;i++) {
-            if(newArrayFileFolderName[i].trim().length()>0) {
+        for (int i = 0; i < newArrayFileFolderName.length; i++) {
+            if (newArrayFileFolderName[i].trim().length() > 0) {
                 fileNameNew = subAfterString(newArrayFileFolderName[i], "/");
                 if (fileNameNew.equals(param.getName())) {
                     filePathName = StringUtil.subMyString(newArrayFileFolderName[i], "/");
@@ -1630,7 +1670,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     public DownloadView uploadFileByMappedByteBuffer1(MultipartFileParam param, UserInfo userInfo) throws Exception {
         File tmpDir = null;
         String uploadDirPath = finalDirPath;
-        param.setName(param.getName().replace("*",","));
+        param.setName(param.getName().replace("*", ","));
         String fileName = param.getName();
         //根据业务员订单号设计师看有没有文件夹
         List<FilemanUrl> oldFileUrls = new ArrayList<FilemanUrl>();
@@ -1712,7 +1752,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     public void modifyFolderByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
-        param.setName(param.getName().replace("*",","));
+        param.setName(param.getName().replace("*", ","));
         String fileName = param.getName();
         String uploadDirPath = finalDirPath;
         String filePathName = StringUtil.subMyString(param.getWebkitRelativePath(), "/");
@@ -1771,7 +1811,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     public void modifyFileByMappedByteBuffer(MultipartFileParam param, UserInfo info) throws Exception {
-        param.setName(param.getName().replace("*",","));
+        param.setName(param.getName().replace("*", ","));
         String fileName = param.getName();
         String uploadDirPath = finalDirPath;
         String oldsPath = null;

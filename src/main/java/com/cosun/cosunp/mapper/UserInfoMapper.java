@@ -23,7 +23,7 @@ public interface UserInfoMapper {
     List<UserInfo> findAllUser();
 
     @Select("select o.* from userinfo o left join employee e on o.empno = e.empno\n" +
-            "left join dept t on e.deptId = t.id where deptname in ( \"研发中心\" ,\"技术部\") ")
+            "left join dept t on e.deptId = t.id where deptname in ( \"研发中心\" ,\"技术部\") or o.uid = '1000005' ")
     List<UserInfo> findAllUserOnlyDesigner();
 
     @Select("SELECT count(*) FROM userinfo ")

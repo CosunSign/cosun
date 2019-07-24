@@ -65,7 +65,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
         <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
-                                                      size="2"><u><strong>温馨小贴士</strong></u></font></a>
+                                                      size="2"><u><strong>使用说明</strong></u></font></a>
 
 
         <p>
@@ -723,19 +723,22 @@
     };
 
     function updateFilePathBeforeSave(filePathNames) {
+
         var arrr = filePathNames.split(":");
         for (var ab = 0; ab < arrr.length; ab++) {
             if (arrr[ab].trim().length <= 0) {
                 arrr.remove(arrr[ab]);
             }
         }
+
         var folderFileArr;
         var folderFileArra;
-        for (var i = 0; i < arrr.length; i++) {
-            folderFileArr = arrr[i].split("/");
-            for (var a = 0; a < newUrlArray.length; a++) {
-                folderFileArra = newUrlArray[a].split("/");
-                if (folderFileArr[folderFileArr.length - 1] == folderFileArra[folderFileArra.length - 1]) {
+        for (var a = 0; a < newUrlArray.length; a++) {
+            folderFileArra = newUrlArray[a].split("/");
+            for (var i = 0; i < arrr.length; i++) {
+                folderFileArr = arrr[i].split("/");
+                //此处思路是拿从后来拿过来处理过的url,根据name对比，对比上就将系统后台传过来的url值给前端
+                if (folderFileArr[folderFileArr.length - 1].trim() == folderFileArra[folderFileArra.length - 1].trim()) {
                     arrr.remove(arrr[i]);
                     arrr.push(newUrlArray[a]);
                 }
@@ -1533,7 +1536,7 @@
         var ojb = window.parent.document.getElementById('innershowMessageDiv12');
         ojb.innerHTML = " <p><font color=\"#000000\" size=\"2\" th:align=\"center\">一,上传方式:文件夹和文件二选一.</font>\n" +
             "                <p>\n" +
-            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,文件夹命名:同一订单下不能出现重复文件夹名,不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>\n" +
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,文件夹命名:不能单独以业务员,订单编号,设计师,日期为文件或文件夹名,如:201901的文夹名不行,201901XXXXX则可行,以此类推.</font>\n" +
             "                <p>\n" +
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">三,文件(夹)命名:文件名必须有扩展名并为有效扩展名,文件夹命名不能以有效扩展名为后缀如abc.xls文件夹名无效。</font>\n" +
             "                <p>\n" +
@@ -1547,7 +1550,10 @@
             "                <p>\n" +
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">八,文件(夹)上传不接收任何类型的空文件(0字节文件).</font>\n" +
             "                <p>\n" +
-            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">九,为方便后续操作,请尽量将信息填写完整.</font>"
+            "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">九,为方便后续操作,请尽量将信息填写完整.</font>"+
+        "                <p>\n" +
+        "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">十,需要上传的文件后缀名系统中不存在的请联系管理员.</font>"
+
 
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         window.parent.document.getElementById('showMessageDiv').style.display = "block";

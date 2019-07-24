@@ -57,7 +57,7 @@
 
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a onclick="alertMessageDiv()" href="#"><font color="#FF0000"
-                                                      size="2"><u><strong>温馨小贴士</strong></u></font></a>
+                                                      size="2"><u><strong>使用说明</strong></u></font></a>
 
 
         <p>
@@ -616,9 +616,9 @@
             formData.append('filePathName', filePathName);
         } else if (totalFileNum1 != 0) {
             for (var i = 0; i < allurls1.length; i++) {
-                var index = allurls1[i].lastIndexOf('.');
-                var centerurla = allurls1[i].substr(index + 1, allurls1[i].length);
-                if (centerurla.indexOf(".") != -1) {
+                if (allurls1[i].indexOf(".") != -1) {
+                    var index = allurls1[i].lastIndexOf('.');
+                    var centerurla = allurls1[i].substr(index + 1, allurls1[i].length);
                     if (extensionarray.includes(centerurla)) {
                         fileName += allurls1[i] + ":";
                     } else {

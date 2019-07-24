@@ -1424,7 +1424,7 @@ public class FileUploadAndDownController {
                 if (view.getFolderOrFileName().contains(".")) {//代表是文件
                     index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
                     if (index > 0) {
-                        if (!vi.getOpRight().contains("4")) {
+                        if (vi.getOpRight()==null || !vi.getOpRight().contains("4")) {
                             isDeleteRight = false;
                             break a;
                         }
@@ -2875,7 +2875,7 @@ public class FileUploadAndDownController {
         if (ful != null && ful.getUrlAfterUpdateForNoRepeat() !=null && ful.getUrlAfterUpdateForNoRepeat().size() > 0) {
             for (int i = 0; i < ful.getUrlAfterUpdateForNoRepeat().size(); i++) {
                 arr = ful.getUrlAfterUpdateForNoRepeat().get(i);
-                allNewPath.add(StringUtils.join(arr, "/"));
+                allNewPath.add(StringUtils.join(arr, "/").replace(",", "*"));
             }
         }
         ful.setAllPath(allNewPath);
