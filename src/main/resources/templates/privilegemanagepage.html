@@ -546,82 +546,69 @@
                             vililegeflags = data[num].opRight;
                             if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                 folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                folderhtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
+                                folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                 if (isNull(vililegeflags) != "") {
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                 } else {
-                                    // folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                    folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                 }
-                                folderhtml += " <td width=\"155px\" align=\"center\">\n" +
+                                folderhtml += " <td width=\"15%\" align=\"center\">\n" +
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                    " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                    " <td width=\"520px\" align=\"left+\" id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                    "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                    " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                    " <td width=\"36%\" align=\"left+\" id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                     " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                             } else {//代表为文件
                                 fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                fileshtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
+                                fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                 if (isNull(vililegeflags) != "") {
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     } else {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                 } else {
-                                    // fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                    fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                 }
-                                fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                    " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                    " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                    "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                    " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                    " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                             }
-                            // $("#orderno").val(data[num].orderNo);
                             $("#foldername").val(data[num].folderOrFileName);
                         });
                         if (currentPage > 1) {
@@ -829,80 +816,70 @@
                             vililegeflags = data[num].opRight;
                             if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
                                 folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                folderhtml += "<td width=\"30px\" align=\"center\">" + ((currentPage - 1) * 12 + num + 1) + "</td> ";
+                                folderhtml += "<td width=\"4%\" align=\"center\">" + ((currentPage - 1) * 12 + num + 1) + "</td> ";
                                 if (isNull(vililegeflags) != "") {
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                 } else {
                                     // folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value=\"1\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                    folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value=\"2\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                    folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"3\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value=\"4\" name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                 }
-                                folderhtml += " <td width=\"155px\" align=\"center\">\n" +
-                                    "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                    " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                    " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                folderhtml += " <td width=\"15%\" align=\"center\">\n" +
+                                    "<span style=\"width:100%;\" >" + data[num].orderNo + "</span></td> " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                    "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                    " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                    " <td width=\"36%\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                     " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                             } else {//代表为文件
                                 fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                fileshtml += "<td width=\"30px\" align=\"center\">" + ((currentPage - 1) * 12 + num + 1) + "</td> ";
+                                fileshtml += "<td width=\"4%\" align=\"center\">" + ((currentPage - 1) * 12 + num + 1) + "</td> ";
                                 if (isNull(vililegeflags) != "") {
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     } else {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                 } else {
                                     // fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                    fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                    fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                    fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                 }
-                                fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                     "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                    " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                    "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                    " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                    " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                    " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                    "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                    " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                    " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                             }
                             // $("#orderno").val(data[num].orderNo);
                             $("#foldername").val(data[num].folderOrFileName);
@@ -1026,149 +1003,137 @@
                             if (num < 12) {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    folderhtml += "<td width=\"29px\" align=\"center\">" + (num + 1) + "</td> ";
+                                    folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (isNull(vililegeflags) != "") {
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("4") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
-                                    folderhtml += " <td width=\"155px\" align=\"center\">\n" +
+                                    folderhtml += " <td width=\"15%\" align=\"center\">\n" +
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                        " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                        " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                        "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                        " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                        " <td width=\"36%\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
                                     if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                        fileshtml += "<td width=\"29px\" align=\"center\">" + (num + 1) + "</td>";
+                                        fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td>";
                                         if (isNull(vililegeflags) != "") {
                                             if (vililegeflags.indexOf("2") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             } else {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             }
                                             if (vililegeflags.indexOf("3") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             } else {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             }
                                             if (vililegeflags.indexOf("4") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             } else {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             }
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
-                                        fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                        fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                             "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                            "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                            " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                            " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                            "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                            " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                            " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                                     }
                                 }
                             } else {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                     folderhtml += "<tr  id=\"" + data[num].orderNo + data[num].folderOrFileName + "\" style=\"display:none\">";
-                                    folderhtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
+                                    folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (isNull(vililegeflags) != "") {
-                                        // if (vililegeflags.indexOf("1") > -1) {
-                                        //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo  + data[num].folderOrFileName + "\"></td>";
-                                        // } else {
-                                        //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // }
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("4") > -1) {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                     } else {
-                                        // folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
-                                    folderhtml += " <td width=\"155px\" align=\"center\">\n" +
+                                    folderhtml += " <td width=\"15%\" align=\"center\">\n" +
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                        " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                        " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                        "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                        " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                        " <td width=\"36%\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
                                     if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\" style=\"display:none\">";
-                                        fileshtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
+                                        fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                         if (isNull(vililegeflags) != "") {
-                                            // if (vililegeflags.indexOf("1") > -1) {
-                                            //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                            // } else {
-                                            //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                            // }
                                             if (vililegeflags.indexOf("2") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                                fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                             } else {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                                fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                             }
                                             if (vililegeflags.indexOf("3") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             } else {
-                                                folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             }
                                             if (vililegeflags.indexOf("4") > -1) {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             } else {
-                                                fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                                fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                             }
                                         } else {
-                                            // fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
-                                        fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                        fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                             "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                            "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                            " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                            " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                            "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                            " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                            " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                                     }
                                 }
 
@@ -1349,68 +1314,58 @@
                             if (num < 12) {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    folderhtml += "<td width=\"3%\" align=\"center\">" + (num + 1) + "</td> ";
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
+                                    folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     } else {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"3%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
-                                    folderhtml += " <td width=\"3%\" align=\"center\">\n" +
+                                    folderhtml += " <td width=\"15%\" align=\"center\">\n" +
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                        " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                        " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                        "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                        " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                        " <td width=\"36%\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
                                     if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
 
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                        fileshtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
-                                        // if (vililegeflags.indexOf("1") > -1) {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // } else {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo  + data[num].folderOrFileName + "\"></td>";
-                                        // }
+                                        fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("4") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
-                                        fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                        fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                             "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                            "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                            " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                            " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                            "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                            " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                            " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                                     }
                                 }
 
@@ -1418,67 +1373,57 @@
                             } else {
                                 if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
                                     folderhtml += "<tr style=\"display:none\" id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
-                                    folderhtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
-                                    // if (vililegeflags.indexOf("1") > -1) {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // } else {
-                                    //     folderhtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                    // }
+                                    folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (vililegeflags.indexOf("2") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                        folderhtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                     }
                                     if (vililegeflags.indexOf("3") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
                                     if (vililegeflags.indexOf("4") > -1) {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     } else {
-                                        folderhtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                        folderhtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                     }
-                                    folderhtml += " <td width=\"155px\" align=\"center\">\n" +
+                                    folderhtml += " <td width=\"15%\" align=\"center\">\n" +
                                         "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                        " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                        "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                        " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                        " <td width=\"520px\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                        " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                        "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                        " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                        " <td width=\"36%\" align=\"left+\"  id=\"" + isNull(data[num].orderNo) + "\"><img src=\"/images/icon/Folder.png\" " +
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
                                     if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\"  style=\"display:none\">";
-                                        fileshtml += "<td width=\"30px\" align=\"center\">" + (num + 1) + "</td> ";
-                                        // if (vililegeflags.indexOf("1") > -1) {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"  checked value='1' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\"></td>";
-                                        // } else {
-                                        //     fileshtml += "<td width=\"30px\" align=\"center\"><input  type=\"checkbox\"   value='1' name=\"privilegenum" + data[num].orderNo  + data[num].folderOrFileName + "\"></td>";
-                                        // }
+                                        fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                         if (vililegeflags.indexOf("2") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" checked value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
+                                            fileshtml += "<td width=\"5%\" align=\"center\"><input type=\"checkbox\" value='2' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td> ";
                                         }
                                         if (vililegeflags.indexOf("3") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='3' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
                                         if (vililegeflags.indexOf("4") > -1) {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" checked value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         } else {
-                                            fileshtml += "<td width=\"30px\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
+                                            fileshtml += "<td width=\"4%\" align=\"center\"><input type=\"checkbox\" value='4' name=\"privilegenum" + data[num].orderNo + data[num].folderOrFileName + "\" ></td>";
                                         }
-                                        fileshtml += " <td width=\"155px\" align=\"center\">\n" +
+                                        fileshtml += " <td width=\"15%\" align=\"center\">\n" +
                                             "<span style=\"width:150px;height:50px;\" >" + data[num].orderNo + "</span></td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
-                                            " <td width=\"50px\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
-                                            "<td width=\"50px\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
-                                            " <td width=\"150px\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
-                                            " <td width=\"520px\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].salor + "</i> </td> " +
+                                            " <td width=\"6%\" align=\"center\"> <i>" + data[num].engineer + "</i> </td> " +
+                                            "<td width=\"5%\" align=\"center\" name='" + isNull(data[num].oprighter) + "'>" + isNull(data[num].fullName) + "</td>" +
+                                            " <td width=\"15%\" align=\"center\"> <i>" + data[num].createTime + "</i> </td> " +
+                                            " <td width=\"36%\" align=\"left\"><i><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].folderOrFileName + "</i><td></tr>"
                                     }
 
                                 }
