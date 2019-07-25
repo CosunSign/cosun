@@ -227,6 +227,7 @@ public class FileUploadAndDownController {
     public void findBackFoldersByQueryParam3New(@RequestBody(required = true) DownloadView view, HttpSession session, HttpServletResponse response) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<String> norepeatFoldorFile = null;
+        List<String> exts = fileUploadAndDownServ.findAllExtension();
         List<FilemanUrl> urls = null;
         FilemanRight right = null;
         List<String> folderOrFiles = null;
@@ -252,7 +253,8 @@ public class FileUploadAndDownController {
         urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
 
         //取上二级文件夹名 由下找下一层文件夹或文件
-        if (!foldername.contains(".")) {
+        String extName = StringUtil.subAfterString(foldername,".");
+        if (!foldername.contains(".") || !exts.contains(extName)) {
             for (FilemanUrl u : urls) {
                 vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                 lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
@@ -284,7 +286,7 @@ public class FileUploadAndDownController {
 
                 for (DownloadView v : views) {
                     if (v.getFolderOrFileName() != null) {
-                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                        if (v.getFolderOrFileName().equals(tempFolFileName)) {
                             flag = false;
                         }
                     }
@@ -314,7 +316,8 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        if (tempFolFileName.contains(".")) {
+                        extName = StringUtil.subAfterString(tempFolFileName,".");
+                        if (tempFolFileName.contains(".") && exts.contains(extName)) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -386,7 +389,7 @@ public class FileUploadAndDownController {
 
                 for (DownloadView v : views) {
                     if (v.getFolderOrFileName() != null) {
-                        if (v.getFolderOrFileName().contains(tempFolFileName)) {
+                        if (v.getFolderOrFileName().equals(tempFolFileName)) {
                             flag = false;
                         }
                     }
@@ -415,7 +418,8 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        if (tempFolFileName.contains(".")) {
+                        extName = StringUtil.subAfterString(tempFolFileName,".");
+                        if (tempFolFileName.contains(".") && exts.contains(extName)) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -445,16 +449,19 @@ public class FileUploadAndDownController {
         if (views.size() > 0) {
 
             viewss = new ArrayList<DownloadView>();
+            String exName;
             for (DownloadView vii : views) {
+                exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
                 if (vii.getFolderOrFileName() != null) {
-                    if (!vii.getFolderOrFileName().contains(".")) {
+                    if (!vii.getFolderOrFileName().contains(".") || !exts.contains(exName)) {
                         viewss.add(vii);
                     }
                 }
             }
             for (DownloadView vii : views) {
+                exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
                 if (vii.getFolderOrFileName() != null) {
-                    if (vii.getFolderOrFileName().contains(".")) {
+                    if (vii.getFolderOrFileName().contains(".") && exts.contains(exName)) {
                         viewss.add(vii);
                     }
                 }
@@ -818,6 +825,7 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<FilemanUrl> urls = null;
         List<String> norepeatFoldorFile = null;
+        List<String> exts = fileUploadAndDownServ.findAllExtension();
         List<String> folderOrFiles = null;
         Integer index = null;
         Integer lastIndex = null;
@@ -853,13 +861,17 @@ public class FileUploadAndDownController {
                 right = fileUploadAndDownServ.getFileRightByUrlIdAndFileInfoIdAnaUid(u.getId(), u.getFileInfoId(), view.getuId());
                 tempFolOrFileName = (u.getLogur1().substring(index + 2 + view.getFolderName().length(), lastIndex));
                 for (DownloadView v : views) {
-                    if (v.getFolderOrFileName().contains(tempFolOrFileName)) {
+                    if (v.getFolderOrFileName().equals(tempFolOrFileName)) {
                         flag = false;
                     }
                 }
                 if (flag) {
                     vi.setFolderOrFileName(tempFolOrFileName);
-                    if (!tempFolOrFileName.contains(".")) {
+                    String extName = "";
+                    if(tempFolOrFileName.contains(".")) {
+                        extName = StringUtil.subAfterString(tempFolOrFileName,".");
+                    }
+                    if (!tempFolOrFileName.contains(".") || !exts.contains(extName)) { //文件夹
                         allOprights = "";
                         for (FilemanUrl uu : urls) {
                             if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
@@ -879,7 +891,7 @@ public class FileUploadAndDownController {
                                 }
                             }
                         }
-                    } else {
+                    } else { //文件
                         allOprights = "";
                         for (FilemanUrl uu : urls) {
                             if (uu.getLogur1().contains(tempFolOrFileName)) {
@@ -902,7 +914,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        if (tempFolOrFileName.contains(".")) {
+                        if (tempFolOrFileName.contains(".") && exts.contains(extName)) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -924,13 +936,16 @@ public class FileUploadAndDownController {
         //}
         if (views.size() > 0) {
             viewss = new ArrayList<DownloadView>();
+            String extName = "";
             for (DownloadView vii : views) {
-                if (!vii.getFolderOrFileName().contains(".")) {
+              extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                if (!vii.getFolderOrFileName().contains(".") || !exts.contains(extName)) {
                     viewss.add(vii);
                 }
             }
             for (DownloadView vii : views) {
-                if (vii.getFolderOrFileName().contains(".")) {
+                extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                if (vii.getFolderOrFileName().contains(".") && exts.contains(extName)) {
                     viewss.add(vii);
                 }
             }
