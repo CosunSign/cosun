@@ -485,7 +485,7 @@
                 if (trid != "showdiv" && trid != "nodatadiv" && trid != "pagetfoottr") {
                     privilelist[i] = trid;
                     $('input[name="privilegenum' + trid + '"]:checked').each(function () {//拼接是重点  容易拼接出错
-                        privilelist[i] += "," + $(this).val();
+                        privilelist[i] += ":" + $(this).val();
                     });
                 }
             }
@@ -544,7 +544,13 @@
                         inputpage.val(currentPage);
                         $.each(data, function (num) {
                             vililegeflags = data[num].opRight;
-                            if (data[num].folderOrFileName.indexOf(".") <= 0) {//代表为文件夹
+                            var indexc;
+                            var extName;
+                            if(data[num].folderOrFileName.indexOf(".") >= 0) {
+                                 indexc = data[num].folderOrFileName.lastIndexOf('.');
+                                 extName = data[num].folderOrFileName.substr(indexc + 1, data[num].folderOrFileName.length);
+                            }
+                            if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extName.toLowerCase())) {//代表为文件夹
                                 folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                 folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                 if (isNull(vililegeflags) != "") {

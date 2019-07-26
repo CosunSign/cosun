@@ -140,7 +140,8 @@ public interface FileUploadAndDownMapper {
     void addfileManFileDataByUpload(FileManFileInfo fileManFile);
 
     @Select("SELECT ffi.id, " +
-            "                      IFNULL(fmu.updateuser,fmu.username) as lastUpdator, " +
+            "                      IFNULL(fo.fullname,\n" +
+            "\t\to.fullname) as lastUpdator, " +
             "                     IFNULL(fmu.updateTime,fmu.uptime) as lastUpdateTime, " +
             "                      fmu.orginname AS fileName, " +
             "                      ffi.extinfo1 AS salor, " +
@@ -154,6 +155,8 @@ public interface FileUploadAndDownMapper {
             "                     FROM  " +
             "                     filemanfileinfo ffi " +
             "                     LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId " +
+            " left join userinfo o on ffi.username = o.username\n" +
+            " left join userinfo fo on fo.username = ffi.updateuser" +
             " ORDER BY " +
             "   ffi.createtime DESC limit #{currentPageTotalNum},#{PageSize} ")
     List<DownloadView> findAllFileUrlByCondition(Integer uid, int currentPageTotalNum, int PageSize);
@@ -168,7 +171,7 @@ public interface FileUploadAndDownMapper {
     @Select("SELECT    \n" +
             "\ta.ordernum as orderNo,\n" +
             "\ta.extinfo1 as salor,\n" +
-            "\ta.createuser as engineer,\n" +
+            "\tc.fullname as engineer,\n" +
             "\tIFNULL(a.updatetime, a.createtime) as createTime,\n" +
             "\tb.uid as oprighter,\n" +
             "  b.opright as opRight, \n" +
@@ -176,7 +179,7 @@ public interface FileUploadAndDownMapper {
             "FROM\n" +
             "\tfilemanfileinfo a\n" +
             "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
-            "left join userinfo c on c.uid = b.uid\n" +
+            "left join userinfo c on c.username = b.username  \n" +
             " where b.uid is null GROUP BY a.ordernum " +
             "ORDER BY a.createtime DESC limit #{currentPageTotalNum},#{PageSize} ")
     List<DownloadView> findAllUploadFileByCondition(Integer uId, int currentPageTotalNum, int PageSize);
@@ -690,7 +693,7 @@ public interface FileUploadAndDownMapper {
 
         public String findAllUrlByThreeParamNew2(DownloadView view) {
             StringBuilder sql = new StringBuilder(" select * from (SELECT\n" +
-                    "\tinfo.createuser AS engineer,\n" +
+                    "\tuu.fullname AS engineer,\n" +
                     "\tinfo.extinfo1 AS salor,\n" +
                     "\tinfo.ordernum AS orderNo,\n" +
                     "\tIFNULL(info.updatetime, info.createtime) AS createTime,\n" +
@@ -702,7 +705,9 @@ public interface FileUploadAndDownMapper {
                     "FROM\n" +
                     "\tfilemanfileinfo info\n" +
                     "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
-                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on fr.uid = u.uid  \n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  " +
+                    "left join userinfo u on fr.uid = u.uid  \n" +
+                    "left join userinfo uu on fr.createuser = uu.username  \n" +
                     "where fr.uid is null  ");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and info.extinfo1 = #{salor} ");
@@ -749,7 +754,7 @@ public interface FileUploadAndDownMapper {
                     "UNION ALL\n" +
                     "\n" +
                     "SELECT\n" +
-                    "\tinfo.createuser AS engineer,\n" +
+                    "\tuu.fullname AS engineer,\n" +
                     "\tinfo.extinfo1 AS salor,\n" +
                     "\tinfo.ordernum AS orderNo,\n" +
                     "\tIFNULL(info.updatetime, info.createtime) AS createTime,\n" +
@@ -785,7 +790,10 @@ public interface FileUploadAndDownMapper {
                     "FROM\n" +
                     "\tfilemanfileinfo info\n" +
                     "JOIN filemanright fr ON info.id = fr.fileInfoId\n" +
-                    "JOIN filemanurl fu ON fr.fileurlid = fu.id  left join userinfo u on u.uid = fr.uid \n" +
+                    "JOIN filemanurl fu ON fr.fileurlid = fu.id " +
+                    " left join userinfo u on u.uid = fr.uid " +
+                    " left join userinfo uu on uu.username = info.createuser" +
+                    "\n" +
                     "where 1=1 ");
             if (view.getSalor() != "" && view.getSalor() != null && view.getSalor().trim().length() > 0) {
                 sql.append(" and info.extinfo1 = #{salor} ");
@@ -1440,7 +1448,8 @@ public interface FileUploadAndDownMapper {
 
         public String findAllByParaCondition(DownloadView view) {
             StringBuilder sql = new StringBuilder(" SELECT \tffi.id,\n" +
-                    "  IFNULL(fmu.updateuser,fmu.username) as lastUpdator,\n" +
+                    "  IFNULL(fo.fullname,\n" +
+                    "\t\to.fullname) as lastUpdator,\n" +
                     "  IFNULL(fmu.updateTime,fmu.uptime) as lastUpdateTime,\n" +
                     "\tfmu.orginname AS fileName,\n" +
                     "\tffi.extinfo1 AS salor,\n" +
@@ -1454,6 +1463,8 @@ public interface FileUploadAndDownMapper {
                     " FROM " +
                     " filemanfileinfo ffi" +
                     " LEFT JOIN filemanurl fmu ON ffi.id = fmu.fileInfoId" +
+                    " left join userinfo o on fmu.username = o.username\n" +
+                    " left join userinfo fo on fo.username = fmu.updateuser" +
                     " WHERE " +
                     " 1=1 ");
             if (view.getuId() != null && view.getuId() != 0) {
@@ -1510,7 +1521,7 @@ public interface FileUploadAndDownMapper {
         public String findMessageByOrderNoandUid(String orderNo, Integer uId) {
             StringBuilder sql = new StringBuilder("SELECT\n" +
                     "\ta.extinfo1 as salor,\n" +
-                    "\ta.createuser as engineer,\n" +
+                    "\tifnull(cc.fullname,'') as engineer,\n" +
                     "\ta.ordernum as orderNo,\n" +
                     "\tIFNULL(a.updatetime, a.createtime) as createTime,\n" +
                     "\tb.uid as oprighter,\n" +
@@ -1519,6 +1530,7 @@ public interface FileUploadAndDownMapper {
                     "\tfilemanfileinfo a\n" +
                     "LEFT JOIN filemanright b ON a.id = b.fileInfoId\n" +
                     "left join userinfo c on c.uid = b.uid\n" +
+                    " left join userinfo cc on cc.username = b.createuser\n" +
                     " where a.ordernum = #{orderNo} ");
             if (uId != 0) {
                 sql.append(" and b.uId = #{uId} ");

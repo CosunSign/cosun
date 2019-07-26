@@ -253,7 +253,7 @@ public class FileUploadAndDownController {
         urls = fileUploadAndDownServ.findAllUrlByOrderNoAndUid(view.getOrderNo(), view.getLinshiId());
 
         //取上二级文件夹名 由下找下一层文件夹或文件
-        String extName = StringUtil.subAfterString(foldername,".");
+        String extName = StringUtil.subAfterString(foldername, ".");
         if (!foldername.contains(".") || !exts.contains(extName.toLowerCase())) {
             for (FilemanUrl u : urls) {
                 vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
@@ -316,7 +316,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        extName = StringUtil.subAfterString(tempFolFileName,".");
+                        extName = StringUtil.subAfterString(tempFolFileName, ".");
                         if (tempFolFileName.contains(".") && exts.contains(extName.toLowerCase())) {
                             vi.setOpRight(right.getOpRight());
                         } else {
@@ -418,7 +418,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        extName = StringUtil.subAfterString(tempFolFileName,".");
+                        extName = StringUtil.subAfterString(tempFolFileName, ".");
                         if (tempFolFileName.contains(".") && exts.contains(extName.toLowerCase())) {
                             vi.setOpRight(right.getOpRight());
                         } else {
@@ -451,7 +451,7 @@ public class FileUploadAndDownController {
             viewss = new ArrayList<DownloadView>();
             String exName;
             for (DownloadView vii : views) {
-                exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                exName = StringUtil.subAfterString(vii.getFolderOrFileName(), ".");
                 if (vii.getFolderOrFileName() != null) {
                     if (!vii.getFolderOrFileName().contains(".") || !exts.contains(exName.toLowerCase())) {
                         viewss.add(vii);
@@ -459,7 +459,7 @@ public class FileUploadAndDownController {
                 }
             }
             for (DownloadView vii : views) {
-                exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                exName = StringUtil.subAfterString(vii.getFolderOrFileName(), ".");
                 if (vii.getFolderOrFileName() != null) {
                     if (vii.getFolderOrFileName().contains(".") && exts.contains(exName.toLowerCase())) {
                         viewss.add(vii);
@@ -868,8 +868,8 @@ public class FileUploadAndDownController {
                 if (flag) {
                     vi.setFolderOrFileName(tempFolOrFileName);
                     String extName = "";
-                    if(tempFolOrFileName.contains(".")) {
-                        extName = StringUtil.subAfterString(tempFolOrFileName,".");
+                    if (tempFolOrFileName.contains(".")) {
+                        extName = StringUtil.subAfterString(tempFolOrFileName, ".");
                     }
                     if (!tempFolOrFileName.contains(".") || !exts.contains(extName.toLowerCase())) { //文件夹
                         allOprights = "";
@@ -938,13 +938,13 @@ public class FileUploadAndDownController {
             viewss = new ArrayList<DownloadView>();
             String extName = "";
             for (DownloadView vii : views) {
-              extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                extName = StringUtil.subAfterString(vii.getFolderOrFileName(), ".");
                 if (!vii.getFolderOrFileName().contains(".") || !exts.contains(extName.toLowerCase())) {
                     viewss.add(vii);
                 }
             }
             for (DownloadView vii : views) {
-                extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
+                extName = StringUtil.subAfterString(vii.getFolderOrFileName(), ".");
                 if (vii.getFolderOrFileName().contains(".") && exts.contains(extName.toLowerCase())) {
                     viewss.add(vii);
                 }
@@ -1320,46 +1320,51 @@ public class FileUploadAndDownController {
         int index;
         int recordCount = 0;
         int maxPage = 0;
-        if (info.getUserActor() == 2 || info.getUserActor() == 1) {
-            views = new ArrayList<DownloadView>();
-            String tempStr = null;
-            for (int i = 0; i < privilelist.size(); i++) {
-                if (privilelist.get(i).contains(",")) {//代表有权限标记
-                    index = privilelist.get(i).indexOf(",");
-                    tempStr = privilelist.get(i).substring(0, index);
-                    orderNo = tempStr.substring(0, 17);
-                    fileOrFolderName = tempStr.substring(17, index);
-                    opright = privilelist.get(i).substring(index + 1, privilelist.get(i).length());
-                } else {
-                    orderNo = privilelist.get(i).substring(0, 17);
-                    fileOrFolderName = privilelist.get(i).substring(17, privilelist.get(i).length());
-                    opright = "";
+        try {
+            if (info.getUserActor() == 2 || info.getUserActor() == 1) {
+                views = new ArrayList<DownloadView>();
+                String tempStr = null;
+                for (int i = 0; i < privilelist.size(); i++) {
+                    if (privilelist.get(i).contains(":")) {//代表有权限标记
+                        index = privilelist.get(i).indexOf(":");
+                        tempStr = privilelist.get(i).substring(0, index);
+                        orderNo = tempStr.substring(0, 17);
+                        fileOrFolderName = tempStr.substring(17, index);
+                        opright = privilelist.get(i).substring(index + 1, privilelist.get(i).length());
+                    } else {
+                        orderNo = privilelist.get(i).substring(0, 17);
+                        fileOrFolderName = privilelist.get(i).substring(17, privilelist.get(i).length());
+                        opright = "";
+                    }
+                    view = new DownloadView();
+                    view.setOrderNo(orderNo);
+                    view.setFolderOrFileName(fileOrFolderName);
+                    view.setOpRight(opright);
+                    views.add(view);
                 }
-                view = new DownloadView();
-                view.setOrderNo(orderNo);
-                view.setFolderOrFileName(fileOrFolderName);
-                view.setOpRight(opright);
-                views.add(view);
-            }
 
-            if (views.size() > 0)
-                fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
+                if (views.size() > 0)
+                    fileUploadAndDownServ.saveOrUpdateFilePrivilege(views, privilegeusers, info);
 
-            views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(viewHtml);
-            recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(viewHtml);
-            maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-            List<DownloadView> viewsNew = new ArrayList<DownloadView>();
-            int pointindex;
-            for (DownloadView v : views) {
-                pointindex = StringUtils.ordinalIndexOf(v.getUrlAddr(), "/", 4);
-                String[] b = v.getUrlAddr().substring(pointindex + 1, v.getUrlAddr().length()).split("/");
-                v.setFolderOrFileName(b[0]);
-                viewsNew.add(v);
+                views = fileUploadAndDownServ.findAllUrlByParamThreeNew2(viewHtml);
+                recordCount = fileUploadAndDownServ.findAllUrlByParamThreeNew2Count(viewHtml);
+                maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
+                List<DownloadView> viewsNew = new ArrayList<DownloadView>();
+                int pointindex;
+                for (DownloadView v : views) {
+                    pointindex = StringUtils.ordinalIndexOf(v.getUrlAddr(), "/", 4);
+                    String[] b = v.getUrlAddr().substring(pointindex + 1, v.getUrlAddr().length()).split("/");
+                    v.setFolderOrFileName(b[0]);
+                    viewsNew.add(v);
+
+                }
+                //int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
+                // int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
 
             }
-            //int recordCount = fileUploadAndDownServ.findAllFilesByCondParamCount(view);
-            // int maxPage = recordCount % view.getPageSize() == 0 ? recordCount / view.getPageSize() : recordCount / view.getPageSize() + 1;
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
         if (views != null && views.size() > 0) {
             views.get(0).setMaxPage(maxPage);
@@ -1373,21 +1378,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str1 = x.writeValueAsString(views);
-
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str1); //返回前端ajax
             } catch (JsonProcessingException e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
-        }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
 
     }
@@ -1439,7 +1437,7 @@ public class FileUploadAndDownController {
                 if (view.getFolderOrFileName().contains(".")) {//代表是文件
                     index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
                     if (index > 0) {
-                        if (vi.getOpRight()==null || !vi.getOpRight().contains("4")) {
+                        if (vi.getOpRight() == null || !vi.getOpRight().contains("4")) {
                             isDeleteRight = false;
                             break a;
                         }
@@ -1532,8 +1530,8 @@ public class FileUploadAndDownController {
         a:
         for (DownloadView view : vs) {
             views = fileUploadAndDownServ.findAllUrlByOrderNoAndUid1(view.getOrderNo(), info.getuId());
-            if(view.getFolderOrFileName().contains(".")) {
-                extName = StringUtil.subAfterString(view.getFolderOrFileName(),".");
+            if (view.getFolderOrFileName().contains(".")) {
+                extName = StringUtil.subAfterString(view.getFolderOrFileName(), ".");
             }
             for (DownloadView vi : views) {
                 if (view.getFolderOrFileName().contains(".") && exts.contains(extName.toLowerCase())) {//代表是文件
@@ -2072,7 +2070,7 @@ public class FileUploadAndDownController {
         List<String> allNewPath = new ArrayList<String>();
         String[] arr;
 
-        if (ful != null && ful.getUrlAfterUpdateForNoRepeat() !=null && ful.getUrlAfterUpdateForNoRepeat().size() > 0) {
+        if (ful != null && ful.getUrlAfterUpdateForNoRepeat() != null && ful.getUrlAfterUpdateForNoRepeat().size() > 0) {
             for (int i = 0; i < ful.getUrlAfterUpdateForNoRepeat().size(); i++) {
                 arr = ful.getUrlAfterUpdateForNoRepeat().get(i);
                 allNewPath.add(StringUtils.join(arr, "/").replace(",", "*"));
@@ -2106,7 +2104,7 @@ public class FileUploadAndDownController {
         boolean isExsitFileName = false;
         FileManFileInfo info = null;
         if (userInfo.getUseruploadright() == 1) {//有无权限
-           ful = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
+            ful = fileUploadAndDownServ.checkFileisSame(view, userInfo, view.getFilePathName());//判断是否有重名的文件名
             //上传的文件或文件夹有无重复，有无存在
             if (ful.getIsSameFileUploadFolderName().equals("OK")) {
                 info = fileUploadAndDownServ.getFileInfoByOrderNo(view.getOrderNo());
@@ -2432,11 +2430,11 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+//            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
-            view.setFilePathNames(view.getFilePathNames().replace("*",","));
+            view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             fileUploadAndDownServ.saveFolderMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -2449,10 +2447,10 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
-            view.setFilePathNames(view.getFilePathNames().replace("*",","));
+            view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             fileUploadAndDownServ.saveFolderMessageUpdate(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -2466,10 +2464,10 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+             //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
-            view.setFilePathNames(view.getFilePathNames().replace("*",","));
+            view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             fileUploadAndDownServ.saveFileMessage(view, userInfo);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -2483,9 +2481,9 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+//            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
-            view.setFilePathNames(view.getFilePathNames().replace("*",","));
+            view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             fileUploadAndDownServ.saveFileMessageUpdate(view, userInfo);
         } catch (Exception e) {

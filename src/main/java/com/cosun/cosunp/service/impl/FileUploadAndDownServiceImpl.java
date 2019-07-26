@@ -75,72 +75,82 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveOrUpdateFilePrivilege(List<DownloadView> views, List<String> privilegeusers, UserInfo in) throws Exception {
-        DownloadView view = null;
-        List<UserInfo> uis = null;
-        FileManFileInfo info = null;
-        FilemanRight right = null;
-        FilemanUrl url = null;
-        List<FilemanUrl> urls = null;
-        for (DownloadView vi : views) {
-            info = fileUploadAndDownMapper.getFileInfoByOrderNo(vi.getOrderNo());
-            for (String operrighter : privilegeusers) {
-                if (vi.getFolderOrFileName().contains(".")) {//代表是文件名
-                    right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid(info.getId(), vi.getFolderOrFileName(), Integer.valueOf(operrighter));
-                    //如果RIGHT为空,代表是RIGHT表中无数据,需要新增一条数据
-                    if (right == null) {
-                        //url = fileUploadAndDownMapper.getFileManUrlByFileInfoIdandFileName(right.getId(),vi.getFolderOrFileName());
-                        if (vi.getOpRight().trim().length() > 0) {
-                            right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid2(info.getId(), vi.getFolderOrFileName());
-                            right.setOpRight(vi.getOpRight());
-                            right.setuId(Integer.valueOf(operrighter));
-                            fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
-                            fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
-                        }
-                    } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
-                        if (vi.getOpRight() == null || vi.getOpRight() == "") {
-                            fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
-                            fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
-                        } else {
-                            if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
-                                right.setOpRight(vi.getOpRight());
-                                right.setUpdateUser(in.getUserName());
-                                right.setUpdateTime(new Date());
-                                fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
-                            }
-                        }
-
+        try {
+            DownloadView view = null;
+            List<UserInfo> uis = null;
+            List<String> exts = fileUploadAndDownMapper.findAllExtension();
+            FileManFileInfo info = null;
+            FilemanRight right = null;
+            FilemanUrl url = null;
+            List<FilemanUrl> urls = null;
+            String extName = "";
+            for (DownloadView vi : views) {
+                info = fileUploadAndDownMapper.getFileInfoByOrderNo(vi.getOrderNo());
+                for (String operrighter : privilegeusers) {
+                    if (vi.getFolderOrFileName().contains(".")) {
+                        extName = StringUtil.subAfterString(vi.getFolderOrFileName(), ".");
                     }
-                } else {//代表是文件夹
-                    urls = fileUploadAndDownMapper.getFileManUrlByFileInfoId(info.getId());
-                    for (FilemanUrl u : urls) {
-                        if (u.getLogur1().indexOf("/" + vi.getFolderOrFileName() + "/") > -1) {//查询地址中有无选中的文件夹
-                            right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileRightIdandUid(info.getId(), u.getId(), Integer.valueOf(operrighter));
-                            if (right == null) {
-                                if (vi.getOpRight().trim().length() > 0) {
-                                    right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileUrlId(info.getId(), u.getId());
+                    if (vi.getFolderOrFileName().contains(".") && exts.contains(extName.toLowerCase())) {//代表是文件名
+                        right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid(info.getId(), vi.getFolderOrFileName(), Integer.valueOf(operrighter));
+                        //如果RIGHT为空,代表是RIGHT表中无数据,需要新增一条数据
+                        if (right == null) {
+                            //url = fileUploadAndDownMapper.getFileManUrlByFileInfoIdandFileName(right.getId(),vi.getFolderOrFileName());
+                            if (vi.getOpRight().trim().length() > 0) {
+                                right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileNameAndUid2(info.getId(), vi.getFolderOrFileName());
+                                right.setOpRight(vi.getOpRight());
+                                right.setuId(Integer.valueOf(operrighter));
+                                fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
+                                fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
+                            }
+                        } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
+                            if (vi.getOpRight() == null || vi.getOpRight() == "") {
+                                fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
+                                fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
+                            } else {
+                                if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
                                     right.setOpRight(vi.getOpRight());
-                                    right.setuId(Integer.valueOf(operrighter));
-                                    fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
-                                    fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
+                                    right.setUpdateUser(in.getUserName());
+                                    right.setUpdateTime(new Date());
+                                    fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
                                 }
-                            } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
-                                if (vi.getOpRight() == null || vi.getOpRight() == "") {
-                                    fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
-                                    fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
-                                } else {
-                                    if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
-                                        right.setOpRight(vi.getOpRight());
-                                        right.setUpdateUser(in.getUserName());
-                                        right.setUpdateTime(new Date());
-                                        fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
-                                    }
-                                }
+                            }
 
+                        }
+                    } else {//代表是文件夹
+                        urls = fileUploadAndDownMapper.getFileManUrlByFileInfoId(info.getId());
+                        for (FilemanUrl u : urls) {
+                            if (u.getLogur1().indexOf("/" + vi.getFolderOrFileName() + "/") > -1) {//查询地址中有无选中的文件夹
+                                right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileRightIdandUid(info.getId(), u.getId(), Integer.valueOf(operrighter));
+                                if (right == null) {
+                                    if (vi.getOpRight().trim().length() > 0) {
+                                        right = fileUploadAndDownMapper.getFileRightByFileInfoIdAndFileUrlId(info.getId(), u.getId());
+                                        right.setOpRight(vi.getOpRight());
+                                        right.setuId(Integer.valueOf(operrighter));
+                                        fileUploadAndDownMapper.updateFileRight0OprightById(right.getId());
+                                        fileUploadAndDownMapper.saveFileManRightBySampleRightBean(right);
+                                    }
+                                } else {//不为空 判断权限值与现权限值是否相同,相同不理会,不同,update操作\
+                                    if (vi.getOpRight() == null || vi.getOpRight() == "") {
+                                        fileUploadAndDownMapper.updateFileRightNullOprightById(right.getId());
+                                        fileUploadAndDownMapper.deleteFileRightPrivileg(right.getId());
+                                    } else {
+                                        if (vi.getOpRight() != "" && !right.getOpRight().equals(vi.getOpRight())) {
+                                            right.setOpRight(vi.getOpRight());
+                                            right.setUpdateUser(in.getUserName());
+                                            right.setUpdateTime(new Date());
+                                            fileUploadAndDownMapper.upDateFileRightOprightById(right.getId(), right.getOpRight(), right.getUpdateUser(), right.getUpdateTime());
+                                        }
+                                    }
+
+                                }
                             }
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e);
         }
     }
 
@@ -1409,11 +1419,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                 for (int k = 0; k < centerfolderone.length - 1; k++) {
                     for (int f = 0; f < centerfoldertwo.length - 1; f++) {
                         //判断同一层次的文件夹是否相等,还要判断如果前面所有的文件夹层次也一模一样,即可视为一个文件夹,否则重命名
-                        if (k == f && centerfolderone[k].replace("*","").equals(centerfoldertwo[f].replace("*",""))) {
+                        if (k == f && centerfolderone[k].replace("*", "").equals(centerfoldertwo[f].replace("*", ""))) {
                             for (int o = 0; o <= k; o++) {
-                                if (!centerfolderone[o].replace("*","").equals(centerfoldertwo[o].replace("*",""))) {
+                                if (!centerfolderone[o].replace("*", "").equals(centerfoldertwo[o].replace("*", ""))) {
                                     //如上传文件夹名与系统中存在文件夹名相同，只改上传的文件夹名，系统中存在的文件夹名不动
-                                    if(!centerfolderone[k].contains("*")) {
+                                    if (!centerfolderone[k].contains("*")) {
                                         centerfolderone[k] = centerfolderone[k].replace("*", "") + dateStr + folderNum++;
                                         mysqlcenterurlsAll.remove(j);
                                         mysqlcenterurlsAll.add(centerfolderone);
@@ -1425,13 +1435,13 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                                 }
                             }
                         } else {
-                            if (centerfolderone[k].replace("*","").equals(centerfoldertwo[f].replace("*",""))) {
+                            if (centerfolderone[k].replace("*", "").equals(centerfoldertwo[f].replace("*", ""))) {
                                 {//如果不是同一层次的文件夹名字一样.即视重复
-                                    if(!centerfolderone[k].contains("*")) {
+                                    if (!centerfolderone[k].contains("*")) {
                                         centerfolderone[k] = centerfolderone[k].replace("*", "") + dateStr + folderNum++;
                                         mysqlcenterurlsAll.remove(j);
                                         mysqlcenterurlsAll.add(centerfolderone);
-                                    }else {
+                                    } else {
                                         centerfoldertwo[f] = centerfoldertwo[f].replace("*", "") + dateStr + folderNum++;
                                         mysqlcenterurlsAll.remove(j);
                                         mysqlcenterurlsAll.add(centerfoldertwo);
@@ -1450,7 +1460,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         for (int m = 0; m < mysqlcenterurlsAll.size(); m++) {
             marrray1 = mysqlcenterurlsAll.get(m);
             for (int n = 0; n < marrray1.length; n++) {
-                marrray1[n] = marrray1[n].replace("*","");
+                marrray1[n] = marrray1[n].replace("*", "");
             }
         }
         ful.setIsSameFileUploadFolderName(isSameFileUploadFolderName);

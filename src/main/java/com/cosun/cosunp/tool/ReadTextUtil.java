@@ -42,17 +42,21 @@ public class ReadTextUtil {
             Extension sargs = null;
             String[] splitA = null;
             while ((lineTxt = br.readLine()) != null) {
-                sargs = new Extension();
                 if (lineTxt.trim().length() > 0) {
                     splitA = lineTxt.trim().split(" ");
-                    if(splitA[0].trim().length()>0) {
-                        args = deleteString(splitA[0].trim(), '.');
-                        args = deleteString(args, ',');
-                        args = deleteString(args, ':');
+                    if (splitA[0].trim().length() > 0) {
+                        for (int a = 0; a < splitA.length; a++) {
+                            sargs = new Extension();
+                            if (splitA[a].trim().length() > 0) {
+                                args = deleteString(splitA[a].trim(), '.');
+                                args = deleteString(args, ',');
+                                args = deleteString(args, ':');
+                                sargs.setExtension(args.toLowerCase());
+                                list.add(sargs);
+                            }
+                        }
                     }
-                   // args = deleteString(lineTxt.trim(), '.');
-                    sargs.setExtension(args.toLowerCase());
-                    list.add(sargs);
+                    // args = deleteString(lineTxt.trim(), '.');
                 }
             }
             br.close();

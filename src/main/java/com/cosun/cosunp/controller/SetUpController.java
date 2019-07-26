@@ -80,7 +80,7 @@ public class SetUpController {
     @RequestMapping(value = "/saveExtension", method = RequestMethod.POST)
     public void saveExtension(HttpServletResponse response) throws Exception {
         try {
-            List<Extension> exs = new ReadTextUtil().readTxtUtil("C:\\Users\\Administrator\\Desktop\\扩展名大全.txt");
+            List<Extension> exs = new ReadTextUtil().readTxtUtil("C:\\Users\\Administrator\\Desktop\\aaaa.txt");
             rulesServ.saveExtension(exs);
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
