@@ -254,7 +254,7 @@ public class FileUploadAndDownController {
 
         //取上二级文件夹名 由下找下一层文件夹或文件
         String extName = StringUtil.subAfterString(foldername,".");
-        if (!foldername.contains(".") || !exts.contains(extName)) {
+        if (!foldername.contains(".") || !exts.contains(extName.toLowerCase())) {
             for (FilemanUrl u : urls) {
                 vi = fileUploadAndDownServ.findMessageByOrderNoandUid(view.getOrderNo(), view.getLinshiId());
                 lastIndex = u.getLogur1().indexOf("/" + view.getFolderName() + "/");
@@ -317,7 +317,7 @@ public class FileUploadAndDownController {
                     }
                     if (right != null && right.getOpRight() != null) {
                         extName = StringUtil.subAfterString(tempFolFileName,".");
-                        if (tempFolFileName.contains(".") && exts.contains(extName)) {
+                        if (tempFolFileName.contains(".") && exts.contains(extName.toLowerCase())) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -419,7 +419,7 @@ public class FileUploadAndDownController {
                     }
                     if (right != null && right.getOpRight() != null) {
                         extName = StringUtil.subAfterString(tempFolFileName,".");
-                        if (tempFolFileName.contains(".") && exts.contains(extName)) {
+                        if (tempFolFileName.contains(".") && exts.contains(extName.toLowerCase())) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -453,7 +453,7 @@ public class FileUploadAndDownController {
             for (DownloadView vii : views) {
                 exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
                 if (vii.getFolderOrFileName() != null) {
-                    if (!vii.getFolderOrFileName().contains(".") || !exts.contains(exName)) {
+                    if (!vii.getFolderOrFileName().contains(".") || !exts.contains(exName.toLowerCase())) {
                         viewss.add(vii);
                     }
                 }
@@ -461,7 +461,7 @@ public class FileUploadAndDownController {
             for (DownloadView vii : views) {
                 exName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
                 if (vii.getFolderOrFileName() != null) {
-                    if (vii.getFolderOrFileName().contains(".") && exts.contains(exName)) {
+                    if (vii.getFolderOrFileName().contains(".") && exts.contains(exName.toLowerCase())) {
                         viewss.add(vii);
                     }
                 }
@@ -871,7 +871,7 @@ public class FileUploadAndDownController {
                     if(tempFolOrFileName.contains(".")) {
                         extName = StringUtil.subAfterString(tempFolOrFileName,".");
                     }
-                    if (!tempFolOrFileName.contains(".") || !exts.contains(extName)) { //文件夹
+                    if (!tempFolOrFileName.contains(".") || !exts.contains(extName.toLowerCase())) { //文件夹
                         allOprights = "";
                         for (FilemanUrl uu : urls) {
                             if (uu.getLogur1().contains("/" + tempFolOrFileName + "/"))
@@ -914,7 +914,7 @@ public class FileUploadAndDownController {
                         }
                     }
                     if (right != null && right.getOpRight() != null) {
-                        if (tempFolOrFileName.contains(".") && exts.contains(extName)) {
+                        if (tempFolOrFileName.contains(".") && exts.contains(extName.toLowerCase())) {
                             vi.setOpRight(right.getOpRight());
                         } else {
                             vi.setOpRight(allOprights);
@@ -939,13 +939,13 @@ public class FileUploadAndDownController {
             String extName = "";
             for (DownloadView vii : views) {
               extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
-                if (!vii.getFolderOrFileName().contains(".") || !exts.contains(extName)) {
+                if (!vii.getFolderOrFileName().contains(".") || !exts.contains(extName.toLowerCase())) {
                     viewss.add(vii);
                 }
             }
             for (DownloadView vii : views) {
                 extName = StringUtil.subAfterString(vii.getFolderOrFileName(),".");
-                if (vii.getFolderOrFileName().contains(".") && exts.contains(extName)) {
+                if (vii.getFolderOrFileName().contains(".") && exts.contains(extName.toLowerCase())) {
                     viewss.add(vii);
                 }
             }
@@ -1536,7 +1536,7 @@ public class FileUploadAndDownController {
                 extName = StringUtil.subAfterString(view.getFolderOrFileName(),".");
             }
             for (DownloadView vi : views) {
-                if (view.getFolderOrFileName().contains(".") && exts.contains(extName)) {//代表是文件
+                if (view.getFolderOrFileName().contains(".") && exts.contains(extName.toLowerCase())) {//代表是文件
                     index = vi.getUrlAddr().indexOf(view.getFolderOrFileName());
                     if (index > 0) {
                         if (!vi.getOpRight().contains("3")) {
@@ -2432,7 +2432,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
@@ -2483,7 +2483,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+           // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*",","));
             UserInfo userInfo = (UserInfo) session.getAttribute("account");

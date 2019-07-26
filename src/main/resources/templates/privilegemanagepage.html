@@ -1001,7 +1001,7 @@
                                 $("#backfolder").attr("disabled", "disabled");
                             }
                             if (num < 12) {
-                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                     folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (isNull(vililegeflags) != "") {
@@ -1035,7 +1035,7 @@
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
-                                    if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                         fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td>";
                                         if (isNull(vililegeflags) != "") {
@@ -1069,7 +1069,7 @@
                                     }
                                 }
                             } else {
-                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                                     folderhtml += "<tr  id=\"" + data[num].orderNo + data[num].folderOrFileName + "\" style=\"display:none\">";
                                     folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (isNull(vililegeflags) != "") {
@@ -1103,7 +1103,7 @@
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
-                                    if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\" style=\"display:none\">";
                                         fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                         if (isNull(vililegeflags) != "") {
@@ -1312,7 +1312,7 @@
                                 $("#backfolder").attr("disabled", "disabled");
                             }
                             if (num < 12) {
-                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                                     folderhtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                     folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (vililegeflags.indexOf("2") > -1) {
@@ -1340,7 +1340,7 @@
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
-                                    if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
 
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                         fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
@@ -1371,7 +1371,7 @@
 
 
                             } else {
-                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                                if (data[num].folderOrFileName.indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                                     folderhtml += "<tr style=\"display:none\" id=\"" + data[num].orderNo + data[num].folderOrFileName + "\">";
                                     folderhtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                     if (vililegeflags.indexOf("2") > -1) {
@@ -1399,7 +1399,7 @@
                                         " align=\"middle\" border=\"0\" value='" + data[num].folderOrFileName + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                         " style=\"width: 30px; height: 30px; vertical-align: middle\"/><i>" + data[num].folderOrFileName + "</i><td></tr>";
                                 } else {//代表为文件
-                                    if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                                    if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                                         fileshtml += "<tr id=\"" + data[num].orderNo + data[num].folderOrFileName + "\"  style=\"display:none\">";
                                         fileshtml += "<td width=\"4%\" align=\"center\">" + (num + 1) + "</td> ";
                                         if (vililegeflags.indexOf("2") > -1) {

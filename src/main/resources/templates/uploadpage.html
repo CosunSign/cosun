@@ -579,7 +579,7 @@
                     if (folderArray[a].indexOf(".") != -1) {
                         var indexc = folderArray[a].lastIndexOf('.');
                         var centerurlc = folderArray[a].substr(indexc + 1, folderArray[a].length);
-                        if (extensionarray.includes(centerurlc)) {
+                        if (extensionarray.includes(centerurlc.toLowerCase())) {
                             alert("您选择的文件夹名不能以有效扩展名结尾,如:" + allurls[i]);
                             window.parent.document.getElementById('coverbehidepage').style.display = "none";
                             flagg = false;
@@ -603,7 +603,7 @@
                 if (allurls[i].indexOf(":") == -1) {
                     var indexa = centerurla.lastIndexOf('.');
                     var extenName = centerurla.substr(indexa + 1, centerurla.length);
-                    if (extensionarray.includes(extenName)) {
+                    if (extensionarray.includes(extenName.toLowerCase())) {
                         allurls[i] = allurls[i].replace(/,/g, '*');
                         filePathName += allurls[i] + ":";
                     } else {
@@ -630,7 +630,7 @@
                 if (allurls1[i].indexOf(".") != -1) {
                     var indexa = allurls1[i].lastIndexOf('.');
                     var extenName = allurls1[i].substr(indexa + 1, allurls1[i].length);
-                    if (extensionarray.includes(extenName)) {
+                    if (extensionarray.includes(extenName.toLowerCase())) {
                         allurls1[i] = allurls1[i].replace(/,/g, '*');
                         fileName += allurls1[i] + ":";
                     } else {
@@ -1387,7 +1387,7 @@
                 $.each(data, function (num) {
                     var ind = data[num].lastIndexOf('.');
                     var extenName = data[num].substr(ind + 1, data[num].length);
-                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                         $("#foldername").val(data[num]);
                         if (reg.test(data[num])) {
                             $("#backfolder").attr("disabled", "disabled");
@@ -1410,7 +1410,7 @@
 
                         }
                     } else {//代表为文件
-                        if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                        if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                             fileshtml += "<li><img src=\"/images/icon/File.png\" " +
                                 " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone2 == 0) {//代表没有文件夹
@@ -1486,7 +1486,7 @@
                 $.each(data, function (num) {
                     var ind = data[num].lastIndexOf('.');
                     var extenName = data[num].substr(ind + 1, data[num].length);
-                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                         $("#foldername").val(data[num]);
                         if (fileInput != "") {
                             if (cominone == 0) {
@@ -1505,7 +1505,7 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                         }
                     } else {//代表为文件
-                        if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                        if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                             fileshtml += "<li><img src=\"/images/icon/File.png\" " +
                                 " align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             if (cominone == 0) {

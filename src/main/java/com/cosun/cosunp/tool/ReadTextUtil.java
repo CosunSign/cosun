@@ -27,7 +27,6 @@ public class ReadTextUtil {
         try {
             try {
                 //charset = detector.detectCodepage(file.toURI().toURL());
-
                 //查找指定资源的URL，其中res.txt仍然开始的bin目录下
                 File file = new File(configpath);
                 is = new FileInputStream(file);
@@ -41,11 +40,18 @@ public class ReadTextUtil {
             String lineTxt = null;
             String args = null;
             Extension sargs = null;
+            String[] splitA = null;
             while ((lineTxt = br.readLine()) != null) {
                 sargs = new Extension();
                 if (lineTxt.trim().length() > 0) {
-                    args = deleteString(lineTxt.trim(),'.');
-                    sargs.setExtension(args);
+                    splitA = lineTxt.trim().split(" ");
+                    if(splitA[0].trim().length()>0) {
+                        args = deleteString(splitA[0].trim(), '.');
+                        args = deleteString(args, ',');
+                        args = deleteString(args, ':');
+                    }
+                   // args = deleteString(lineTxt.trim(), '.');
+                    sargs.setExtension(args.toLowerCase());
                     list.add(sargs);
                 }
             }

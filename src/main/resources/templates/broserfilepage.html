@@ -242,7 +242,7 @@
                         $("#orderno").val(data[totalnum]);
                     }
                     if (num < 15) {
-                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
@@ -254,7 +254,7 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                                 fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
                                     "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
@@ -265,7 +265,7 @@
                         }
 
                     } else {
-                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             if (reg.test(data[num])) {
                                 $("#backfolder").attr("disabled", "disabled");
@@ -277,7 +277,7 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone2 = 1;
                         } else {//代表为文件
-                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
 
                                 fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -549,7 +549,7 @@
                         $("#orderno").val(data[totalnum]);
                     }
                     if (num < 15) {
-                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             folderhtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -558,7 +558,7 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
 
                                 fileshtml += "<li><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -569,7 +569,7 @@
                             }
                         }
                     } else {
-                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName)) {//代表为文件夹
+                        if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
                             $("#foldername").val(data[num]);
                             folderhtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
@@ -578,7 +578,7 @@
                                 " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                             cominone = 1;
                         } else {//代表为文件
-                            if (extensionarray.includes(extenName)) {//含有效扩展名,为文件,
+                            if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
                                 fileshtml += "<li style='display: none'><img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
                                     "/><img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
