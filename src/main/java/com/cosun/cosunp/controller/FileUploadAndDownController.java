@@ -2430,7 +2430,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-//            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
@@ -2447,7 +2447,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
@@ -2464,7 +2464,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-             //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
@@ -2481,7 +2481,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-//            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
