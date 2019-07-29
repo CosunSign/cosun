@@ -23,13 +23,16 @@ import java.time.LocalDateTime;
 public class RestartLinuxTask {
 
     //@Scheduled(fixedRate=5000)
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 07 * * ?")
     private void configureTasks() {
         try {
-            Runtime.getRuntime().exec("reboot");
+            Runtime.getRuntime().exec("reboot");//linux 每天定时重启服务器
+            //每天启动oppenoffic服务
+           //String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
+            //Runtime.getRuntime().exec(command);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
 }
