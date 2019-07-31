@@ -1,14 +1,16 @@
 package com.cosun.cosunp.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.aspose.cad.Color;
+import com.aspose.cad.Image;
+import com.aspose.cad.imageoptions.CadRasterizationOptions;
+import com.aspose.cad.imageoptions.PdfOptions;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
 import com.cosun.cosunp.service.IUserInfoServ;
 import com.cosun.cosunp.tool.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.xdevapi.JsonArray;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import net.sf.json.JSONArray;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
@@ -18,8 +20,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Controller;
@@ -35,13 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequestMapping("/fileupdown")
@@ -97,21 +94,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str1 = x.writeValueAsString(dataList);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str1); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 throw e;
             }
         }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            throw e;
-        }
-
     }
 
     /**
@@ -177,6 +167,7 @@ public class FileUploadAndDownController {
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
+            e.printStackTrace();
             logger.debug(e.getMessage());
             throw e;
         }
@@ -209,6 +200,7 @@ public class FileUploadAndDownController {
             response.getWriter().print(str); //返回前端ajax
         } catch (IOException e) {
             logger.debug(e.getMessage());
+            e.printStackTrace();
             throw e;
         }
     }
@@ -481,19 +473,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(viewss);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
+                e.printStackTrace();
                 throw e;
             }
-        }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            throw e;
         }
     }
 
@@ -598,21 +585,16 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(names);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
+                e.printStackTrace();
                 throw e;
             }
         }
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            throw e;
-        }
     }
 
 
@@ -714,22 +696,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(names);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 e.printStackTrace();
                 logger.debug(e.getMessage());
                 throw e;
             }
-        }
-
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.debug(e.getMessage());
-            throw e;
         }
     }
 
@@ -789,22 +763,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(norepeatFoFiPAIXU);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
-        }
-
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
     }
 
@@ -960,22 +926,16 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(viewss);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 e.printStackTrace();
+                logger.debug(e.getMessage());
                 throw e;
             }
         }
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 
 
@@ -1025,23 +985,16 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(norepeatFoldorFile);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         }
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     /**
@@ -1097,22 +1050,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(names);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
-        }
-
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
     }
 
@@ -1162,23 +1107,16 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(norepeatFoldorFile);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         }
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     /**
@@ -1204,18 +1142,10 @@ public class FileUploadAndDownController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str = x.writeValueAsString(views);
-
-        } catch (JsonProcessingException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-        try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
@@ -1279,22 +1209,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(viewsNew);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
-        }
-
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
     }
 
@@ -1490,19 +1412,10 @@ public class FileUploadAndDownController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str = x.writeValueAsString(flag);
-
-        } catch (JsonProcessingException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-
-        try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
@@ -1620,7 +1533,6 @@ public class FileUploadAndDownController {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("text/html;charset=UTF-8");
                 response.getWriter().print(str); //返回前端ajax
-
             } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
@@ -1684,13 +1596,11 @@ public class FileUploadAndDownController {
                 outputStream.flush();
                 num = bufferedInputStream.read(buff);
             }
-            System.out.println("==================complete========");
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
             throw e;
         } finally {
-            System.out.println("==================complete========");
             if (bufferedInputStream != null) {
                 bufferedInputStream.close();
             }
@@ -1768,24 +1678,15 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str1 = x.writeValueAsString(dataList);
-
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str1); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-
     }
 
     /**
@@ -1977,18 +1878,10 @@ public class FileUploadAndDownController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str1 = x.writeValueAsString(returnMessage);
-
-        } catch (JsonProcessingException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-        try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
@@ -2014,18 +1907,10 @@ public class FileUploadAndDownController {
         ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
         try {
             str1 = x.writeValueAsString(returnMessage);
-
-        } catch (JsonProcessingException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
-        try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
             throw e;
@@ -2166,22 +2051,15 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(views);
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
         }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-
     }
 
 
@@ -2217,20 +2095,14 @@ public class FileUploadAndDownController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
             try {
                 str = x.writeValueAsString(views);
-            } catch (JsonProcessingException e) {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
                 throw e;
             }
-        }
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
-        } catch (IOException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
-            throw e;
         }
 
     }
@@ -2430,7 +2302,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
@@ -2447,7 +2319,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFolderMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
@@ -2464,7 +2336,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessage(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            //Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
@@ -2481,7 +2353,7 @@ public class FileUploadAndDownController {
     @ResponseBody
     public void saveFileMessageUpdate(DownloadView view, HttpSession session) throws Exception {
         try {
-            Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
+            // Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
@@ -2650,6 +2522,114 @@ public class FileUploadAndDownController {
             boolean isFolderNameForEngDateOrderNoSalor = fileUploadAndDownServ.isFolderNameForEngDateOrderNoSalor(null);
         }
         return new ModelAndView("uploadpage");
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/preview", method = RequestMethod.GET)
+    public void pdfStreamHandler(@RequestParam("fileNameandOrderNum") String fileNameandOrderNum, HttpServletRequest request, HttpServletResponse response) {
+        //PDF文件地址
+        File file = null;
+        InputStream inStream = null;
+        FilemanUrl url = null;
+        fileNameandOrderNum = fileNameandOrderNum.replace("*", "&");
+        try {
+            String[] splitA = fileNameandOrderNum.split(":");
+            String fileName = splitA[0].trim();
+            String orderNo = splitA[1].trim();
+            int index = fileName.lastIndexOf(".");
+            String filenamecenter = fileName.substring(0, index);
+            String fileType = fileName.substring(index + 1, fileName.length());
+            if (fileName.endsWith(".docx") || fileName.endsWith(".DOCX") ||
+                    fileName.endsWith(".doc") || fileName.endsWith(".DOC") ||
+                    fileName.endsWith(".xls") || fileName.endsWith(".XLS") ||
+                    fileName.endsWith(".xlsx") || fileName.endsWith(".XLSX") ||
+                    fileName.endsWith(".ppt") || fileName.endsWith(".PPT") ||
+                    fileName.endsWith(".pptx") || fileName.endsWith(".PPTX")) {
+                url = fileUploadAndDownServ.getUrlByFileNameAndOrderNo(orderNo, fileName);
+                file = new File(finalDirPath + url.getLogur1());
+                InputStream inputStream = new FileInputStream(file);
+                inStream = WordToPDF.getPdfStream(fileType, inputStream);
+            } else if (fileName.endsWith(".pdf") || fileName.endsWith(".PDF") ||
+                    fileName.endsWith(".pdfx") || fileName.endsWith(".PDFX")) {
+                url = fileUploadAndDownServ.getUrlByFileNameAndOrderNo(orderNo, fileName);
+                file = new File(finalDirPath + url.getLogur1());
+                inStream = new FileInputStream(file);
+            } else if (fileName.endsWith(".dwg") || fileName.endsWith(".DWG")) {
+                url = fileUploadAndDownServ.getUrlByFileNameAndOrderNo(orderNo, fileName);
+                String srcFile = finalDirPath + url.getLogur1();
+                com.aspose.cad.Image objImage = com.aspose.cad.Image.load(srcFile);
+                // Create an instance of CadRasterizationOptions and set its various properties
+                CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
+                rasterizationOptions.setBackgroundColor(Color.getWhite());
+                rasterizationOptions.setPageWidth(1600);
+                rasterizationOptions.setPageHeight(1600);
+                PdfOptions pdfOptions = new PdfOptions();
+                pdfOptions.setVectorRasterizationOptions(rasterizationOptions);
+                objImage.save(finalDirPath + "linshi/" + filenamecenter + ".pdf", pdfOptions);
+                file = new File(finalDirPath + "linshi/" + filenamecenter + ".pdf");
+                inStream = new FileInputStream(file);
+            } else if (fileName.endsWith(".dxf") || fileName.endsWith(".DXF")) {
+                url = fileUploadAndDownServ.getUrlByFileNameAndOrderNo(orderNo, fileName);
+                String srcFile = finalDirPath + url.getLogur1();
+                Image image = Image.load(srcFile);
+                CadRasterizationOptions rasterizationOptions = new CadRasterizationOptions();
+                rasterizationOptions.setBackgroundColor(Color.getWhite());
+                rasterizationOptions.setPageWidth(1600);
+                rasterizationOptions.setPageHeight(1600);
+                PdfOptions pdfOptions = new PdfOptions();
+                pdfOptions.setVectorRasterizationOptions(rasterizationOptions);
+                image.save(finalDirPath + "linshi/" + filenamecenter + ".pdf", pdfOptions);
+                file = new File(finalDirPath + "linshi/" + filenamecenter + ".pdf");
+                inStream = new FileInputStream(file);
+            }
+            if (file.exists()) {
+                byte[] data = null;
+                data = new byte[inStream.available()];
+                inStream.read(data);
+                response.getOutputStream().write(data);
+                inStream.close();
+            } else {
+            }
+        } catch (
+                Exception e) {
+            System.out.println("pdf文件处理异常：" + e);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inStream != null) {
+                    inStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/showImage")
+    public void showImage(String fileName, String orderNo, HttpServletResponse response) throws Exception {
+        fileName = fileName.replace("*", "&");
+        response.setContentType("text/html; charset=UTF-8");
+        response.setContentType("image/jpeg");
+        FilemanUrl fu = fileUploadAndDownServ.getUrlByFileNameAndOrderNo(orderNo, fileName);
+        FileInputStream fis = new FileInputStream(finalDirPath + fu.getLogur1());
+        OutputStream os = response.getOutputStream();
+        try {
+            int count = 0;
+            byte[] buffer = new byte[1024 * 1024];
+            while ((count = fis.read(buffer)) != -1)
+                os.write(buffer, 0, count);
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null)
+                os.close();
+            if (fis != null)
+                fis.close();
+        }
     }
 }
 

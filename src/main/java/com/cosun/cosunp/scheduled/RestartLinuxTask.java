@@ -28,11 +28,10 @@ public class RestartLinuxTask {
         try {
             Runtime.getRuntime().exec("reboot");//linux 每天定时重启服务器
             //每天启动oppenoffic服务
-           //String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
+           //String com  mand = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
             //Runtime.getRuntime().exec(command);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

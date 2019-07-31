@@ -257,6 +257,10 @@ public interface FileUploadAndDownMapper {
     @Select("select ordernum from filemanfileinfo order by ordernum desc LIMIT #{currentPageTotalNum},#{pageSize}")
     List<String> findAllOrderNum(int currentPageTotalNum, int pageSize);
 
+    @Select("select mu.* from filemanurl mu LEFT JOIN filemanfileinfo fi on mu.fileInfoId = fi.id\n" +
+            "where mu.orginname = #{fileName}  and fi.ordernum = #{orderNo} limit 1 ")
+    FilemanUrl getUrlByFileNameAndOrderNo(String orderNo,String fileName);
+
     @Select("select count(*) from filemanfileinfo  ")
     int findAllOrderNumCount();
 

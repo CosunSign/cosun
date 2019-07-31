@@ -389,7 +389,6 @@
             <systemPath>${project.basedir}/libs/homey.homey.unoil-3.0.1.jar</systemPath>
         </dependency>
 
-
         <dependency>
             <groupId>homey.homey.xstream</groupId>
             <artifactId>xstream</artifactId>
@@ -414,7 +413,6 @@
             <systemPath>${project.basedir}/libs/homey.jodconverter.cli-2.2.2.jar</systemPath>
         </dependency>
 
-
         <dependency>
             <groupId>homey.jodconverter.javadoc</groupId>
             <artifactId>javadoc</artifactId>
@@ -423,6 +421,28 @@
             <systemPath>${project.basedir}/libs/homey.jodconverter.javadoc-2.2.2.jar</systemPath>
         </dependency>
 
+
+
+        <dependency>
+            <groupId>aspose-cad</groupId>
+            <artifactId>javadoc</artifactId>
+            <version>19.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/aspose-cad-19.5.jar</systemPath>
+        </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>com.aspose</groupId>-->
+        <!--<artifactId>aspose-cad</artifactId>-->
+        <!--<version>17.9</version>-->
+        <!--<classifier>javadoc</classifier>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--<groupId>com.aspose</groupId>-->
+        <!--<artifactId>aspose-cad</artifactId>-->
+        <!--<version>17.9</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 
@@ -460,6 +480,11 @@
             <id>spring-milestone</id>
             <url>https://repo.spring.io/libs-release</url>
         </repository>
+        <!--<repository>-->
+            <!--<id>AsposeJavaAPI</id>-->
+            <!--<name>Aspose Java API</name>-->
+            <!--<url>https://repository.aspose.com/repo/com/aspose/aspose-cad/19.5/</url>-->
+        <!--</repository>-->
     </repositories>
 
 

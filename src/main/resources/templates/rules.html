@@ -307,6 +307,7 @@
     function onLineReadPDFSmall(rulesId, fileName) {
         localStorage.setItem("fileName", fileName)
         window.open("/pdfjs/web/viewer.html?file=/rules/preview?rulesId%3D" + rulesId);
+       //  window.open("/pdfjs/web/viewer.html?file=abcd.pdf");
     }
 
 
@@ -401,6 +402,8 @@
                     <td align="center" th:text="${rule.deptStr}"></td>
                     <td align="center" th:text="${rule.titleName}"></td>
                     <td>
+                        <!--<iframe src="/pdfjs/web/viewer.html?file=localhost:8080/abcd.pdf" width="100%" height="99%"></iframe>-->
+
                         <a href="javascript:void(0);"
                            th:onclick="onLineReadPDFSmall([[${rule.id}]],[[${rule.fileName}]]);"
                            th:text="${rule.fileName}"></a>

@@ -5,8 +5,6 @@ import com.cosun.cosunp.entity.Rules;
 import com.cosun.cosunp.mapper.RulesMapper;
 import com.cosun.cosunp.service.IrulesServ;
 import com.cosun.cosunp.tool.FileUtil;
-import com.cosun.cosunp.tool.StringUtil;
-import com.cosun.cosunp.tool.WordToHtml;
 import com.cosun.cosunp.tool.WordToPDF;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

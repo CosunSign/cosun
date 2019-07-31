@@ -1245,6 +1245,11 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
      * @describtion
      */
 
+    public FilemanUrl getUrlByFileNameAndOrderNo(String orderNo,String fileName) throws Exception {
+        return fileUploadAndDownMapper.getUrlByFileNameAndOrderNo(orderNo,fileName);
+    }
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FolderUpdateList isSameFolderNameorFileNameMethod(UserInfo userInfo, DownloadView view, String filePathName) throws Exception {

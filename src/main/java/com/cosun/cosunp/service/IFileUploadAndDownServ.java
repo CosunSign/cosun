@@ -45,6 +45,8 @@ public interface IFileUploadAndDownServ {
 
     List<String> findAllUrlOnlyByParamManyOrNo(DownloadView dv) throws Exception;
 
+    FilemanUrl getUrlByFileNameAndOrderNo(String orderNo,String fileName) throws Exception;
+
     List<UserInfo> findAllUserOnlyDesigner() throws Exception;
 
     List<UserInfo> findAllUser() throws Exception;
