@@ -20,7 +20,22 @@
 <script type="text/javascript">
     var extensionarrays;
     var extensionarray;
+    var extensionSupport = [];
     $(function () {
+        extensionSupport.push('tif');
+        extensionSupport.push('jpeg');
+        extensionSupport.push('jpg');
+        extensionSupport.push('png');
+        extensionSupport.push('dwg');
+        extensionSupport.push('dxf');
+        extensionSupport.push('doc');
+        extensionSupport.push('docx');
+        extensionSupport.push('xls');
+        extensionSupport.push('xlsx');
+        extensionSupport.push('ppt');
+        extensionSupport.push('pptx');
+        extensionSupport.push('pdf');
+        extensionSupport.push('pdfx');
         extensionarrays = $("#extension").val();
         extensionarray = eval("(" + extensionarrays + ")");
         window.parent.document.getElementById('content').style.display = "block";
@@ -260,14 +275,26 @@
                             cominone2 = 1;
                         } else {//代表为文件
                             if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
-                                fileshtml += "<li>" +
-                                    " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo+ "')\"\n " +
-                                    "/> " +
-                                    "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                    "/>" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (extensionSupport.includes(extenName.toLowerCase())) {
+                                    fileshtml += "<li>" +
+                                        " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                } else {
+                                    fileshtml += "<li>" +
+                                        " <img src=\"/images/icon/blank.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\"  " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+
+                                }
                                 if (cominone2 == 0) {//代表没有文件夹
                                     $("#foldername").val(data[num]);
                                 }
@@ -293,15 +320,26 @@
                             cominone2 = 1;
                         } else {//代表为文件
                             if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                                if (extensionSupport.includes(extenName.toLowerCase())) {
+                                    fileshtml += "<li style='display: none'>" +
+                                        " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                } else {
+                                    fileshtml += "<li style='display: none'>" +
+                                        " <img src=\"/images/icon/blank.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\"  " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
 
-                                fileshtml += "<li style='display: none'>" +
-                                    " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
-                                    "/> " +
-                                    "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                    "/>" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                }
                                 if (cominone2 == 0) {//代表没有文件夹
                                     $("#foldername").val(data[num]);
                                 }
@@ -404,7 +442,7 @@
     }
 
 
-    function big(fileName,ordernum) {
+    function big(fileName, ordernum) {
         var reg = /&/g;
         var afterEnds = [];
         afterEnds.push('tif');
@@ -412,9 +450,9 @@
         afterEnds.push('jpg');
         afterEnds.push('png');
         var splitA = fileName.split(".");
-        if(afterEnds.includes(splitA[splitA.length-1].toLowerCase())) {
+        if (afterEnds.includes(splitA[splitA.length - 1].toLowerCase())) {
             window.open("/fileupdown/showImage?fileName=" + fileName.replace(reg, '*') + "&orderNo=" + ordernum);
-        }else {
+        } else {
             localStorage.setItem("fileName", fileName);
             fileName = fileName + ":" + ordernum;
             fileName = fileName.replace(reg, '*');
@@ -624,18 +662,32 @@
                         } else {//代表为文件
                             if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
 
-                                fileshtml += "<li>" +
-                                    " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
-                                    "/> " +
-                                    "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                    "/>" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                if (extensionSupport.includes(extenName.toLowerCase())) {
+                                    fileshtml += "<li>" +
+                                        " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+
+                                } else {
+                                    fileshtml += "<li>" +
+                                        " <img src=\"/images/icon/blank.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\"  " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+
+                                }
                                 if (cominone == 0) {
                                     $("#foldername").val(data[num]);
                                 }
                             }
+
                         }
                     } else {
                         if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
@@ -653,17 +705,32 @@
                             cominone = 1;
                         } else {//代表为文件
                             if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
-                                fileshtml += "<li style='display: none'>" +
-                                    " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
-                                    "/> " +
-                                    "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
-                                    " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
-                                    "/>" +
-                                    "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+
+                                if (extensionSupport.includes(extenName.toLowerCase())) {
+                                    fileshtml += "<li style='display: none'>" +
+                                        " <img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"big('" + data[num] + "','" + orderNo + "')\"\n " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                } else {
+                                    fileshtml += "<li style='display: none'>" +
+                                        " <img src=\"/images/icon/blank.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" " +
+                                        "/> " +
+                                        "<img src=\"/images/icon/modicon.png\" align=\"middle\" border=\"0\" " +
+                                        " style=\"width: 30px; height: 30px; vertical-align: middle\" onclick=\"showupdaterecode('" + data[num] + "')\"\n " +
+                                        "/>" +
+                                        "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
+                                }
+
                                 if (cominone == 0) {
                                     $("#foldername").val(data[num]);
                                 }
+
+
                             }
                         }
                     }
