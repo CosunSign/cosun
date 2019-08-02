@@ -71,6 +71,16 @@ public class OutPutWorkData implements Serializable {
     private String yearMonthDay;
     private Integer workArea;
 
+    private Integer isNoWorkSetButWork;
+
+    public Integer getIsNoWorkSetButWork() {
+        return isNoWorkSetButWork;
+    }
+
+    public void setIsNoWorkSetButWork(Integer isNoWorkSetButWork) {
+        this.isNoWorkSetButWork = isNoWorkSetButWork;
+    }
+
     public Integer getWorkArea() {
         return workArea;
     }

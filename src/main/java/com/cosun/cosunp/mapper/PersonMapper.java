@@ -177,8 +177,14 @@ public interface PersonMapper {
     @Select("select * from dept order by deptname desc limit #{currentPageTotalNum},#{pageSize} ")
     List<Dept> findAllDept(Dept dept);
 
+    @Select("select deptName from dept order by deptname desc ")
+    List<String> findAllDeptA();
+
     @Select("select * from position order by positionName desc")
     List<Position> findAllPositionAll();
+
+    @Select("select positionName from position order by positionName desc")
+    List<String> findAllPositionAllA();
 
     @Select("select * from dept order by deptname desc")
     List<Dept> findAllDeptAll();
@@ -304,6 +310,16 @@ public interface PersonMapper {
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} or (month = #{month} and type = 2)")
     List<WorkDate> getWorkDateByMonthAnPositionLevelList(String month, String positionLevel);
 
+
+    @Select("SELECT\n" +
+            "e.empNo,e.name \n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "JOIN position n ON e.positionId = n.id\n" +
+            "AND n.positionLevel = #{positionLevel} ")
+    List<SmallEmployee> findAllEmployeeByPositionLevel(String positionLevel);
+
+
     @Select("select group_concat(workDate,',') as workDate from workdate where month = #{month} and positionLevel = #{positionLevel} and type in(0,1) ")
     WorkDate getWorkDateByMonthAnPositionLevelandType(String month, String positionLevel);
 
@@ -391,6 +407,12 @@ public interface PersonMapper {
 
     @Insert("insert into position (positionName) values(#{positionName})")
     void addPositionByName(String positionName);
+
+    @Update("update employee set isQuit = 1 ")
+    void updateAllEmployeeNotExist();
+
+    @Update("update employee set isQuit = 0 where empNo = #{empNo} ")
+    void updateEmployeeIsQuitExsit(String empNo);
 
     @Insert("insert into position (positionName,positionLevel) values(#{positionName},#{positionLevel})")
     void addPositionByNameandPositionLevel(String positionName, String positionLevel);
@@ -631,6 +653,10 @@ public interface PersonMapper {
             }
             if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
                 sb.append(" and sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getIsQuits() != null && employee.getIsQuits().size() > 0) {
+                sb.append(" and isQuit in (" + StringUtils.strip(employee.getIsQuits().toString(), "[]") + ") ");
             }
 
             if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
@@ -1023,6 +1049,10 @@ public interface PersonMapper {
 
             if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
                 sb.append(" and e.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getIsQuits() != null && employee.getIsQuits().size() > 0) {
+                sb.append(" and e.isQuit in (" + StringUtils.strip(employee.getIsQuits().toString(), "[]") + ") ");
             }
 
             if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {

@@ -653,8 +653,8 @@ public class PersonServiceImpl implements IPersonServ {
                     if (attributeTitleIndex != null) {
                         em.setPositionLevel(cell[attributeTitleIndex].getContents().trim());
                     }
-                    em.setWorkType(0);
-                    em.setPositionLevel("B");
+                    em.setWorkType(1);
+                    em.setPositionLevel("A");
                     em.setIsQuit(0);
                     employeeList.add(em);
                 }
@@ -784,8 +784,8 @@ public class PersonServiceImpl implements IPersonServ {
                     if (attributeTitleIndex != null) {
                         em.setPositionLevel(cell2[attributeTitleIndex].getContents().trim());
                     }
-                    em.setWorkType(1);
-                    em.setPositionLevel("A");
+                    em.setWorkType(0);
+                    em.setPositionLevel("B");
                     em.setIsQuit(0);
                     employeeList.add(em);
                 }
@@ -830,13 +830,16 @@ public class PersonServiceImpl implements IPersonServ {
 
 
     public void saveDeptNameAndPositionNameAndEms(List<Employee> employeeList) throws Exception {
-        personMapper.clearDeptData();
-        personMapper.clearPositionData();
-        personMapper.clearEmployeeData();
+        //personMapper.clearDeptData();
+        //personMapper.clearPositionData();
+        //personMapper.clearEmployeeData();
+        //导入前将全部人员设为离职
+        personMapper.updateAllEmployeeNotExist();
         Employee em = null;
-        List<String> depts = new ArrayList<String>();
-        List<String> positions = new ArrayList<String>();
+        List<String> depts = personMapper.findAllDeptA();
+        List<String> positions = personMapper.findAllPositionAllA();
         int size = employeeList.size();
+        Employee mysqlEm = null;
         for (int i = 0; i < size; i++) {
             em = employeeList.get(i);
             if (!depts.contains(em.getDeptName())) {
@@ -854,298 +857,303 @@ public class PersonServiceImpl implements IPersonServ {
         }
 
         for (Employee emm : employeeList) {
-            Dept dept = personMapper.getDeptByName(emm.getDeptName());
-            Position position = personMapper.getPositionByName(emm.getPositionName());
-            emm.setDeptId(dept.getId());
-            emm.setPositionId(position.getId());
-            emm.setSex("男".equals(emm.getSexStr()) ? 1 : 0);
+            mysqlEm = personMapper.getEmployeeByEmpNo(emm.getEmpNo());
+            if (mysqlEm != null) {
+                personMapper.updateEmployeeIsQuitExsit(mysqlEm.getEmpNo());
+            } else {
+                Dept dept = personMapper.getDeptByName(emm.getDeptName());
+                Position position = personMapper.getPositionByName(emm.getPositionName());
+                emm.setDeptId(dept.getId());
+                emm.setPositionId(position.getId());
+                emm.setSex("男".equals(emm.getSexStr()) ? 1 : 0);
 
-            if ("已".equals(emm.getMarriagedStr())) {
-                emm.setMarriaged(1);
-            } else if ("未".equals(emm.getMarriagedStr()) || "否".equals(emm.getMarriagedStr())) {
-                emm.setMarriaged(0);
-            } else if ("离".equals(emm.getMarriagedStr())) {
-                emm.setMarriaged(2);
+                if ("已".equals(emm.getMarriagedStr())) {
+                    emm.setMarriaged(1);
+                } else if ("未".equals(emm.getMarriagedStr()) || "否".equals(emm.getMarriagedStr())) {
+                    emm.setMarriaged(0);
+                } else if ("离".equals(emm.getMarriagedStr())) {
+                    emm.setMarriaged(2);
+                }
+
+                if ("壮".equals(emm.getNationStr())) {
+                    emm.setNation(1);
+                } else if ("藏".equals(emm.getNationStr())) {
+                    emm.setNation(2);
+                } else if ("裕固".equals(emm.getNationStr())) {
+                    emm.setNation(3);
+                } else if ("彝".equals(emm.getNationStr())) {
+                    emm.setNation(4);
+                } else if ("瑶".equals(emm.getNationStr())) {
+                    emm.setNation(5);
+                } else if ("锡伯".equals(emm.getNationStr())) {
+                    emm.setNation(6);
+                } else if ("乌孜别克".equals(emm.getNationStr())) {
+                    emm.setNation(7);
+                } else if ("维吾尔".equals(emm.getNationStr())) {
+                    emm.setNation(8);
+                } else if ("佤".equals(emm.getNationStr())) {
+                    emm.setNation(9);
+                } else if ("土家".equals(emm.getNationStr())) {
+                    emm.setNation(10);
+                } else if ("土".equals(emm.getNationStr())) {
+                    emm.setNation(11);
+                } else if ("塔塔尔".equals(emm.getNationStr())) {
+                    emm.setNation(12);
+                } else if ("塔吉克".equals(emm.getNationStr())) {
+                    emm.setNation(13);
+                } else if ("水".equals(emm.getNationStr())) {
+                    emm.setNation(14);
+                } else if ("畲".equals(emm.getNationStr())) {
+                    emm.setNation(15);
+                } else if ("撒拉".equals(emm.getNationStr())) {
+                    emm.setNation(16);
+                } else if ("羌".equals(emm.getNationStr())) {
+                    emm.setNation(17);
+                } else if ("普米".equals(emm.getNationStr())) {
+                    emm.setNation(18);
+                } else if ("怒".equals(emm.getNationStr())) {
+                    emm.setNation(19);
+                } else if ("纳西".equals(emm.getNationStr())) {
+                    emm.setNation(20);
+                } else if ("仫佬".equals(emm.getNationStr())) {
+                    emm.setNation(21);
+                } else if ("苗".equals(emm.getNationStr())) {
+                    emm.setNation(22);
+                } else if ("蒙古".equals(emm.getNationStr())) {
+                    emm.setNation(23);
+                } else if ("门巴".equals(emm.getNationStr())) {
+                    emm.setNation(24);
+                } else if ("毛南".equals(emm.getNationStr())) {
+                    emm.setNation(25);
+                } else if ("满".equals(emm.getNationStr())) {
+                    emm.setNation(26);
+                } else if ("珞巴".equals(emm.getNationStr())) {
+                    emm.setNation(27);
+                } else if ("僳僳".equals(emm.getNationStr())) {
+                    emm.setNation(28);
+                } else if ("黎".equals(emm.getNationStr())) {
+                    emm.setNation(29);
+                } else if ("拉祜".equals(emm.getNationStr())) {
+                    emm.setNation(30);
+                } else if ("柯尔克孜".equals(emm.getNationStr())) {
+                    emm.setNation(31);
+                } else if ("景颇".equals(emm.getNationStr())) {
+                    emm.setNation(32);
+                } else if ("京".equals(emm.getNationStr())) {
+                    emm.setNation(33);
+                } else if ("基诺".equals(emm.getNationStr())) {
+                    emm.setNation(34);
+                } else if ("回".equals(emm.getNationStr())) {
+                    emm.setNation(35);
+                } else if ("赫哲".equals(emm.getNationStr())) {
+                    emm.setNation(36);
+                } else if ("哈萨克".equals(emm.getNationStr())) {
+                    emm.setNation(37);
+                } else if ("哈尼".equals(emm.getNationStr())) {
+                    emm.setNation(38);
+                } else if ("仡佬".equals(emm.getNationStr())) {
+                    emm.setNation(39);
+                } else if ("高山".equals(emm.getNationStr())) {
+                    emm.setNation(40);
+                } else if ("鄂温克".equals(emm.getNationStr())) {
+                    emm.setNation(41);
+                } else if ("俄罗斯".equals(emm.getNationStr())) {
+                    emm.setNation(42);
+                } else if ("鄂伦春".equals(emm.getNationStr())) {
+                    emm.setNation(43);
+                } else if ("独龙".equals(emm.getNationStr())) {
+                    emm.setNation(44);
+                } else if ("东乡".equals(emm.getNationStr())) {
+                    emm.setNation(45);
+                } else if ("侗".equals(emm.getNationStr())) {
+                    emm.setNation(46);
+                } else if ("德昂".equals(emm.getNationStr())) {
+                    emm.setNation(47);
+                } else if ("傣".equals(emm.getNationStr())) {
+                    emm.setNation(48);
+                } else if ("达斡尔".equals(emm.getNationStr())) {
+                    emm.setNation(49);
+                } else if ("朝鲜".equals(emm.getNationStr())) {
+                    emm.setNation(50);
+                } else if ("布依".equals(emm.getNationStr())) {
+                    emm.setNation(51);
+                } else if ("布朗".equals(emm.getNationStr())) {
+                    emm.setNation(52);
+                } else if ("保安".equals(emm.getNationStr())) {
+                    emm.setNation(53);
+                } else if ("白".equals(emm.getNationStr())) {
+                    emm.setNation(54);
+                } else if ("阿昌".equals(emm.getNationStr())) {
+                    emm.setNation(55);
+                } else if ("汉".equals(emm.getNationStr())) {
+                    emm.setNation(56);
+                }
+
+
+                if ("北京".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(1);
+                } else if ("上海".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(2);
+                } else if ("广东".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(3);
+                } else if ("河北".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(4);
+                } else if ("山西".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(5);
+                } else if ("辽宁".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(6);
+                } else if ("吉林".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(7);
+                } else if ("黑龙江".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(8);
+                } else if ("江苏".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(9);
+                } else if ("浙江".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(10);
+                } else if ("安徽".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(11);
+                } else if ("福建".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(12);
+                } else if ("江西".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(13);
+                } else if ("山东".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(14);
+                } else if ("河南".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(15);
+                } else if ("湖北".equals(emm.getNativePlaStr()) || "武汉".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(16);
+                } else if ("湖南".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(17);
+                } else if ("天津".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(18);
+                } else if ("陕西".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(19);
+                } else if ("四川".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(20);
+                } else if ("台湾".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(21);
+                } else if ("云南".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(22);
+                } else if ("青海".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(23);
+                } else if ("甘肃".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(24);
+                } else if ("海南".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(25);
+                } else if ("贵州".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(26);
+                } else if ("重庆".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(27);
+                } else if ("新疆".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(28);
+                } else if ("广西".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(29);
+                } else if ("宁夏".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(30);
+                } else if ("内蒙古".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(31);
+                } else if ("西藏".equals(emm.getNativePlaStr())) {
+                    emm.setNativePla(32);
+                }
+
+                if ("小学".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(1);
+                } else if ("初中".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(2);
+                } else if ("高中".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(3);
+                } else if ("技校".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(4);
+                } else if ("中技".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(5);
+                } else if ("中专".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(6);
+                } else if ("大专".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(7);
+                } else if ("本科".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(8);
+                } else if ("研究生".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(9);
+                } else if ("硕士".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(10);
+                } else if ("博士".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(11);
+                } else if ("MBA".equals(emm.getEducationLeStr())) {
+                    emm.setEducationLe(12);
+                }
+
+                emm.setScreAgreement("有".equals(emm.getScreAgreementStr()) || "是".equals(emm.getScreAgreementStr()) ? 1 : 0);
+
+                if ("离职和社保".equals(emm.getSateListAndLeaCertiStr()) || "是".equals(emm.getSateListAndLeaCertiStr())) {
+                    emm.setSateListAndLeaCerti(1);
+                } else if ("无".equals(emm.getSateListAndLeaCertiStr())) {
+                    emm.setSateListAndLeaCerti(0);
+                } else if ("社保".equals(emm.getSateListAndLeaCertiStr())) {
+                    emm.setSateListAndLeaCerti(2);
+                } else if ("离职".equals(emm.getSateListAndLeaCertiStr())) {
+                    emm.setSateListAndLeaCerti(3);
+                }
+
+                if ("毕业证".equals(emm.getOtherCertiStr())) {
+                    emm.setOtherCerti(1);
+                } else if ("电工证".equals(emm.getOtherCertiStr())) {
+                    emm.setOtherCerti(2);
+                } else if ("焊工证".equals(emm.getOtherCertiStr())) {
+                    emm.setOtherCerti(3);
+                } else if ("结婚证".equals(emm.getOtherCertiStr())) {
+                    emm.setOtherCerti(4);
+                }
+
+
+                if ("健康证".equals(emm.getHealthCertiStr()) || "有".equals(emm.getHealthCertiStr()) || "是".equals(emm.getHealthCertiStr())) {
+                    emm.setHealthCerti(1);
+                } else if ("体检单".equals(emm.getHealthCertiStr())) {
+                    emm.setHealthCerti(2);
+                } else if ("职业病体检".equals(emm.getHealthCertiStr())) {
+                    emm.setHealthCerti(3);
+                } else if ("无".equals(emm.getHealthCertiStr())) {
+                    emm.setHealthCerti(0);
+                } else if (emm.getSateListAndLeaCertiStr() == null) {
+                    emm.setHealthCerti(0);
+                }
+
+                //总监
+                //总经理
+                //副总经理
+                //经理
+                //主管
+                //组长
+                //职员
+                if ("总监".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(1);
+                } else if ("总经理".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(2);
+                } else if ("副总经理".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(3);
+                } else if ("经理".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(4);
+                } else if ("主管".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(5);
+                } else if ("组长".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(6);
+                } else if ("职员".equals(emm.getPositionAttrIdStr())) {
+                    emm.setPositionAttrId(7);
+                }
+                UserInfo userInfo = personMapper.getUserInfoByEmpno(emm.getEmpNo());
+                if (userInfo == null) {
+                    userInfo = new UserInfo();
+                    userInfo.setEmpNo(emm.getEmpNo());
+                    userInfo.setFullName(emm.getName());
+                    userInfo.setUserName(emm.getEmpNo());
+                    userInfo.setUserPwd("cosun888");
+                    userInfo.setState(0);// 0代表未审核
+                    userInfo.setUseruploadright(1);//默认有上传
+                    userInfo.setUserActor(emm.getPositionAttrId());//默认普通员工
+                    userInfoMapper.saveUserInfoByBean(userInfo);
+                }
+
+                personMapper.saveEmployeeByBean(emm);
             }
-
-            if ("壮".equals(emm.getNationStr())) {
-                emm.setNation(1);
-            } else if ("藏".equals(emm.getNationStr())) {
-                emm.setNation(2);
-            } else if ("裕固".equals(emm.getNationStr())) {
-                emm.setNation(3);
-            } else if ("彝".equals(emm.getNationStr())) {
-                emm.setNation(4);
-            } else if ("瑶".equals(emm.getNationStr())) {
-                emm.setNation(5);
-            } else if ("锡伯".equals(emm.getNationStr())) {
-                emm.setNation(6);
-            } else if ("乌孜别克".equals(emm.getNationStr())) {
-                emm.setNation(7);
-            } else if ("维吾尔".equals(emm.getNationStr())) {
-                emm.setNation(8);
-            } else if ("佤".equals(emm.getNationStr())) {
-                emm.setNation(9);
-            } else if ("土家".equals(emm.getNationStr())) {
-                emm.setNation(10);
-            } else if ("土".equals(emm.getNationStr())) {
-                emm.setNation(11);
-            } else if ("塔塔尔".equals(emm.getNationStr())) {
-                emm.setNation(12);
-            } else if ("塔吉克".equals(emm.getNationStr())) {
-                emm.setNation(13);
-            } else if ("水".equals(emm.getNationStr())) {
-                emm.setNation(14);
-            } else if ("畲".equals(emm.getNationStr())) {
-                emm.setNation(15);
-            } else if ("撒拉".equals(emm.getNationStr())) {
-                emm.setNation(16);
-            } else if ("羌".equals(emm.getNationStr())) {
-                emm.setNation(17);
-            } else if ("普米".equals(emm.getNationStr())) {
-                emm.setNation(18);
-            } else if ("怒".equals(emm.getNationStr())) {
-                emm.setNation(19);
-            } else if ("纳西".equals(emm.getNationStr())) {
-                emm.setNation(20);
-            } else if ("仫佬".equals(emm.getNationStr())) {
-                emm.setNation(21);
-            } else if ("苗".equals(emm.getNationStr())) {
-                emm.setNation(22);
-            } else if ("蒙古".equals(emm.getNationStr())) {
-                emm.setNation(23);
-            } else if ("门巴".equals(emm.getNationStr())) {
-                emm.setNation(24);
-            } else if ("毛南".equals(emm.getNationStr())) {
-                emm.setNation(25);
-            } else if ("满".equals(emm.getNationStr())) {
-                emm.setNation(26);
-            } else if ("珞巴".equals(emm.getNationStr())) {
-                emm.setNation(27);
-            } else if ("僳僳".equals(emm.getNationStr())) {
-                emm.setNation(28);
-            } else if ("黎".equals(emm.getNationStr())) {
-                emm.setNation(29);
-            } else if ("拉祜".equals(emm.getNationStr())) {
-                emm.setNation(30);
-            } else if ("柯尔克孜".equals(emm.getNationStr())) {
-                emm.setNation(31);
-            } else if ("景颇".equals(emm.getNationStr())) {
-                emm.setNation(32);
-            } else if ("京".equals(emm.getNationStr())) {
-                emm.setNation(33);
-            } else if ("基诺".equals(emm.getNationStr())) {
-                emm.setNation(34);
-            } else if ("回".equals(emm.getNationStr())) {
-                emm.setNation(35);
-            } else if ("赫哲".equals(emm.getNationStr())) {
-                emm.setNation(36);
-            } else if ("哈萨克".equals(emm.getNationStr())) {
-                emm.setNation(37);
-            } else if ("哈尼".equals(emm.getNationStr())) {
-                emm.setNation(38);
-            } else if ("仡佬".equals(emm.getNationStr())) {
-                emm.setNation(39);
-            } else if ("高山".equals(emm.getNationStr())) {
-                emm.setNation(40);
-            } else if ("鄂温克".equals(emm.getNationStr())) {
-                emm.setNation(41);
-            } else if ("俄罗斯".equals(emm.getNationStr())) {
-                emm.setNation(42);
-            } else if ("鄂伦春".equals(emm.getNationStr())) {
-                emm.setNation(43);
-            } else if ("独龙".equals(emm.getNationStr())) {
-                emm.setNation(44);
-            } else if ("东乡".equals(emm.getNationStr())) {
-                emm.setNation(45);
-            } else if ("侗".equals(emm.getNationStr())) {
-                emm.setNation(46);
-            } else if ("德昂".equals(emm.getNationStr())) {
-                emm.setNation(47);
-            } else if ("傣".equals(emm.getNationStr())) {
-                emm.setNation(48);
-            } else if ("达斡尔".equals(emm.getNationStr())) {
-                emm.setNation(49);
-            } else if ("朝鲜".equals(emm.getNationStr())) {
-                emm.setNation(50);
-            } else if ("布依".equals(emm.getNationStr())) {
-                emm.setNation(51);
-            } else if ("布朗".equals(emm.getNationStr())) {
-                emm.setNation(52);
-            } else if ("保安".equals(emm.getNationStr())) {
-                emm.setNation(53);
-            } else if ("白".equals(emm.getNationStr())) {
-                emm.setNation(54);
-            } else if ("阿昌".equals(emm.getNationStr())) {
-                emm.setNation(55);
-            } else if ("汉".equals(emm.getNationStr())) {
-                emm.setNation(56);
-            }
-
-
-            if ("北京".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(1);
-            } else if ("上海".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(2);
-            } else if ("广东".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(3);
-            } else if ("河北".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(4);
-            } else if ("山西".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(5);
-            } else if ("辽宁".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(6);
-            } else if ("吉林".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(7);
-            } else if ("黑龙江".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(8);
-            } else if ("江苏".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(9);
-            } else if ("浙江".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(10);
-            } else if ("安徽".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(11);
-            } else if ("福建".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(12);
-            } else if ("江西".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(13);
-            } else if ("山东".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(14);
-            } else if ("河南".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(15);
-            } else if ("湖北".equals(emm.getNativePlaStr()) || "武汉".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(16);
-            } else if ("湖南".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(17);
-            } else if ("天津".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(18);
-            } else if ("陕西".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(19);
-            } else if ("四川".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(20);
-            } else if ("台湾".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(21);
-            } else if ("云南".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(22);
-            } else if ("青海".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(23);
-            } else if ("甘肃".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(24);
-            } else if ("海南".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(25);
-            } else if ("贵州".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(26);
-            } else if ("重庆".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(27);
-            } else if ("新疆".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(28);
-            } else if ("广西".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(29);
-            } else if ("宁夏".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(30);
-            } else if ("内蒙古".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(31);
-            } else if ("西藏".equals(emm.getNativePlaStr())) {
-                emm.setNativePla(32);
-            }
-
-            if ("小学".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(1);
-            } else if ("初中".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(2);
-            } else if ("高中".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(3);
-            } else if ("技校".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(4);
-            } else if ("中技".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(5);
-            } else if ("中专".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(6);
-            } else if ("大专".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(7);
-            } else if ("本科".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(8);
-            } else if ("研究生".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(9);
-            } else if ("硕士".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(10);
-            } else if ("博士".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(11);
-            } else if ("MBA".equals(emm.getEducationLeStr())) {
-                emm.setEducationLe(12);
-            }
-
-            emm.setScreAgreement("有".equals(emm.getScreAgreementStr()) || "是".equals(emm.getScreAgreementStr()) ? 1 : 0);
-
-            if ("离职和社保".equals(emm.getSateListAndLeaCertiStr()) || "是".equals(emm.getSateListAndLeaCertiStr())) {
-                emm.setSateListAndLeaCerti(1);
-            } else if ("无".equals(emm.getSateListAndLeaCertiStr())) {
-                emm.setSateListAndLeaCerti(0);
-            } else if ("社保".equals(emm.getSateListAndLeaCertiStr())) {
-                emm.setSateListAndLeaCerti(2);
-            } else if ("离职".equals(emm.getSateListAndLeaCertiStr())) {
-                emm.setSateListAndLeaCerti(3);
-            }
-
-            if ("毕业证".equals(emm.getOtherCertiStr())) {
-                emm.setOtherCerti(1);
-            } else if ("电工证".equals(emm.getOtherCertiStr())) {
-                emm.setOtherCerti(2);
-            } else if ("焊工证".equals(emm.getOtherCertiStr())) {
-                emm.setOtherCerti(3);
-            } else if ("结婚证".equals(emm.getOtherCertiStr())) {
-                emm.setOtherCerti(4);
-            }
-
-
-            if ("健康证".equals(emm.getHealthCertiStr()) || "有".equals(emm.getHealthCertiStr()) || "是".equals(emm.getHealthCertiStr())) {
-                emm.setHealthCerti(1);
-            } else if ("体检单".equals(emm.getHealthCertiStr())) {
-                emm.setHealthCerti(2);
-            } else if ("职业病体检".equals(emm.getHealthCertiStr())) {
-                emm.setHealthCerti(3);
-            } else if ("无".equals(emm.getHealthCertiStr())) {
-                emm.setHealthCerti(0);
-            } else if (emm.getSateListAndLeaCertiStr() == null) {
-                emm.setHealthCerti(0);
-            }
-
-            //总监
-            //总经理
-            //副总经理
-            //经理
-            //主管
-            //组长
-            //职员
-            if ("总监".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(1);
-            } else if ("总经理".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(2);
-            } else if ("副总经理".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(3);
-            } else if ("经理".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(4);
-            }else if ("主管".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(5);
-            }else if ("组长".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(6);
-            }else if ("职员".equals(emm.getPositionAttrIdStr())) {
-                emm.setPositionAttrId(7);
-            }
-            UserInfo userInfo = personMapper.getUserInfoByEmpno(emm.getEmpNo());
-            if (userInfo == null) {
-                userInfo = new UserInfo();
-                userInfo.setEmpNo(emm.getEmpNo());
-                userInfo.setFullName(emm.getName());
-                userInfo.setUserName(emm.getEmpNo());
-                userInfo.setUserPwd("cosun888");
-                userInfo.setState(0);// 0代表未审核
-                userInfo.setUseruploadright(1);//默认有上传
-                userInfo.setUserActor(emm.getPositionAttrId());//默认普通员工
-                userInfoMapper.saveUserInfoByBean(userInfo);
-            }
-
-            personMapper.saveEmployeeByBean(emm);
         }
     }
 
@@ -1165,6 +1173,10 @@ public class PersonServiceImpl implements IPersonServ {
             return timeList;
         }
         return null;
+    }
+
+    public List<SmallEmployee> findAllEmployeeByPositionLevel(String positionLevel) throws Exception {
+        return personMapper.findAllEmployeeByPositionLevel(positionLevel);
     }
 
 
@@ -1225,6 +1237,7 @@ public class PersonServiceImpl implements IPersonServ {
                             co = clockInOrginList.get(k);
                             String[] coDay = co.getDateStr().split("/");
                             if (em.getName().equals(co.getEmployeeName()) && date.equals(coDay[2])) {
+                                if (workDate.getEmpNostr() == null || workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                 otw = new OutPutWorkData();
                                 otw.setWorkArea(em.getWorkType());
                                 otw.setEmployeeName(em.getName());
@@ -1688,24 +1701,25 @@ public class PersonServiceImpl implements IPersonServ {
                                     outPutWorkData.add(otw);
                                 }
                             }
-
                         }
+
                     }
-
-
-                } else {
-                    errorMessage = "您没有" + yearMonth + "年月份" + em.getName() + "人" + em.getPositionLevel() + "属性的排班表，请帮排单设置中设置。";
-                    aaa.setErrorMessage(errorMessage);
-                    outPutWorkData.add(aaa);
-                    return outPutWorkData;
                 }
+
+
+            } else{
+                errorMessage = "您没有" + yearMonth + "年月份" + em.getName() + "人" + em.getPositionLevel() + "属性的排班表，请帮排单设置中设置。";
+                aaa.setErrorMessage(errorMessage);
+                outPutWorkData.add(aaa);
+                return outPutWorkData;
             }
-
-
         }
-        return outPutWorkData;
+
 
     }
+        return outPutWorkData;
+
+}
 
     public List<Employee> findAllEmployeeAll() throws Exception {
         return personMapper.findAllEmployeeAll();

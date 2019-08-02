@@ -139,11 +139,12 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('sortMethod',sortMethod);
         formData.append('sortByName', sortByName);
         formData.append('workTypes',$("#workType").val());
+        formData.append('isQuits',$("#isQuit").val());
         formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
@@ -318,11 +319,12 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('sortMethod',sortMethod);
         formData.append('sortByName', sortByName);
         formData.append('workTypes',$("#workType").val());
+        formData.append('isQuits',$("#isQuit").val());
         formData.append('currentPage', 1);
         $.ajax({
             data: formData,
@@ -601,25 +603,38 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label>入职时间起：</label>
-                        </td>
-                        <td>
-                            <input type="text" id="startIncomDateStr"
-                                   style="width:130px;height: 34px;text-align: center"
-                                   class="Wdate"
-                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
+                        <!--<td>-->
+                            <!--<label>入职时间起：</label>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" id="startIncomDateStr"-->
+                                   <!--style="width:130px;height: 34px;text-align: center"-->
+                                   <!--class="Wdate"-->
+                                   <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>-->
 
-                        </td>
-                        <td>
-                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>
-                        </td>
-                        <td>
-                            <input type="text" id="endIncomDateStr"
-                                   style="width:140px;height: 34px;text-align: center" class="Wdate"
-                                   onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>-->
+                        <!--</td>-->
+                        <!--<td>-->
+                            <!--<input type="text" id="endIncomDateStr"-->
+                                   <!--style="width:140px;height: 34px;text-align: center" class="Wdate"-->
+                                   <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>-->
 
+                        <!--</td>-->
+                        <td>
+                            <label>&nbsp;&nbsp;在职状态：</label>
                         </td>
+                        <td>
+                            <select id="isQuit" multiple class="selectpicker show-tick form-control"
+                                    data-live-search="true" data-actions-box="true"
+                                    data-selected-text-format="count > 2">
+                                　　
+                                <option  th:value="0">在职</option>
+                                <option  th:value="1">离职</option>
+                            </select>
+                        </td>
+
                         <td>
                             <label>&nbsp;&nbsp;工作方式：</label>
                         </td>

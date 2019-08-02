@@ -89,6 +89,7 @@ public class Employee implements Serializable {
     private List<Integer> ids;
     private List<Integer> nameIds;
     private List<Integer> workTypes;
+    private List<Integer> isQuits;
     private List<String> empNos;
     private String startIncomDateStr;
     private String endIncomDateStr;
@@ -122,11 +123,21 @@ public class Employee implements Serializable {
         this.isQuit = isQuit;
     }
 
+    public List<Integer> getIsQuits() {
+        return isQuits;
+    }
+
+    public void setIsQuits(List<Integer> isQuits) {
+        this.isQuits = isQuits;
+    }
+
     public String getIsQuitStr() {
-        if(this.isQuit==0) {
-            return "在职";
-        }else if(this.isQuit==1) {
-            return "离职";
+        if(isQuit!=null) {
+            if (this.isQuit == 0) {
+                return "在职";
+            } else if (this.isQuit == 1) {
+                return "离职";
+            }
         }
         return isQuitStr;
     }

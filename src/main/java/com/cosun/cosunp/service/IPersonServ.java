@@ -21,6 +21,8 @@ public interface IPersonServ {
 
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
 
+    List<SmallEmployee> findAllEmployeeByPositionLevel(String positionLevel) throws Exception;
+
     WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate) throws Exception;
 
     String getPositionNamesByPositionLevel(String positionLevel) throws Exception;

@@ -26,8 +26,18 @@ public class WorkDate implements Serializable {
     private Integer type;//0代表正班  1代表周末加班  2代表法定带薪假
     private List<String> positionLevels;
 
+    private List<SmallEmployee> empList;
+
     public String getEmpNostr() {
         return empNostr;
+    }
+
+    public List<SmallEmployee> getEmpList() {
+        return empList;
+    }
+
+    public void setEmpList(List<SmallEmployee> empList) {
+        this.empList = empList;
     }
 
     public void setEmpNostr(String empNostr) {

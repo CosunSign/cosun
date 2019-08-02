@@ -301,8 +301,19 @@
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
                 errormessagediv.style.color = "green";
                 var data = eval(msg);//将msg化为数;
+                var empList = data[0].empList;
+                document.getElementById("name").options.length = 0;
                 var tr = "";
                 var td = "";
+
+                var optArr = [];
+                for (var i = 0; i < empList.length; i++) {
+                    $('.selectpicker').append("<option value=" + empList[i].empNo + ">" + empList[i].name + "</option>");
+                }
+                // 缺一不可
+                $('#name').selectpicker('refresh');
+                $('#name').selectpicker('render');
+
                 var selectArr = []
                 var empNostr = data[0].empNostr;
                 empNostr = empNostr.substring(1, empNostr.length - 1);

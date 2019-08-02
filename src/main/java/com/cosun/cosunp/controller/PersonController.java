@@ -51,7 +51,7 @@ public class PersonController {
     public ModelAndView toworkdatepage() throws Exception {
         ModelAndView view = new ModelAndView("workdatepage");
         List<Employee> empList = personServ.findAllEmployeeAll();
-        view.addObject("empList",empList);
+        view.addObject("empList", empList);
         return view;
     }
 
@@ -138,7 +138,7 @@ public class PersonController {
             leave.setMaxPage(maxPage);
             leave.setRecordCount(recordCount);
             view.addObject("leaveList", leaveList);
-            view.addObject("empList",empList);
+            view.addObject("empList", empList);
             view.addObject("leave", leave);
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
@@ -338,15 +338,15 @@ public class PersonController {
     @RequestMapping(value = "/computeWorkEmpHours", method = RequestMethod.POST)
     public ModelAndView computeWorkEmpHours(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
-        if (null==cookies) {
+        if (null == cookies) {
             System.out.println("没有cookie==============");
         } else {
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("downloadstatus")){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
                     cookie.setMaxAge(0);// 立即销毁cookie
                     cookie.setPath("/");
-                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    System.out.println("被删除的cookie名字为:" + cookie.getName());
                     resp.addCookie(cookie);
                     break;
                 }
@@ -358,12 +358,12 @@ public class PersonController {
             List<ClockInOrgin> clockInOrginList = personServ.translateTabletoBean(file);
             List<OutPutWorkData> outPutWorkDataList = personServ.computeTableListData(clockInOrginList);
             List<Employee> employeeList = personServ.findAllEmployeeAll();
-            List<SubEmphours> subEmphoursList = MathUtil.computeSubEmpHours(outPutWorkDataList,employeeList);
+            List<SubEmphours> subEmphoursList = MathUtil.computeSubEmpHours(outPutWorkDataList, employeeList);
             String outpathname = "计算完成，请下载查看!";
             if (outPutWorkDataList.get(0).getErrorMessage() == null || outPutWorkDataList.get(0).getErrorMessage().trim().length() <= 0) {
                 resp.setHeader("content-type", "application/octet-stream");
                 resp.setContentType("application/octet-stream");
-                List<String> pathName = ExcelUtil.writeExcelSubWorkHours(subEmphoursList,outPutWorkDataList.get(0).getYearMonth(), finalDirPath);
+                List<String> pathName = ExcelUtil.writeExcelSubWorkHours(subEmphoursList, outPutWorkDataList.get(0).getYearMonth(), finalDirPath);
                 resp.setHeader("Content-Disposition", "attachment;filename=" + new String(pathName.get(0).getBytes(), "iso-8859-1"));
                 byte[] buff = new byte[1024];
                 BufferedInputStream bufferedInputStream = null;
@@ -407,15 +407,15 @@ public class PersonController {
     @RequestMapping(value = "/computeWorkTable", method = RequestMethod.POST)
     public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
-        if (null==cookies) {
+        if (null == cookies) {
             System.out.println("没有cookie==============");
         } else {
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("downloadstatus")){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
                     cookie.setMaxAge(0);// 立即销毁cookie
                     cookie.setPath("/");
-                    System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    System.out.println("被删除的cookie名字为:" + cookie.getName());
                     resp.addCookie(cookie);
                     break;
                 }
@@ -625,16 +625,25 @@ public class PersonController {
         try {
             List<WorkDate> workDateList = new ArrayList<WorkDate>();
             workDate = personServ.getWorkDateByMonth(workDate);
+            List<SmallEmployee> empList = null;
+            if (workDate!=null && workDate.getPositionLevel() != null) {
+                empList = personServ.findAllEmployeeByPositionLevel(workDate.getPositionLevel());
+            }
             if (workDate != null) {
+                if (empList != null) {
+                    workDate.setEmpList(empList);
+                }
                 workDateList.add(workDate);
             } else {
                 WorkDate w = new WorkDate();
                 w.setWorkDate("");
+                if (empList != null) {
+                    w.setEmpList(empList);
+                }
                 workDateList.add(w);
             }
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-
             str1 = x.writeValueAsString(workDateList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
@@ -1074,9 +1083,9 @@ public class PersonController {
         String pathName = "";
         if (type == 1) {
             pathName = ee.get(0).getEducationLeUrl();
-        }else if(type==2) {
+        } else if (type == 2) {
             pathName = ee.get(0).getSateListAndLeaCertiUrl();
-        }else if(type==3) {
+        } else if (type == 3) {
             pathName = ee.get(0).getOtherCertiUrl();
         }
         FileInputStream fis = new FileInputStream(pathName);
