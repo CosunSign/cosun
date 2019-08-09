@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  * @author:homey Wong
- * @date:2018/12/28 0028 下午 4:50
+ * @date:2018/12/28  下午 4:50
  * @Description: 每用某个功能前查验是否登录状态
  * @Modified By:
  * @Modified-date:

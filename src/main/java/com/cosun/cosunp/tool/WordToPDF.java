@@ -44,12 +44,12 @@ public class WordToPDF {
         /** 我把openOffice下载到了 C:/Program Files (x86)/下  ,下面的写法自己修改编辑就可以**/
         // String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
        // String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard";
-        //String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard";
-        //Process p = Runtime.getRuntime().exec(command);
+        String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard";
+        Process p = Runtime.getRuntime().exec(command);
 
         // 连接openoffi ce服务
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
-        // OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
+         OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
         connection.connect();
 
         // 转换
@@ -60,16 +60,16 @@ public class WordToPDF {
         connection.disconnect();
 
         // 关闭进程
-       // p.destroy();
+       p.destroy();
     }
 
 
     //将PDF流输出
     public static InputStream getPdfStream(String fileType, InputStream fileInput) throws Exception {
        // String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard";
-        // String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=0.0.0.0,port=8100;urp;\" -nofirststartwizard";
-       // Process p = Runtime.getRuntime().exec(command);
-        OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
+         String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=0.0.0.0,port=8100;urp;\" -nofirststartwizard";
+        Process p = Runtime.getRuntime().exec(command);
+        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
         // OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
         try {
             connection.connect();                //连接openoffice
@@ -82,7 +82,7 @@ public class WordToPDF {
             InputStream pdfInput = new BufferedInputStream(new ByteArrayInputStream(pdfstream.toByteArray()));//把pdf流转成输入流
             pdfstream.flush();
             pdfstream.close();
-            //p.destroy();
+            p.destroy();
             return pdfInput;
         } catch (Exception e) {
             e.printStackTrace();
