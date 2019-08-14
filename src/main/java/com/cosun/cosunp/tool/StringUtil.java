@@ -16,6 +16,33 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
 
+
+
+    public static String increateOrderByOlderOrderNo(String oldNewestNo,String shortEngName) throws Exception {
+        //COSUN2019XXXXZTXX
+        if(oldNewestNo!=null) {
+            String newestOrder;
+            String beforStr = oldNewestNo.substring(0, 15);
+            String afterNum = oldNewestNo.substring(15, oldNewestNo.length());
+            Integer num = Integer.valueOf(afterNum);
+            num++;
+            String afterNewNum;
+            if (num < 10) {
+                afterNewNum = "0" + num;
+            } else {
+                afterNewNum = num.toString();
+            }
+            newestOrder = beforStr + afterNewNum;
+            return newestOrder;
+        }else {
+            //COSUN20190108WW01
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+            String dateStr = sDateFormat.format(new Date());
+            String orderName = "COSUN"+dateStr+shortEngName+"01";
+            return orderName;
+        }
+    }
+
     /**
      * 功能描述:业务员名单暂放JAVA里，日后再建员工数据库
      * @auther: homey Wong

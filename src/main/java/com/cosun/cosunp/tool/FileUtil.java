@@ -253,6 +253,35 @@ public class FileUtil {
     }
 
 
+    public static String uploadOrderAppend(String descUrl,String engName,String orderNo,MultipartFile file) throws Exception {
+        String fileName = file.getOriginalFilename();
+        String filePath = descUrl + "order" + "\\"+engName + "\\" + orderNo + "\\";
+        File targetFile = new File(filePath);
+        //：判断目录是否存在   不存在：创建目录
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+
+        BufferedOutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(filePath + fileName));
+            stream.write(file.getBytes());
+            stream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            try {
+                if (stream != null) stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+        return filePath+fileName;
+    }
+
+
     public static String uploadFile(MultipartFile file, UserInfo userInfo, DownloadView view, String randomnum) throws Exception {
         String fileName = file.getOriginalFilename();
         String salorpinyinPinYin = view.getSalor();

@@ -25,7 +25,8 @@ public class UserInfo implements Serializable {
     private String webPrivi;
     private String sortMethod;
     private String sortByName;
-
+    private String engName;//英文名
+    private String shortOrderName;//缩写订单代号
 
     private String stateStr;
     private String useruploadrightStr;
@@ -52,6 +53,22 @@ public class UserInfo implements Serializable {
     private int recordCount;// 总记录数
     private int pageSize = 10;
     private int currentPageTotalNum;
+
+    public String getEngName() {
+        return engName;
+    }
+
+    public void setEngName(String engName) {
+        this.engName = engName;
+    }
+
+    public String getShortOrderName() {
+        return shortOrderName;
+    }
+
+    public void setShortOrderName(String shortOrderName) {
+        this.shortOrderName = shortOrderName;
+    }
 
     public String getSortMethod() {
         return sortMethod;

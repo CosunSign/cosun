@@ -147,7 +147,7 @@
 .packingdivcenter {
     border: 1px solid #9AC0CD;
     width: 440px;
-    height: 575px;
+    height: 590px;
     Margin: 10px;
 }
 
@@ -183,7 +183,6 @@
     width: 730px;
     height: 170px;
     border: 1px solid #9AC0CD;
-
 }
 
 
@@ -212,8 +211,9 @@
 
 .rightdiv {
     width: 345px;
-    height: 698px;
+    height: 660px;
     border: 1px solid #9AC0CD;
+    line-height: 14px;
 }
 
 .right01 {
@@ -256,12 +256,14 @@
     width: 448px;
     height: 345px;
     border: 1px solid #9AC0CD;
+    line-height: 14px;
 }
 
 .downdivone {
     width: 419px;
-    height: 347px;
+    height: 310px;
     border: 1px solid #9AC0CD;
+    line-height: 12px;
 }
 
 
@@ -271,7 +273,7 @@
     bottom: 0;
     margin: 5px;
     width: 204px;
-    height: 347px;
+    height: 310px;
     right: 0;
     border: 1px solid #9AC0CD;
 }
@@ -279,7 +281,7 @@
 
 .downdiv {
     width: 623px;
-    height: 347px;
+    height: 310px;
     margin: 5px;
     border: 1px solid #9AC0CD;
     text-align: left
@@ -293,6 +295,14 @@
     text-align: left
 }
 
+.innerdivthree {
+    width: 963px;
+    height: 70px;
+    margin: 5px;
+    border: 1px solid lightsteelblue;
+    text-align: left
+}
+
 .divfour {
     width: 625px;
     height: 132px;
@@ -301,10 +311,26 @@
     text-align: left
 }
 
+.innerdivfour {
+    width: 615px;
+    height: 95px;
+    margin: 5px;
+    border: 1px solid lightsteelblue;
+    text-align: left
+}
+
 .divfive {
     width: 625px;
     height: 140px;
     margin: 10px;
     border: 1px solid #9AC0CD;
+    text-align: left
+}
+
+.innerdivfive {
+    width: 615px;
+    height: 103px;
+    margin: 5px;
+    border: 1px solid lightsteelblue;
     text-align: left
 }
