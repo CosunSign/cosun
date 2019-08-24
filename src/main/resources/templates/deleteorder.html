@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>项目类订单</title>
+    <title>订单删除</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -45,7 +45,6 @@
     var beforestr;
     var finishNoArray = [];
     $(function () {
-        $("#ordertime").val(today());
         newestFinishProudNo = $("#newFinishProudNoh").val();
         beforestr = newestFinishProudNo.substring(0, 9);
         var returnmessage = $("#returnmessage").val();
@@ -54,12 +53,12 @@
         var flag = $('#flag').val();
         var errormessagediv = document.getElementById("errormessage");
         errormessagediv.innerHTML = "";
-        if (flag == 1) {
+        if (flag == 2) {
             $("#errormessage").show();
             if (returnmessage.trim().length > 0) {
-                errormessagediv.innerHTML = "保存成功!" + returnmessage;
+                errormessagediv.innerHTML = "删除成功!" + returnmessage;
             } else {
-                errormessagediv.innerHTML = "保存成功!";
+                errormessagediv.innerHTML = "删除成功!";
             }
             errormessagediv.style.color = "green";
         }
@@ -84,8 +83,10 @@
     var totalnum = 0;
 
     function confirmdatatoTable() {
+
         var errormessagediv = document.getElementById("errormessage2");
         errormessagediv.innerHTML = "";
+
         var trlen = $("#tabletbody").find("tr").length;
         var projectNum = $("#projectNum").val();
         if (trlen >= projectNum) {
@@ -101,6 +102,7 @@
             errormessagediv.style.color = "red";
             return;
         }
+
         var newFinishProudNo = $("#newFinishProudNo").val();
         if (newFinishProudNo.trim().length == 0) {
             $("#errormessage2").show();
@@ -1083,12 +1085,13 @@
             var history_income_remark = tdArr.eq(2).text();//    备注
             itemarr = {
                 "orderNo": $("#orderNo").val(),
-                "productTotalName": $("#projectName").val(),
+                "projectNum": $("#projectNum").val(),
+                "projectName": $("#projectName").val(),
                 "productName": tdArr.eq(2).text(),
                 "newFinishProudNo": tdArr.eq(3).text(),
                 "productBigType": tdArr.eq(4).text(),
                 "productMainShape": tdArr.eq(5).text(),
-                "needNum": tdArr.eq(6).text(),
+                "orderSetNum": tdArr.eq(6).text(),
                 "productSize": tdArr.eq(7).text(),
                 "edgeHightSize": tdArr.eq(8).text(),
                 "itemDeliverTimeStr": tdArr.eq(9).text(),
@@ -1105,6 +1108,24 @@
         document.forms[0].submit();
     }
 
+    function deleteOrderItemByItemId(itemId) {
+        if (confirm("确定要删除?此操作将不可撤销.")) {
+            var trlen = $("#tabletbody").find("tr").length;
+            if (trlen == 1) {
+                alert("只剩最后一项商品明细,删掉后订单也跟着销毁!");
+            }
+            window.location.href = "/order/toDeleteOrderHeadItemByItemid?id=" + itemId;
+
+        }
+    }
+
+    function deleteAllProjectOrder() {
+        var headId = $("#headId").val();
+        if (confirm("确定删除整个订单?此操作将不可撤销.")) {
+            window.location.href = "/order/toDeleteAllOrderByHeadId?id=" + headId;
+
+        }
+    }
 </script>
 <body>
 <div id="coverbehidepage"></div>
@@ -1121,6 +1142,7 @@
     <input type="hidden" th:field="*{shortEngName}" id="shortEngName">
     <input type="hidden" th:field="*{newFinishProudNo}" id="newFinishProudNoh">
     <input type="hidden" th:field="*{orderItemList}" id="orderItemList">
+    <input type="hidden" th:field="*{id}" id="headId">
     <div id='app'>
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
@@ -1130,60 +1152,50 @@
                             <label>下单时间：</label>
                         </td>
                         <td>
-                            <input type="text" style="width:165px" id="ordertime" readonly>
+                            <input type="text" style="width:165px" id="ordertime" class="form-control"
+                                   th:field="*{orderTimeStr}" readonly>
                         </td>
                         <td style="text-align: right">
                             <label>客户单号：</label>
                         </td>
                         <td>
-                            <input type="text" style="width:165px" th:field="*{orderNo}" readonly>
+                            <input type="text" style="width:165px" th:field="*{orderNo}" class="form-control" readonly>
                         </td>
 
                         <td style="text-align: right">
                             <label>商品类别数量：</label>
                         </td>
                         <td>
-                            <input type="text"
-                                   id="projectNum"
-                                   class="form-control"
-                                   placeholder="请输入商品类别数量"
-                                   style="width:150px">
+                            <input type="text" id="projectNum" class="form-control" placeholder="请输入商品类别数量"
+                                   style="width:150px" th:field="*{orderSetNum}" readonly>
                         </td>
                         <td style="text-align: right">
                             <label>业务员：</label>
                         </td>
                         <td>
-                            <input type="text" style="width:165px" th:field="*{salor}" readonly>
+                            <input type="text" style="width:165px" th:field="*{salor}" class="form-control" readonly>
                         </td>
 
                     </tr>
+                    <tr></tr>
                     <tr>
                         <td style="text-align: right">
                             <label>项目总名称：</label>
                         </td>
                         <td colspan="1">
-                            <input type="text" id="projectName"
-                                   th:field = "*{productTotalName}"
-                                   placeholder="请输入项目总名称"
-                                   class="form-control"
-                                   style="width:165px">
+                            <input type="text" id="projectName" placeholder="请输入项目总名称" class="form-control"
+                                   style="width:165px" th:field="*{productTotalName}" readonly>
                         </td>
-                        <td style="text-align: right">
-                            <label>附件：</label>
-                        </td>
-                        <td><input type="file" name="file" multiple id="file"></td>
-                        <td style="text-align: right">
+
+                        <td style="text-align: right" colspan="3">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="openAddOrderItemDiv()">新增</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="addProjectOrder()">保存</a>
+                               href="javascript:void(0);" onclick="deleteAllProjectOrder()">全部删除</a>
 
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </td>
-                        <td colspan="2">
+                        <td colspan="3">
                             <div style="display: none" id="errormessage">
 
                             </div>
@@ -1219,6 +1231,38 @@
     </tr>
     </thead>
     <tbody id="tabletbody">
+    <div th:unless="${#lists.isEmpty(orderHeadList)}">
+        <div th:each="order,iterStat:${orderHeadList}" align="center">
+            <tr th:ondblclick="showAlertDivByItemId([[${order.id}]])">
+                <td align="center"
+                    th:text="${(iterStat.index+1)}+${orderHead.currentPage-1}*${orderHead.pageSize}"></td>
+                <td align="center">
+                    <a class="btn btn-xs btn-primary"
+                       th:onclick="deleteOrderItemByItemId([[${order.id}]]);">删除</a>
+                </td>
+                <td align="center" th:text="${order.productName}"></td>
+                <td align="center" th:text="${order.newFinishProudNo}"></td>
+                <td align="center" th:text="${order.productBigType}"></td>
+                <td align="center" th:text="${order.productMainShape}"></td>
+                <td align="center" th:text="${order.needNum}"></td>
+                <td align="center" th:text="${order.productSize}"></td>
+                <td align="center" th:text="${order.edgeHightSize}"></td>
+                <td align="center" th:text="${order.itemDeliverTimeStr}"></td>
+                <td align="center" th:text="${order.mainMateriAndArt}"></td>
+                <td align="center" th:text="${order.backInstallSelect}"></td>
+                <td align="center" th:text="${order.electMateriNeeds}"></td>
+                <td align="center" th:text="${order.installTransfBacking}"></td>
+                <td align="center" th:text="${order.otherRemark}"></td>
+            </tr>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(orderHeadList)}">
+        <tr>
+            <td colspan="15">
+                查无数据
+            </td>
+        </tr>
+    </div>
 
     </tbody>
     <tfoot id="s_tfoot">

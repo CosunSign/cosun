@@ -87,9 +87,13 @@
                 class="fa fa-collapse"></i></a></li>
         <li>
             <ul class="premium-menuforsalor nav nav-list collapse">
-                <li><a th:href="@{/order/createsinglegoods}" target="targetText"><span class="fa fa-caret-right"></span>
-                    单件商品</a></li>
-                <li><a href="#"><span class="fa fa-caret-right"></span> 项目类</a></li>
+                <!--<li><a th:href="@{/order/createsinglegoods}" target="targetText"><span class="fa fa-caret-right"></span>-->
+                <!--单件商品</a></li>-->
+                <!--<li><a th:href="@{/order/createprojectgoods}" target="targetText"><span-->
+                <!--class="fa fa-caret-right"></span> 项目类</a></li>-->
+
+                <li><a th:href="@{/order/toOrderPage}" target="targetText"><span
+                        class="fa fa-caret-right"></span>订单</a></li>
             </ul>
         </li>
 
@@ -112,76 +116,76 @@
 
 
         <div id="caiwudiv" style="display: none">
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right">
+            <li data-popover="false"
+                data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+                rel="popover" data-placement="right">
 
-            <a href="#" data-target=".premium-menuforcaiwu"
-               class="nav-header collapsed"
-               data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>财务<i
-                    class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforcaiwu nav nav-list collapse">
-                <li>
-                    <a th:href="@{/finance/tofinance}" target="targetText"><span
-                            class="fa fa-caret-right"></span>工资信息</a></li>
-                <li>
-                    <a th:href="@{/finance/toEmpHours}" target="targetText"><span
-                            class="fa fa-caret-right"></span>工时信息</a></li>
-                <li>
-                    <a th:href="@{/finance/toFinanceImportData}" target="targetText"><span
-                            class="fa fa-caret-right"></span>财务数据信息</a></li>
-                <li>
-                    <a th:href="@{/finance/toAfterSalary}" target="targetText"><span
-                            class="fa fa-caret-right"></span>工资单</a></li>
-                <li>
-                    <a th:href="@{/finance/tomainpage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>数据导入</a></li>
-                <li>
-                    <a th:href="@{/finance/toCompute}" target="targetText"><span
-                            class="fa fa-caret-right"></span>一键计算</a></li>
-                <li>
-                    <a th:href="@{/finance/toSetUp}" target="targetText"><span
-                            class="fa fa-caret-right"></span>设置</a></li>
-            </ul>
-        </li>
+                <a href="#" data-target=".premium-menuforcaiwu"
+                   class="nav-header collapsed"
+                   data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>财务<i
+                        class="fa fa-collapse"></i></a></li>
+            <li>
+                <ul class="premium-menuforcaiwu nav nav-list collapse">
+                    <li>
+                        <a th:href="@{/finance/tofinance}" target="targetText"><span
+                                class="fa fa-caret-right"></span>工资信息</a></li>
+                    <li>
+                        <a th:href="@{/finance/toEmpHours}" target="targetText"><span
+                                class="fa fa-caret-right"></span>工时信息</a></li>
+                    <li>
+                        <a th:href="@{/finance/toFinanceImportData}" target="targetText"><span
+                                class="fa fa-caret-right"></span>财务数据信息</a></li>
+                    <li>
+                        <a th:href="@{/finance/toAfterSalary}" target="targetText"><span
+                                class="fa fa-caret-right"></span>工资单</a></li>
+                    <li>
+                        <a th:href="@{/finance/tomainpage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>数据导入</a></li>
+                    <li>
+                        <a th:href="@{/finance/toCompute}" target="targetText"><span
+                                class="fa fa-caret-right"></span>一键计算</a></li>
+                    <li>
+                        <a th:href="@{/finance/toSetUp}" target="targetText"><span
+                                class="fa fa-caret-right"></span>设置</a></li>
+                </ul>
+            </li>
 
         </div>
 
-<div id="renshidiv" style="display: none">
-        <li data-popover="false"
-            data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
-            rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfilea"
-                                                    class="nav-header collapsed"
-                                                    data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>人事<i
-                class="fa fa-collapse"></i></a></li>
-        <li>
-            <ul class="premium-menuforfilea nav nav-list collapse">
-                <li>
-                    <a th:href="@{/person/tomainpage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>员工信息</a></li>
-                <li>
-                    <a th:href="@{/person/toworksetpage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>考勤设置</a></li>
-                <li>
-                    <a th:href="@{/person/toworkdatepage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>排班设置</a></li>
-                <li>
-                    <a th:href="@{/person/toleavepage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>请假单</a></li>
-                <li>
-                    <a th:href="@{/person/tocomputeworkdate}" target="targetText"><span
-                            class="fa fa-caret-right"></span>考勤计算</a></li>
-                <li>
-                    <a th:href="@{/person/topositanddeptpage}" target="targetText"><span
-                            class="fa fa-caret-right"></span>职位/部门</a></li>
-                <li>
-                    <a th:href="@{/finance/toupdatesalary}" target="targetText"><span
-                            class="fa fa-caret-right"></span>工资调整</a></li>
-            </ul>
-        </li>
+        <div id="renshidiv" style="display: none">
+            <li data-popover="false"
+                data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
+                rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfilea"
+                                                        class="nav-header collapsed"
+                                                        data-toggle="collapse"><i class="fa fa-fw fa-fighter-jet"></i>人事<i
+                    class="fa fa-collapse"></i></a></li>
+            <li>
+                <ul class="premium-menuforfilea nav nav-list collapse">
+                    <li>
+                        <a th:href="@{/person/tomainpage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>员工信息</a></li>
+                    <li>
+                        <a th:href="@{/person/toworksetpage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>考勤设置</a></li>
+                    <li>
+                        <a th:href="@{/person/toworkdatepage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>排班设置</a></li>
+                    <li>
+                        <a th:href="@{/person/toleavepage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>请假单</a></li>
+                    <li>
+                        <a th:href="@{/person/tocomputeworkdate}" target="targetText"><span
+                                class="fa fa-caret-right"></span>考勤计算</a></li>
+                    <li>
+                        <a th:href="@{/person/topositanddeptpage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>职位/部门</a></li>
+                    <li>
+                        <a th:href="@{/finance/toupdatesalary}" target="targetText"><span
+                                class="fa fa-caret-right"></span>工资调整</a></li>
+                </ul>
+            </li>
 
-</div>
+        </div>
         <li data-popover="false"
             rel="popover" data-placement="right"><a th:href="@{/rules/torulespage}" target="targetText"
                                                     data-target=".premium-menuforfileab"
@@ -370,6 +374,47 @@
     </div>
 </div>
 
+
+<!--订单明细弹出框-->
+<div id="orderItemDiv" style="display: none">
+    <div id="orderItemDivIn" style="display: block">
+        <div id="orderItemDivTop" style="text-align: center">
+            <table style="align: center" class="grid" width="100%">
+                <thead id="tablethead22">
+                <tr>
+                    <td width="32px" style="text-align: center">序号</td>
+                    <td style="text-align: center">订单编号</td>
+                    <td style="text-align: center">品名</td>
+                    <td style="text-align: center">新成品编号</td>
+                    <td style="text-align: center">产品大类</td>
+                    <td style="text-align: center">产品主体</td>
+                    <td style="text-align: center">需求数量</td>
+                    <td style="text-align: center">产品尺寸</td>
+                    <td style="text-align: center">边高尺寸</td>
+                    <td style="text-align: center">交货时间</td>
+                    <td style="text-align: center">背部安装选项</td>
+                    <td style="text-align: center">主体材质需求及工艺</td>
+                    <td style="text-align: center">电子类辅料需求</td>
+                    <td style="text-align: center">安装/运输/包装</td>
+                    <td style="text-align: center">其它说明</td>
+                </tr>
+                </thead>
+                <tbody id="tablecontent22">
+
+                </tbody>
+
+
+            </table>
+
+        </div>
+    </div>
+    <div id="innershowMessageDiv252" th:align="right">
+        <p>
+            <br>
+            <input type="button" value="关闭" onclick="closeOrderItemMessage()">
+    </div>
+</div>
+
 </body>
 </html>
 
@@ -424,6 +469,11 @@
         //window.parent.document.getElementById('updateDiv').style.display = "block";
         $("#coverbehidepage").hide();
         $("#updateDiv").hide();
+    }
+
+    function closeOrderItemMessage() {
+        $("#coverbehidepage").hide();
+        $("#orderItemDiv").hide();
     }
 
     function getHtmlStreamById(rulesId) {
@@ -555,6 +605,7 @@
     #tablethead {
         width: calc(100% - 1em)
     }
+
 
     #updateDiv {
         top: 22%;
@@ -764,15 +815,76 @@
     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
         color: #fff;
     }
+
+
+    #orderItemDivInner {
+        border: 1px solid #9AC0CD;
+        width: 1260px;
+        height: 470px;
+        margin-left: 5px;
+        margin-right: 5px;
+        background-color: #E0EEEE;
+    }
+
+    #orderItemDivTop {
+        border: 1px solid #9AC0CD;
+        width: 1260px;
+        height: 510px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 5px;
+        background-color: #E0EEEE;
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
+    #innershowMessageDiv252 {
+        border: 1px solid #9AC0CD;
+        width: 1260px;
+        height: 50px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        border: 1px solid #9AC0CD;
+        background-color: #E0EEEE;
+        position: absolute;
+    }
+
+    #orderItemDiv {
+        top: 13%;
+        left: 4%;
+        width: 1300px;
+        height: 600px;
+        padding: 8px;
+        border: 8px solid #E8E9F7;
+        background-color: #E0EEEE;
+        z-index: 1008;
+        position: absolute;
+    }
+
+    #contentTable22 {
+        display: block;
+        height: 365px;
+        overflow-y: scroll;
+    }
+
+    #tablethead22 tr td {
+        table-layout: fixed;
+        text-align: center;
+    }
+
+    #tablethead22 {
+        width: calc(100% - 1em)
+    }
 </style>
 
 <script type="text/javascript">
     $(function () {
         var type = $("#usertype").val();
-        if(type.includes("1")) {
+        if (type.includes("1")) {
             $("#caiwudiv").show();
         }
-        if(type.includes("2")) {
+        if (type.includes("2")) {
             $("#renshidiv").show()
         }
         var uls = $('.sidebar-nav > ul > *').clone();
@@ -782,7 +894,6 @@
             window.top.location.href = window.self.location.href;
         }
     });
-
 
 
 </script>

@@ -20,6 +20,8 @@ public class OrderItemAppend implements Serializable {
     private String urlName;
     private String fileName;
 
+    private Integer headId;
+
     public Integer getId() {
         return id;
     }
@@ -42,6 +44,14 @@ public class OrderItemAppend implements Serializable {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    public Integer getHeadId() {
+        return headId;
+    }
+
+    public void setHeadId(Integer headId) {
+        this.headId = headId;
     }
 
     public String getUrlName() {

@@ -1,6 +1,8 @@
 package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.zip.DataFormatException;
 
 /**
  * @author:homey Wong
@@ -25,6 +27,63 @@ public class OrderItem implements Serializable {
     private String electMateriNeeds;//电子类辅料需求
     private String installTransfBacking;//安装运输包装
     private String otherRemark;//其它说明
+    private Date itemDeliverTime;//单项交货时间
+    private String productName;//品名
+    private Integer needNum;//需求数量
+    private Date itemCreateTime;//建单时间
+
+    private String itemCreateTimeStr;
+    private String itemDeliverTimeStr;
+
+
+
+    public Date getItemCreateTime() {
+        return itemCreateTime;
+    }
+
+    public void setItemCreateTime(Date itemCreateTime) {
+        this.itemCreateTime = itemCreateTime;
+    }
+
+    public String getItemCreateTimeStr() {
+        return itemCreateTimeStr;
+    }
+
+    public void setItemCreateTimeStr(String itemCreateTimeStr) {
+        this.itemCreateTimeStr = itemCreateTimeStr;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public Integer getNeedNum() {
+        return needNum;
+    }
+
+    public void setNeedNum(Integer needNum) {
+        this.needNum = needNum;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public Date getItemDeliverTime() {
+        return itemDeliverTime;
+    }
+
+    public void setItemDeliverTime(Date itemDeliverTime) {
+        this.itemDeliverTime = itemDeliverTime;
+    }
+
+    public String getItemDeliverTimeStr() {
+        return itemDeliverTimeStr;
+    }
+
+    public void setItemDeliverTimeStr(String itemDeliverTimeStr) {
+        this.itemDeliverTimeStr = itemDeliverTimeStr;
+    }
 
     public Integer getId() {
         return id;

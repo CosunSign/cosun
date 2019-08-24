@@ -20,7 +20,21 @@
     width: 100%;
     height: 720px;
     background-color: black;
-    z-index: 1006;
+    z-index: 1009;
+    -moz-opacity: 0.1;
+    opacity: .10;
+    filter: alpha(opacity=10);
+}
+
+#coverbehidepagethree {
+    display: none;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 720px;
+    background-color: black;
+    z-index: 1003;
     -moz-opacity: 0.1;
     opacity: .10;
     filter: alpha(opacity=10);
@@ -39,7 +53,7 @@
     width: 50%;
     height: 50%;
     background-color: white;
-    z-index: 1007;
+    z-index: 1010;
     border: 8px solid #E8E9F7;
 }
 
@@ -53,7 +67,7 @@
     padding: 8px;
     border: 8px solid #E8E9F7;
     background-color: white;
-    z-index: 1002;
+    z-index: 1004;
     overflow: auto;
 }
 
@@ -68,7 +82,7 @@
     padding: 8px;
     border: 8px solid #E8E9F7;
     background-color: white;
-    z-index: 1005;
+    z-index: 1008;
     overflow: auto;
 }
 
@@ -82,7 +96,7 @@
     padding: 8px;
     border: 8px solid #E8E9F7;
     background-color: white;
-    z-index: 1003;
+    z-index: 1005;
     overflow: auto;
 }
 
@@ -147,7 +161,7 @@
 .packingdivcenter {
     border: 1px solid #9AC0CD;
     width: 440px;
-    height: 590px;
+    height: 600px;
     Margin: 10px;
 }
 

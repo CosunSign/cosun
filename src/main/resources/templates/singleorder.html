@@ -85,7 +85,7 @@
             var d = today.getDate();
             m = m < 10 ? "0" + m : m;
             d = d < 10 ? "0" + d : d;
-            return h + "-" + m + "-" + d ;
+            return h + "-" + m + "-" + d;
         }
 
     </script>
@@ -113,10 +113,8 @@
         <input type="hidden" th:field="*{installTransfBacking}" id="installtransf">
 
         <div id="maincontentbig">
-
             <h5>产品制作需求单</h5>
             <div class="centerdivcss" id="maincontent">
-
                 <div class="wrapper">
                     <div class="right">
                         <h10>附件上传</h10>
@@ -125,7 +123,7 @@
                         </p>
                         <br>
                         <p>
-                        &nbsp;&nbsp;<input type="file" name="file" multiple id="file">
+                            &nbsp;&nbsp;<input type="file" name="file" multiple id="file">
                     </div>
                     <div class="panel-body form-inline" id="selectdiv">
                         <h10>基础属性</h10>
@@ -133,10 +131,12 @@
 
                         <table style="border-collapse:separate; border-spacing:2px;">
                             <tr>
-                                <td><label>客户单号:</label></td>
-                                <td><input type="text" style="width:165px"  th:field="*{orderNo}" readonly></td>
+                                <td>客户单号:</td>
+                                <td><input type="text" style="width:165px" th:field="*{orderNo}" readonly></td>
                                 <td style="text-align: right">&nbsp;&nbsp;品名:</td>
-                                <td colspan="3"><input type="text" style="width:400px" th:field="*{productName}"></td>
+                                <td colspan="3"><input type="text" style="width:400px"
+                                                       id="productName"
+                                                       th:field="*{productTotalName}"></td>
                             </tr>
                             <tr>
                                 <td>下单时间:</td>
@@ -145,28 +145,30 @@
                                            class="Wdate" th:field="*{orderTimeStr}"></td>
                                 <td>交货时间:</td>
                                 <td><input type="text" id="deliverdate" style="width:165px"
-                                           class="Wdate" th:field="*{deliverTimeStr}"
+                                           class="Wdate" th:field="*{itemDeliverTimeStr}"
                                            onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'orderdate\')}'})">
                                 </td>
                                 <td>&nbsp;&nbsp;需求数量:</td>
                                 <td><input type="text" style="width:130px"
                                            onblur="validateisnum3()"
-                                           th:field="*{orderSetNum}">套</td>
+                                           id="orderSetNum"
+                                           th:field="*{needNum}">套
+                                </td>
                             </tr>
                             <tr>
                                 <td>产品大类:</td>
                                 <td style="width: 180px">
                                     <select th:field="*{productBigType}" id="productBigType">
-                                    <option value = "" disabled selected hidden>产品大类</option>
-                                    <option value="钣金类">钣金类</option>
-                                    <option value="标牌类">标牌类</option>
-                                    <option value="灯箱类">灯箱类</option>
-                                    <option value="吊牌类">吊牌类</option>
-                                    <option value="立牌类">立牌类</option>
-                                    <option value="立体字">立体字</option>
-                                    <option value="图文类">图文类</option>
-                                    <option value="智能类">智能类</option>
-                                </select></td>
+                                        <option value="" disabled selected hidden>产品大类</option>
+                                        <option value="钣金类">钣金类</option>
+                                        <option value="标牌类">标牌类</option>
+                                        <option value="灯箱类">灯箱类</option>
+                                        <option value="吊牌类">吊牌类</option>
+                                        <option value="立牌类">立牌类</option>
+                                        <option value="立体字">立体字</option>
+                                        <option value="图文类">图文类</option>
+                                        <option value="智能类">智能类</option>
+                                    </select></td>
                                 <td>产品主体:</td>
                                 <td><select th:field="*{productMainShape}">
                                     <option value="" disabled selected hidden>产品主体</option>
@@ -193,17 +195,19 @@
                                     <option value="其它">其它</option>
                                 </select></td>
                                 <td>&nbsp;&nbsp;新成品编号:</td>
-                                <td><input type="text" style="width:150px" th:field="*{newFinishProudNo}"></td>
+                                <td><input type="text" style="width:150px" readonly th:field="*{newFinishProudNo}"></td>
                             </tr>
                             <tr>
                                 <td>产品尺寸:</td>
                                 <td><input type="text" style="width:150px"
                                            onblur="validateisnum2()"
-                                           th:field="*{productSize}">mm</td>
+                                           th:field="*{productSize}">mm
+                                </td>
                                 <td>边高尺寸:</td>
                                 <td><input type="text" style="width:150px"
                                            onblur="validateisnum()"
-                                           th:field="*{edgeHightSize}">mm</td>
+                                           th:field="*{edgeHightSize}">mm
+                                </td>
                                 <td style="text-align: right">&nbsp;&nbsp;业务员:</td>
                                 <td>
                                     <!--<select id="positionId"  style="width: 100px" multiple class="selectpicker show-tick form-control"-->
@@ -214,10 +218,10 @@
                                     <!--</select>-->
 
                                     <!--<select id="SalorNo" class="selectpicker show-tick form-control"-->
-                                            <!--data-live-search="true">-->
-                                        <!--<option th:value="0">请选择员工</option>-->
-                                        <!--<option th:each="c:${salorList}" th:value="${c.empNo}"-->
-                                                <!--th:text="${c.name}"></option>-->
+                                    <!--data-live-search="true">-->
+                                    <!--<option th:value="0">请选择员工</option>-->
+                                    <!--<option th:each="c:${salorList}" th:value="${c.empNo}"-->
+                                    <!--th:text="${c.name}"></option>-->
                                     <!--</select>-->
 
                                     <input type="text" id="SalorNo" style="width:150px" th:field="*{salor}" readonly>
@@ -258,9 +262,10 @@
                         </p>
 
                         <br>
-                            <input type="button" onclick="confirmdatatoMysql()" value="确认">&nbsp;&nbsp;&nbsp;&nbsp;<input type="button"
-                                                                                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                                                      value="取消">
+                        <input type="button" onclick="confirmdatatoMysql()" value="确认">&nbsp;&nbsp;&nbsp;&nbsp;<input
+                            type="button"
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            value="取消">
                         </br>
                         <div id="errormessage" style="display: none"></div>
                     </div>
@@ -1510,7 +1515,7 @@
                 </tr>
 
             </table>
-            <p style="margin: 15px auto">
+            <p style="margin: 5px auto">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

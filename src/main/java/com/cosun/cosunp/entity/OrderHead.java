@@ -2,6 +2,7 @@ package com.cosun.cosunp.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author:homey Wong
@@ -15,18 +16,31 @@ public class OrderHead implements Serializable {
     private static final long serialVersionUID = 8581338015386967740L;
 
     private Integer id;
-    private Integer singleOrProject; //代表是单项类还是项目类
     private String orderNo; //客户单号
-    private String productName; //品名
+    private String productTotalName; //商品总名称
     private String orderTimeStr; //下单时间
-    private String deliverTimeStr; //交货时间
-    private String orderSetNum;//订单套数
+    private Integer orderSetNum;//订单类别数量
     private String SalorNo; //业务员
+    private Integer state;//0未审核  1审核通过  2审核未通过
+    private Integer singleOrProject; //代表是单项类还是项目类
+
+
+    private List<Integer> nameIds;
+    private List<Integer> orderNos;
+    private List<String> prodNames;
+    private List<Integer> singleOrProjects;
+    private List<Integer> states;
+
     private Date orderTime;
     private Date deliverTime;
     private String engName;
 
+    private String itemDeliverTimeStr;
+
     private String salor;
+    private String singleOrProjectStr;
+    private String stateStr;
+    private String itemCreateTimeStr;
 
     //item
     private Integer orderHeadId;//关联Id
@@ -40,8 +54,210 @@ public class OrderHead implements Serializable {
     private String electMateriNeeds;//电子类辅料需求
     private String installTransfBacking;//安装运输包装
     private String otherRemark;//其它说明
+    private String productName;
+    private Integer needNum;
 
+    private String shortEngName;
     private Integer itemId;
+
+    private String orderItemList;
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 10;
+    private int currentPageTotalNum;
+    private String sortMethod;
+    private String sortByName;
+
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getItemCreateTimeStr() {
+        return itemCreateTimeStr;
+    }
+
+    public void setItemCreateTimeStr(String itemCreateTimeStr) {
+        this.itemCreateTimeStr = itemCreateTimeStr;
+    }
+
+    public List<Integer> getNameIds() {
+        return nameIds;
+    }
+
+    public void setNameIds(List<Integer> nameIds) {
+        this.nameIds = nameIds;
+    }
+
+
+    public Integer getNeedNum() {
+        return needNum;
+    }
+
+    public void setNeedNum(Integer needNum) {
+        this.needNum = needNum;
+    }
+
+    public List<Integer> getOrderNos() {
+        return orderNos;
+    }
+
+    public void setOrderNos(List<Integer> orderNos) {
+        this.orderNos = orderNos;
+    }
+
+    public List<String> getProdNames() {
+        return prodNames;
+    }
+
+    public void setProdNames(List<String> prodNames) {
+        this.prodNames = prodNames;
+    }
+
+    public List<Integer> getSingleOrProjects() {
+        return singleOrProjects;
+    }
+
+    public void setSingleOrProjects(List<Integer> singleOrProjects) {
+        this.singleOrProjects = singleOrProjects;
+    }
+
+    public List<Integer> getStates() {
+        return states;
+    }
+
+    public void setStates(List<Integer> states) {
+        this.states = states;
+    }
+
+    public String getStateStr() {
+        if (this.state != null) {
+            if (this.state == 0) {
+                return "未审核";
+            } else if (this.state == 1) {
+                return "审核通过";
+            } else if (this.state == 2) {
+                return "审核不通过";
+            }
+        }
+        return stateStr;
+    }
+
+    public void setStateStr(String stateStr) {
+        this.stateStr = stateStr;
+    }
+
+    public String getSingleOrProjectStr() {
+        if (singleOrProject != null) {
+            if (this.singleOrProject == 0) {
+                return "单项订单";
+            } else if (this.singleOrProject == 1) {
+                return "项目订单";
+            }
+        }
+        return singleOrProjectStr;
+    }
+
+    public void setSingleOrProjectStr(String singleOrProjectStr) {
+        this.singleOrProjectStr = singleOrProjectStr;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPageTotalNum() {
+        if (this.currentPage != 0)
+            return (currentPage - 1) * pageSize;
+        return 0;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
+
+    public String getSortMethod() {
+        return sortMethod;
+    }
+
+    public void setSortMethod(String sortMethod) {
+        this.sortMethod = sortMethod;
+    }
+
+    public String getSortByName() {
+        return sortByName;
+    }
+
+    public void setSortByName(String sortByName) {
+        this.sortByName = sortByName;
+    }
+
+    public String getItemDeliverTimeStr() {
+        return itemDeliverTimeStr;
+    }
+
+    public void setItemDeliverTimeStr(String itemDeliverTimeStr) {
+        this.itemDeliverTimeStr = itemDeliverTimeStr;
+    }
+
+    public String getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(String orderItemList) {
+        this.orderItemList = orderItemList;
+    }
+
+    public String getShortEngName() {
+        return shortEngName;
+    }
+
+    public void setShortEngName(String shortEngName) {
+        this.shortEngName = shortEngName;
+    }
 
     public Integer getItemId() {
         return itemId;
@@ -203,12 +419,12 @@ public class OrderHead implements Serializable {
         this.orderNo = orderNo;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getProductTotalName() {
+        return productTotalName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setProductTotalName(String productTotalName) {
+        this.productTotalName = productTotalName;
     }
 
     public String getOrderTimeStr() {
@@ -219,19 +435,11 @@ public class OrderHead implements Serializable {
         this.orderTimeStr = orderTimeStr;
     }
 
-    public String getDeliverTimeStr() {
-        return deliverTimeStr;
-    }
-
-    public void setDeliverTimeStr(String deliverTimeStr) {
-        this.deliverTimeStr = deliverTimeStr;
-    }
-
-    public String getOrderSetNum() {
+    public Integer getOrderSetNum() {
         return orderSetNum;
     }
 
-    public void setOrderSetNum(String orderSetNum) {
+    public void setOrderSetNum(Integer orderSetNum) {
         this.orderSetNum = orderSetNum;
     }
 }

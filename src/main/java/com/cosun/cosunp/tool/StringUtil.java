@@ -17,6 +17,32 @@ import java.util.regex.Pattern;
 public class StringUtil {
 
 
+    public static String increateFinishiNoByOrldFinishiNo(String oldnewestProdNo,String shortEngName) throws Exception {
+        //C190815ZT01
+        if(oldnewestProdNo!=null) {
+            String newestOrder;
+            String beforStr = oldnewestProdNo.substring(0, 9);
+            String afterNum = oldnewestProdNo.substring(9, oldnewestProdNo.length());
+            Integer num = Integer.valueOf(afterNum);
+            num++;
+            String afterNewNum;
+            if (num < 10) {
+                afterNewNum = "0" + num;
+            } else {
+                afterNewNum = num.toString();
+            }
+            newestOrder = beforStr + afterNewNum;
+            return newestOrder;
+        }else {
+            //COSUN20190108WW01
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+            String dateStr = sDateFormat.format(new Date());
+            dateStr = dateStr.substring(2,dateStr.length());
+            String orderName = "C"+dateStr+shortEngName+"01";
+            return orderName;
+        }
+    }
+
 
     public static String increateOrderByOlderOrderNo(String oldNewestNo,String shortEngName) throws Exception {
         //COSUN2019XXXXZTXX
@@ -39,6 +65,32 @@ public class StringUtil {
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
             String orderName = "COSUN"+dateStr+shortEngName+"01";
+            return orderName;
+        }
+    }
+
+    public static String increateProdNoByOlderProductNo(String oldNewestNo,String shortEngName) throws Exception {
+        //C190822HW01
+        if(oldNewestNo!=null) {
+            String newestOrder;
+            String beforStr = oldNewestNo.substring(0, 9);
+            String afterNum = oldNewestNo.substring(9, oldNewestNo.length());
+            Integer num = Integer.valueOf(afterNum);
+            num++;
+            String afterNewNum;
+            if (num < 10) {
+                afterNewNum = "0" + num;
+            } else {
+                afterNewNum = num.toString();
+            }
+            newestOrder = beforStr + afterNewNum;
+            return newestOrder;
+        }else {
+            //C190822HW01
+            SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+            String dateStr = sDateFormat.format(new Date());
+            dateStr = dateStr.substring(2,dateStr.length());
+            String orderName = "C"+dateStr+shortEngName+"01";
             return orderName;
         }
     }

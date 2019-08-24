@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>项目类订单</title>
+    <title>订单修改</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -45,7 +45,6 @@
     var beforestr;
     var finishNoArray = [];
     $(function () {
-        $("#ordertime").val(today());
         newestFinishProudNo = $("#newFinishProudNoh").val();
         beforestr = newestFinishProudNo.substring(0, 9);
         var returnmessage = $("#returnmessage").val();
@@ -84,8 +83,10 @@
     var totalnum = 0;
 
     function confirmdatatoTable() {
+
         var errormessagediv = document.getElementById("errormessage2");
         errormessagediv.innerHTML = "";
+
         var trlen = $("#tabletbody").find("tr").length;
         var projectNum = $("#projectNum").val();
         if (trlen >= projectNum) {
@@ -101,6 +102,7 @@
             errormessagediv.style.color = "red";
             return;
         }
+
         var newFinishProudNo = $("#newFinishProudNo").val();
         if (newFinishProudNo.trim().length == 0) {
             $("#errormessage2").show();
@@ -1083,12 +1085,13 @@
             var history_income_remark = tdArr.eq(2).text();//    备注
             itemarr = {
                 "orderNo": $("#orderNo").val(),
-                "productTotalName": $("#projectName").val(),
+                "projectNum": $("#projectNum").val(),
+                "projectName": $("#projectName").val(),
                 "productName": tdArr.eq(2).text(),
                 "newFinishProudNo": tdArr.eq(3).text(),
                 "productBigType": tdArr.eq(4).text(),
                 "productMainShape": tdArr.eq(5).text(),
-                "needNum": tdArr.eq(6).text(),
+                "orderSetNum": tdArr.eq(6).text(),
                 "productSize": tdArr.eq(7).text(),
                 "edgeHightSize": tdArr.eq(8).text(),
                 "itemDeliverTimeStr": tdArr.eq(9).text(),
@@ -1103,6 +1106,138 @@
         console.log(orderItemList);
         $("#orderItemList").val(JSON.stringify(orderItemList));
         document.forms[0].submit();
+    }
+
+    function deleteOrderItemByHeadId(itemId) {
+        if (confirm("确定要删除?此操作将不可撤销.")) {
+            var trlen = $("#tabletbody").find("tr").length;
+            if (trlen == 1) {
+                alert("只剩最后一项商品明细,删掉后订单也跟着销毁!");
+            }
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+            var formData = new FormData();
+            formData.append('id', itemId);
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: "/order/deleteOrderItemByItemId",
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (msg) {
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;删除成功!";
+                    errormessagediv.style.color = "green";
+                    var data = eval(msg);//将msg化为数;
+                    var tr = "";
+                    var image01 = $("#image01");
+                    var image02 = $("#image02");
+                    var image03 = $("#image03");
+                    var image04 = $("#image04");
+                    var maxpageid = $("#maxPage");
+                    var n_currentPage = $("#n_currentPage");
+                    var inputpage = $("#_tp");
+                    image01.html("");
+                    image02.html("");
+                    image03.html("");
+                    image04.html("");
+                    var td = "";
+                    var td2 = "";
+                    var tbody = $("#tabletblody");
+                    tbody.html("");
+                    var userType;
+                    if (data != null && data != "") {
+                        $("#nodatadiv").hide();
+                        $("#showdiv").show();
+                        currentPage = data[0].currentPage; //当前页
+                        totalPage = data[0].maxPage; //总多少页
+                        totaldata = data[0].recordCount; //总共多少记录
+                        pageSize = data[0].pageSize;
+                        userType = data[0].type;
+                        maxpageid.val(totalPage);
+                        n_currentPage.val(currentPage);
+                        inputpage.val(currentPage);
+                        var eduLe;
+                        var safeLe;
+                        var otherLe;
+                        $.each(data, function (num) {
+                            tr = $("<tr id='" + data[num].id + "'></tr>");
+                            tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                            tr.append("<td>**</td>");
+                            tr.append("<td>" + isNull(data[num].productName) + "</td>");
+                            tr.append("<td>" + isNull(data[num].newFinishProudNo) + "</td>");
+                            tr.append("<td>" + isNull(data[num].productBigType) + "</td>");
+                            tr.append("<td>" + isNull(data[num].productMainShape) + "</td>");
+                            tr.append("<td>" + isNull(data[num].needNum) + "</td>");
+                            tr.append("<td>" + isNull(data[num].productSize) + "</td>");
+                            tr.append("<td>" + isNull(data[num].edgeHightSize) + "</td>");
+                            tr.append("<td>" + isNull(data[num].itemDeliverTimeStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].mainMateriAndArt) + "</td>");
+                            tr.append("<td>" + isNull(data[num].backInstallSelect) + "</td>");
+                            tr.append("<td>" + isNull(data[num].electMateriNeeds) + "</td>");
+                            tr.append("<td>" + isNull(data[num].installTransfBacking) + "</td>");
+                            tr.append("<td>" + isNull(data[num].otherRemark) + "</td>");
+                            // td = "<td>";
+                            // td += " <a class=\"btn btn-xs btn-primary\" \n" +
+                            //     "onclick=\"updateEmployeeSalary('" + data[num].empNo + "');\">编辑</a>\n" +
+                            //     "  <a class=\"btn btn-xs btn-primary\"\n" +
+                            //     " onclick=\"deleteEmployeeSalary('" + data[num].empNo + "');\">删除</a> </td>";
+                            // tr.append(td);
+                            tr.appendTo(tbody);
+                        });
+                        $("#currentpagespan").html(currentPage);
+                        $("#maxpagespan").html(totalPage);
+                        $("#recordcountspan").html(totaldata);
+                        if (currentPage > 1) {
+                            var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPriPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPriPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image01.html(imange01str);
+                        } else {
+                            image01.html("");
+                        }
+                        if (currentPage <= 1) {
+                            var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image02.html(image02str);
+                        } else {
+                            image02.html("");
+                        }
+                        if (currentPage < totalPage) {
+                            var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goPriAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                            imange03str += '<img src="/images/page/my-2.jpg" onClick="goPriMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                            image03.html(imange03str);
+                        } else {
+                            image03.html("");
+                        }
+                        if (currentPage >= totalPage) {
+                            var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                            image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                            image04.html(image04str);
+                        } else {
+                            image04.html("");
+                        }
+                    } else {
+                        $("#nodatadiv").show();
+                        $("#showdiv").hide();
+                    }
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                },
+                error: function (msg) {
+                    window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                    errormessagediv.style.color = "red";
+                }
+            });
+        }
+
     }
 
 </script>
@@ -1130,7 +1265,7 @@
                             <label>下单时间：</label>
                         </td>
                         <td>
-                            <input type="text" style="width:165px" id="ordertime" readonly>
+                            <input type="text" style="width:165px" id="ordertime" th:field="*{orderTimeStr}" readonly>
                         </td>
                         <td style="text-align: right">
                             <label>客户单号：</label>
@@ -1143,11 +1278,8 @@
                             <label>商品类别数量：</label>
                         </td>
                         <td>
-                            <input type="text"
-                                   id="projectNum"
-                                   class="form-control"
-                                   placeholder="请输入商品类别数量"
-                                   style="width:150px">
+                            <input type="text" id="projectNum" class="form-control" placeholder="请输入商品类别数量"
+                                   style="width:150px" th:field="*{orderSetNum}">
                         </td>
                         <td style="text-align: right">
                             <label>业务员：</label>
@@ -1162,28 +1294,22 @@
                             <label>项目总名称：</label>
                         </td>
                         <td colspan="1">
-                            <input type="text" id="projectName"
-                                   th:field = "*{productTotalName}"
-                                   placeholder="请输入项目总名称"
-                                   class="form-control"
-                                   style="width:165px">
+                            <input type="text" id="projectName" placeholder="请输入项目总名称" class="form-control"
+                                   style="width:165px" th:field="*{productTotalName}">
                         </td>
-                        <td style="text-align: right">
-                            <label>附件：</label>
-                        </td>
-                        <td><input type="file" name="file" multiple id="file"></td>
-                        <td style="text-align: right">
+
+                        <td style="text-align: right" colspan="3">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="openAddOrderItemDiv()">新增</a>
+                               href="javascript:void(0);" onclick="openAddOrderItemDiv()">附件操作</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="addProjectOrder()">保存</a>
+                               href="javascript:void(0);" onclick="addProjectOrder()">更新</a>
 
                             <!--<input type="button" value="查找" class="btn btn-primary">-->
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </td>
-                        <td colspan="2">
+                        <td colspan="3">
                             <div style="display: none" id="errormessage">
 
                             </div>
@@ -1219,6 +1345,38 @@
     </tr>
     </thead>
     <tbody id="tabletbody">
+    <div th:unless="${#lists.isEmpty(orderHeadList)}">
+        <div th:each="order,iterStat:${orderHeadList}" align="center">
+            <tr th:ondblclick="showAlertDivByItemId([[${order.id}]])">
+                <td align="center"
+                    th:text="${(iterStat.index+1)}+${orderHead.currentPage-1}*${orderHead.pageSize}"></td>
+                <td align="center">
+                    <a class="btn btn-xs btn-primary"
+                       th:onclick="updateOrderItemByheadId([[${order.id}]]);">编辑</a>
+                </td>
+                <td align="center" th:text="${order.productName}"></td>
+                <td align="center" th:text="${order.newFinishProudNo}"></td>
+                <td align="center" th:text="${order.productBigType}"></td>
+                <td align="center" th:text="${order.productMainShape}"></td>
+                <td align="center" th:text="${order.needNum}"></td>
+                <td align="center" th:text="${order.productSize}"></td>
+                <td align="center" th:text="${order.edgeHightSize}"></td>
+                <td align="center" th:text="${order.itemDeliverTimeStr}"></td>
+                <td align="center" th:text="${order.mainMateriAndArt}"></td>
+                <td align="center" th:text="${order.backInstallSelect}"></td>
+                <td align="center" th:text="${order.electMateriNeeds}"></td>
+                <td align="center" th:text="${order.installTransfBacking}"></td>
+                <td align="center" th:text="${order.otherRemark}"></td>
+            </tr>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(orderHeadList)}">
+        <tr>
+            <td colspan="15">
+                查无数据
+            </td>
+        </tr>
+    </div>
 
     </tbody>
     <tfoot id="s_tfoot">
