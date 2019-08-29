@@ -23,7 +23,15 @@ public class OrderHead implements Serializable {
     private String SalorNo; //业务员
     private Integer state;//0未审核  1审核通过  2审核未通过
     private Integer singleOrProject; //代表是单项类还是项目类
+    private Date headUpdateTime;
+    private Integer updateHeadTimes;//更改次数
+    private String confirmEmpNo;
+    private Date confirmTime;
 
+    private String confirmTimeStr;
+    private Date itemUpdateTime;
+    private String headUpdateTimeStr;
+    private String itemUpdateTimeStr;
 
     private List<Integer> nameIds;
     private List<Integer> orderNos;
@@ -62,6 +70,9 @@ public class OrderHead implements Serializable {
 
     private String orderItemList;
 
+
+    private String folderName;
+
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
     private int maxPage;// 最大页数
@@ -71,6 +82,78 @@ public class OrderHead implements Serializable {
     private String sortMethod;
     private String sortByName;
 
+
+    public String getConfirmEmpNo() {
+        return confirmEmpNo;
+    }
+
+    public void setConfirmEmpNo(String confirmEmpNo) {
+        this.confirmEmpNo = confirmEmpNo;
+    }
+
+    public Date getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(Date confirmTime) {
+        this.confirmTime = confirmTime;
+    }
+
+    public String getConfirmTimeStr() {
+        return confirmTimeStr;
+    }
+
+    public void setConfirmTimeStr(String confirmTimeStr) {
+        this.confirmTimeStr = confirmTimeStr;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public Integer getUpdateHeadTimes() {
+        return updateHeadTimes;
+    }
+
+    public void setUpdateHeadTimes(Integer updateHeadTimes) {
+        this.updateHeadTimes = updateHeadTimes;
+    }
+
+    public String getHeadUpdateTimeStr() {
+        return headUpdateTimeStr;
+    }
+
+    public void setHeadUpdateTimeStr(String headUpdateTimeStr) {
+        this.headUpdateTimeStr = headUpdateTimeStr;
+    }
+
+    public String getItemUpdateTimeStr() {
+        return itemUpdateTimeStr;
+    }
+
+    public void setItemUpdateTimeStr(String itemUpdateTimeStr) {
+        this.itemUpdateTimeStr = itemUpdateTimeStr;
+    }
+
+    public Date getHeadUpdateTime() {
+        return headUpdateTime;
+    }
+
+    public void setHeadUpdateTime(Date headUpdateTime) {
+        this.headUpdateTime = headUpdateTime;
+    }
+
+    public Date getItemUpdateTime() {
+        return itemUpdateTime;
+    }
+
+    public void setItemUpdateTime(Date itemUpdateTime) {
+        this.itemUpdateTime = itemUpdateTime;
+    }
 
     public String getProductName() {
         return productName;

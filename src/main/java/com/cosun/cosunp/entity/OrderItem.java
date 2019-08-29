@@ -31,11 +31,40 @@ public class OrderItem implements Serializable {
     private String productName;//品名
     private Integer needNum;//需求数量
     private Date itemCreateTime;//建单时间
+    private Date itemUpdateTime;
+    private Integer updateItemTimes;
 
+    private String productTotalName;
+
+
+    private String itemUpdateTimeStr;
     private String itemCreateTimeStr;
     private String itemDeliverTimeStr;
 
 
+    public String getProductTotalName() {
+        return productTotalName;
+    }
+
+    public void setProductTotalName(String productTotalName) {
+        this.productTotalName = productTotalName;
+    }
+
+    public Integer getUpdateItemTimes() {
+        return updateItemTimes;
+    }
+
+    public void setUpdateItemTimes(Integer updateItemTimes) {
+        this.updateItemTimes = updateItemTimes;
+    }
+
+    public String getItemUpdateTimeStr() {
+        return itemUpdateTimeStr;
+    }
+
+    public void setItemUpdateTimeStr(String itemUpdateTimeStr) {
+        this.itemUpdateTimeStr = itemUpdateTimeStr;
+    }
 
     public Date getItemCreateTime() {
         return itemCreateTime;
@@ -141,7 +170,13 @@ public class OrderItem implements Serializable {
         this.edgeHightSize = edgeHightSize;
     }
 
+    public Date getItemUpdateTime() {
+        return itemUpdateTime;
+    }
 
+    public void setItemUpdateTime(Date itemUpdateTime) {
+        this.itemUpdateTime = itemUpdateTime;
+    }
 
     public String getMainMateriAndArt() {
         return mainMateriAndArt;

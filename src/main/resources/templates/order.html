@@ -51,6 +51,11 @@
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
             errormessagediv.style.color = "green";
+        }else if (aflag == 5) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;审核状态更改成功!";
+            errormessagediv.style.color = "green";
         }
     });
 
@@ -522,6 +527,13 @@
         window.location.href = "/order/toDeleteOrderHeadItemByheadId?id=" + headId;
     }
 
+    function confirmOrderItemByheadId(obj) {
+        var tr = obj.parentNode.parentNode;
+        var orderNo = tr.cells[1].innerHTML;
+        var state = $("#stateStr"+orderNo).val();
+        window.location.href = "/order/updateStateByOrderNo?orderNo="+orderNo+"&"+"state="+state;
+    }
+
 
 </script>
 <body>
@@ -700,15 +712,21 @@
                     <td align="center" th:text="${order.orderTimeStr}"></td>
                     <td align="center" th:text="${order.orderSetNum}"></td>
                     <td align="center" th:text="${order.singleOrProjectStr}"></td>
-                    <td align="center" th:text="${order.stateStr}"></td>
+                    <!--th:text="${order.stateStr}"-->
+                    <td align="center">
+                        <select th:id="stateStr+${order.orderNo}" class="selectpicker show-tick form-control">
+                            <option th:value="0" th:selected="${order.state eq 0}">未审核</option>
+                            <option th:value="1" th:selected="${order.state eq 1}">审核通过</option>
+                            <option th:value="2" th:selected="${order.state eq 2}">审核未通过</option>
+                        </select>
+                    </td>
                     <td align="center">
                         <a class="btn btn-xs btn-primary"
                            th:onclick="updateOrderItemByheadId([[${order.id}]]);">编辑</a>
                         <a class="btn btn-xs btn-primary"
                            th:onclick="deleteOrderItemByheadId([[${order.id}]]);">删除</a>
-                        &nbsp;&nbsp;&nbsp;
-                        <input type="checkbox" name="deleteBatch" th:value="${order.id}">
-
+                        <a class="btn btn-xs btn-primary"
+                           th:onclick="confirmOrderItemByheadId(this);">审核状态保存</a>
                     </td>
                 </tr>
             </div>

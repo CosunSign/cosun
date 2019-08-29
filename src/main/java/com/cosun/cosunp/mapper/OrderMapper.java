@@ -4,6 +4,7 @@ import com.cosun.cosunp.entity.Employee;
 import com.cosun.cosunp.entity.OrderHead;
 import com.cosun.cosunp.entity.OrderItem;
 import com.cosun.cosunp.entity.OrderItemAppend;
+import com.mysql.cj.x.protobuf.MysqlxCrud;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -35,7 +36,7 @@ public interface OrderMapper {
             "\t\torderTime,\n" +
             "\t\torderSetNum,\n" +
             "\t\tSalorNo,\n" +
-            "state"+
+            "state" +
             "\t)\n" +
             "VALUES\n" +
             "\t(\n" +
@@ -141,9 +142,64 @@ public interface OrderMapper {
             "\t#{urlName})")
     void saveOrderItemAppend(OrderItemAppend orderItemAppend);
 
+    @Select("select * from orderhead where orderNo = #{orderNo} ")
+    OrderHead getOldHeadByOrderNo(String orderNo);
+
+    @Select("SELECT\n" +
+            "\tid,\n" +
+            "\torderHeadId,\n" +
+            "\tproductBigType,\n" +
+            "\tproductMainShape,\n" +
+            "\tnewFinishProudNo,\n" +
+            "\tproductSize,\n" +
+            "\tedgeHightSize,\n" +
+            "\tmainMateriAndArt,\n" +
+            "\tbackInstallSelect,\n" +
+            "\telectMateriNeeds,\n" +
+            "\tinstallTransfBacking,\n" +
+            "\totherRemark,\n" +
+            "\titemDeliverTime as itemDeliverTimeStr,\n" +
+            "\tproductName,\n" +
+            "\tneedNum,\n" +
+            "\titemCreateTime as itemCreateTimeStr,\n" +
+            "\titemUpdateTime as itemUpdateTimeStr\n" +
+            "FROM\n" +
+            "\torderitem" +
+            " where orderHeadId = #{orderHeadId} and newFinishProudNo = #{newFinishProudNo}")
+    OrderItem getOldItemByOrderIdandNewestFinishNo(OrderItem item);
+
+    @Update("update orderhead set productTotalName = #{productTotalName},orderSetNum = #{orderSetNum}," +
+            "headUpdateTime = #{headUpdateTimeStr},updateHeadTimes = #{updateHeadTimes} where orderNo = #{orderNo} ")
+    void updateOrderHeadByOrderNo(OrderHead head);
+
+    @Update("update orderitem set \n" +
+            "\tproductBigType = #{productBigType},\n" +
+            "\tproductMainShape = #{productMainShape},\n" +
+            "\tnewFinishProudNo = #{newFinishProudNo},\n" +
+            "\tproductSize = #{productSize},\n" +
+            "\tedgeHightSize = #{edgeHightSize},\n" +
+            "\tmainMateriAndArt = #{mainMateriAndArt},\n" +
+            "\tbackInstallSelect = #{backInstallSelect},\n" +
+            "\telectMateriNeeds = #{electMateriNeeds},\n" +
+            "\tinstallTransfBacking = #{installTransfBacking},\n" +
+            "\totherRemark = #{otherRemark},\n" +
+            "\titemDeliverTime = #{itemDeliverTimeStr},\n" +
+            "\tproductName = #{productName},\n" +
+            "\tneedNum = #{needNum},\n" +
+            "\titemUpdateTime = #{itemUpdateTimeStr},\n" +
+            "\tupdateItemTimes = #{updateItemTimes} \n" +
+            " where id = #{id}")
+    void updateOrderItemById(OrderItem item);
+
     @Select("select orderNo from orderhead where SalorNo = #{empNo} and orderTime >= #{startTime} " +
             "AND orderTime <= #{endTime} order by id desc limit 1 ")
     String findNewestOrderNoBySalor(String empNo, String startTime, String endTime);
+
+    @Select("select urlName from orderitemappend where orderNo = #{orderNo} ")
+    List<String> findAllUrlByOrderNo(String orderNo);
+
+    @Update("update orderhead set state = #{state},confirmEmpNo = #{confirmEmpNo},confirmTime = #{confirmTimeStr} where orderNo = #{orderNo}")
+    void updateStateByOrderNo(OrderHead orderHead);
 
     @Select("select id,orderNo from orderhead order by orderNo desc")
     List<OrderHead> findAllOrderNo();
@@ -193,11 +249,14 @@ public interface OrderMapper {
     @Delete("delete from orderhead where id = #{headId}")
     void deleAllOrderItemByHeadId(Integer headId);
 
+    @Select("select * from orderitem where id = #{itemId}")
+    OrderItem getOrderItemById(Integer itemId);
+
     @Delete("delete from orderitem where orderHeadId = #{headId}")
     void deleteAllOrderHeadById(Integer headId);
 
     @Update("update orderhead set orderSetNum = #{totalNum} where id = #{headId} ")
-    void updateOrderHeadTotalNum(Integer headId,Integer totalNum);
+    void updateOrderHeadTotalNum(Integer headId, Integer totalNum);
 
     @Delete("delete from orderhead where id = (select orderheadid from orderitem where id = #{itemId} limit 1 )")
     void deleteAllOrderHeadAndItemByItemId(Integer itemId);
@@ -216,7 +275,7 @@ public interface OrderMapper {
             "\toi.needNum,\n" +
             "\toi.productSize,\n" +
             "\toi.edgeHightSize,\n" +
-            "\toi.itemDeliverTime as itemDeliverTimeStr,\n" +
+            "\tdate_format(oi.itemDeliverTime, '%Y-%m-%d')  as itemDeliverTimeStr,\n" +
             "\toi.backInstallSelect,\n" +
             "\toi.mainMateriAndArt,\n" +
             "\toi.electMateriNeeds,\n" +

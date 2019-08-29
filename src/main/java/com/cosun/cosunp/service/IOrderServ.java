@@ -24,15 +24,23 @@ public interface IOrderServ {
 
     OrderHead getOrderHeadByHeadId(Integer id) throws Exception;
 
+    OrderItem getOrderItemById(Integer itemId) throws Exception;
+
     List<OrderHead> findAllOrderNo() throws Exception;
 
+    void updateProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo,MultipartFile[] file) throws Exception;
+
     List<String> findAllProdName() throws Exception;
+
+    List<String> findAllUrlByOrderNo(String orderNo) throws Exception;
 
     List<OrderHead> findAllOrderHead(OrderHead orderHead) throws Exception;
 
     void deleteAllOrderByHeadId(Integer headId) throws Exception;
 
     int findAllOrderHeadCount() throws Exception;
+
+    void updateStateByOrderNo(OrderHead orderHead) throws Exception;
 
     List<OrderHead> queryOrderHeadByCondition(OrderHead orderHead) throws Exception;
 

@@ -48,6 +48,58 @@ public class OrderController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/findNextFoldersByQueryParam")
+    public void findNextFoldersByQueryParam(@RequestBody(required = true) OrderHead orderHead, HttpSession session, HttpServletResponse response) throws Exception {
+        List<String> urls = orderServ.findAllUrlByOrderNo(orderHead.getOrderNo());
+        List<String> norepeatFoldorFile = new ArrayList<String>();
+        List<String> folderOrFiles = new ArrayList<String>();
+        Integer index = null;
+        Integer lastIndex = null;
+        for (String s : urls) {
+            index = s.indexOf("\\" + orderHead.getFolderName() + "\\");//字符串第一次出现的位置
+            lastIndex = s.indexOf("\\", index + 2 + orderHead.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            if (lastIndex == -1) {
+                lastIndex = s.length();
+            }
+            if (index != -1) {
+                folderOrFiles.add(s.substring(index + 2 + orderHead.getFolderName().length(), lastIndex));
+            }
+        }
+
+        for (String s : folderOrFiles) {
+            if (!norepeatFoldorFile.contains(s)) {
+                norepeatFoldorFile.add(s);
+            }
+        }
+        List<String> names = new ArrayList<String>();
+        for (String s : norepeatFoldorFile) {
+            if (!s.contains(".")) {
+                names.add(s);
+            }
+        }
+        for (String s : norepeatFoldorFile) {
+            if (s.contains(".")) {
+                names.add(s);
+            }
+        }
+
+        String str = null;
+        if (norepeatFoldorFile != null) {
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            try {
+                str = x.writeValueAsString(names);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html;charset=UTF-8");
+                response.getWriter().print(str); //返回前端ajax
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/createsinglegoods")
     public ModelAndView toCreateSingleGoodsPage(HttpSession session) throws Exception {
         try {
@@ -78,6 +130,34 @@ public class OrderController {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateStateByOrderNo")
+    public ModelAndView updateStateByOrderNo(OrderHead orderHead1,HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = sDateFormat.format(new Date());
+        ModelAndView mav = new ModelAndView("order");
+        orderHead1.setConfirmEmpNo(userInfo.getEmpNo());
+        orderHead1.setConfirmTimeStr(dateStr);
+        orderServ.updateStateByOrderNo(orderHead1);
+        OrderHead orderHead = new OrderHead();
+        List<Employee> salorList = fileUploadAndDownServ.findAllSalorByDeptName();
+        List<OrderHead> orderNoList = orderServ.findAllOrderNo();
+        List<String> prodNameList = orderServ.findAllProdName();
+        List<OrderHead> orderList = orderServ.findAllOrderHead(orderHead);
+        int recordCount = orderServ.findAllOrderHeadCount();
+        int maxPage = recordCount % orderHead.getPageSize() == 0 ? recordCount / orderHead.getPageSize() : recordCount / orderHead.getPageSize() + 1;
+        orderHead.setMaxPage(maxPage);
+        orderHead.setRecordCount(recordCount);
+        mav.addObject("salorList", salorList);
+        mav.addObject("orderNoList", orderNoList);
+        mav.addObject("prodNameList", prodNameList);
+        mav.addObject("orderList", orderList);
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("flag", 5);
+        return mav;
     }
 
     @ResponseBody
@@ -155,13 +235,35 @@ public class OrderController {
         Integer id = orderHead.getId();
         orderHead = orderServ.getOrderHeadByHeadId(orderHead.getId());
         ModelAndView mav = new ModelAndView("updateorder");
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
         List<OrderHead> orderHeadList = orderServ.getOrderItemByHeadId(id);
         mav.addObject("orderHeadList", orderHeadList);
         mav.addObject("orderHead", orderHead);
         mav.addObject("flag", 0);
+        mav.addObject("extensionList", extensionList);
         return mav;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/showOrderItemDivByOrderItemId")
+    public void showOrderItemDivByOrderItemId(@RequestBody(required = true) OrderItem orderItem, HttpSession session, HttpServletResponse response) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        orderItem = orderServ.getOrderItemById(orderItem.getId());
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(orderItem);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/toDeleteOrderHeadItemByheadId")
@@ -284,6 +386,63 @@ public class OrderController {
         mav.addObject("flag", 0);
         return mav;
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/updateProjectOrderToMysql")
+    public ModelAndView updateProjectOrderToMysql(@RequestParam("file") MultipartFile[] file, OrderHead orderHead, HttpSession session, HttpServletRequest request) throws Exception {
+        JSONArray jsonArray = JSONArray.fromObject(orderHead.getOrderItemList());
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Object o;
+        JSONObject jsonObject2;
+        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+        OrderItem oi = null;
+        OrderHead oh = null;
+        for (int a = 0; a < jsonArray.size(); a++) {
+            oi = new OrderItem();
+            o = jsonArray.get(a);
+            jsonObject2 = JSONObject.fromObject(o);
+            oh = (OrderHead) JSONObject.toBean(jsonObject2, OrderHead.class);
+            if (oh != null) {
+                oi.setProductBigType(oh.getProductBigType()); //产品大类
+                oi.setProductMainShape(oh.getProductMainShape()); //产品主体
+                oi.setNewFinishProudNo(oh.getNewFinishProudNo()); //新成品编号
+                oi.setProductSize(oh.getProductSize()); //产品尺寸
+                oi.setEdgeHightSize(oh.getEdgeHightSize()); //边高尺寸
+                oi.setMainMateriAndArt(oh.getMainMateriAndArt());//主体材质需求及工艺
+                oi.setBackInstallSelect(oh.getBackInstallSelect());//背部安装选项
+                oi.setElectMateriNeeds(oh.getElectMateriNeeds());//电子类辅料需求
+                oi.setInstallTransfBacking(oh.getInstallTransfBacking());//安装运输包装
+                oi.setItemDeliverTimeStr(oh.getItemDeliverTimeStr());
+                oi.setOtherRemark(oh.getOtherRemark());//其它说明
+                oi.setNeedNum(oh.getNeedNum());//商品数量
+                oi.setProductName(oh.getProductName());
+                orderItemList.add(oi);
+            }
+        }
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = sDateFormat.format(new Date());
+        oh.setOrderTimeStr(dateStr);
+        oh.setState(0);
+        orderServ.updateProjectData(oh, orderItemList, userInfo, file);
+        ModelAndView mav = new ModelAndView("order");
+        List<Employee> salorList = fileUploadAndDownServ.findAllSalorByDeptName();
+        List<OrderHead> orderNoList = orderServ.findAllOrderNo();
+        List<String> prodNameList = orderServ.findAllProdName();
+        List<OrderHead> orderList = orderServ.findAllOrderHead(orderHead);
+        int recordCount = orderServ.findAllOrderHeadCount();
+        int maxPage = recordCount % orderHead.getPageSize() == 0 ? recordCount / orderHead.getPageSize() : recordCount / orderHead.getPageSize() + 1;
+        orderHead.setMaxPage(maxPage);
+        orderHead.setRecordCount(recordCount);
+        mav.addObject("salorList", salorList);
+        mav.addObject("orderNoList", orderNoList);
+        mav.addObject("prodNameList", prodNameList);
+        mav.addObject("orderList", orderList);
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("flag", 3);
+        return mav;
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/addProjectOrderToMysql")

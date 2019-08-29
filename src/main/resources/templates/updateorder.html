@@ -26,6 +26,11 @@
         font-size: 11px;
     }
 
+    #folderDiv {
+        overflow-y: scroll;
+        overflow-x: scroll;
+    }
+
     #maincontentbig {
         display: none;
         position: absolute;
@@ -44,7 +49,11 @@
     var newestFinishProudNo;
     var beforestr;
     var finishNoArray = [];
+    var extensionarrays;
+    var extensionarray;
     $(function () {
+        extensionarrays = $("#extension").val();
+        extensionarray = eval("(" + extensionarrays + ")");
         newestFinishProudNo = $("#newFinishProudNoh").val();
         beforestr = newestFinishProudNo.substring(0, 9);
         var returnmessage = $("#returnmessage").val();
@@ -83,10 +92,8 @@
     var totalnum = 0;
 
     function confirmdatatoTable() {
-
         var errormessagediv = document.getElementById("errormessage2");
         errormessagediv.innerHTML = "";
-
         var trlen = $("#tabletbody").find("tr").length;
         var projectNum = $("#projectNum").val();
         if (trlen >= projectNum) {
@@ -1108,6 +1115,7 @@
         document.forms[0].submit();
     }
 
+
     function deleteOrderItemByHeadId(itemId) {
         if (confirm("确定要删除?此操作将不可撤销.")) {
             var trlen = $("#tabletbody").find("tr").length;
@@ -1237,7 +1245,853 @@
                 }
             });
         }
+    }
 
+    function updateconfirmdatatoTable(trid) {
+        var errormessagediv = document.getElementById("errormessage2");
+        errormessagediv.innerHTML = "";
+        var projectNum = $("#projectNum").val();
+        var productName = $("#productName").val();
+        if (productName.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "品名不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var newFinishProudNo = $("#newFinishProudNo").val();
+        if (newFinishProudNo.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "新成品编号不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var productBigType = $("#productBigType").val();
+        if (productBigType == null) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请选择产品大类!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var productMainShape = $("#productMainShape").val();
+        if (productMainShape == null) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请选择产品主体!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var orderSetNum = $("#orderSetNum").val();
+        if (orderSetNum.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请输入需求数量!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var productSize = $("#productSize").val();
+        if (productSize.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请输入产品尺寸!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var edgeHightSize = $("#edgeHightSize").val();
+        if (edgeHightSize.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请输入边高尺寸!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var deliverdate = $("#deliverdate").val();
+        if (deliverdate.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请输入交货时间!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var backInstallSelect = $("#backInstallSelect").val();
+        if (backInstallSelect.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "请选择背部安装选项!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+        var mainMateriAndArt = $("#maintotalremark").html();
+        if (mainMateriAndArt.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "主体材质需求及其工艺不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var electMateriNeeds = $("#electmateremark").html();
+        if (electMateriNeeds.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "电子类辅料需求不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var installTransfBacking = $("#anzhuangtransfbackingremark").html();
+        if (installTransfBacking.trim().length == 0) {
+            $("#errormessage2").show();
+            errormessagediv.innerHTML = "安装/运输/包装不能为空!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        $("#maincontentbig").hide();
+        document.getElementById("coverbehidepage").style.display = "none";
+        window.parent.document.getElementById('coverbehidepageLeft').style.display = "none";
+        window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
+
+        $("#" + trid).children().eq(2).text($("#productName").val().trim());
+        $("#" + trid).children().eq(3).text($("#newFinishProudNo").val().trim());
+        $("#" + trid).children().eq(4).text($("#productBigType").val().trim());
+        $("#" + trid).children().eq(5).text($("#productMainShape").val().trim());
+        $("#" + trid).children().eq(6).text($("#orderSetNum").val().trim());
+        $("#" + trid).children().eq(7).text($("#productSize").val().trim());
+        $("#" + trid).children().eq(8).text($("#edgeHightSize").val().trim());
+        $("#" + trid).children().eq(9).text($("#deliverdate").val().trim());
+        $("#" + trid).children().eq(10).text($("#maintotalremark").html().trim());
+        $("#" + trid).children().eq(11).text($("#backInstallSelect").val().trim());
+        $("#" + trid).children().eq(12).text($("#electmateremark").html().trim());
+        $("#" + trid).children().eq(13).text($("#anzhuangtransfbackingremark").html().trim());
+        $("#" + trid).children().eq(14).text($("#otherRemark").val().trim());
+        // var tabletbody = $("#tabletbody");
+        // var tr = $("<tr></tr>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + ++totalnum + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\"><a class=\"btn btn-xs btn-primary\" onclick=\"updateOrderItem(this);\">编辑</a>" +
+        //     "&nbsp;&nbsp;&nbsp;<a class=\"btn btn-xs btn-primary\" onclick=\"deleteOrderItem(this);\">删除</a></td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#productName").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#newFinishProudNo").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#productBigType").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#productMainShape").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#orderSetNum").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#productSize").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#edgeHightSize").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell; vertical-align:middle\">" + $("#deliverdate").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell;text-align: left;vertical-align:middle\">" + $("#mainmateria").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell;vertical-align:middle\">" + $("#backInstallSelect").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell;text-align: left;vertical-align:middle\">" + $("#electmateri").val().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell;text-align: left;vertical-align:middle\">" + $("#anzhuangtransfbackingremark").html().trim() + "</td>");
+        // tr.append("<td style=\"display:table-cell;vertical-align:middle\">" + $("#otherRemark").val().trim() + "</td>");
+        // tr.appendTo(tabletbody);
+        // $("#totalnum").html("总共有" + totalnum + "个商品");
+        //
+        // finishNoArray.push(newestFinishProudNo);
+        //
+        // beforestr = newestFinishProudNo.substring(0, 9);
+        // var aftersplit = newestFinishProudNo.substring(9, 11);
+        // aftersplit = parseInt(aftersplit) + 1;
+        // if (aftersplit < 10) {
+        //     aftersplit = "0" + aftersplit;
+        // }
+        // newestFinishProudNo = beforestr + aftersplit;
+        // $("#newFinishProudNo").val(newestFinishProudNo);
+    }
+
+    function updateOrderItemByheadId(obj) {
+        var tr = obj.parentNode.parentNode;
+        var trid = tr.id;
+        $("#confirmdatatoTable").removeAttr("onclick");
+        $("#confirmdatatoTable").attr("onclick", "updateconfirmdatatoTable('" + trid + "');");
+        $("#newFinishProudNo").attr("readonly", true);
+        $("#newFinishProudNo").removeAttr("onblur");
+        updatenow = true;
+        document.getElementById("alertdiv").reset()
+        document.getElementById("coverbehidepage").style.display = "block";
+        window.parent.document.getElementById('coverbehidepageLeft').style.display = "block";
+        window.parent.document.getElementById('coverbehidepageTop').style.display = "block";
+        $("#maincontentbig").show();
+        $("#needcheck").prop("checked", false);
+        $("#needloushuikong").prop("checked", false);
+        $("#standarddrawing").prop("checked", false);
+        $("#plusjiexiantu").prop("checked", false);
+        var tdvalue = tr.cells[2].innerText;
+        $("#productName").val(tdvalue);
+        tdvalue = tr.cells[3].innerText;
+        $("#newFinishProudNo").val(tdvalue);
+        tdvalue = tr.cells[4].innerText;
+        $("#productBigType").val(tdvalue);
+        tdvalue = tr.cells[5].innerText;
+        $("#productMainShape").val(tdvalue);
+        tdvalue = tr.cells[6].innerText;
+        $("#orderSetNum").val(tdvalue);
+        tdvalue = tr.cells[7].innerText;
+        $("#productSize").val(tdvalue);
+        tdvalue = tr.cells[8].innerText;
+        $("#edgeHightSize").val(tdvalue);
+        tdvalue = tr.cells[9].innerText;
+        $("#deliverdate").val(tdvalue);
+        tdvalue = tr.cells[11].innerText;
+        $("#backInstallSelect").val(tdvalue);
+        tdvalue = tr.cells[14].innerText;
+        $("#otherRemark").val(tdvalue);
+        tdvalue = tr.cells[13].innerHTML;
+        $("#anzhuangtransfbackingremark").html(tdvalue);
+        tdvalue = tr.cells[12].innerHTML;
+        $("#electmateremark").html(tdvalue);
+        tdvalue = tr.cells[10].innerHTML;
+        $("#maintotalremark").html(tdvalue);
+
+        //回显主体材质及工艺
+        //不锈钢板,镜面,#304,0.9mm,需要参照样板,;
+        // 不锈钢板2,镜面,#316,1.0mm,电镀:红色,;
+        // 铝合金板,#6061,0.7mm,电镀:红色,水镀:白色,;
+        var mainmateriandarts = $("#maintotalremark").text();
+        var mainarray = [];
+        var aftersplitbydouandfenhao = mainmateriandarts.split(",;");
+        for (var a = 0; a < aftersplitbydouandfenhao.length; a++) {
+            var aferdouhaosplit = aftersplitbydouandfenhao[a].split(",");
+            if (aferdouhaosplit[0] == "不锈钢板") {
+                $("#stainlesteel").prop("checked", true);
+                $("#surattribute").val(aferdouhaosplit[1]);
+                $("#materialattribute").val(aferdouhaosplit[2]);
+                $("#thickness").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#stainlesteelart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "不锈钢板2") {
+                $("#stainless2").prop("checked", true);
+                $("#coverattri2").val(aferdouhaosplit[1]);
+                $("#materialattri2").val(aferdouhaosplit[2]);
+                $("#thickness2").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#stainless2art").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "铝合金板") {
+                $("#aluminumalloyplate").prop("checked", true);
+                $("#marialattr3").val(aferdouhaosplit[1]);
+                $("#thickness3").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#aluminumalloyplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "铁板") {
+                $("#ironplate").prop("checked", true);
+                $("#materialattr5").val(aferdouhaosplit[1]);
+                $("#thickness5").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#ironplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "铜板") {
+                $("#copperplate").prop("checked", true);
+                $("#materialattr15").val(aferdouhaosplit[1]);
+                $("#thickness6").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#copperplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "镀锌板") {
+                $("#galvanizedsheet").prop("checked", true);
+                $("#thickness7").val(aferdouhaosplit[1]);
+                mainarray = [];
+                for (var a = 2; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#galvanizedsheetart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "电解板") {
+                $("#electplate").prop("checked", true);
+                $("#thickness8").val(aferdouhaosplit[1]);
+                mainarray = [];
+                for (var a = 2; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#electplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "铝板") {
+                $("#aluminumplate").prop("checked", true);
+                $("#thickness9").val(aferdouhaosplit[1]);
+                mainarray = [];
+                for (var a = 2; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#aluminumplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "边条") {
+                $("#strake").prop("checked", true);
+                $("#materialattr6").val(aferdouhaosplit[1]);
+                mainarray = [];
+                for (var a = 2; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#strakeart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "边条") {
+                $("#strake").prop("checked", true);
+                $("#materialattr6").val(aferdouhaosplit[1]);
+                mainarray = [];
+                for (var a = 2; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#strakeart").val(mainarray.join(",") + ",");
+            }
+
+            //不锈钢板,纱面,#316,0.9mm,需要参照样板,;亚克力板,3mm,黑白,严克力属性,填漆:白色,;
+            //不锈钢板,镜面,#304,0.9mm,抛光,喷砂,做锈,拉丝:横纹细纹拉丝,阳极氧化:白色,;
+            if (aferdouhaosplit[0] == "亚克力板") {
+                $("#acrylic").prop("checked", true);
+                $("#thick01").val(aferdouhaosplit[1]);
+                $("#colorattr").val(aferdouhaosplit[2]);
+                $("#attrdescribtion").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#acrylicart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "PC板") {
+                $("#pcplate").prop("checked", true);
+                $("#thickness02").val(aferdouhaosplit[1]);
+                $("#colorattr02").val(aferdouhaosplit[2]);
+                $("#attrdescribtion02").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#pcplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "仿大理石板") {
+                $("#marblesalb").prop("checked", true);
+                $("#thickness03").val(aferdouhaosplit[1]);
+                $("#attrdiscribtion03").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#marblesalbart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "铝塑板") {
+                $("#alucomppanel").prop("checked", true);
+                $("#thickness05").val(aferdouhaosplit[1]);
+                $("#colorattr05").val(aferdouhaosplit[2]);
+                $("#colordescribtion05").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#alucomppanelart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "PVC板") {
+                $("#pvcplate").prop("checked", true);
+                $("#thickness06").val(aferdouhaosplit[1]);
+                $("#colorattr06").val(aferdouhaosplit[2]);
+                $("#attrdescribtion06").val(aferdouhaosplit[3]);
+                mainarray = [];
+                for (var a = 4; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#pvcplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "木板") {
+                $("#moodplate").prop("checked", true);
+                $("#thickness07").val(aferdouhaosplit[1]);
+                $("#attrdescribtion07").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#moodplateart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "方通") {
+                $("#fangtong").prop("checked", true);
+                $("#materiattr").val(aferdouhaosplit[1]);
+                $("#addfangtongremark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#fangtongart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "扁通") {
+                $("#biantong").prop("checked", true);
+                $("#biantongthicness").val(aferdouhaosplit[1]);
+                $("#addbiantongremark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#biantongart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "圆管") {
+                $("#yuanguan").prop("checked", true);
+                $("#yuanguanattri").val(aferdouhaosplit[1]);
+                $("#addyuanguanremark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#yuanguanart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "角条") {
+                $("#jiaotiao").prop("checked", true);
+                $("#jiaotiaoattri").val(aferdouhaosplit[1]);
+                $("#addjiaotiaoremark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#jiaotiaoart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "圆支") {
+                $("#yuanzhi").prop("checked", true);
+                $("#yuanzhithicness").val(aferdouhaosplit[1]);
+                $("#addyuanzhiremark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#yuanzhiart").val(mainarray.join(",") + ",");
+            }
+
+            if (aferdouhaosplit[0] == "型材") {
+                $("#xingcai").prop("checked", true);
+                $("#xingcaithickness").val(aferdouhaosplit[1]);
+                $("#addxingcairemark").val(aferdouhaosplit[2]);
+                mainarray = [];
+                for (var a = 3; a < aferdouhaosplit.length; a++) {
+                    mainarray.push(aferdouhaosplit[a]);
+                }
+                $("#xingcaiart").val(mainarray.join(",") + ",");
+            }
+
+        }
+
+
+        //回显电子辅料
+        //电源:UL,防水,AA;
+        //电线:UL,国标,AA;
+        //模组:UL,防水,蓝色,AA;灯带:其它,防水,黄色,AA;灯珠:UL,防水,黄色;灯条:UL,防水,红色,AA;
+        var electtotalremarkstr = $("#electmateremark").text();
+        var fenhaoaftersplitelect = electtotalremarkstr.split(";");
+        var remarkonly = [];
+        for (var a = 0; a < fenhaoaftersplitelect.length; a++) {
+            var douhaoaftersplit = fenhaoaftersplitelect[a].split(":");
+            if (douhaoaftersplit[0] == "电源") {
+                $("#dianyuan").prop("checked", true);
+                var dianyuanselectorremark = douhaoaftersplit[1].split(",");
+                $("#dianyuanrenzhen").val(dianyuanselectorremark[0]);
+                $("#dianyuanfangshui").val(dianyuanselectorremark[1]);
+                remarkonly = [];
+                if (dianyuanselectorremark.length > 2) {
+                    for (var b = 2; b < dianyuanselectorremark.length; b++) {
+                        remarkonly.push(dianyuanselectorremark[b]);
+                    }
+                    $("#dianyuanplusremark").val(remarkonly.join(","));
+                }
+            }
+
+            if (douhaoaftersplit[0] == "电线") {
+                $("#dianxian").prop("checked", true);
+                var dianxianselectorremark = douhaoaftersplit[1].split(",");
+                $("#dianxianrenzheng").val(dianxianselectorremark[0]);
+                $("#dianxianbiaozhun").val(dianxianselectorremark[1]);
+                remarkonly = [];
+                if (dianxianselectorremark.length > 2) {
+                    for (var b = 2; b < dianxianselectorremark.length; b++) {
+                        remarkonly.push(dianxianselectorremark[b]);
+                    }
+                    $("#dianxianplusremark").val(remarkonly.join(","));
+                }
+            }
+
+            if (douhaoaftersplit[0] == "模组") {
+                $("#mozu").prop("checked", true);
+                var dianxianselectorremark = douhaoaftersplit[1].split(",");
+                $("#mozurenzheng").val(dianxianselectorremark[0]);
+                $("#mozufuangshui").val(dianxianselectorremark[1]);
+                $("#mozecolor").val(dianxianselectorremark[2]);
+                remarkonly = [];
+                if (dianxianselectorremark.length > 3) {
+                    for (var b = 3; b < dianxianselectorremark.length; b++) {
+                        remarkonly.push(dianxianselectorremark[b]);
+                    }
+                    $("#mozuplusremark").val(remarkonly.join(","));
+                }
+            }
+
+            if (douhaoaftersplit[0] == "灯带") {
+                $("#dendai").prop("checked", true);
+                var dianxianselectorremark = douhaoaftersplit[1].split(",");
+                $("#dendairenzheng").val(dianxianselectorremark[0]);
+                $("#dendaifangshui").val(dianxianselectorremark[1]);
+                $("#dendaicolor").val(dianxianselectorremark[2]);
+                remarkonly = [];
+                if (dianxianselectorremark.length > 3) {
+                    for (var b = 3; b < dianxianselectorremark.length; b++) {
+                        remarkonly.push(dianxianselectorremark[b]);
+                    }
+                    $("#dendaiplusremark").val(remarkonly.join(","));
+                }
+            }
+
+            if (douhaoaftersplit[0] == "灯珠") {
+                $("#zhengzhu").prop("checked", true);
+                var dianxianselectorremark = douhaoaftersplit[1].split(",");
+                $("#zhengzhurenzheng").val(dianxianselectorremark[0]);
+                $("#zhengzhufangshui").val(dianxianselectorremark[1]);
+                $("#dengzhucolor").val(dianxianselectorremark[2]);
+                remarkonly = [];
+                if (dianxianselectorremark.length > 3) {
+                    for (var b = 3; b < dianxianselectorremark.length; b++) {
+                        remarkonly.push(dianxianselectorremark[b]);
+                    }
+                    $("#dengzhuplusremark").val(remarkonly.join(","));
+                }
+            }
+
+            if (douhaoaftersplit[0] == "灯条") {
+                $("#dengtiao").prop("checked", true);
+                var dianxianselectorremark = douhaoaftersplit[1].split(",");
+                $("#dengtiaorenzheng").val(dianxianselectorremark[0]);
+                $("#dengtiaofangshui").val(dianxianselectorremark[1]);
+                $("#dengtiaocolor").val(dianxianselectorremark[2]);
+                remarkonly = [];
+                if (dianxianselectorremark.length > 3) {
+                    for (var b = 3; b < dianxianselectorremark.length; b++) {
+                        remarkonly.push(dianxianselectorremark[b]);
+                    }
+                    $("#dengtiaoplusremark").val(remarkonly.join(","));
+                }
+            }
+        }
+
+        if (douhaoaftersplit[0] == "其它需求") {
+            $("#electotherneeds").val(douhaoaftersplit[1]);
+        }
+
+        //回显 安装/运输/包装
+
+        //安装运输包装回显
+        var anzhuangtransfbackingremark = $("#anzhuangtransfbackingremark").html();
+        var aftersplitanzhuang = anzhuangtransfbackingremark.split("<br>");
+        //安装方式:室内;贴墙:贴玻璃,螺栓,AAA;配备1:1安装图纸,配备接线图
+        var anzhuangstr = aftersplitanzhuang[0];
+        var anzhuangstrsplit000 = anzhuangstr.split(";");
+        var anzhuangstrsplit = [];
+        for (var b = 0; b < anzhuangstrsplit000.length; b++) {
+            if (anzhuangstrsplit000[b].trim().length > 0) {
+                anzhuangstrsplit.push(anzhuangstrsplit000[b].trim());
+            }
+        }
+        var anzhuangstrsplit0 = anzhuangstrsplit[0];
+        var index = anzhuangstrsplit0.indexOf(":");
+        anzhuangstrsplit0 = anzhuangstrsplit0.substring(index + 1, anzhuangstrsplit0.length);
+        var anzhuangstrsplitarry = anzhuangstrsplit0.split(",");
+
+        $(":radio[name='isoutorin'][value='" + anzhuangstrsplitarry[0] + "']").prop("checked", "checked")
+        for (var i = 1; i < anzhuangstrsplitarry.length; i++) {
+            if (anzhuangstrsplitarry[i] == "需要检修") {
+                $("#needcheck").prop("checked", true);
+            }
+            if (anzhuangstrsplitarry[i] == "需要安装漏水孔") {
+                $("#needloushuikong").prop("checked", true);
+            }
+        }
+
+        var anzhuangstrsplit1 = anzhuangstrsplit[1];
+        //贴墙:贴玻璃,螺栓,AAA
+        var newArray = [];
+        var aftersplitbymaohao = anzhuangstrsplit1.split(":");
+        var aftersplitbydouhao = aftersplitbymaohao[1].split(",");
+        $(":radio[name='anzhuangfangshi'][value='" + aftersplitbymaohao[0] + "']").prop("checked", "checked");
+        if (aftersplitbymaohao[0] == "贴墙") {
+            $("#tieqiangtype").val(aftersplitbydouhao[0]);
+            $("#tieqianganzhuatype").val(aftersplitbydouhao[1]);
+            if (aftersplitbydouhao.length > 2) {
+                newArray = [];
+                for (var a = 2; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#tieqiangplusremark").val(newArray.join(","));
+            }
+        } else if (aftersplitbymaohao[0] == "离墙") {
+            $("#liqianganzhuantype").val(aftersplitbydouhao[0]);
+            if (aftersplitbydouhao.length > 1) {
+                newArray = [];
+                for (var a = 1; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#liqianganzhuantype").val(newArray.join(","));
+            }
+
+        } else if (aftersplitbymaohao[0] == "吊装") {
+            $("#diaozhuanganzhuatype").val(aftersplitbydouhao[0]);
+            if (aftersplitbydouhao.length > 1) {
+                newArray = [];
+                for (var a = 1; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#diaozhuangremark").val(newArray.join(","));
+            }
+
+        } else if (aftersplitbymaohao[0] == "侧装") {
+            $("#cezhuangtype").val(aftersplitbydouhao[0]);
+            if (aftersplitbydouhao.length > 1) {
+                newArray = [];
+                for (var a = 1; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#cezhuangplusremark").val(newArray.join(","));
+            }
+        } else if (aftersplitbymaohao[0] == "立装") {
+            $("#lizhuangtype").val(aftersplitbydouhao[0]);
+            if (aftersplitbydouhao.length > 1) {
+                newArray = [];
+                for (var a = 1; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#lizhuangplusremark").val(newArray.join(","));
+            }
+        } else if (aftersplitbymaohao[0] == "盒装") {
+            $("#hezhuangtype").val(aftersplitbydouhao[0]);
+            if (aftersplitbydouhao.length > 1) {
+                newArray = [];
+                for (var a = 1; a < aftersplitbydouhao.length; a++) {
+                    newArray.push(aftersplitbydouhao[a]);
+                }
+                $("#hezhuangplusremark").val(newArray.join(","));
+            }
+        } else if (aftersplitbymaohao[0] == "其它") {
+            if (aftersplitbydouhao.length > 0) {
+                $("#otheranzhuangplusremark").val(aftersplitbydouhao.join(","))
+            }
+        }
+
+        if (anzhuangstrsplit.length > 2) {
+            var anzhuangstrsplit2 = anzhuangstrsplit[2];
+            console.log(anzhuangstrsplit2);
+            var anzhuangstrsplit2array = anzhuangstrsplit2.split(",");
+            for (var i = 0; i < anzhuangstrsplit2array.length; i++) {
+                if (anzhuangstrsplit2array[i] == "配备1:1安装图纸") {
+                    $("#standarddrawing").prop("checked", true);
+                }
+                if (anzhuangstrsplit2array[i] == "配备接线图") {
+                    $("#plusjiexiantu").prop("checked", true);
+                }
+                if (anzhuangstrsplit2array[i].indexOf("其它说明:") >= 0) {
+                    var index = anzhuangstrsplit2array[i].indexOf(":");
+                    var remarkOnly = anzhuangstrsplit2array[i].substring(index + 1, anzhuangstrsplit2array[i].length);
+                    $("#anzhuangotherremark").val(remarkOnly);
+                }
+            }
+        }
+
+
+        if (anzhuangstrsplit.length > 3) {
+            var anzhuangstrsplit3 = anzhuangstrsplit[3];
+            var index = anzhuangstrsplit3.indexOf(":");
+            var remarkOnly = anzhuangstrsplit3.substring(index + 1, anzhuangstrsplit3.length);
+            $("#anzhuangotherremark").val(remarkOnly);
+        }
+
+        // 运输方式:快递,需要标签,其它说明:xxx
+        var yunshutype = aftersplitanzhuang[1];
+        var yunshutypesplit = yunshutype.split(",");
+        var index = yunshutypesplit[0].indexOf(":");
+        var yunshumethod = yunshutypesplit[0].substring(index + 1, yunshutypesplit[0].length);
+        $("#transftertype").val(yunshumethod);
+
+
+        if (yunshutypesplit.length > 1) {
+            if (yunshutypesplit[1].trim() == "需要标签") {
+                $("#needtag").prop("checked", true);
+            }
+            if (yunshutypesplit[1].trim().indexOf("其它说明:") >= 0) {
+                var index = yunshutypesplit[1].indexOf(":");
+                var remarkOnly = yunshutypesplit[1].substring(index + 1, yunshutypesplit[1].length);
+                $("#transfotherremark").val(remarkOnly);
+            }
+        }
+
+        if (yunshutypesplit.length > 2) {
+            if (yunshutypesplit[2].trim().indexOf("其它说明:") >= 0) {
+                if (yunshutypesplit.length > 3) {
+                    newArray = [];
+                    for (var a = 2; a < yunshutypesplit.length; a++) {
+                        newArray.push(yunshutypesplit[a]);
+                    }
+                }
+                yunshutypesplit[2] = newArray.join(",")
+                var index = yunshutypesplit[2].indexOf(":");
+                var remarkOnly = yunshutypesplit[2].substring(index + 1, yunshutypesplit[2].length);
+                $("#transfotherremark").val(remarkOnly);
+            }
+        }
+
+
+        // 包装方式:木箱,
+        var packtype = aftersplitanzhuang[2];
+        var packtypesplit = packtype.split(",");
+        var indexa = packtypesplit[0].indexOf(":");
+        var packmethod = packtypesplit[0].substring(indexa + 1, packtypesplit[0].length);
+        $("#packingtype").val(packmethod);
+
+
+        if (packtypesplit.length > 1) {
+            if (packtypesplit[1].trim().indexOf("其它说明:") >= 0) {
+                if (packtypesplit.length > 2) {
+                    newArray = [];
+                    for (var a = 1; a < packtypesplit.length; a++) {
+                        newArray.push(packtypesplit[a]);
+                    }
+                }
+                packtypesplit[1] = newArray.join(",");
+                var index = packtypesplit[1].indexOf(":");
+                var remarkOnly = packtypesplit[1].substring(index + 1, packtypesplit[1].length);
+                $("#packingotherremark").val(remarkOnly);
+            }
+        }
+    }
+
+
+    function updateProjectOrder() {
+        var errormessagediv = document.getElementById("errormessage");
+        errormessagediv.innerHTML = "";
+        var trlen = $("#tabletbody").find("tr").length;
+        var projectNum = $("#projectNum").val();
+        if (trlen == 0) {
+            $("#errormessage").show();
+            errormessagediv.innerHTML = "请添加项目订单的商品后再更新!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        if (projectNum != trlen) {
+            $("#errormessage").show();
+            errormessagediv.innerHTML = "您更新项目订单的商品数量与您填写商品类别数量不一致!";
+            errormessagediv.style.color = "red";
+            return;
+        }
+
+        var orderItemList = [];
+        var itemarr
+
+        $("#tabletbody").find("tr").each(function () {
+            var tdArr = $(this).children();
+            var history_income_type = tdArr.eq(0).text();//收入类别
+            var history_income_money = tdArr.eq(1).text();//收入金额
+            var history_income_remark = tdArr.eq(2).text();//备注
+            itemarr = {
+                "productTotalName": $("#projectName").val(),
+                "orderNo": $("#orderNo").val(),
+                "projectNum": $("#projectNum").val(),
+                "projectName": $("#projectName").val(),
+                "productName": tdArr.eq(2).text(),
+                "newFinishProudNo": tdArr.eq(3).text(),
+                "productBigType": tdArr.eq(4).text(),
+                "productMainShape": tdArr.eq(5).text(),
+                "needNum": tdArr.eq(6).text(),
+                "productSize": tdArr.eq(7).text(),
+                "edgeHightSize": tdArr.eq(8).text(),
+                "itemDeliverTimeStr": tdArr.eq(9).text(),
+                "backInstallSelect": tdArr.eq(11).text(),
+                "mainMateriAndArt": tdArr.eq(10).text(),
+                "electMateriNeeds": tdArr.eq(12).text(),
+                "installTransfBacking": tdArr.eq(13).text(),
+                "otherRemark": tdArr.eq(14).text()
+            };
+            orderItemList.push(itemarr);
+        });
+        console.log(orderItemList);
+        $("#orderItemList").val(JSON.stringify(orderItemList));
+        document.forms[0].submit();
+    }
+
+    function showFileByFileName(orderNo) {
+    }
+
+    function shownextfolderorfilesByAppen(orderNo) {
+        var folderOrFileHtml = "";
+        window.parent.document.getElementById('coverbehidepage').style.display = "block";
+        var jsonarray = {
+            "folderName": orderNo,//当前文件夹名
+            "orderNo": orderNo
+        };
+        var data = JSON.stringify(jsonarray);
+        $.ajax({
+            data: data,
+            type: "POST",
+            contentType: "application/json",//上传内容格式为json结构
+            url: "/order/findNextFoldersByQueryParam",
+            success: function (msg) {
+                var data = eval(msg); //data为URLS
+                $.each(data, function (num) {
+                    var ind = data[num].lastIndexOf('.');
+                    var extenName = data[num].substr(ind + 1, data[num].length);
+                    if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
+                        $("#folderName").val(data[num]);
+                        folderOrFileHtml += " <li><img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\"\n" +
+                            "                            style=\"width: 30px; height: 30px; vertical-align: middle\"\n" +
+                            "                            onclick=\"showupdateDiv(" + data[num] + ")\"/>\n" +
+                            "                                <img src=\"/images/icon/Folder.png\" " +
+                            "  ondblclick=\"shownextfolderorfilesByAppen(" + data[num] + ")\" align=\"middle\" border=\"0\"\n" +
+                            "                           style=\"width:\n" +
+                            "                            30px; height: 30px; vertical-align: middle\"/>\n" +
+                            "                            <input type=\"text\" readonly id=\"foldericon\" style=\"border:none;width:300px\"\n" +
+                            "                            value=\"" + data[num] + "\"></li>"
+
+                    } else {//代表为文件
+                        if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                            folderOrFileHtml += " <li><img src=\"/images/icon/big.png\" align=\"middle\" border=\"0\"\n" +
+                                "                            style=\"width: 30px; height: 30px; vertical-align: middle\"\n" +
+                                "                            onclick=\"showFileByFileName('" + data[num] + "')\"/>\n" +
+                                "                                <img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"\n" +
+                                "                           style=\"width:\n" +
+                                "                            30px; height: 30px; vertical-align: middle\"/>\n" +
+                                "                            <input type=\"text\" readonly id=\"foldericon\" style=\"border:none;width:300px\"\n" +
+                                "                            value=\"" + data[num] + "\"></li>";
+                        }
+                    }
+                });
+                $("#folderDiv").html(folderOrFileHtml);
+            },
+            error: function (msg) {
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                alert("查询失败");
+            }
+        });
+        window.parent.document.getElementById('coverbehidepage').style.display = "none";
     }
 
 </script>
@@ -1248,7 +2102,9 @@
 <input type="hidden" id="tipsforwhere" value="">
 <input type="hidden" id="flag" th:value="${flag}">
 <input type="hidden" id="returnmessage" th:value="${returnmessage}">
-<form th:object="${orderHead}" th:action="@{/order/addProjectOrderToMysql}" th:method="post"
+<input type="hidden" th:value="${extensionList}" id="extension">
+<input type="hidden" id="folderName">
+<form th:object="${orderHead}" th:action="@{/order/updateProjectOrderToMysql}" th:method="post"
       enctype="multipart/form-data">
     <input type="hidden" th:field="*{mainMateriAndArt}" id="mainmateria">
     <input type="hidden" th:field="*{installTransfBacking}" id="installtransf">
@@ -1260,26 +2116,48 @@
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
                 <table style="width: 100%">
-                    <tr>
-                        <td style="text-align: right">
+                    <tr style="height: 50px">
+                        <td style="text-align: right;width: 5% ">
                             <label>下单时间：</label>
                         </td>
-                        <td>
+                        <td style="width: 13%">
                             <input type="text" style="width:165px" id="ordertime" th:field="*{orderTimeStr}" readonly>
                         </td>
-                        <td style="text-align: right">
+                        <td style="text-align: right;width:5%">
                             <label>客户单号：</label>
                         </td>
-                        <td>
+                        <td style="width:13%">
                             <input type="text" style="width:165px" th:field="*{orderNo}" readonly>
                         </td>
 
-                        <td style="text-align: right">
+                        <td style="text-align: right;width:5%">
                             <label>商品类别数量：</label>
                         </td>
-                        <td>
+                        <td style="width: 13%">
                             <input type="text" id="projectNum" class="form-control" placeholder="请输入商品类别数量"
                                    style="width:150px" th:field="*{orderSetNum}">
+                        </td>
+
+                        <td rowspan="2" colspan="2">
+                            <div id="folderDiv">
+                                <img src="/images/icon/blank.png" align="middle" border="0"
+                                     style="width: 30px; height: 30px; vertical-align: middle"/>
+                                <img src="/images/icon/Folder.png" align="middle" border="0"
+                                     th:ondblclick="shownextfolderorfilesByAppen([[*{orderNo}]])" style="width:
+                                30px; height: 30px; vertical-align: middle"/>
+                                <input type="text" readonly id="foldericon" style="border:none;width:300px"
+                                       th:value="*{orderNo}">
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr style="height: 50px">
+                        <td style="text-align: right">
+                            <label>项目总名称：</label>
+                        </td>
+                        <td colspan="1">
+                            <input type="text" id="projectName" placeholder="请输入项目总名称" class="form-control"
+                                   style="width:165px" th:field="*{productTotalName}">
                         </td>
                         <td style="text-align: right">
                             <label>业务员：</label>
@@ -1288,32 +2166,23 @@
                             <input type="text" style="width:165px" th:field="*{salor}" readonly>
                         </td>
 
-                    </tr>
-                    <tr>
-                        <td style="text-align: right">
-                            <label>项目总名称：</label>
+                        <td style="text-align: right" colspan="1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-primary"
+                               href="javascript:void(0);" onclick="updateProjectOrder()">更新</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-primary"
+                               href="javascript:void(0);" onclick="updateProjectOrderAppen()">附件更改</a>
                         </td>
                         <td colspan="1">
-                            <input type="text" id="projectName" placeholder="请输入项目总名称" class="form-control"
-                                   style="width:165px" th:field="*{productTotalName}">
-                        </td>
-
-                        <td style="text-align: right" colspan="3">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="openAddOrderItemDiv()">附件操作</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="addProjectOrder()">更新</a>
-
-                            <!--<input type="button" value="查找" class="btn btn-primary">-->
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </td>
-                        <td colspan="3">
                             <div style="display: none" id="errormessage">
 
                             </div>
                         </td>
+                        <td>
+
+                        </td>
+
                     </tr>
                 </table>
             </div>
@@ -1347,12 +2216,12 @@
     <tbody id="tabletbody">
     <div th:unless="${#lists.isEmpty(orderHeadList)}">
         <div th:each="order,iterStat:${orderHeadList}" align="center">
-            <tr th:ondblclick="showAlertDivByItemId([[${order.id}]])">
+            <tr th:id="${order.newFinishProudNo}">
                 <td align="center"
                     th:text="${(iterStat.index+1)}+${orderHead.currentPage-1}*${orderHead.pageSize}"></td>
                 <td align="center">
                     <a class="btn btn-xs btn-primary"
-                       th:onclick="updateOrderItemByheadId([[${order.id}]]);">编辑</a>
+                       th:onclick="updateOrderItemByheadId(this);">编辑</a>
                 </td>
                 <td align="center" th:text="${order.productName}"></td>
                 <td align="center" th:text="${order.newFinishProudNo}"></td>
@@ -1509,7 +2378,7 @@
                     <textarea rows="8" cols="30" id="otherRemark" align="center"></textarea>
                 </p>
                 <br>
-                <input type="button" onclick="confirmdatatoTable()" value="确认">&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="button" id="confirmdatatoTable" onclick="confirmdatatoTable()" value="确认">&nbsp;&nbsp;&nbsp;&nbsp;
                 <input type="button" value="取消" onclick="closeprojectDiv()">
                 </br>
                 <div id="errormessage2" style="display: none"></div>

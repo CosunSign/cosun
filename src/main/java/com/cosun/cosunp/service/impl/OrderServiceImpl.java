@@ -55,6 +55,10 @@ public class OrderServiceImpl implements IOrderServ {
         orderMapper.deleteAllOrderHeadById(headId);
     }
 
+    public OrderItem getOrderItemById(Integer itemId) throws Exception {
+        return orderMapper.getOrderItemById(itemId);
+    }
+
     public int deleteOrderItemByItemId(Integer id) throws Exception {
         List<OrderItem> ois = orderMapper.getAllOrderItemBy(id);
         if (ois.size() > 1) {
@@ -102,8 +106,69 @@ public class OrderServiceImpl implements IOrderServ {
                 }
             }
         }
+    }
+
+    public void updateProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo, MultipartFile[] files) throws Exception {
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = sDateFormat.format(new Date());
+        orderHead.setOrderSetNum(ois.size());
+        OrderHead oldHead = orderMapper.getOldHeadByOrderNo(orderHead.getOrderNo());
+        if (!oldHead.getProductTotalName().equals(orderHead.getProductTotalName()) || oldHead.getOrderSetNum() != orderHead.getOrderSetNum()) {
+            orderHead.setHeadUpdateTimeStr(dateStr);
+            orderHead.setUpdateHeadTimes((oldHead.getUpdateHeadTimes() == null ? 0 : oldHead.getUpdateHeadTimes()) + 1);
+            orderMapper.updateOrderHeadByOrderNo(orderHead);
+        }
+
+        OrderItem oldItem;
+        OrderItem newItem;
+        for (int a = 0; a < ois.size(); a++) {
+            newItem = ois.get(a);
+            ois.get(a).setOrderHeadId(oldHead.getId());
+            oldItem = orderMapper.getOldItemByOrderIdandNewestFinishNo(ois.get(a));
+            if (!oldItem.getProductName().equals(newItem.getProductName()) || !oldItem.getNewFinishProudNo().equals(newItem.getNewFinishProudNo()) ||
+                    !oldItem.getProductBigType().equals(newItem.getProductBigType()) || !oldItem.getProductMainShape().equals(newItem.getProductMainShape()) ||
+                    oldItem.getNeedNum() != newItem.getNeedNum() || !oldItem.getProductSize().equals(newItem.getProductSize()) ||
+                    !oldItem.getEdgeHightSize().equals(newItem.getEdgeHightSize()) || !oldItem.getItemDeliverTimeStr().equals(newItem.getItemDeliverTimeStr()) ||
+                    !oldItem.getBackInstallSelect().equals(newItem.getBackInstallSelect()) || !oldItem.getMainMateriAndArt().equals(newItem.getMainMateriAndArt()) ||
+                    !oldItem.getElectMateriNeeds().equals(newItem.getElectMateriNeeds()) || !oldItem.getInstallTransfBacking().equals(newItem.getInstallTransfBacking()) ||
+                    !oldItem.getOtherRemark().equals(newItem.getOtherRemark())) {
+                ois.get(a).setItemUpdateTimeStr(dateStr);
+                ois.get(a).setUpdateItemTimes((oldItem.getUpdateItemTimes() == null ? 0 : oldItem.getUpdateItemTimes()) + 1);
+                ois.get(a).setId(oldItem.getId());
+                orderMapper.updateOrderItemById(ois.get(a));
+            }
+        }
 
 
+        String urlName;
+        String fileName;
+        //存储订单所带的附件
+        if (files.length > 0) {
+            OrderItemAppend oia;
+            for (MultipartFile file : files) {
+                if (file.getOriginalFilename().trim().length() > 0) {
+                    FileUtil.uploadOrderAppend(finalDirPath, orderHead.getEngName(), orderHead.getOrderNo(), file);
+                    fileName = file.getOriginalFilename();
+                    urlName = "order" + "\\" + orderHead.getEngName() + "\\" + orderHead.getOrderNo() + "\\" + fileName;
+                    if (urlName != null) {
+                        oia = new OrderItemAppend();
+                        oia.setFileName(fileName);
+                        oia.setOrderNo(orderHead.getOrderNo());
+                        oia.setUrlName(urlName);
+                        oia.setHeadId(orderHead.getId());
+                        orderMapper.saveOrderItemAppend(oia);
+                    }
+                }
+            }
+        }
+    }
+
+    public List<String> findAllUrlByOrderNo(String orderNo) throws Exception {
+        return orderMapper.findAllUrlByOrderNo(orderNo);
+    }
+
+    public void updateStateByOrderNo(OrderHead orderHead) throws Exception {
+        orderMapper.updateStateByOrderNo(orderHead);
     }
 
     public String findNewestOrderNoBySalor(String empNo, String startTime, String endTime) throws Exception {
