@@ -418,7 +418,6 @@ public class RulesController {
                 rules.setUploaderId(userInfo.getuId());
                 boolean isDocorDocx = rulesServ.saveRuleByRuleBean(file, rules);
 
-
                 DownloadView views = new DownloadView();
                 session.setAttribute("account", userInfo);
                 views.setFullName(userInfo.getFullName());

@@ -1,9 +1,6 @@
 package com.cosun.cosunp.service;
 
-import com.cosun.cosunp.entity.Employee;
-import com.cosun.cosunp.entity.OrderHead;
-import com.cosun.cosunp.entity.OrderItem;
-import com.cosun.cosunp.entity.UserInfo;
+import com.cosun.cosunp.entity.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,13 +11,29 @@ public interface IOrderServ {
 
     void addOrderHeadAndItemByBean(OrderHead orderHead, MultipartFile[] files) throws Exception;
 
-    String findNewestOrderNoBySalor(String empNo,String startTime,String endTime) throws Exception;
+    String findNewestOrderNoBySalor(String empNo, String startTime, String endTime) throws Exception;
 
-    String saveProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo,MultipartFile[] file) throws Exception;
+    OrderHead getOrderHeadByOrderNo(String orderNo) throws Exception;
 
-    String findNewestFinishProdNoByOldFinishProdNo(String empNo,String startTime,String endTime) throws Exception;
+    void deleteOrderItemAppendByItemAppendIds(Integer[] ids, String orderNo) throws Exception;
+
+    List<OrderItemAppend> findAllItemAppendByOrderNo(Integer headId) throws Exception;
+
+    void addOrderAppendByOrderNo(MultipartFile[] file,String orderNo) throws Exception;
+
+    List<String> findAllFileNameByOrderNo(String orderNo) throws Exception;
+
+    List<OrderItemAppend> findAllItemAppendByOrderNoReal(String orderNo) throws Exception;
+
+    String saveProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo, MultipartFile[] file) throws Exception;
+
+    String findNewestFinishProdNoByOldFinishProdNo(String empNo, String startTime, String endTime) throws Exception;
 
     List<OrderHead> getOrderItemByHeadId(Integer id) throws Exception;
+
+    String fillDataToModuleExcelByOrderId(Integer id) throws Exception;
+
+    String transferExcelToPDF(String excelUrlName) throws Exception;
 
     OrderHead getOrderHeadByHeadId(Integer id) throws Exception;
 
@@ -28,7 +41,7 @@ public interface IOrderServ {
 
     List<OrderHead> findAllOrderNo() throws Exception;
 
-    void updateProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo,MultipartFile[] file) throws Exception;
+    void updateProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo, MultipartFile[] file) throws Exception;
 
     List<String> findAllProdName() throws Exception;
 

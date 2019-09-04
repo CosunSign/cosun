@@ -64,6 +64,37 @@ public class WordToPDF {
     }
 
 
+
+    //PDF流写入服务器硬盘
+    // 将word格式的文件转换为pdf格式
+    public static void WordToPDFOrder(String excelName, String pdfName, String descDir) throws IOException {
+        // 源文件目录
+        File inputFile = new File(descDir + "linshi/" + excelName);
+        // 输出文件目录cc
+        File outputFile = new File(descDir+"linshi/"+pdfName);
+        if (!outputFile.getParentFile().exists()) {
+            outputFile.getParentFile().mkdir();
+        }
+        // 调用openoffice服务线程
+        /** 我把openOffice下载到了 C:/Program Files (x86)/下  ,下面的写法自己修改编辑就可以**/
+        //String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
+       // String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard";
+       // String command = "C:/Program Files (x86)/OpenOffice 4/program/soffice -headless -accept=\"socket,host=127.0.0.1,port=8100;urp;\" -nofirststartwizard";
+       // Process p = Runtime.getRuntime().exec(command);
+        // 连接openoffi ce服务
+        //OpenOfficeConnection connection = new SocketOpenOfficeConnection("0.0.0.0", 8100);
+        OpenOfficeConnection connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+        connection.connect();
+        // 转换
+        DocumentConverter converter = new OpenOfficeDocumentConverter(connection);
+        converter.convert(inputFile, outputFile);
+        // 关闭连接
+        connection.disconnect();
+        // 关闭进程
+       // p.destroy();
+    }
+
+
     //将PDF流输出
     public static InputStream getPdfStream(String fileType, InputStream fileInput) throws Exception {
         String command = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard";

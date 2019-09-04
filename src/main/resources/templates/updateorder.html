@@ -29,6 +29,8 @@
     #folderDiv {
         overflow-y: scroll;
         overflow-x: scroll;
+        width: 290px;
+        height: 100px;
     }
 
     #maincontentbig {
@@ -2038,6 +2040,10 @@
         document.forms[0].submit();
     }
 
+    function updateProjectOrderAppen(orderNo) {
+        window.location.href = "/order/toOrderAppendPage?orderNo=" + orderNo;
+    }
+
     function showFileByFileName(orderNo) {
     }
 
@@ -2145,7 +2151,7 @@
                                 <img src="/images/icon/Folder.png" align="middle" border="0"
                                      th:ondblclick="shownextfolderorfilesByAppen([[*{orderNo}]])" style="width:
                                 30px; height: 30px; vertical-align: middle"/>
-                                <input type="text" readonly id="foldericon" style="border:none;width:300px"
+                                <input type="text" readonly id="foldericon" style="border:none;width:200px"
                                        th:value="*{orderNo}">
 
                             </div>
@@ -2172,7 +2178,7 @@
                                href="javascript:void(0);" onclick="updateProjectOrder()">更新</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="updateProjectOrderAppen()">附件更改</a>
+                               href="javascript:void(0);" th:onclick="updateProjectOrderAppen([[*{orderNo}]])">附件更改</a>
                         </td>
                         <td colspan="1">
                             <div style="display: none" id="errormessage">

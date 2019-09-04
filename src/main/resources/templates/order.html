@@ -51,7 +51,7 @@
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
             errormessagediv.style.color = "green";
-        }else if (aflag == 5) {
+        } else if (aflag == 5) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;审核状态更改成功!";
@@ -530,8 +530,12 @@
     function confirmOrderItemByheadId(obj) {
         var tr = obj.parentNode.parentNode;
         var orderNo = tr.cells[1].innerHTML;
-        var state = $("#stateStr"+orderNo).val();
-        window.location.href = "/order/updateStateByOrderNo?orderNo="+orderNo+"&"+"state="+state;
+        var state = $("#stateStr" + orderNo).val();
+        window.location.href = "/order/updateStateByOrderNo?orderNo=" + orderNo + "&" + "state=" + state;
+    }
+
+    function transferDataToPDFFile(headId) {
+        window.open("/pdfjs/web/viewer.html?file=/order/transferDataToPDFFile?id%3D" + headId);
     }
 
 
@@ -727,6 +731,8 @@
                            th:onclick="deleteOrderItemByheadId([[${order.id}]]);">删除</a>
                         <a class="btn btn-xs btn-primary"
                            th:onclick="confirmOrderItemByheadId(this);">审核状态保存</a>
+                        <a class="btn btn-xs btn-primary"
+                           th:onclick="transferDataToPDFFile([[${order.id}]]);">PDF打印</a>
                     </td>
                 </tr>
             </div>

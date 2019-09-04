@@ -198,6 +198,24 @@ public interface OrderMapper {
     @Select("select urlName from orderitemappend where orderNo = #{orderNo} ")
     List<String> findAllUrlByOrderNo(String orderNo);
 
+    @Select("select * from orderhead where orderno = #{orderno} ")
+    OrderHead getOrderHeadByOrderNo(String orderNo);
+
+    @Select("select * from orderitemappend where id = #{id}")
+    OrderItemAppend getOrderItemAppendById(Integer id);
+
+    @Delete("delete from orderitemappend where id = #{id} ")
+    void deleteOrderItemAppendByAppendId(Integer id);
+
+    @Select("select fileName from orderitemappend where orderNo = #{orderNo} ")
+    List<String> findAllFileNameByOrderNo(String orderNo);
+
+    @Select("select * from orderitemappend where headId = #{id} order by fileName asc ")
+    List<OrderItemAppend> findAllItemAppendByOrderNo(Integer id);
+
+    @Select("select * from orderitemappend where orderNo = #{orderNo} order by fileName asc ")
+    List<OrderItemAppend> findAllItemAppendByOrderNoReal(String orderNo);
+
     @Update("update orderhead set state = #{state},confirmEmpNo = #{confirmEmpNo},confirmTime = #{confirmTimeStr} where orderNo = #{orderNo}")
     void updateStateByOrderNo(OrderHead orderHead);
 
@@ -280,6 +298,7 @@ public interface OrderMapper {
             "\toi.mainMateriAndArt,\n" +
             "\toi.electMateriNeeds,\n" +
             "\toi.installTransfBacking,\n" +
+            "\toh.productTotalName as productTotalName,\n" +
             "\toi.otherRemark\n" +
             "FROM\n" +
             "\torderhead oh\n" +
@@ -289,6 +308,7 @@ public interface OrderMapper {
             " ORDER BY\n" +
             "\toi.productName ASC")
     List<OrderHead> getOrderItemByHeadId(Integer id);
+
 
     @Select("SELECT\n" +
             "oh.singleOrProject AS singleOrProject,\n" +

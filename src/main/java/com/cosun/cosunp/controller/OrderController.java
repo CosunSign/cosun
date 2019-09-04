@@ -20,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,8 +135,48 @@ public class OrderController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/toOrderAppendPage")
+    public ModelAndView toOrderAppendPage(String orderNo, HttpSession session) throws Exception {
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        ModelAndView mav = new ModelAndView("updateorderappend");
+        OrderHead orderHead = orderServ.getOrderHeadByOrderNo(orderNo);
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        List<OrderItemAppend> orderItemAppendList = orderServ.findAllItemAppendByOrderNo(orderHead.getId());
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
+        List<String> oldFileLists = orderServ.findAllFileNameByOrderNo(orderNo);
+        JSONArray oldFileList = JSONArray.fromObject(oldFileLists.toArray());
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("extensionList", extensionList);
+        mav.addObject("flag", 0);
+        mav.addObject("orderItemAppendList", orderItemAppendList);
+        mav.addObject("oldFileList", oldFileList);
+        return mav;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteOrderItemAppendByIds")
+    public ModelAndView deleteOrderItemAppendByIds(Integer[] ids, String orderNo, HttpSession session) throws Exception {
+        ModelAndView mav = new ModelAndView("updateorderappend");
+        OrderHead orderHead = orderServ.getOrderHeadByOrderNo(orderNo);
+        orderServ.deleteOrderItemAppendByItemAppendIds(ids, orderNo);
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        List<OrderItemAppend> orderItemAppendList = orderServ.findAllItemAppendByOrderNo(orderHead.getId());
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
+        List<String> oldFileLists = orderServ.findAllFileNameByOrderNo(orderNo);
+        JSONArray oldFileList = JSONArray.fromObject(oldFileLists.toArray());
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("extensionList", extensionList);
+        mav.addObject("flag", 2);
+        mav.addObject("orderItemAppendList", orderItemAppendList);
+        mav.addObject("oldFileList", oldFileList);
+        return mav;
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/updateStateByOrderNo")
-    public ModelAndView updateStateByOrderNo(OrderHead orderHead1,HttpSession session) throws Exception {
+    public ModelAndView updateStateByOrderNo(OrderHead orderHead1, HttpSession session) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = sDateFormat.format(new Date());
@@ -443,6 +485,56 @@ public class OrderController {
         return mav;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/addOrderAppendByOrderNo")
+    public ModelAndView addOrderAppendByOrderNo(@RequestParam("file") MultipartFile[] file, OrderHead orderHead, HttpSession session, HttpServletRequest request) throws Exception {
+        ModelAndView mav = new ModelAndView("updateorderappend");
+        orderServ.addOrderAppendByOrderNo(file, orderHead.getOrderNo());
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        List<OrderItemAppend> orderItemAppendList = orderServ.findAllItemAppendByOrderNoReal(orderHead.getOrderNo());
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
+        List<String> oldFileLists = orderServ.findAllFileNameByOrderNo(orderHead.getOrderNo());
+        JSONArray oldFileList = JSONArray.fromObject(oldFileLists.toArray());
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("extensionList", extensionList);
+        mav.addObject("flag", 1);
+        mav.addObject("orderItemAppendList", orderItemAppendList);
+        mav.addObject("oldFileList", oldFileList);
+        return mav;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/transferDataToPDFFile", method = RequestMethod.GET)
+    public void transferDataToPDFFile(@RequestParam("id") Integer id, HttpServletResponse response) throws Exception {
+        //将数据填充到模板
+        String excelurl = orderServ.fillDataToModuleExcelByOrderId(id);
+        //将生成的EXCEL转换为PDF
+        String pdfurl = orderServ.transferExcelToPDF(excelurl);
+        //PDF文件地址
+        FileInputStream input = null;
+        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+            File file = new File(pdfurl);
+            if (file.exists()) {
+                byte[] data = null;
+                input = new FileInputStream(file);
+                data = new byte[input.available()];
+                input.read(data);
+                response.getOutputStream().write(data);
+            }
+        } catch (Exception e) {
+            System.out.println("pdf文件处理异常：" + e);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/addProjectOrderToMysql")
