@@ -73,6 +73,7 @@ public class OrderHead implements Serializable {
 
     private String folderName;
 
+
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
     private int maxPage;// 最大页数
@@ -81,7 +82,6 @@ public class OrderHead implements Serializable {
     private int currentPageTotalNum;
     private String sortMethod;
     private String sortByName;
-
 
     public String getConfirmEmpNo() {
         return confirmEmpNo;
@@ -225,9 +225,15 @@ public class OrderHead implements Serializable {
             if (this.state == 0) {
                 return "未审核";
             } else if (this.state == 1) {
-                return "审核通过";
+                return "审核通过/下发";
             } else if (this.state == 2) {
-                return "审核不通过";
+                return "审核未通过";
+            } else if(this.state==3) {
+                return "暂停";
+            } else if(this.state==4) {
+                return "终止";
+            }else if(this.state==5) {
+                return "完成";
             }
         }
         return stateStr;

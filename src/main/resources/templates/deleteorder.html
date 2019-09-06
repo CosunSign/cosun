@@ -1119,6 +1119,10 @@
         }
     }
 
+    function backMainPage() {
+        window.location.href = "/order/toOrderPage";
+    }
+
     function deleteAllProjectOrder() {
         var headId = $("#headId").val();
         if (confirm("确定删除整个订单?此操作将不可撤销.")) {
@@ -1147,7 +1151,7 @@
         <div class="panel panel-primary">
             <div class="panel-body form-inline">
                 <table style="width: 100%">
-                    <tr>
+                    <tr style="height: 30px">
                         <td style="text-align: right">
                             <label>下单时间：</label>
                         </td>
@@ -1159,7 +1163,7 @@
                             <label>客户单号：</label>
                         </td>
                         <td>
-                            <input type="text" style="width:165px" th:field="*{orderNo}" class="form-control" readonly>
+                            <input type="text" style="width:180px" th:field="*{orderNo}" class="form-control" readonly>
                         </td>
 
                         <td style="text-align: right">
@@ -1177,8 +1181,7 @@
                         </td>
 
                     </tr>
-                    <tr></tr>
-                    <tr>
+                    <tr style="height: 50px">
                         <td style="text-align: right">
                             <label>项目总名称：</label>
                         </td>
@@ -1192,8 +1195,9 @@
                             <a class="btn btn-primary"
                                href="javascript:void(0);" onclick="deleteAllProjectOrder()">全部删除</a>
 
-                            <!--<input type="button" value="查找" class="btn btn-primary">-->
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-primary"
+                               href="javascript:void(0);" onclick="backMainPage()">返回</a>
                         </td>
                         <td colspan="3">
                             <div style="display: none" id="errormessage">

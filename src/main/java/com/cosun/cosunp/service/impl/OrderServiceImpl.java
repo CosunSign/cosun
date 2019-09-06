@@ -8,14 +8,16 @@ import com.cosun.cosunp.tool.StringUtil;
 import com.cosun.cosunp.tool.WordToPDF;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFBorderFormatting;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
-import org.assertj.core.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -64,9 +64,18 @@ public class OrderServiceImpl implements IOrderServ {
         return orderMapper.getOrderHeadByHeadId(id);
     }
 
+    public OrderHead getOrderHeadByOrderNo2(String orderNo) throws Exception {
+        return orderMapper.getOrderHeadByOrderNo2(orderNo);
+    }
+
+
     public void deleteAllOrderByHeadId(Integer headId) throws Exception {
+        OrderHead orderHead = orderMapper.getOrderHeadByHeadId2(headId);
+        //E:\ftpserver\order\homey Wong\COSUN20190905HW06
+        FileUtil.delFolder(finalDirPath+"order/"+orderHead.getEngName()+"/"+orderHead.getOrderNo()+"/");
         orderMapper.deleAllOrderItemByHeadId(headId);
         orderMapper.deleteAllOrderHeadById(headId);
+
     }
 
     public OrderItem getOrderItemById(Integer itemId) throws Exception {
@@ -76,12 +85,14 @@ public class OrderServiceImpl implements IOrderServ {
     public int deleteOrderItemByItemId(Integer id) throws Exception {
         List<OrderItem> ois = orderMapper.getAllOrderItemBy(id);
         if (ois.size() > 1) {
-            orderMapper.updateOrderHeadTotalNum(ois.get(0).getOrderHeadId(), ois.size());
+            orderMapper.updateOrderHeadTotalNum(ois.get(0).getOrderHeadId(), ois.size()-1);
             orderMapper.deleteOrderItemByItemId(id);
             return 0;
         } else {
-            orderMapper.deleteOrderItemByItemId(id);
+            OrderHead orderHead = orderMapper.getOrderHeadByHeadId2(ois.get(0).getOrderHeadId());
+            FileUtil.delFolder(finalDirPath+"order/"+orderHead.getEngName()+"/"+orderHead.getOrderNo()+"/");
             orderMapper.deleteAllOrderHeadAndItemByItemId(id);
+            orderMapper.deleteOrderItemByItemId(id);
             return 1;
         }
     }
@@ -337,12 +348,14 @@ public class OrderServiceImpl implements IOrderServ {
                 for (int a = 0; a < orderHeadList.size(); a++) {
                     oh = orderHeadList.get(a);
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("成品编号");
                     cell = row.createCell(1);
                     cell.setCellValue(oh.getNewFinishProudNo());
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("品名");
                     cell.setCellStyle(cellStyle);
@@ -363,6 +376,7 @@ public class OrderServiceImpl implements IOrderServ {
                     cell.setCellStyle(cellStyle);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("产品尺寸");
                     cell.setCellStyle(cellStyle);
@@ -384,6 +398,7 @@ public class OrderServiceImpl implements IOrderServ {
 
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 2500);
                     cell = row.createCell(0);
                     cell.setCellValue("产品简易效果图");
                     cell.setCellStyle(cellStyle);
@@ -393,6 +408,7 @@ public class OrderServiceImpl implements IOrderServ {
 
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("主体材质及工艺");
                     cell.setCellStyle(cellStyle);
@@ -401,11 +417,13 @@ public class OrderServiceImpl implements IOrderServ {
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(1);
                     cell.setCellValue(oh.getMainMateriAndArt());
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("电子类辅料需求");
                     cell.setCellStyle(cellStyle);
@@ -414,6 +432,7 @@ public class OrderServiceImpl implements IOrderServ {
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("安装/运输/包装方式");
                     cell.setCellStyle(cellStyle);
@@ -422,16 +441,19 @@ public class OrderServiceImpl implements IOrderServ {
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(1);
                     cell.setCellValue(oh.getInstallTransfBacking());
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(1);
                     cell.setCellValue(oh.getInstallTransfBacking());
                     cell.setCellStyle(style);
 
                     row = hssfSheet.createRow(beginRow++);
+                    row.setHeight((short) 400);
                     cell = row.createCell(0);
                     cell.setCellValue("其它备注");
                     cell.setCellStyle(cellStyle);
@@ -518,7 +540,7 @@ public class OrderServiceImpl implements IOrderServ {
     }
 
     public void addOrderAppendByOrderNo(MultipartFile[] files, String orderNo) throws Exception {
-        OrderHead orderHead = orderMapper.getOldHeadByOrderNo(orderNo);
+        OrderHead orderHead = orderMapper.getOldHeadByOrderNo2(orderNo);
         String urlName;
         String fileName;
         //存储订单所带的附件

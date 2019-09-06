@@ -1831,6 +1831,21 @@ function closeprojectDiv() {
     window.parent.document.getElementById('coverbehidepageTop').style.display = "none";
 }
 
+function validateOrderNumSet() {
+    $("#errormessage").hide();
+    var errormessagediv = document.getElementById("errormessage");
+    var reg = new RegExp("^[0-9]+(.[0-9]{1,3})?$");
+    var edgeHightSize = $("#projectNum").val();
+    if (edgeHightSize.trim().length > 0 && !reg.test(edgeHightSize.trim())) {
+        $("#projectNum").val("");
+        var alertmessage = "商品类别数量只能为数字!";
+        $("#errormessage").show();
+        errormessagediv.innerHTML = alertmessage;
+        errormessagediv.style.color = "red";
+        return;
+    }
+}
+
 function openAddOrderItemDiv() {
     var projectName = $("#projectName").val();
     var projectNum = $("#projectNum").val();
@@ -1838,9 +1853,25 @@ function openAddOrderItemDiv() {
     errormessagediv.innerHTML = "";
     var trlen = $("#tabletbody").find("tr").length;
 
-    if(trlen>=projectNum) {
+    if (projectNum.trim().length == 0 || parseInt(projectNum.trim()) <= 0) {
         $("#errormessage").show();
-        errormessagediv.innerHTML = "您添加的商品类别数量已有"+projectNum+"个!不能再添加。";
+        $("#projectNum").val("");
+        errormessagediv.innerHTML = "请先输入商品类别数量!";
+        errormessagediv.style.color = "red";
+        return;
+    }
+
+    if (parseInt(projectNum.trim()) < 2) {
+        $("#errormessage").show();
+        $("#projectNum").val("");
+        errormessagediv.innerHTML = "项目类订单的商品数量不能少于2个!";
+        errormessagediv.style.color = "red";
+        return;
+    }
+
+    if (trlen >= projectNum) {
+        $("#errormessage").show();
+        errormessagediv.innerHTML = "您添加的商品类别数量已有" + projectNum + "个!不能再添加。";
         errormessagediv.style.color = "red";
         return;
     }
@@ -1893,7 +1924,7 @@ function checkFinishiProdNo(finishNo) {
         return;
     }
 
-    if(finishNoArray.includes(finishNo)) {
+    if (finishNoArray.includes(finishNo)) {
         $("#errormessage2").show();
         errormessagediv.innerHTML = "您输入的新成品编号已存在!";
         errormessagediv.style.color = "red";
@@ -1902,9 +1933,19 @@ function checkFinishiProdNo(finishNo) {
     }
 
     var beforestrnow = finishNo.substring(0, 9);
-    if(beforestr != beforestrnow) {
+    if (beforestr != beforestrnow) {
         $("#errormessage2").show();
-        errormessagediv.innerHTML = "您输入的新成品编号前缀应是:"+beforestr;
+        errormessagediv.innerHTML = "您输入的新成品编号前缀应是:" + beforestr;
+        errormessagediv.style.color = "red";
+        $("#newFinishProudNo").val("");
+        return;
+    }
+
+    var afterNum = newestFinishProudNo.substring(9, 11);
+    var afterNumNow = finishNo.substring(9, 11);
+    if (afterNumNow < afterNum) {
+        $("#errormessage2").show();
+        errormessagediv.innerHTML = "您输入的新成品编号系统中已存在!";
         errormessagediv.style.color = "red";
         $("#newFinishProudNo").val("");
         return;
@@ -1935,7 +1976,7 @@ function validateisnum62(sizenum) {
         $("#errormessage2").show();
         errormessagediv.innerHTML = alertmessage;
         errormessagediv.style.color = "red";
-        $("#edgeHighSize").val("");
+        $("#edgeHightSize").val("");
         return;
     }
 }
@@ -1949,7 +1990,7 @@ function validateisnum32(numvalue) {
         $("#errormessage2").show();
         errormessagediv.innerHTML = alertmessage;
         errormessagediv.style.color = "red";
-        $("#neednum").val("");
+        $("#orderSetNum").val("");
         return;
     }
 }

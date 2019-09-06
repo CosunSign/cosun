@@ -300,7 +300,9 @@
     height: 70px;
     margin: 5px;
     border: 1px solid lightsteelblue;
-    text-align: left
+    text-align: left;
+    overflow-x: scroll;
+
 }
 
 .divfour {
@@ -316,7 +318,8 @@
     height: 95px;
     margin: 5px;
     border: 1px solid lightsteelblue;
-    text-align: left
+    text-align: left;
+    overflow-y: scroll;
 }
 
 .divfive {
@@ -332,5 +335,6 @@
     height: 103px;
     margin: 5px;
     border: 1px solid lightsteelblue;
-    text-align: left
+    text-align: left;
+    overflow-x: scroll;
 }

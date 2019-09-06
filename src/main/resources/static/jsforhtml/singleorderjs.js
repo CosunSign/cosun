@@ -1431,13 +1431,13 @@ function submitmainmateriandart() {
     var zikemateriremark = $("#zikemateriremark").val();
     if (zikemateriremark.trim().length > 0) {
         name = "字壳材质补充说明,";
-        maintotalremark += name + zikemateriremark.trim();
+        maintotalremark += name + zikemateriremark.trim()+";";
     }
 
     var covermateriremark = $("#covermateriremark").val();
     if (covermateriremark.trim().length > 0) {
         name = "面板材质补充说明,";
-        maintotalremark += name + covermateriremark.trim();
+        maintotalremark += name + covermateriremark.trim()+";";
     }
 
     var plusremark = $("#plusremark").val();
@@ -1579,6 +1579,7 @@ function confirmdatatoMysql() {
         errormessagediv.style.color = "red";
         return;
     }
+    document.getElementById("coverbehidepage").style.display = "block";
     document.forms[0].submit();
 
 }
@@ -1602,6 +1603,7 @@ function validateisnum() {
     var reg = new RegExp("^[0-9]+(.[0-9]{1,3})?$");
     var edgeHightSize = $("#edgeHightSize").val();
     if (edgeHightSize.trim().length>0 && !reg.test(edgeHightSize.trim())) {
+        $("#edgeHightSize").val("");
         var alertmessage = "边高尺寸只能为数字!";
         $("#errormessage").show();
         errormessagediv.innerHTML = alertmessage;
@@ -1610,13 +1612,14 @@ function validateisnum() {
     }
 }
 
-function validateisnum3() {
+function validateisnum3(obj) {
     $("#errormessage").hide();
     var errormessagediv = document.getElementById("errormessage");
     var reg = new RegExp("^[0-9]+(.[0-9]{1,3})?$");
     var orderSetNum = $("#orderSetNum").val();
     if (orderSetNum.trim().length>0 && !reg.test(orderSetNum.trim())) {
         var alertmessage = "需求数量只能为数字!";
+        $("#orderSetNum").val("")
         $("#errormessage").show();
         errormessagediv.innerHTML = alertmessage;
         errormessagediv.style.color = "red";
@@ -1631,6 +1634,7 @@ function validateisnum2() {
     var productSize = $("#productSize").val();
     if (productSize.trim().length>0 && !reg.test(productSize.trim())) {
         var alertmessage = "产品尺寸只能为数字!";
+        $("#productSize").val("");
         $("#errormessage").show();
         errormessagediv.innerHTML = alertmessage;
         errormessagediv.style.color = "red";
@@ -1778,6 +1782,11 @@ function confirmtranorpackdiv() {
         maintotalremark += $("#plusjiexiantu").val() + ",";
     }
 
+    var anzhuangotherremark = $("#anzhuangotherremark").val().trim();
+    if(anzhuangotherremark.length>0) {
+        maintotalremark += anzhuangotherremark + ",";
+    }
+
 
     var transftertype = $("#transftertype").val();
     if (transftertype == null) {
@@ -1875,9 +1884,9 @@ function confirmelectmaterialneeds() {
 
         var dianyuanplusremark = $("#dianyuanplusremark").val();
         if (dianyuanplusremark.length > 0) {
-            maintotalremark += name + dianyuanrenzhen + "," + dianyuanfangshui + "," + dianyuanplusremark + ";";
+            maintotalremark += name + dianyuanrenzhen + "," + dianyuanfangshui + "," + dianyuanplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + dianyuanrenzhen + "," + dianyuanfangshui + ";";
+            maintotalremark += name + dianyuanrenzhen + "," + dianyuanfangshui + ","+$("#dianyuanremark").val()+";";
         }
 
     }
@@ -1901,9 +1910,9 @@ function confirmelectmaterialneeds() {
         }
         var dianxianplusremark = $("#dianxianplusremark").val();
         if (dianxianplusremark.length > 0) {
-            maintotalremark += name + dianxianrenzheng + "," + dianxianbiaozhun + "," + dianxianplusremark + ";";
+            maintotalremark += name + dianxianrenzheng + "," + dianxianbiaozhun + "," + dianxianplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + dianxianrenzheng + "," + dianxianbiaozhun + ";";
+            maintotalremark += name + dianxianrenzheng + "," + dianxianbiaozhun + ","+$("#dianyuanremark").val()+";";
         }
 
     }
@@ -1934,9 +1943,9 @@ function confirmelectmaterialneeds() {
         }
         var mozuplusremark = $("#mozuplusremark").val();
         if (mozuplusremark.length > 0) {
-            maintotalremark += name + mozurenzheng + "," + mozufuangshui + "," + mozecolor + "," + mozuplusremark + ";";
+            maintotalremark += name + mozurenzheng + "," + mozufuangshui + "," + mozecolor + "," + mozuplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + mozurenzheng + "," + mozufuangshui + "," + mozecolor + ";";
+            maintotalremark += name + mozurenzheng + "," + mozufuangshui + "," + mozecolor + ","+$("#dianyuanremark").val()+";";
         }
     }
 
@@ -1966,9 +1975,9 @@ function confirmelectmaterialneeds() {
         }
         var dendaiplusremark = $("#dendaiplusremark").val();
         if (dendaiplusremark.length > 0) {
-            maintotalremark += name + dendairenzheng + "," + dendaifangshui + "," + dendaicolor + "," + dendaiplusremark + ";";
+            maintotalremark += name + dendairenzheng + "," + dendaifangshui + "," + dendaicolor + "," + dendaiplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + dendairenzheng + "," + dendaifangshui + "," + dendaicolor + ";";
+            maintotalremark += name + dendairenzheng + "," + dendaifangshui + "," + dendaicolor + ","+$("#dianyuanremark").val()+";";
         }
     }
 
@@ -1998,9 +2007,9 @@ function confirmelectmaterialneeds() {
         }
         var dengzhuplusremark = $("#dengzhuplusremark").val();
         if (dengzhuplusremark > 0) {
-            maintotalremark += name + zhengzhurenzheng + "," + zhengzhufangshui + "," + dengzhucolor + "," + dengzhuplusremark + ";";
+            maintotalremark += name + zhengzhurenzheng + "," + zhengzhufangshui + "," + dengzhucolor + "," + dengzhuplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + zhengzhurenzheng + "," + zhengzhufangshui + "," + dengzhucolor + ";";
+            maintotalremark += name + zhengzhurenzheng + "," + zhengzhufangshui + "," + dengzhucolor + ","+$("#dianyuanremark").val()+";";
         }
     }
 
@@ -2028,11 +2037,12 @@ function confirmelectmaterialneeds() {
             isFullMessage = false;
             return;
         }
+
         var dengtiaoplusremark = $("#dengtiaoplusremark").val();
         if (dengtiaoplusremark.length > 0) {
-            maintotalremark += name + dengtiaorenzheng + "," + dengtiaofangshui + "," + dengtiaocolor + "," + dengtiaoplusremark + ";";
+            maintotalremark += name + dengtiaorenzheng + "," + dengtiaofangshui + "," + dengtiaocolor + "," + dengtiaoplusremark + ","+$("#dianyuanremark").val()+";";
         } else {
-            maintotalremark += name + dengtiaorenzheng + "," + dengtiaofangshui + "," + dengtiaocolor + ";";
+            maintotalremark += name + dengtiaorenzheng + "," + dengtiaofangshui + "," + dengtiaocolor + "," +$("#dianyuanremark").val()+";";
         }
     }
 

@@ -1987,6 +1987,10 @@
     }
 
 
+    function backOrderMainPage() {
+        window.location.href = "/order/toOrderPage"
+    }
+
     function updateProjectOrder() {
         var errormessagediv = document.getElementById("errormessage");
         errormessagediv.innerHTML = "";
@@ -2179,6 +2183,10 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary"
                                href="javascript:void(0);" th:onclick="updateProjectOrderAppen([[*{orderNo}]])">附件更改</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-primary"
+                               href="javascript:void(0);" onclick="backOrderMainPage()">返回</a>
+
                         </td>
                         <td colspan="1">
                             <div style="display: none" id="errormessage">

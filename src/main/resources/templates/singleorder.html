@@ -88,6 +88,10 @@
             return h + "-" + m + "-" + d;
         }
 
+
+        function backOrderMainPage() {
+            window.location.href = "/order/toOrderPage"
+        }
     </script>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -150,7 +154,7 @@
                                 </td>
                                 <td>&nbsp;&nbsp;需求数量:</td>
                                 <td><input type="text" style="width:130px"
-                                           onblur="validateisnum3()"
+                                           onblur="validateisnum3(this)"
                                            id="orderSetNum"
                                            th:field="*{needNum}">套
                                 </td>
@@ -262,10 +266,9 @@
                         </p>
 
                         <br>
-                        <input type="button" onclick="confirmdatatoMysql()" value="确认">&nbsp;&nbsp;&nbsp;&nbsp;<input
-                            type="button"
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            value="取消">
+                        <input type="button" onclick="confirmdatatoMysql()" value="确认">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="button" onclick="backOrderMainPage()" value="取消">
                         </br>
                         <div id="errormessage" style="display: none"></div>
                     </div>
@@ -1201,7 +1204,7 @@
                                                                placeholder="补充说明...">
                     <br>
                 <p>
-                    <textarea rows="3" cols="65" placeholder="其它需求..."></textarea>
+                    <textarea rows="3" cols="65"  id="dianyuanremark" placeholder="其它需求..."></textarea>
                 <p>
                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

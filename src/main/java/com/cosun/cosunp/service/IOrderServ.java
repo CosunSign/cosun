@@ -31,6 +31,8 @@ public interface IOrderServ {
 
     List<OrderHead> getOrderItemByHeadId(Integer id) throws Exception;
 
+    OrderHead getOrderHeadByOrderNo2(String orderNo) throws Exception;
+
     String fillDataToModuleExcelByOrderId(Integer id) throws Exception;
 
     String transferExcelToPDF(String excelUrlName) throws Exception;

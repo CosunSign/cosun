@@ -272,6 +272,21 @@ public class OrderController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/backUpdatePageByOrderNo")
+    public ModelAndView backUpdatePageByOrderNo(HttpSession session, OrderHead orderHead) throws Exception {
+        orderHead = orderServ.getOrderHeadByOrderNo2(orderHead.getOrderNo());
+        ModelAndView mav = new ModelAndView("updateorder");
+        List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
+        JSONArray extensionList = JSONArray.fromObject(extensionLists.toArray());
+        List<OrderHead> orderHeadList = orderServ.getOrderItemByHeadId(orderHead.getId());
+        mav.addObject("orderHeadList", orderHeadList);
+        mav.addObject("orderHead", orderHead);
+        mav.addObject("flag", 0);
+        mav.addObject("extensionList", extensionList);
+        return mav;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/toUpdateOrderHeadItemByheadId")
     public ModelAndView toUpdateOrderHeadItemByheadId(HttpSession session, OrderHead orderHead) throws Exception {
         Integer id = orderHead.getId();
@@ -601,8 +616,19 @@ public class OrderController {
         orderHead.setSalorNo(userInfo.getEmpNo());
         orderHead.setEngName(userInfo.getEngName());
         orderServ.addOrderHeadAndItemByBean(orderHead, file);
-        DownloadView view = new DownloadView();
-        mav.addObject("view", view);
+        List<Employee> salorList = fileUploadAndDownServ.findAllSalorByDeptName();
+        List<OrderHead> orderNoList = orderServ.findAllOrderNo();
+        List<String> prodNameList = orderServ.findAllProdName();
+        List<OrderHead> orderList = orderServ.findAllOrderHead(orderHead);
+        int recordCount = orderServ.findAllOrderHeadCount();
+        int maxPage = recordCount % orderHead.getPageSize() == 0 ? recordCount / orderHead.getPageSize() : recordCount / orderHead.getPageSize() + 1;
+        orderHead.setMaxPage(maxPage);
+        orderHead.setRecordCount(recordCount);
+        mav.addObject("salorList", salorList);
+        mav.addObject("orderNoList", orderNoList);
+        mav.addObject("prodNameList", prodNameList);
+        mav.addObject("orderList", orderList);
+        mav.addObject("orderHead", orderHead);
         mav.addObject("flag", 1);
         return mav;
     }

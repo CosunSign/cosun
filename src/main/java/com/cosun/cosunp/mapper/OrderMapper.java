@@ -142,6 +142,17 @@ public interface OrderMapper {
             "\t#{urlName})")
     void saveOrderItemAppend(OrderItemAppend orderItemAppend);
 
+    @Select("SELECT\n" +
+            "\toh.id,\n" +
+            "\tuo.engName,\n" +
+            "\toh.orderNo\n" +
+            "FROM\n" +
+            "\torderhead oh\n" +
+            "LEFT JOIN userinfo uo ON oh.SalorNo = uo.empno\n" +
+            "WHERE\n" +
+            "\torderNo = #{orderNo} ")
+    OrderHead getOldHeadByOrderNo2(String orderNo);
+
     @Select("select * from orderhead where orderNo = #{orderNo} ")
     OrderHead getOldHeadByOrderNo(String orderNo);
 
@@ -309,6 +320,19 @@ public interface OrderMapper {
             "\toi.productName ASC")
     List<OrderHead> getOrderItemByHeadId(Integer id);
 
+    @Select("SELECT\n" +
+            "oh.singleOrProject AS singleOrProject,\n" +
+            "\toh.orderNo AS orderNo,\n" +
+            "\toh.productTotalName AS productTotalName,\n" +
+            "\toh.orderTime AS orderTimeStr,\n" +
+            "\toh.orderSetNum AS orderSetNum,\n" +
+            "\tee.`name` AS salor," +
+            "\toh.id AS id" +
+            " FROM\n" +
+            "\torderhead oh\n" +
+            "LEFT JOIN employee ee ON oh.SalorNo = ee.empno" +
+            " where oh.orderNo = #{orderNo} ")
+    OrderHead getOrderHeadByOrderNo2(String orderNo);
 
     @Select("SELECT\n" +
             "oh.singleOrProject AS singleOrProject,\n" +
@@ -323,6 +347,16 @@ public interface OrderMapper {
             "LEFT JOIN employee ee ON oh.SalorNo = ee.empno" +
             " where oh.id = #{id} ")
     OrderHead getOrderHeadByHeadId(Integer id);
+
+    @Select("SELECT\n" +
+            "\toh.orderNo,\n" +
+            "  uo.engName\n" +
+            "FROM\n" +
+            "\torderhead oh left join userinfo uo on oh.SalorNo = uo.empno\n" +
+            "WHERE\n" +
+            "\toh.id = #{id} ")
+    OrderHead getOrderHeadByHeadId2(Integer id);
+
 
     @Select("select *  from orderitem where orderHeadId =(  select orderheadid from orderitem where id = #{itemId} limit 1)")
     List<OrderItem> getAllOrderItemBy(Integer itemId);
@@ -391,11 +425,11 @@ public interface OrderMapper {
             }
 
             if (orderHead.getOrderTimeStr() != null && orderHead.getOrderTimeStr().length() > 0) {
-                sb.append(" and oh.orderTime  <= #{orderTimeStr} ");
+                sb.append(" and date_format(oh.orderTime, '%Y-%m-%d') = #{orderTimeStr}");
             }
 
             if (orderHead.getItemDeliverTimeStr() != null && orderHead.getItemDeliverTimeStr().length() > 0) {
-                sb.append(" and oh.deliverTimeStr  <= #{deliverTimeStr} ");
+                sb.append(" and date_format(oi.itemDeliverTime, '%Y-%m-%d') = #{itemDeliverTimeStr}");
             }
 
             if (orderHead.getSortMethod() != null && !"undefined".equals(orderHead.getSortMethod()) && !"undefined".equals(orderHead.getSortByName()) && orderHead.getSortByName() != null) {
@@ -450,7 +484,7 @@ public interface OrderMapper {
                     }
                 }
             } else {
-                sb.append(" order by oh.orderNo desc ");
+                sb.append(" GROUP BY oh.orderNo order by oh.orderNo desc ");
             }
             sb.append("  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
@@ -458,10 +492,10 @@ public interface OrderMapper {
 
 
         public String queryOrderHeadByConditionCount(OrderHead orderHead) {
-            StringBuilder sb = new StringBuilder("SELECT count(*) " +
+            StringBuilder sb = new StringBuilder("select count(*) from (SELECT count(*) " +
                     "FROM\n" +
                     "\torderhead oh join orderitem oi on oh.id = oi.orderHeadId \n" +
-                    " JOIN employee ep ON oh.SalorNo = ep.empno where 1=1");
+                    " left JOIN employee ep ON oh.SalorNo = ep.empno where 1=1");
             if (orderHead.getNameIds() != null && orderHead.getNameIds().size() > 0) {
                 sb.append(" and ep.id in (" + StringUtils.strip(orderHead.getNameIds().toString(), "[]") + ") ");
 
@@ -484,12 +518,14 @@ public interface OrderMapper {
             }
 
             if (orderHead.getOrderTimeStr() != null && orderHead.getOrderTimeStr().length() > 0) {
-                sb.append(" and oh.orderTime  <= #{orderTimeStr} ");
+                sb.append(" and date_format(oh.orderTime, '%Y-%m-%d') = #{orderTimeStr}");
             }
 
             if (orderHead.getItemDeliverTimeStr() != null && orderHead.getItemDeliverTimeStr().length() > 0) {
-                sb.append(" and oh.deliverTimeStr  <= #{deliverTimeStr} ");
+                sb.append(" and date_format(oi.itemDeliverTime, '%Y-%m-%d') = #{itemDeliverTimeStr}");
             }
+
+            sb.append(" GROUP BY oh.orderNo) as a ");
             return sb.toString();
         }
 
