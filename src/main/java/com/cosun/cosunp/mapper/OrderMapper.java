@@ -379,6 +379,20 @@ public interface OrderMapper {
             "limit #{currentPageTotalNum},#{pageSize}")
     List<OrderHead> findAllOrderHead(OrderHead orderHead);
 
+    @Select("SELECT\n" +
+            "\toh.id,\n" +
+            "\toh.singleOrProject,\n" +
+            "\toh.orderNo,\n" +
+            "\toh.orderTime as orderTimeStr,\n" +
+            "\toh.orderSetNum as orderSetNum,\n" +
+            "\tep.fullname AS salor,\n" +
+            "\toh.state\n" +
+            "FROM\n" +
+            "\torderhead oh\n" +
+            "LEFT JOIN userinfo ep ON oh.SalorNo = ep.empno where oh.state = 1 order by  oh.orderNo desc " +
+            "limit #{currentPageTotalNum},#{pageSize}")
+    List<OrderHead> findAllOrderHeadForPMC(OrderHead orderHead);
+
     @Select("select count(*) from orderhead ")
     int findAllOrderHeadCount();
 

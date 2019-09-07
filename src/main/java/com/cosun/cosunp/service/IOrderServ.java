@@ -47,6 +47,8 @@ public interface IOrderServ {
 
     List<String> findAllProdName() throws Exception;
 
+    List<OrderHead> findAllOrderHeadForPMC(OrderHead orderHead) throws Exception;
+
     List<String> findAllUrlByOrderNo(String orderNo) throws Exception;
 
     List<OrderHead> findAllOrderHead(OrderHead orderHead) throws Exception;

@@ -78,6 +78,10 @@ public class OrderServiceImpl implements IOrderServ {
 
     }
 
+    public List<OrderHead> findAllOrderHeadForPMC(OrderHead orderHead) throws Exception {
+        return orderMapper.findAllOrderHeadForPMC(orderHead);
+    }
+
     public OrderItem getOrderItemById(Integer itemId) throws Exception {
         return orderMapper.getOrderItemById(itemId);
     }

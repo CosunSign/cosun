@@ -27,6 +27,8 @@ public class OrderHead implements Serializable {
     private Integer updateHeadTimes;//更改次数
     private String confirmEmpNo;
     private Date confirmTime;
+    private String pmcConfirmEmpno;
+    private Date pmcConfirmTime;
 
     private String confirmTimeStr;
     private Date itemUpdateTime;
@@ -43,6 +45,9 @@ public class OrderHead implements Serializable {
     private Date deliverTime;
     private String engName;
 
+    private String pmcDeliverTimeStr;
+    private String pmcRecordTimeStr;
+    private String pmcConfirmTimeStr;
     private String itemDeliverTimeStr;
 
     private String salor;
@@ -64,6 +69,11 @@ public class OrderHead implements Serializable {
     private String otherRemark;//其它说明
     private String productName;
     private Integer needNum;
+    private Date pmcDeliverTime;
+    private String needAdvanceMaterials;
+    private String outWorkFiles;
+    private Date pmcRecordTime;
+    private String pmcRecordEmpno;
 
     private String shortEngName;
     private Integer itemId;
@@ -85,6 +95,86 @@ public class OrderHead implements Serializable {
 
     public String getConfirmEmpNo() {
         return confirmEmpNo;
+    }
+
+    public String getPmcConfirmEmpno() {
+        return pmcConfirmEmpno;
+    }
+
+    public void setPmcConfirmEmpno(String pmcConfirmEmpno) {
+        this.pmcConfirmEmpno = pmcConfirmEmpno;
+    }
+
+    public Date getPmcConfirmTime() {
+        return pmcConfirmTime;
+    }
+
+    public void setPmcConfirmTime(Date pmcConfirmTime) {
+        this.pmcConfirmTime = pmcConfirmTime;
+    }
+
+    public String getPmcDeliverTimeStr() {
+        return pmcDeliverTimeStr;
+    }
+
+    public void setPmcDeliverTimeStr(String pmcDeliverTimeStr) {
+        this.pmcDeliverTimeStr = pmcDeliverTimeStr;
+    }
+
+    public String getPmcRecordTimeStr() {
+        return pmcRecordTimeStr;
+    }
+
+    public void setPmcRecordTimeStr(String pmcRecordTimeStr) {
+        this.pmcRecordTimeStr = pmcRecordTimeStr;
+    }
+
+    public String getPmcConfirmTimeStr() {
+        return pmcConfirmTimeStr;
+    }
+
+    public void setPmcConfirmTimeStr(String pmcConfirmTimeStr) {
+        this.pmcConfirmTimeStr = pmcConfirmTimeStr;
+    }
+
+    public Date getPmcDeliverTime() {
+        return pmcDeliverTime;
+    }
+
+    public void setPmcDeliverTime(Date pmcDeliverTime) {
+        this.pmcDeliverTime = pmcDeliverTime;
+    }
+
+    public String getNeedAdvanceMaterials() {
+        return needAdvanceMaterials;
+    }
+
+    public void setNeedAdvanceMaterials(String needAdvanceMaterials) {
+        this.needAdvanceMaterials = needAdvanceMaterials;
+    }
+
+    public String getOutWorkFiles() {
+        return outWorkFiles;
+    }
+
+    public void setOutWorkFiles(String outWorkFiles) {
+        this.outWorkFiles = outWorkFiles;
+    }
+
+    public Date getPmcRecordTime() {
+        return pmcRecordTime;
+    }
+
+    public void setPmcRecordTime(Date pmcRecordTime) {
+        this.pmcRecordTime = pmcRecordTime;
+    }
+
+    public String getPmcRecordEmpno() {
+        return pmcRecordEmpno;
+    }
+
+    public void setPmcRecordEmpno(String pmcRecordEmpno) {
+        this.pmcRecordEmpno = pmcRecordEmpno;
     }
 
     public void setConfirmEmpNo(String confirmEmpNo) {
