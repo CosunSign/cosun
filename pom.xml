@@ -13,7 +13,7 @@
     <groupId>com.cosun</groupId>
     <artifactId>cosunp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>cosunp</name>
+    <name>ROOT</name>
     <packaging>war</packaging>
     <description>Demo project for Spring Boot</description>
     <properties>
@@ -27,12 +27,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <!--<exclusions>-->
-            <!--<exclusion>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
-            <!--</exclusion>-->
-            <!--</exclusions>-->
         </dependency>
 
 
@@ -55,11 +49,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>com.artofsolving</groupId>-->
-        <!--<artifactId>jodconverter</artifactId>-->
-        <!--<version>2.2.1</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -427,20 +416,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/aspose-cad-19.5.jar</systemPath>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>com.aspose</groupId>-->
-        <!--<artifactId>aspose-cad</artifactId>-->
-        <!--<version>17.9</version>-->
-        <!--<classifier>javadoc</classifier>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>com.aspose</groupId>-->
-        <!--<artifactId>aspose-cad</artifactId>-->
-        <!--<version>17.9</version>-->
-        <!--</dependency>-->
-
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
 
     <build>
