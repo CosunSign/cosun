@@ -1,84 +1,94 @@
 package com.cosun.cosunp.weixin;
 
-import org.dom4j.DocumentException;
+import com.cosun.cosunp.tool.Constants;
+import fr.opensagres.xdocreport.document.json.JSONObject;
+import net.sf.json.JSONArray;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.Date;
-import java.util.Map;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
 
 /**
  * @author:homey Wong
- * @Date: 2019/9/11 0011 上午 9:03
+ * @Date: 2019/9/12  下午 5:10
  * @Description:
  * @Modified By:
  * @Modified-date:
  */
-@WebServlet(urlPatterns = "/weixin/hello")
-public class WeiXinController extends HttpServlet {
+@Controller
+@RequestMapping("/weixin")
+public class WeiXinController {
 
-    public static final String tooken = "homeyhomeyhomey";
+    private static JedisPool pool;
+    private static Jedis jedis;
 
-    public WeiXinController() {
-        //空构造函数
+    @ResponseBody
+    @RequestMapping(value = "/getMobileLocate")
+    public ModelAndView getMobileLocate(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ModelAndView view = new ModelAndView("weixin");
+        return view;
     }
 
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("success");
-        String signature = request.getParameter("signature");
-        String timestamp = request.getParameter("timestamp");
-        String nonce = request.getParameter("nonce");
-        String echostr = request.getParameter("echostr");
-        PrintWriter outPW = null;
+    @ResponseBody
+    @RequestMapping(value = "/getMobileLocateReal")
+    public void getMobileLocateReal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String url = request.getParameter("wxurl");
+        pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+        jedis = pool.getResource();
         try {
-            outPW = response.getWriter();
-            if (CheckUtil.checkSignature(signature, timestamp, nonce, tooken)) {
-                outPW.write(echostr);
-            }
-        } catch (IOException e) {
+            String noncestr = UUID.randomUUID().toString().replace("-", "").substring(0, 16);//随机字符串
+            String timestamp = String.valueOf(System.currentTimeMillis() / 1000);//时间戳
+            System.out.println("accessToken:" + jedis.get(Constants.accessToken) + "\njsapi_ticket:" + jedis.get(Constants.jsapi_ticket) + "\n时间戳：" + timestamp + "\n随机字符串：" + noncestr);
+            String str = "jsapi_ticket=" + jedis.get(Constants.jsapi_ticket) + "&noncestr=" + noncestr + "&timestamp=" + timestamp + "&url=" + url;
+            //6、将字符串进行sha1加密
+            String signature = CheckUtil.getSha1(str);
+            System.out.println("参数：" + str + "\n签名：" + signature);
+            List l_data = new ArrayList();
+            l_data.add(timestamp);
+            l_data.add(noncestr);
+            l_data.add(signature);
+            l_data.add(url);
+            l_data.add(WeiXinConfig.appid);
+            JSONArray l_jsonarrary = JSONArray.fromObject(l_data);
+            //json转的字符串值
+            String l_jsonstring = l_jsonarrary.toString();
+            response.getWriter().print(l_jsonstring);
+            response.getWriter().flush();
+            response.getWriter().close();
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            outPW.close();
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        System.out.println("******a***");
-        try {
-            Map<String, String> map = WeiXinUtil.xmlToMap(request);
-            String fromUserName = map.get("FromUserName");
-            String toUserName = map.get("ToUserName");
-            String msgType = map.get("MsgType");
-            String content = map.get("Content");
-
-            String message = null;
-            if ("text".equals(msgType)) {
-                InMsgEntity text = new InMsgEntity();
-                text.setFromUserName(toUserName); //原来的信息发送者，将变成信息接受者
-                text.setToUserName(fromUserName); //原理的接受者，变成发送者
-                text.setMsgType("text"); //表示消息的类型是text类型
-                text.setCreateTime(new Date().getTime());
-                text.setContent("您发送的信息是：" + content);
-                message = WeiXinUtil.textMessageToXml(text); //装换成 xml 格式发送给微信解析
-                System.out.println(message);
-            }
-            out.print(message);
-        } catch (DocumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    @ResponseBody
+    @RequestMapping(value = "/punchClock")
+    public ModelAndView punchClock(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        //22.77200698852539
+        //114.3155288696289
+        Double latitude = Double.valueOf(request.getParameter("latitude"));
+        Double longitude = Double.valueOf(request.getParameter("longitude"));
+        ModelAndView mav = new ModelAndView("success");
+        Map<String, String> address = MapUtil.getCityByLonLat(latitude, longitude);
+        if (address != null) {
+            mav.addObject("flag", "您打卡成功,打卡地址为:" + address.get("province") + address.get("city") + address.get("district") +
+                    address.get("street"));
+        } else {
+            mav.addObject("flag", "打卡失败，请稍后重试!");
         }
-
+        return mav;
     }
 
 

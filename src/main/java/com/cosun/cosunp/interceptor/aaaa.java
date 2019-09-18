@@ -9,6 +9,11 @@ package com.cosun.cosunp.interceptor;
  */
 public class aaaa {
 
+    //22.77200698852539,114.3155288696289
+    //ZzGk5eR49FPNwxhXzbVWXjDsGBBXTA6V
+
+    //http://api.map.baidu.com/reverse_geocoding/v3/?ak=ZzGk5eR49FPNwxhXzbVWXjDsGBBXTA6V&output=json&coordtype=wgs84ll&location=22.77200698852539,114.3155288696289
+
 //
 //    整理后:
     //=============================业务模块=======================================

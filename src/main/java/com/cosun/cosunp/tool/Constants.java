@@ -3,11 +3,6 @@ package com.cosun.cosunp.tool;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 常量表
- * Created by 超文 on 2017/05/02.
- * version 1.0
- */
 public interface Constants {
     /**
      * 异常信息统一头信息<br>
@@ -26,6 +21,12 @@ public interface Constants {
      * 保存上传文件的状态
      */
     public static final String FILE_UPLOAD_STATUS = "FILE_UPLOAD_STATUS";
+
+    public static final String accessToken = "accessToken";
+
+    public static final String expiresin = "expiresin";
+
+    public static final String jsapi_ticket = "jsapi_ticket";
 
 
 }

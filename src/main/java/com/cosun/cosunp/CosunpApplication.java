@@ -1,6 +1,7 @@
 package com.cosun.cosunp;
 
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
+import com.cosun.cosunp.weixin.AccessTokenServlet;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //import javax.servlet.MultipartConfigElement;
 
 @EnableTransactionManagement
-@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @MapperScan("com.cosun.cosunp.mapper")
 @EnableCaching
 @ServletComponentScan
@@ -55,10 +56,9 @@ public class CosunpApplication extends SpringBootServletInitializer {
             public void run(String... args) throws Exception {
                 fileUploadAndDownServ.deleteAll();
                 fileUploadAndDownServ.init();
+                //new AccessTokenServlet().init();
             }
         };
     }
-
-
 }
 
