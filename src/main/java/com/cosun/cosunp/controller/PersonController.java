@@ -55,6 +55,137 @@ public class PersonController {
         return view;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/saveClockInSetUp", method = RequestMethod.POST)
+    public void saveClockInSetUp(ClockInSetUp clockInSetUp, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            boolean isSave = personServ.saveClockInSetUp(clockInSetUp);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteClockInDataByOutDays")
+    public ModelAndView deleteClockInDataByOutDays(ClockInSetUp clockInSetUp) throws Exception {
+        ModelAndView view = new ModelAndView("outclockinset");
+        personServ.deleteClockSetInByOutDays(clockInSetUp.getOutDays());
+        List<ClockInSetUp> clockInSetUpList = personServ.findAllOutClockInSetUp();
+        view.addObject("flag", 2);
+        view.addObject("clockInSetUpList", clockInSetUpList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/tooutsetpage")
+    public ModelAndView tooutsetpage() throws Exception {
+        ModelAndView view = new ModelAndView("outclockinset");
+        List<ClockInSetUp> clockInSetUpList = personServ.findAllOutClockInSetUp();
+        view.addObject("flag", 0);
+        view.addObject("clockInSetUpList", clockInSetUpList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/saveOrUpdateGongZhongHaoIdByEmpNo")
+    public ModelAndView saveOrUpdateGongZhongHaoIdByEmpNo(GongZhongHao gongZhongHao, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("gongzhonghao");
+        try {
+            int isSaveOrUpdate = personServ.saveOrUpdateGongZhongHaoIdByEmpNo(gongZhongHao);
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Employee> employeeList = personServ.findAllEmployee(employee);
+            int recordCount = personServ.findAllEmployeeCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("employeeList", employeeList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("flag", isSaveOrUpdate);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/togongzhonghao")
+    public ModelAndView togongzhonghao(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("gongzhonghao");
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Employee> employeeList = personServ.findAllEmployee(employee);
+            int recordCount = personServ.findAllEmployeeCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("employeeList", employeeList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/toOutClockInListQuery")
+    public ModelAndView toOutClockInListQuery(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("outclockin");
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Employee> employeeList = personServ.findAllEmployeeOutClockIn(employee);
+            int recordCount = personServ.findAllEmployeeOutClockInCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("employeeList", employeeList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/tocomputeworkdate")
     public ModelAndView tocomputeworkdate() throws Exception {
@@ -494,6 +625,7 @@ public class PersonController {
         }
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/checkAndSave", method = RequestMethod.POST)
     public void checkAndSave(Position position, HttpSession session, HttpServletResponse response) throws Exception {
@@ -626,7 +758,7 @@ public class PersonController {
             List<WorkDate> workDateList = new ArrayList<WorkDate>();
             workDate = personServ.getWorkDateByMonth(workDate);
             List<SmallEmployee> empList = null;
-            if (workDate!=null && workDate.getPositionLevel() != null) {
+            if (workDate != null && workDate.getPositionLevel() != null) {
                 empList = personServ.findAllEmployeeByPositionLevel(workDate.getPositionLevel());
             }
             if (workDate != null) {
@@ -1216,6 +1348,33 @@ public class PersonController {
             throw e;
         }
 
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryGongZhongHaoByCondition", method = RequestMethod.POST)
+    public void queryGongZhongHaoByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<Employee> employeeList = personServ.queryGongZhongHaoByCondition(employee);
+            int recordCount = personServ.queryGongZhongHaoByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (employeeList.size() > 0) {
+                employeeList.get(0).setMaxPage(maxPage);
+                employeeList.get(0).setRecordCount(recordCount);
+                employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+                employeeList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @ResponseBody

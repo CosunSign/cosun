@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>打卡</title>
+    <title>拍照</title>
     <script src="/lib/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -33,7 +33,7 @@
                 timestamp: l_timestamp, // 必填，生成签名的时间戳，上文通过后台获取的
                 nonceStr: l_noncestr, // 必填，生成签名的随机串，上文通过后台获取的
                 signature: l_signature,// 必填，签名，上文通过后台获取的
-                jsApiList: ['getLocation'] // 必填，需要使用的JS接口列表，就是下文的分享朋友圈和转发给朋友的列表
+                jsApiList: ['chooseImage', 'uploadImage'] // 必填，需要使用的JS接口列表，就是下文的分享朋友圈和转发给朋友的列表
             });
         });
     });
@@ -42,13 +42,13 @@
     wx.ready(function () {
         wx.checkJsApi({
             jsApiList: [
-                'getLocation'
+                'chooseImage', 'uploadImage'
             ],
             success: function (res) {
                 // alert(JSON.stringify(res));
                 // alert(JSON.stringify(res.checkResult.getLocation));
-                if (res.checkResult.getLocation == false) {
-                    alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
+                if (res.checkResult.chooseImage == false) {
+                    alert('你的微信版本太低！');
                     return;
                 }
             }
@@ -56,14 +56,24 @@
         wx.error(function (res) {
             alert("接口调取失败")
         });
-        wx.getLocation({
+        wx.chooseImage({
+            count: 1, // 最多可以选择的图片张数，默认9
+            sizeType: ['original', 'compressed'], // original 原图，compressed 压缩图，默认二者都有
+            sourceType: ['camera'], // album 从相册选图，camera 使用相机，默认二者都有
             success: function (res) {
-                var locate = JSON.stringify(res);
-                window.location.href = "http://homey.nat100.top/weixin/punchClock?latitude=" + res.latitude + "&longitude="
-                    + res.longitude + "&openId=" + openId;
+                let localIds = res.localIds; // 返回选定照片的本地ID列表（手机上操作就是手机端的ID列表，是一个数组），localId可以作为img标签的src属性显示图片
+                wx.uploadImage({
+                    localId: localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (result) {
+                        let serverId = result.serverId; // 返回图片的服务器端ID
+                        window.location.href = "http://homey.nat100.top/weixin/saveOutPhoto?serverId="+serverId + "&openId=" + openId;
+                    }
+                });
             },
-            cancel: function (res) {
-                alert('用户拒绝授权获取地理位置');
+            fail: function () {
+            },
+            complete: function () {
             }
         });
 

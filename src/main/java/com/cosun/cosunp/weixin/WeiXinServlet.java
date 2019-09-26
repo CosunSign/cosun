@@ -1,14 +1,21 @@
 package com.cosun.cosunp.weixin;
 
+import com.cosun.cosunp.controller.PersonController;
+import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.Constants;
 import net.sf.json.JSONArray;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.servlet.ModelAndView;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,10 +35,18 @@ import java.util.*;
 @WebServlet(urlPatterns = "/weixin/hello")
 public class WeiXinServlet extends HttpServlet {
 
+    private static Logger logger = LogManager.getLogger(WeiXinServlet.class);
+
+    @Autowired
+    IPersonServ personServ;
 
     public static final String tooken = "homeyhomeyhomey";
     private static JedisPool pool;
     private static Jedis jedis;
+
+    private static final String clockin = "clockin";
+    private static final String clickquery = "clickquery";
+
 
     public WeiXinServlet() {
         //空构造函数
@@ -68,17 +83,60 @@ public class WeiXinServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
-        System.out.println(jedis.get(Constants.accessToken) + "*****");
-        System.out.println(jedis.get(Constants.jsapi_ticket) + "*****");
+        System.out.println(jedis.get(Constants.accessToken));
+        System.out.println(jedis.get(Constants.jsapi_ticket));
         try {
+            // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd5109277d8902606&redirect_uri=http://homey.nat100.top/weixin/getMobileLocate&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
+
             PrintWriter out = response.getWriter();
             Map<String, String> map = WeiXinUtil.xmlToMap(request);
             String fromUserName = map.get("FromUserName");
             String toUserName = map.get("ToUserName");
             String msgType = map.get("MsgType");
             String content = map.get("Content");
+            String key = map.get("EventKey");
             String message = null;
-            if ("text".equals(msgType)) {
+            StringBuilder returnMes = new StringBuilder();
+            if ("event".equals(msgType)) {
+                if (clickquery.equals(key)) {
+                    List<OutClockIn> allOutClockIn = personServ.findAllOutClockInByOpenId(fromUserName);
+                    if (allOutClockIn.size() > 0) {
+                        for (OutClockIn on : allOutClockIn) {
+                            returnMes.append(on.getClockInDateStr() + ":");
+                            returnMes.append(on.getClockInDateAMOnStr() + ",");
+                            returnMes.append(on.getClockInAddrAMOn() + ",");
+                            if (on.getAmOnUrl() != null && on.getAmOnUrl().trim().length() > 0) {
+                                returnMes.append("上午已摄像.");
+                            } else {
+                                returnMes.append("上午还未摄像.");
+                            }
+                            returnMes.append(on.getClockInDatePMOnStr() + ",");
+                            returnMes.append(on.getClockInAddrPMOn() + ".");
+                            if (on.getPmOnUrl() != null && on.getPmOnUrl().trim().length() > 0) {
+                                returnMes.append("下午已摄像.");
+                            } else {
+                                returnMes.append("下午还未摄像.");
+                            }
+                            returnMes.append(on.getClockInDateNMOnStr() + ",");
+                            returnMes.append(on.getClockInAddNMOn() + ".");
+                            if (on.getNmOnUrl() != null && on.getNmOnUrl().trim().length() > 0) {
+                                returnMes.append("晚上已摄像.");
+                            } else {
+                                returnMes.append("晚上还未摄像.");
+                            }
+                        }
+                    } else {
+                        returnMes.append("暂无考勤信息");
+                    }
+                    InMsgEntity text = new InMsgEntity();
+                    text.setFromUserName(toUserName); //原来的信息发送者，将变成信息接受者
+                    text.setToUserName(fromUserName); //原理的接受者，变成发送者
+                    text.setMsgType("text"); //表示消息的类型是text类型
+                    text.setCreateTime(new Date().getTime());
+                    text.setContent("您的考勤信息是：" + returnMes);
+                    message = WeiXinUtil.textMessageToXml(text); //装换成 xml 格式发送给微信解析
+                }
+            } else if ("text".equals(msgType)) {
                 InMsgEntity text = new InMsgEntity();
                 text.setFromUserName(toUserName); //原来的信息发送者，将变成信息接受者
                 text.setToUserName(fromUserName); //原理的接受者，变成发送者
@@ -101,6 +159,12 @@ public class WeiXinServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+
     }
 
     public void setRedisValue(AccessToken accessToken) {

@@ -16,6 +16,16 @@ public class AccessToken implements Serializable {
     private String accessToken;
     private int expiresin;
     private String jsapi_ticket;
+    private String openId;
+
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
 
     public String getAccessToken() {
         return accessToken;

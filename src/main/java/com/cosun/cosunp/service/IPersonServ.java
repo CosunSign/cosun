@@ -1,7 +1,9 @@
 package com.cosun.cosunp.service;
 
 import com.cosun.cosunp.entity.*;
+import com.cosun.cosunp.weixin.OutClockIn;
 import org.springframework.web.multipart.MultipartFile;
+import sun.font.LayoutPathImpl;
 
 import java.util.List;
 
@@ -41,6 +43,8 @@ public interface IPersonServ {
 
     void deleteLeaveByBatch(List<Integer> ids) throws Exception;
 
+    int saveOrUpdateGongZhongHaoIdByEmpNo(GongZhongHao gongZhongHao) throws Exception;
+
     void updateLeaveToMysql(Leave leave) throws Exception;
 
     List<Employee> findAllEmployees() throws Exception;
@@ -49,15 +53,31 @@ public interface IPersonServ {
 
     List<Dept> findAllDeptAll() throws Exception;
 
+    void deleteClockSetInByOutDays(Double outDays) throws Exception;
+
+    List<ClockInSetUp> findAllOutClockInSetUp() throws Exception;
+
     void deleteLeaveById(Integer id) throws Exception;
 
-    void updateEmployeeData(MultipartFile educationLeFile,MultipartFile sateListAndLeaCertiFile,MultipartFile otherCertiFile,Employee employee) throws Exception;
+    void updateEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Position> findAllPosition(Position position) throws Exception;
 
-    void addEmployeeData(MultipartFile educationLeFile,MultipartFile sateListAndLeaCertiFile,MultipartFile otherCertiFile,Employee employee) throws Exception;
+    void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
+
+    List<ClockInSetUp> findAllCLockInSetUp() throws Exception;
+
+    List<Leave> findAllLeaveByWeiXinId(String openId) throws Exception;
+
+    String getNameByWeiXinId(String openId) throws Exception;
+
+    List<Employee> findAllEmployeeOutClockIn(Employee employee) throws Exception;
+
+    int findAllEmployeeOutClockInCount(Employee employee) throws Exception;
+
+    boolean saveClockInSetUp(ClockInSetUp clockInSetUp) throws Exception;
 
     Employee getEmployeeByEmpno(String empNo) throws Exception;
 
@@ -85,9 +105,21 @@ public interface IPersonServ {
 
     void addWorkSetData(WorkSet workSet) throws Exception;
 
+    void saveOrUpdateOutClockInDataUrl(OutClockIn outClockIn) throws Exception;
+
     List<Employee> queryEmployeeByCondition(Employee employee) throws Exception;
 
+    List<Employee> queryGongZhongHaoByCondition(Employee employee) throws Exception;
+
+    List<OutClockIn> findAllOutClockInByOpenId(String openId) throws Exception;
+
+    int queryGongZhongHaoByConditionCount(Employee employee) throws Exception;
+
     List<WorkSet> queryWorkSetByCondition(WorkSet workSet) throws Exception;
+
+    int isClockInAlready(String openId,String dateStr, String titileName) throws Exception;
+
+    void saveOrUpdateOutClockInData(OutClockIn outClockIn) throws Exception;
 
     int queryWorkSetByConditionCount(WorkSet workSet) throws Exception;
 

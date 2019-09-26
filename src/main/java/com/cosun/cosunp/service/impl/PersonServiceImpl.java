@@ -6,6 +6,7 @@ import com.cosun.cosunp.mapper.UserInfoMapper;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.DateUtil;
 import com.cosun.cosunp.tool.FileUtil;
+import com.cosun.cosunp.weixin.OutClockIn;
 import jxl.Cell;
 import jxl.WorkbookSettings;
 import org.apache.logging.log4j.LogManager;
@@ -110,6 +111,107 @@ public class PersonServiceImpl implements IPersonServ {
 
     }
 
+    public boolean saveClockInSetUp(ClockInSetUp clockInSetUp) throws Exception {
+        int len = personMapper.findIfExsit(clockInSetUp);
+        if (len == 0) {
+            personMapper.saveClockInSetUp(clockInSetUp);
+            return true;
+        } else {
+            personMapper.updateClockInSetUp(clockInSetUp);
+            return false;
+        }
+    }
+
+    public List<ClockInSetUp> findAllOutClockInSetUp() throws Exception {
+        return personMapper.findAllOutClockInSetUp();
+    }
+
+    public List<Employee> queryGongZhongHaoByCondition(Employee employee) throws Exception {
+        return personMapper.queryGongZhongHaoByCondition(employee);
+    }
+
+    public int queryGongZhongHaoByConditionCount(Employee employee) throws Exception {
+        return personMapper.queryGongZhongHaoByConditionCount(employee);
+    }
+
+    public int isClockInAlready(String openId,String dateStr, String titileName) throws Exception {
+        return personMapper.isClockInAlready(openId,dateStr, titileName);
+    }
+
+    public void saveOrUpdateOutClockInDataUrl(OutClockIn outClockIn) throws Exception {
+        OutClockIn orginal = personMapper.getOutClockInByDateAndWeiXinId(outClockIn);
+        if (orginal == null) {
+            personMapper.addPhotoOutClockInDateByBean(outClockIn);
+        } else {
+            if (outClockIn.getAmOnUrl() != null) {
+                personMapper.updatePhotoClockInDateByAM(outClockIn);
+            } else if (outClockIn.getPmOnUrl() != null) {
+                personMapper.updatePhotoClockInDateByPM(outClockIn);
+            } else if (outClockIn.getNmOnUrl() != null) {
+                personMapper.updatePhotoClockInDateByNM(outClockIn);
+            }
+        }
+    }
+
+    public List<Leave> findAllLeaveByWeiXinId(String openId) throws Exception {
+        return personMapper.findAllLeaveByWeiXinId(openId);
+    }
+
+    public String getNameByWeiXinId(String openId) throws Exception {
+        return personMapper.getNameByWeiXinId(openId);
+    }
+
+    public List<ClockInSetUp> findAllCLockInSetUp() throws Exception {
+        return personMapper.findAllCLockInSetUp();
+    }
+
+    public List<Employee> findAllEmployeeOutClockIn(Employee employee) throws Exception {
+        return personMapper.findAllEmployeeOutClockIn(employee);
+    }
+
+    public int findAllEmployeeOutClockInCount(Employee employee) throws Exception {
+        return 1;
+        //return personMapper.findAllEmployeeOutClockInCount(employee);
+    }
+
+    public List<OutClockIn> findAllOutClockInByOpenId(String openId) throws Exception {
+        return personMapper.findAllOutClockInByOpenId(openId);
+    }
+
+    public void saveOrUpdateOutClockInData(OutClockIn outClockIn) throws Exception {
+        OutClockIn orginal = personMapper.getOutClockInByDateAndWeiXinId(outClockIn);
+        if (orginal == null) {
+            personMapper.addOutClockInDateByBean(outClockIn);
+        } else {
+            if (outClockIn.getClockInDateAMOnStr() != null) {
+                personMapper.updateClockInDateByAM(outClockIn);
+            } else if (outClockIn.getClockInDatePMOnStr() != null) {
+                personMapper.updateClockInDateByPM(outClockIn);
+            } else if (outClockIn.getClockInDateNMOnStr() != null) {
+                personMapper.updateClockInDateByNM(outClockIn);
+            }
+        }
+
+    }
+
+    public int saveOrUpdateGongZhongHaoIdByEmpNo(GongZhongHao gongZhongHao) throws Exception {
+        int isExsit = personMapper.getGongZhongHaoByEmpNo(gongZhongHao.getEmpNo());
+        if (gongZhongHao.getGongzhonghaoId().trim().length() == 0) {
+            personMapper.deleteGongZhongHaoByEmpNo(gongZhongHao.getEmpNo());
+            return 2;
+        }
+        if (isExsit == 0) {
+            personMapper.saveGongZhongHaoByBean(gongZhongHao);
+            return 1;
+        } else {
+            personMapper.updateGongZhongHaoByEmpNo(gongZhongHao);
+            return 3;
+        }
+    }
+
+    public void deleteClockSetInByOutDays(Double outDays) throws Exception {
+        personMapper.deleteClockSetInByOutDays(outDays);
+    }
 
     public void deleteLeaveByBatch(List<Integer> ids) throws Exception {
         personMapper.deleteLeaveByBatch(ids);
@@ -1374,8 +1476,8 @@ public class PersonServiceImpl implements IPersonServ {
                                                 }
                                                 //下午下班
                                                 if (workSet.getNoonOff() != null) {
-                                                    if (workSet.getNoonOffFrom() != null ) {
-                                                        if (time.after(workSet.getNoonOffFrom())  || (time.equals(workSet.getNoonOff()))) {
+                                                    if (workSet.getNoonOffFrom() != null) {
+                                                        if (time.after(workSet.getNoonOffFrom()) || (time.equals(workSet.getNoonOff()))) {
                                                             poff = true;
                                                             otw.setWorkSetPOff(workSet.getNoonOff().toString());
                                                             otw.setWorkSetPOffForm(workSet.getNoonOffFrom().toString());

@@ -34,6 +34,7 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
         //排除配置
         addInterceptor.excludePathPatterns("/error");
         addInterceptor.excludePathPatterns("/");
+        addInterceptor.excludePathPatterns("/weixin/punchClock");
         addInterceptor.excludePathPatterns("/account/**");
         //拦截配置
         addInterceptor.addPathPatterns("/account/toMainPage");

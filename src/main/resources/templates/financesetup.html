@@ -42,6 +42,7 @@
     String.prototype.trim = function () {
         return this.replace(/(^\s*)|(\s*$)/g, "");
     }
+
     function validateDouble(idname) {
         $("#errormessage").hide();
         var reg = new RegExp("^[0-9]+(.[0-9]{1,3})?$");

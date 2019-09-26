@@ -11,5 +11,6 @@ public interface WeiXinConfig {
 
      static final String appid = "wxd5109277d8902606";
      static final String secret = "4744abd9870fade269794229b89d7f55";
+     static final String fromId = "gh_d88dcf673fd3";
 
 }

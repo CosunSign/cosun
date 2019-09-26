@@ -45,6 +45,11 @@ public class Employee implements Serializable {
     private Integer isQuit;//0在职  1离职
     private String isQuitStr;
 
+
+    private String gongzhonghaoId;
+
+    private List<Integer> isgongzhonghaoBangDing;
+
     private String remark;
 
     private String educationLeUrl;
@@ -114,6 +119,123 @@ public class Employee implements Serializable {
 
     private String stateStr;
 
+    //回显外出打卡属性
+    private String outLeaveSheet;
+    private String clockInDateStr;
+    private String clockInDateAMOnStr;
+    private String clockInAddrAMOn;
+    private String amOnUrl;
+    private String clockInDatePMOnStr;
+    private String clockInAddrPMOn;
+    private String pmOnUrl;
+    private String clockInDateNMOnStr;
+    private String clockInAddNMOn;
+    private String nmOnUrl;
+
+
+    public String getOutLeaveSheet() {
+        return outLeaveSheet;
+    }
+
+    public void setOutLeaveSheet(String outLeaveSheet) {
+        this.outLeaveSheet = outLeaveSheet;
+    }
+
+    public String getClockInDateStr() {
+        return clockInDateStr;
+    }
+
+    public void setClockInDateStr(String clockInDateStr) {
+        this.clockInDateStr = clockInDateStr;
+    }
+
+    public String getClockInDateAMOnStr() {
+        return clockInDateAMOnStr;
+    }
+
+    public void setClockInDateAMOnStr(String clockInDateAMOnStr) {
+        this.clockInDateAMOnStr = clockInDateAMOnStr;
+    }
+
+    public String getClockInAddrAMOn() {
+        return clockInAddrAMOn;
+    }
+
+    public void setClockInAddrAMOn(String clockInAddrAMOn) {
+        this.clockInAddrAMOn = clockInAddrAMOn;
+    }
+
+    public String getAmOnUrl() {
+        return amOnUrl;
+    }
+
+    public void setAmOnUrl(String amOnUrl) {
+        this.amOnUrl = amOnUrl;
+    }
+
+    public String getClockInDatePMOnStr() {
+        return clockInDatePMOnStr;
+    }
+
+    public void setClockInDatePMOnStr(String clockInDatePMOnStr) {
+        this.clockInDatePMOnStr = clockInDatePMOnStr;
+    }
+
+    public String getClockInAddrPMOn() {
+        return clockInAddrPMOn;
+    }
+
+    public void setClockInAddrPMOn(String clockInAddrPMOn) {
+        this.clockInAddrPMOn = clockInAddrPMOn;
+    }
+
+    public String getPmOnUrl() {
+        return pmOnUrl;
+    }
+
+    public void setPmOnUrl(String pmOnUrl) {
+        this.pmOnUrl = pmOnUrl;
+    }
+
+    public String getClockInDateNMOnStr() {
+        return clockInDateNMOnStr;
+    }
+
+    public void setClockInDateNMOnStr(String clockInDateNMOnStr) {
+        this.clockInDateNMOnStr = clockInDateNMOnStr;
+    }
+
+    public String getClockInAddNMOn() {
+        return clockInAddNMOn;
+    }
+
+    public void setClockInAddNMOn(String clockInAddNMOn) {
+        this.clockInAddNMOn = clockInAddNMOn;
+    }
+
+    public String getNmOnUrl() {
+        return nmOnUrl;
+    }
+
+    public void setNmOnUrl(String nmOnUrl) {
+        this.nmOnUrl = nmOnUrl;
+    }
+
+    public List<Integer> getIsgongzhonghaoBangDing() {
+        return isgongzhonghaoBangDing;
+    }
+
+    public void setIsgongzhonghaoBangDing(List<Integer> isgongzhonghaoBangDing) {
+        this.isgongzhonghaoBangDing = isgongzhonghaoBangDing;
+    }
+
+    public String getGongzhonghaoId() {
+        return gongzhonghaoId;
+    }
+
+    public void setGongzhonghaoId(String gongzhonghaoId) {
+        this.gongzhonghaoId = gongzhonghaoId;
+    }
 
     public Integer getIsQuit() {
         return isQuit;
@@ -132,7 +254,7 @@ public class Employee implements Serializable {
     }
 
     public String getIsQuitStr() {
-        if(isQuit!=null) {
+        if (isQuit != null) {
             if (this.isQuit == 0) {
                 return "在职";
             } else if (this.isQuit == 1) {
@@ -147,7 +269,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getEducationLeUrlInt() {
-        if (this.getEducationLeUrl().trim().length()<=0 || "0".equals(this.getEducationLeUrl().trim())) {
+        if (this.getEducationLeUrl().trim().length() <= 0 || "0".equals(this.getEducationLeUrl().trim())) {
             return 0;
         }
         return 1;
@@ -158,7 +280,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getSateListAndLeaCertiUrlInt() {
-        if (this.getSateListAndLeaCertiUrl().trim().length()<=0 || "0".equals(this.getSateListAndLeaCertiUrl().trim())) {
+        if (this.getSateListAndLeaCertiUrl().trim().length() <= 0 || "0".equals(this.getSateListAndLeaCertiUrl().trim())) {
             return 0;
         }
         return 1;
@@ -169,7 +291,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getOtherCertiUrlInt() {
-        if(this.otherCerti!=null) {
+        if (this.otherCerti != null) {
             if (this.getOtherCertiUrl().trim().length() <= 0 || "0".equals(this.getOtherCertiUrl().trim())) {
                 return 0;
             }
@@ -497,11 +619,11 @@ public class Employee implements Serializable {
                 return "副总经理级别";
             } else if (positionAttrId == 4) {
                 return "经理级别";
-            }else if (positionAttrId == 5) {
+            } else if (positionAttrId == 5) {
                 return "主管级别";
-            }else if (positionAttrId == 6) {
+            } else if (positionAttrId == 6) {
                 return "组长级别";
-            }else if (positionAttrId == 7) {
+            } else if (positionAttrId == 7) {
                 return "职员级别";
             }
         }

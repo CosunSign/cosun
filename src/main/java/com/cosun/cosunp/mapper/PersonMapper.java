@@ -1,6 +1,7 @@
 package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
+import com.cosun.cosunp.weixin.OutClockIn;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -99,11 +100,156 @@ public interface PersonMapper {
     @Select("select count(*) from dept")
     int findAllDeptConditionCount();
 
+    @Select("select count(*) from clockinsetup where outDays = #{outDays}")
+    int findIfExsit(ClockInSetUp clockInSetUp);
+
+    @Insert("insert into clockinsetup (outDays,dayClockInTimes,remark) values (#{outDays},#{dayClockInTimes},#{remark})")
+    void saveClockInSetUp(ClockInSetUp clockInSetUp);
+
+    @Update("update clockinsetup set dayClockInTimes = #{dayClockInTimes},remark = #{remark} where outDays = #{outDays}")
+    void updateClockInSetUp(ClockInSetUp clockInSetUp);
+
     @Select("select count(*) from position where positionName like  CONCAT('%',#{positionName},'%')")
     int checkIfExsit(String positionName);
 
     @Select("select count(*) from dept where deptname like  CONCAT('%',#{deptname},'%')")
     int checkIfExsit2(String deptname);
+
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "isClockInAlready")
+    int isClockInAlready(String openId,String dateStr, String titleName);
+
+    @Select("select " +
+            "weixinNo,\n" +
+            "\tifnull(date_format(clockInDateAMOn, '%h:%i:%s'),'')  as clockInDateAMOnStr,\n" +
+            "\tifnull(clockInAddrAMOn,'') as clockInAddrAMOn,\n" +
+            "\t \tCASE\n" +
+            "WHEN amOnUrl IS NULL THEN\n" +
+            "\t'无'\n" +
+            "WHEN amOnUrl IS NOT NULL THEN\n" +
+            "\t'有'\n" +
+            "ELSE\n" +
+            "\t'other' \n" +
+            "END as amOnUrl ,\n" +
+            "\tifnull(date_format(clockInDatePMOn, '%h:%i:%s'),'') as clockInDatePMOnStr,\n" +
+            "\tifnull(clockInAddrPMOn,'') as clockInAddrPMOn,\n" +
+            "\t\tCASE\n" +
+            "WHEN pmOnUrl IS NULL THEN\n" +
+            "\t'无'\n" +
+            "WHEN pmOnUrl IS NOT NULL THEN\n" +
+            "\t'有'\n" +
+            "ELSE\n" +
+            "\t'other' \n" +
+            "END as pmOnUrl,\n" +
+            "\tifnull(date_format(clockInDateNMOn, '%h:%i:%s'),'') as clockInDateNMOnStr,\n" +
+            "\tifnull(clockInAddNMOn,'') as clockInAddNMOn,\n" +
+            "\t\tCASE\n" +
+            "WHEN nmOnUrl IS NULL THEN\n" +
+            "\t'无'\n" +
+            "WHEN nmOnUrl IS NOT NULL THEN\n" +
+            "\t'有'\n" +
+            "ELSE\n" +
+            "\t'other' \n" +
+            "END as nmOnUrl,\n" +
+            "\tclockInDate as clockInDateStr" +
+            " from outclockin where weixinNo = #{openId} order by clockInDate asc")
+    List<OutClockIn> findAllOutClockInByOpenId(String openId);
+
+    @Select("select * from outclockin where weixinNo = #{weixinNo} and clockInDate = #{clockInDateStr} ")
+    OutClockIn getOutClockInByDateAndWeiXinId(OutClockIn outClockIn);
+
+    @Insert("INSERT into outclockin (weixinNo,\n" +
+            "\tclockInDateAMOn,\n" +
+            "\tclockInAddrAMOn,\n" +
+            "\tclockInDatePMOn,\n" +
+            "\tclockInAddrPMOn,\n" +
+            "\tclockInDateNMOn,\n" +
+            "\tclockInAddNMOn,\n" +
+            "\tclockInDate)\n" +
+            " values(" +
+            "#{weixinNo}," +
+            "#{clockInDateAMOnStr}," +
+            "#{clockInAddrAMOn}," +
+            "#{clockInDatePMOnStr}," +
+            "#{clockInAddrPMOn}," +
+            "#{clockInDateNMOnStr}," +
+            "#{clockInAddNMOn}," +
+            "#{clockInDateStr})\n")
+    void addOutClockInDateByBean(OutClockIn outClockIn);
+
+    @Insert("INSERT into outclockin (weixinNo,\n" +
+            "\tclockInDateAMOn,\n" +
+            "\tclockInAddrAMOn,\n" +
+            "\tamOnUrl,\n" +
+            "\tclockInDatePMOn,\n" +
+            "\tclockInAddrPMOn,\n" +
+            "\tpmOnUrl,\n" +
+            "\tclockInDateNMOn,\n" +
+            "\tclockInAddNMOn,\n" +
+            "\tnmOnUrl,\n" +
+            "\tclockInDate)\n" +
+            " values(" +
+            "#{weixinNo}," +
+            "#{clockInDateAMOnStr}," +
+            "#{clockInAddrAMOn}," +
+            "#{amOnUrl}," +
+            "#{clockInDatePMOnStr}," +
+            "#{clockInAddrPMOn}," +
+            "#{pmOnUrl}," +
+            "#{clockInDateNMOnStr}," +
+            "#{clockInAddNMOn}," +
+            "#{nmOnUrl}," +
+            "#{clockInDateStr})\n")
+    void addPhotoOutClockInDateByBean(OutClockIn outClockIn);
+
+    @Update("update outclockin set amOnUrl = #{amOnUrl} " +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updatePhotoClockInDateByAM(OutClockIn outClockIn);
+
+    @Update("update outclockin set clockInDateAMOn = #{clockInDateAMOnStr},clockInAddrAMOn = #{clockInAddrAMOn}" +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updateClockInDateByAM(OutClockIn outClockIn);
+
+    @Update("update outclockin set clockInDatePMOn = #{clockInDatePMOnStr},clockInAddrPMOn = #{clockInAddrPMOn}" +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updateClockInDateByPM(OutClockIn outClockIn);
+
+    @Update("update outclockin set pmOnUrl = #{pmOnUrl}" +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updatePhotoClockInDateByPM(OutClockIn outClockIn);
+
+    @Update("update outclockin set clockInDateNMOn = #{clockInDateNMOnStr},clockInAddNMOn = #{clockInAddNMOn}" +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updateClockInDateByNM(OutClockIn outClockIn);
+
+    @Update("update outclockin set nmOnUrl = #{nmOnUrl}" +
+            " where weixinNo = #{weixinNo} and  clockInDate = #{clockInDateStr} ")
+    void updatePhotoClockInDateByNM(OutClockIn outClockIn);
+
+    @Select("select * from clockinsetup order by outDays asc")
+    List<ClockInSetUp> findAllCLockInSetUp();
+
+    @Select("SELECT\n" +
+            "\te.empno as empNo,\n" +
+            "\te.`name` as name,\n" +
+            "\tdate_format(ld.beginleave, '%Y-%m-%d %h:%i:%s')  as beginleaveStr,\n" +
+            "\tdate_format(ld.endleave, '%Y-%m-%d %h:%i:%s') as endleaveStr,\n" +
+            "\tld.leavelong,\n" +
+            "\tld.leaveDescrip\n" +
+            "FROM\n" +
+            "\tleavedata ld\n" +
+            "LEFT JOIN employee e ON ld.employeeid = e.id\n" +
+            "LEFT JOIN gongzhonghao g ON g.empNo = e.empno" +
+            " where g.gongzhonghaoId = #{openId} " +
+            "order by ld.id desc")
+    List<Leave> findAllLeaveByWeiXinId(String openId);
+
+    @Select("select e.`name` from gongzhonghao g LEFT JOIN employee e on e.empno = g.empNo\n" +
+            "where gongzhonghaoId = #{openId} limit 1 ")
+    String getNameByWeiXinId(String openId);
+
+    @Delete("delete from clockinsetup where outDays = #{outDays}")
+    void deleteClockSetInByOutDays(Double outDays);
 
     @Select("SELECT\n" +
             "\tid,\n" +
@@ -145,9 +291,14 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeByCondition")
     List<Employee> queryEmployeeByCondition(Employee employee);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryGongZhongHaoByCondition")
+    List<Employee> queryGongZhongHaoByCondition(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryGongZhongHaoByConditionCount")
+    int queryGongZhongHaoByConditionCount(Employee employee);
+
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeSalaryByCondition")
     List<Employee> queryEmployeeSalaryByCondition(Employee employee);
-
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryWorkSetByCondition")
     List<WorkSet> queryWorkSetByCondition(WorkSet workSet);
@@ -173,6 +324,24 @@ public interface PersonMapper {
 
     @Select("select * from position order by positionName desc limit #{currentPageTotalNum},#{pageSize}")
     List<Position> findAllPosition(Position position);
+
+    @Select("select * from clockinsetup order by outDays asc ")
+    List<ClockInSetUp> findAllOutClockInSetUp();
+
+    @Select("select count(*) from gongzhonghao where empNo = #{empNo}")
+    int getGongZhongHaoByEmpNo(String empNo);
+
+
+    @Insert("INSERT into gongzhonghao (empNo,gongzhonghaoId)\n" +
+            " values(#{empNo},#{gongzhonghaoId})\n")
+    void saveGongZhongHaoByBean(GongZhongHao gongZhongHao);
+
+
+    @Delete("delete from gongzhonghao where empNo = #{empNo} ")
+    void deleteGongZhongHaoByEmpNo(String empNo);
+
+    @Update(" update gongzhonghao set gongzhonghaoId = #{gongzhonghaoId} where empNo = #{empNo} ")
+    void updateGongZhongHaoByEmpNo(GongZhongHao gongZhongHao);
 
     @Select("select * from dept order by deptname desc limit #{currentPageTotalNum},#{pageSize} ")
     List<Dept> findAllDept(Dept dept);
@@ -236,13 +405,76 @@ public interface PersonMapper {
             "\td.deptname AS deptName,\n" +
             "\tn.positionName AS positionName,\n" +
             "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "\te.empno AS empNo,e.isQuit " +
+            "\te.empno AS empNo," +
+            "e.isQuit," +
+            "h.gongzhonghaoId " +
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
-            "LEFT JOIN position n on e.positionId = n.id\n" +
+            "LEFT JOIN position n on e.positionId = n.id " +
+            " left join gongzhonghao h on e.empno = h.empNo " +
             "\t\tORDER BY\n" +
             "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
     List<Employee> findAllEmployee(Employee employee);
+
+
+//    SELECT
+//    e. NAME,
+//    d.deptname AS deptName,
+//    n.positionName AS positionName,
+//    e.empno,
+//
+//
+//    FROM
+//    employee e
+//    LEFT JOIN dept d ON e.deptId = d.id
+//    LEFT JOIN position n ON e.positionId = n.id
+//    LEFT JOIN gongzhonghao h ON e.empno = h.empNo
+//    left join outclockin o on o.weixinNo = h.gongzhonghaoId
+//    left join leavedata l on l.employeeid = e.id
+//    where l.type = 1
+//    ORDER BY
+//    e.empno ASC
+//    LIMIT 0,10
+
+    @Select("SELECT\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\te.otherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "  e.id AS id,\n" +
+            "\td.deptname AS deptName,\n" +
+            "\tn.positionName AS positionName,\n" +
+            "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "\te.empno AS empNo," +
+            "e.isQuit," +
+            "h.gongzhonghaoId " +
+            "\t\tFROM\n" +
+            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
+            "LEFT JOIN position n on e.positionId = n.id " +
+            " left join gongzhonghao h on e.empno = h.empNo " +
+            "\t\tORDER BY\n" +
+            "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
+    List<Employee> findAllEmployeeOutClockIn(Employee employee);
 
 
     @Select("SELECT\te. NAME,\n" +
@@ -394,8 +626,6 @@ public interface PersonMapper {
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel} " +
             " and type = #{type} ")
     WorkDate getWorkDateByMonth(WorkDate workDate);
-
-
 
 
     @Select("select *,GROUP_CONCAT(workdate) from workdate where month = #{month} and positionLevel = #{positionLevel} " +
@@ -846,145 +1076,282 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod())&& !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
-                if("name".equals(employee.getSortByName())){
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
                     sb.append(" order by e.name ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("sexStr".equals(employee.getSortByName())) {
+                } else if ("sexStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.sex ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("empNo".equals(employee.getSortByName())) {
+                } else if ("empNo".equals(employee.getSortByName())) {
                     sb.append(" order by e.empno ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("deptName".equals(employee.getSortByName())) {
+                } else if ("deptName".equals(employee.getSortByName())) {
                     sb.append(" order by d.deptname ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("positionName".equals(employee.getSortByName())) {
+                } else if ("positionName".equals(employee.getSortByName())) {
                     sb.append(" order by n.positionName ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("positionAttrIdStr".equals(employee.getSortByName())) {
+                } else if ("positionAttrIdStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.positionAttrId ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("birthDayStr".equals(employee.getSortByName())) {
+                } else if ("birthDayStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.birthDay ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("incomdateStr".equals(employee.getSortByName())) {
+                } else if ("incomdateStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.incompdate ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("nativePlaStr".equals(employee.getSortByName())) {
+                } else if ("nativePlaStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.nativePla ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("contactPhone".equals(employee.getSortByName())) {
+                } else if ("contactPhone".equals(employee.getSortByName())) {
                     sb.append(" order by e.contactPhone ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("educationLeStr".equals(employee.getSortByName())) {
+                } else if ("educationLeStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.educationLe ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
+                } else if ("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.sateListAndLeaCerti ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("otherCertiStr".equals(employee.getSortByName())) {
+                } else if ("otherCertiStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.otherCerti ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("compreSalary".equals(employee.getSortByName())) {
+                } else if ("compreSalary".equals(employee.getSortByName())) {
                     sb.append(" order by s.compreSalary ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("posSalary".equals(employee.getSortByName())) {
+                } else if ("posSalary".equals(employee.getSortByName())) {
                     sb.append(" order by s.posSalary ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("jobSalary".equals(employee.getSortByName())) {
+                } else if ("jobSalary".equals(employee.getSortByName())) {
                     sb.append(" order by s.jobSalary ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("meritSalary".equals(employee.getSortByName())) {
+                } else if ("meritSalary".equals(employee.getSortByName())) {
                     sb.append(" order by s.meritSalary ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("allMoney".equals(employee.getSortByName())) {
+                } else if ("allMoney".equals(employee.getSortByName())) {
                     sb.append(" order by (compresalary+possalary+jobsalary+meritsalary) ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("state".equals(employee.getSortByName())) {
+                } else if ("state".equals(employee.getSortByName())) {
                     sb.append(" order by state ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                } else if("isQuit".equals(employee.getSortByName())) {
+                } else if ("isQuit".equals(employee.getSortByName())) {
                     sb.append(" order by isQuit ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" order by e.empno asc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+        public String queryGongZhongHaoByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT count(*) FROM \n" +
+                    "\temployee e\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id ");
+            if (employee.getIsgongzhonghaoBangDing() != null
+                    && employee.getIsgongzhonghaoBangDing().size() > 0
+                    && employee.getIsgongzhonghaoBangDing().get(0) == 1) {
+                sb.append("  join gongzhonghao h on e.empno = h.empNo ");
+            } else {
+                sb.append(" left join gongzhonghao h on e.empno = h.empNo ");
+            }
+
+            sb.append(" where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+            return sb.toString();
+        }
+
+        public String queryGongZhongHaoByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +
+                    "\te. NAME AS namea,\n" +
+                    "\te.sex,\n" +
+                    "\te.deptId,\n" +
+                    "\te.empno,\n" +
+                    "\te.positionId,\n" +
+                    "\te.incompdate,\n" +
+                    "\te.conExpDate,\n" +
+                    "\te.birthDay,\n" +
+                    "\te.ID_NO,\n" +
+                    "\te.nativePla,\n" +
+                    "\te.homeAddr,\n" +
+                    "\te.valiPeriodOfID,\n" +
+                    "\te.nation,\n" +
+                    "\te.marriaged,\n" +
+                    "\te.contactPhone,\n" +
+                    "\te.educationLe,\n" +
+                    "\te.educationLeUrl,\n" +
+                    "\te.screAgreement,\n" +
+                    "\te.healthCerti,\n" +
+                    "\te.sateListAndLeaCerti,\n" +
+                    "\te.sateListAndLeaCertiUrl,\n" +
+                    "\te.otherCerti,\n" +
+                    "\te.otherCertiUrl,\n" +
+                    "\te.positionAttrId,\n" +
+                    "  e.id AS id,\n" +
+                    "\td.deptname AS deptName,\n" +
+                    "\tn.positionName AS positionName,\n" +
+                    "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+                    "\te.empno AS empNo," +
+                    "e.isQuit," +
+                    "h.gongzhonghaoId " +
+                    "\t\t FROM \n" +
+                    "\temployee e\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id ");
+            if (employee.getIsgongzhonghaoBangDing() != null
+                    && employee.getIsgongzhonghaoBangDing().size() > 0
+                    && employee.getIsgongzhonghaoBangDing().get(0) == 1
+            ) {
+                sb.append("  join gongzhonghao h on e.empno = h.empNo ");
+            } else {
+                sb.append(" left join gongzhonghao h on e.empno = h.empNo ");
+            }
+
+            sb.append(" where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
+                    sb.append(" order by e.name ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by e.empno ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by d.deptname ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("gongzhonghaoId".equals(employee.getSortByName())) {
+                    sb.append(" order by h.gongzhonghaoId ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
                 }
@@ -1066,103 +1433,103 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and e.incompdate <= #{endIncomDateStr}");
             }
-            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod())&& !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
-                if("name".equals(employee.getSortByName())){
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
                     sb.append(" order by e.name ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("sexStr".equals(employee.getSortByName())) {
+                } else if ("sexStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.sex ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("empNo".equals(employee.getSortByName())) {
+                } else if ("empNo".equals(employee.getSortByName())) {
                     sb.append(" order by e.empno ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("deptName".equals(employee.getSortByName())) {
+                } else if ("deptName".equals(employee.getSortByName())) {
                     sb.append(" order by d.deptname ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("positionName".equals(employee.getSortByName())) {
+                } else if ("positionName".equals(employee.getSortByName())) {
                     sb.append(" order by n.positionName ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("positionAttrIdStr".equals(employee.getSortByName())) {
+                } else if ("positionAttrIdStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.positionAttrId ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("birthDayStr".equals(employee.getSortByName())) {
+                } else if ("birthDayStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.birthDay ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("incomdateStr".equals(employee.getSortByName())) {
+                } else if ("incomdateStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.incompdate ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("nativePlaStr".equals(employee.getSortByName())) {
+                } else if ("nativePlaStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.nativePla ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("contactPhone".equals(employee.getSortByName())) {
+                } else if ("contactPhone".equals(employee.getSortByName())) {
                     sb.append(" order by e.contactPhone ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("educationLeStr".equals(employee.getSortByName())) {
+                } else if ("educationLeStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.educationLe ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
+                } else if ("sateListAndLeaCertiStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.sateListAndLeaCerti ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("otherCertiStr".equals(employee.getSortByName())) {
+                } else if ("otherCertiStr".equals(employee.getSortByName())) {
                     sb.append(" order by e.otherCerti ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
-                }else if("isQuit".equals(employee.getSortByName())) {
+                } else if ("isQuit".equals(employee.getSortByName())) {
                     sb.append(" order by e.isQuit ");
-                    if("asc".equals(employee.getSortMethod())){
+                    if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
-                    }else if("desc".equals(employee.getSortMethod())) {
+                    } else if ("desc".equals(employee.getSortMethod())) {
                         sb.append(" desc ");
                     }
                 }
@@ -1295,6 +1662,24 @@ public interface PersonMapper {
             }
             if (position.getPositionLevel() != null && position.getPositionLevel().trim().length() > 0) {
                 sb.append(" and positionLevel = #{positionLevel}");
+            }
+            return sb.toString();
+        }
+
+        public String isClockInAlready(String openId,String dateStr, String titleName) {
+            StringBuilder sb = new StringBuilder();
+            if ("clockInDateAMOn".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and clockInDate = #{dateStr} and clockInDateAMOn <> ''");
+            } else if ("clockInDatePMOn".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and  clockInDate = #{dateStr} and clockInDatePMOn <> ''");
+            } else if ("clockInDateNMOn".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and  clockInDate = #{dateStr} and clockInDateNMOn <> ''");
+            } else if ("amOnUrl".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and   clockInDate = #{dateStr} and amOnUrl <> ''");
+            } else if ("pmOnUrl".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and  clockInDate = #{dateStr} and pmOnUrl <> ''");
+            } else if ("nmOnUrl".equals(titleName)) {
+                sb.append("select count(*) from outclockin where weixinNo = #{openId} and  clockInDate = #{dateStr} and nmOnUrl <> ''");
             }
             return sb.toString();
         }
