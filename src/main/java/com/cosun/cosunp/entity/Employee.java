@@ -132,6 +132,34 @@ public class Employee implements Serializable {
     private String clockInAddNMOn;
     private String nmOnUrl;
 
+    private Integer amOnUrlInt;
+    private Integer pmOnUrlInt;
+    private Integer nmOnUrlInt;
+
+
+    public Integer getAmOnUrlInt() {
+        return amOnUrlInt;
+    }
+
+    public void setAmOnUrlInt(Integer amOnUrlInt) {
+        this.amOnUrlInt = amOnUrlInt;
+    }
+
+    public Integer getPmOnUrlInt() {
+        return pmOnUrlInt;
+    }
+
+    public void setPmOnUrlInt(Integer pmOnUrlInt) {
+        this.pmOnUrlInt = pmOnUrlInt;
+    }
+
+    public Integer getNmOnUrlInt() {
+        return nmOnUrlInt;
+    }
+
+    public void setNmOnUrlInt(Integer nmOnUrlInt) {
+        this.nmOnUrlInt = nmOnUrlInt;
+    }
 
     public String getOutLeaveSheet() {
         return outLeaveSheet;
@@ -269,7 +297,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getEducationLeUrlInt() {
-        if (this.getEducationLeUrl().trim().length() <= 0 || "0".equals(this.getEducationLeUrl().trim())) {
+        if (this.getEducationLeUrl()==null || this.getEducationLeUrl().trim().length() <= 0 || "0".equals(this.getEducationLeUrl().trim())) {
             return 0;
         }
         return 1;
@@ -280,7 +308,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getSateListAndLeaCertiUrlInt() {
-        if (this.getSateListAndLeaCertiUrl().trim().length() <= 0 || "0".equals(this.getSateListAndLeaCertiUrl().trim())) {
+        if (this.getSateListAndLeaCertiUrl() == null || this.getSateListAndLeaCertiUrl().trim().length() <= 0 || "0".equals(this.getSateListAndLeaCertiUrl().trim())) {
             return 0;
         }
         return 1;

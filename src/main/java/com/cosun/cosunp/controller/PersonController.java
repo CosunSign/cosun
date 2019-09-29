@@ -4,6 +4,7 @@ import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.ExcelUtil;
 import com.cosun.cosunp.tool.MathUtil;
+import com.cosun.cosunp.weixin.OutClockIn;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1206,6 +1207,39 @@ public class PersonController {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/showImageByClockInId")
+    public void showImageByClockInId(Integer id, Integer type, HttpServletResponse response) throws Exception {
+        response.setContentType("text/html; charset=UTF-8");
+        response.setContentType("image/jpeg");
+        OutClockIn ee = personServ.getOutClockInById(id);
+        String pathName = "";
+        if (type == 1) {
+            pathName = ee.getAmOnUrl();
+        } else if (type == 2) {
+            pathName = ee.getPmOnUrl();
+        } else if (type == 3) {
+            pathName = ee.getNmOnUrl();
+        }
+        FileInputStream fis = new FileInputStream(finalDirPath+pathName);
+        OutputStream os = response.getOutputStream();
+        try {
+            int count = 0;
+            byte[] buffer = new byte[1024 * 1024];
+            while ((count = fis.read(buffer)) != -1)
+                os.write(buffer, 0, count);
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null)
+                os.close();
+            if (fis != null)
+                fis.close();
+        }
+    }
+
     @ResponseBody
     @RequestMapping(value = "/showImage")
     public void showImage(Integer id, Integer type, HttpServletResponse response) throws Exception {
@@ -1376,6 +1410,35 @@ public class PersonController {
             throw e;
         }
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryOutClockInByCondition", method = RequestMethod.POST)
+    public void queryOutClockInByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<Employee> employeeList = personServ.queryOutClockInByCondition(employee);
+            int recordCount = personServ.queryOutClockInByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (employeeList.size() > 0) {
+                employeeList.get(0).setMaxPage(maxPage);
+                employeeList.get(0).setRecordCount(recordCount);
+                employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+                employeeList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/queryEmployeeByCondition", method = RequestMethod.POST)

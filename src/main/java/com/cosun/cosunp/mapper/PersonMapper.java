@@ -117,7 +117,7 @@ public interface PersonMapper {
 
 
     @SelectProvider(type = PseronDaoProvider.class, method = "isClockInAlready")
-    int isClockInAlready(String openId,String dateStr, String titleName);
+    int isClockInAlready(String openId, String dateStr, String titleName);
 
     @Select("select " +
             "weixinNo,\n" +
@@ -154,6 +154,47 @@ public interface PersonMapper {
             "\tclockInDate as clockInDateStr" +
             " from outclockin where weixinNo = #{openId} order by clockInDate asc")
     List<OutClockIn> findAllOutClockInByOpenId(String openId);
+
+    @Select("select * from outclockin where id = #{id}")
+    OutClockIn getOutClockInById(Integer id);
+
+    @Select("select gongzhonghaoId from gongzhonghao")
+    List<String> findAllOpenId();
+
+    @Select("select * from clockinsetup order by outDays desc")
+    List<ClockInSetUp> findAllClockInSetUp();
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "findAllLeaveA")
+    List<Leave> findAllLeaveA(String monday, String tuesday, String wednesday, String thurday, String today);
+
+    @Select("SELECT\n" +
+            "\tee.`name`,\n" +
+            "  ee.empno,\n" +
+            "  ee.id,\n" +
+            "\tgg.gongzhonghaoId,\n" +
+            "\tld.beginleave,\n" +
+            "\tld.endleave,\n" +
+            "\toc.clockInDate,\n" +
+            "\toc.clockInDateAMOn,\n" +
+            "\toc.clockInAddrAMOn,\n" +
+            "\toc.amOnUrl,\n" +
+            "\toc.clockInDatePMOn,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl,\n" +
+            "\toc.clockInDateNMOn,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl\n" +
+            "FROM\n" +
+            "\tleavedata ld\n" +
+            "LEFT JOIN employee ee ON ld.employeeid = ee.id\n" +
+            "LEFT JOIN gongzhonghao gg ON gg.empNo = ee.empno\n" +
+            "LEFT JOIN outclockin oc ON oc.weixinNo = gg.gongzhonghaoId\n" +
+            "AND oc.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
+            "AND oc.clockInDate <= date_format(ld.endleave, '%Y-%m-%d')\n" +
+            " where oc.clockInDate in(#{monday},#{tuesday},#{wednesday},#{thurday},#{today})"+
+            "ORDER BY\n" +
+            "\tee.empno  ASC")
+    List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today);
 
     @Select("select * from outclockin where weixinNo = #{weixinNo} and clockInDate = #{clockInDateStr} ")
     OutClockIn getOutClockInByDateAndWeiXinId(OutClockIn outClockIn);
@@ -290,6 +331,12 @@ public interface PersonMapper {
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeByCondition")
     List<Employee> queryEmployeeByCondition(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryOutClockInByCondition")
+    List<Employee> queryOutClockInByCondition(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryOutClockInByConditionCount")
+    int queryOutClockInByConditionCount(Employee employee);
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryGongZhongHaoByCondition")
     List<Employee> queryGongZhongHaoByCondition(Employee employee);
@@ -436,46 +483,64 @@ public interface PersonMapper {
 //    e.empno ASC
 //    LIMIT 0,10
 
-    @Select("SELECT\te. NAME,\n" +
-            "\te. NAME AS namea,\n" +
-            "\te.sex,\n" +
-            "\te.deptId,\n" +
-            "\te.empno,\n" +
-            "\te.positionId,\n" +
-            "\te.incompdate,\n" +
-            "\te.conExpDate,\n" +
-            "\te.birthDay,\n" +
-            "\te.ID_NO,\n" +
-            "\te.nativePla,\n" +
-            "\te.homeAddr,\n" +
-            "\te.valiPeriodOfID,\n" +
-            "\te.nation,\n" +
-            "\te.marriaged,\n" +
-            "\te.contactPhone,\n" +
-            "\te.educationLe,\n" +
-            "\te.educationLeUrl,\n" +
-            "\te.screAgreement,\n" +
-            "\te.healthCerti,\n" +
-            "\te.sateListAndLeaCerti,\n" +
-            "\te.sateListAndLeaCertiUrl,\n" +
-            "\te.otherCerti,\n" +
-            "\te.otherCertiUrl,\n" +
-            "\te.positionAttrId,\n" +
-            "  e.id AS id,\n" +
-            "\td.deptname AS deptName,\n" +
-            "\tn.positionName AS positionName,\n" +
-            "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
-            "\te.empno AS empNo," +
-            "e.isQuit," +
-            "h.gongzhonghaoId " +
-            "\t\tFROM\n" +
-            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
-            "LEFT JOIN position n on e.positionId = n.id " +
-            " left join gongzhonghao h on e.empno = h.empNo " +
-            "\t\tORDER BY\n" +
-            "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
+    @Select("SELECT\n" +
+            "\to.id,\n" +
+            "\te.NAME,\n" +
+            "\td.deptname as deptName,\n" +
+            "\tn.positionName as positionName,\n" +
+            "\tifnull(ld.beginleave,'') as beginleaveStr,\n" +
+            "\tifnull(ld.endleave,'') as endleaveStr,\n" +
+            "\to.clockInDate AS clockInDateStr,\n" +
+            "\to.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+            "\to.clockInAddrAMOn,\n" +
+            "\tCASE\n" +
+            "WHEN o.amOnUrl IS NULL THEN\n" +
+            "\t 0\n" +
+            "WHEN o.amOnUrl IS NOT NULL THEN\n" +
+            "\t 1 \n" +
+            "END AS amOnUrlInt,\n" +
+            " o.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+            " o.clockInAddrPMOn,\n" +
+            " CASE\n" +
+            "WHEN o.pmOnUrl IS NULL THEN\n" +
+            "\t0\n" +
+            "WHEN o.pmOnUrl IS NOT NULL THEN\n" +
+            "\t1\n" +
+            "END AS pmOnUrlInt,\n" +
+            " o.clockInDateNMOn AS clockInDateNMOnStr,\n" +
+            " o.clockInAddNMOn,\n" +
+            " CASE\n" +
+            "WHEN o.nmOnUrl IS NULL THEN\n" +
+            "\t0\n" +
+            "WHEN o.nmOnUrl IS NOT NULL THEN\n" +
+            "\t1\n" +
+            "END AS nmOnUrlInt\n" +
+            "FROM\n" +
+            "\toutclockin o\n" +
+            "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
+            "LEFT JOIN employee e ON e.empno = g.empNo\n" +
+            "LEFT JOIN dept d ON e.deptId = d.id\n" +
+            "LEFT JOIN position n ON e.positionId = n.id\n" +
+            "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
+            "AND o.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
+            "AND o.clockInDate <= date_format(ld.endleave, '%Y-%m-%d')\n" +
+            "ORDER BY\n" +
+            "\te.empno ASC\n" +
+            " limit #{currentPageTotalNum},#{pageSize} ")
     List<Employee> findAllEmployeeOutClockIn(Employee employee);
 
+
+    @Select("SELECT count(*)  " +
+            "FROM\n" +
+            "\toutclockin o\n" +
+            "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
+            "LEFT JOIN employee e ON e.empno = g.empNo\n" +
+            "LEFT JOIN dept d ON e.deptId = d.id\n" +
+            "LEFT JOIN position n ON e.positionId = n.id\n" +
+            "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
+            "AND o.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
+            "AND o.clockInDate <= date_format(ld.endleave, '%Y-%m-%d') ")
+    int findAllEmployeeOutClockInCount(Employee employee);
 
     @Select("SELECT\te. NAME,\n" +
             "\te. NAME AS namea,\n" +
@@ -1362,6 +1427,229 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+        public String queryOutClockInByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT count(*) " +
+                    "FROM\n" +
+                    "\toutclockin o\n" +
+                    "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
+                    " JOIN employee e ON e.empno = g.empNo\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id\n" +
+                    "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
+                    "AND o.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
+                    "AND o.clockInDate <= date_format(ld.endleave, '%Y-%m-%d')\n" +
+                    " where 1=1 ");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and e.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getIsQuits() != null && employee.getIsQuits().size() > 0) {
+                sb.append(" and e.isQuit in (" + StringUtils.strip(employee.getIsQuits().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            return sb.toString();
+        }
+
+        public String queryOutClockInByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\te.NAME,\n" +
+                    "\to.id,\n" +
+                    "\td.deptname,\n" +
+                    "\tn.positionName,\n" +
+                    "\tifnull(ld.beginleave,'') as beginleaveStr,\n" +
+                    "\tifnull(ld.endleave,'') as endleaveStr,\n" +
+                    "\to.clockInDate AS clockInDateStr,\n" +
+                    "\to.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+                    "\to.clockInAddrAMOn,\n" +
+                    "\tCASE\n" +
+                    "WHEN o.amOnUrl IS NULL THEN\n" +
+                    "\t0\n" +
+                    "WHEN o.amOnUrl IS NOT NULL THEN\n" +
+                    "\t1\n" +
+                    "END AS amOnUrlInt,\n" +
+                    " o.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+                    " o.clockInAddrPMOn,\n" +
+                    " CASE\n" +
+                    "WHEN o.pmOnUrl IS NULL THEN\n" +
+                    "\t0\n" +
+                    "WHEN o.pmOnUrl IS NOT NULL THEN\n" +
+                    "\t1\n" +
+                    "END AS pmOnUrlInt,\n" +
+                    " o.clockInDateNMOn AS clockInDateNMOnStr,\n" +
+                    " o.clockInAddNMOn,\n" +
+                    " CASE\n" +
+                    "WHEN o.nmOnUrl IS NULL THEN\n" +
+                    "\t0\n" +
+                    "WHEN o.nmOnUrl IS NOT NULL THEN\n" +
+                    "\t1\n" +
+                    "END AS nmOnUrlInt\n" +
+                    "FROM\n" +
+                    "\toutclockin o\n" +
+                    "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
+                    " JOIN employee e ON e.empno = g.empNo\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id\n" +
+                    "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
+                    "AND o.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
+                    "AND o.clockInDate <= date_format(ld.endleave, '%Y-%m-%d')\n" +
+                    " where 1=1 ");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and e.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getIsQuits() != null && employee.getIsQuits().size() > 0) {
+                sb.append(" and e.isQuit in (" + StringUtils.strip(employee.getIsQuits().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
+                    sb.append(" order by e.name ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by e.empno ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by d.deptname ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("outLeaveSheet".equals(employee.getSortByName())) {
+                    sb.append(" order by ld.beginleave ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInDateStr".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInDate ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInDateAMOnStr".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInDateAMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInAddrAMOn".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInAddrAMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("amOnUrl".equals(employee.getSortByName())) {
+                    sb.append(" order by o.amOnUrl ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInDatePMOnStr".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInDatePMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInAddrPMOn".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInAddrPMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("pmOnUrl".equals(employee.getSortByName())) {
+                    sb.append(" order by o.pmOnUrl ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInDateNMOnStr".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInDateNMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockInAddNMOn".equals(employee.getSortByName())) {
+                    sb.append(" order by o.clockInAddNMOn ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("nmOnUrl".equals(employee.getSortByName())) {
+                    sb.append(" order by o.nmOnUrl ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+
+            } else {
+                sb.append(" order by e.name asc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
         public String queryEmployeeByCondition(Employee employee) {
             StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +
                     "\te. NAME AS namea,\n" +
@@ -1666,7 +1954,7 @@ public interface PersonMapper {
             return sb.toString();
         }
 
-        public String isClockInAlready(String openId,String dateStr, String titleName) {
+        public String isClockInAlready(String openId, String dateStr, String titleName) {
             StringBuilder sb = new StringBuilder();
             if ("clockInDateAMOn".equals(titleName)) {
                 sb.append("select count(*) from outclockin where weixinNo = #{openId} and clockInDate = #{dateStr} and clockInDateAMOn <> ''");
@@ -1681,6 +1969,33 @@ public interface PersonMapper {
             } else if ("nmOnUrl".equals(titleName)) {
                 sb.append("select count(*) from outclockin where weixinNo = #{openId} and  clockInDate = #{dateStr} and nmOnUrl <> ''");
             }
+            return sb.toString();
+        }
+
+        public String findAllLeaveA(String monday, String tuesday, String wednesday, String thurday, String today) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tld.beginleave AS beginleave,\n" +
+                    "\tld.beginleave AS beginleaveStr,\n" +
+                    "\tld.endleave AS endleave,\n" +
+                    "\tld.endleave AS endleaveStr,\n" +
+                    "\tld.leavelong AS leavelong,\n" +
+                    "\tld.leaveDescrip AS leaveDescrip,\n" +
+                    "\tee.empno,\n" +
+                    "\tee.`name`\n" +
+                    "FROM\n" +
+                    "\tleavedata ld\n" +
+                    "LEFT JOIN employee ee ON ld.employeeid = ee.id\n" +
+                    "WHERE ld.type=2 " +
+                    " (AND date_format(ld.beginleave, '%Y-%m-%d') <= #{monday} \n" +
+                    "AND date_format(ld.endleave, '%Y-%m-%d') >= #{monday} \n" +
+                    "OR (date_format(ld.beginleave, '%Y-%m-%d') <= #{tuesday} \n" +
+                    "AND date_format(ld.endleave, '%Y-%m-%d') >= #{tuesday}) \n" +
+                    "OR (date_format(ld.beginleave, '%Y-%m-%d') <= #{wednesday} \n" +
+                    "AND date_format(ld.endleave, '%Y-%m-%d') >= #{wednesday}) \n" +
+                    "OR (date_format(ld.beginleave, '%Y-%m-%d') <= #{thurday} \n" +
+                    "AND date_format(ld.endleave, '%Y-%m-%d') >= #{thurday}) \n" +
+                    "OR (date_format(ld.beginleave, '%Y-%m-%d') <= #{today} \n" +
+                    "AND date_format(ld.endleave, '%Y-%m-%d') >= #{today})) ");
             return sb.toString();
         }
     }

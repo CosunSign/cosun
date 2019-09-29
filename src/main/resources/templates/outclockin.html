@@ -52,29 +52,29 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goPriPageone() {
         $("#n_currentPage").val(1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function isNull(arg1) {
@@ -105,51 +105,48 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryEmployeeByCondition2();
+            queryOutClockInByCondition2();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryEmployeeByCondition2();
+        queryOutClockInByCondition2();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryEmployeeByCondition2() {
+    function queryOutClockInByCondition2() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
         formData.append('nameIds', $("#name").val());
-        formData.append('sexIds', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
-        formData.append('sortMethod', sortMethod);
-        formData.append('sortByName', sortByName);
         formData.append('workTypes', $("#workType").val());
         formData.append('isQuits', $("#isQuit").val());
         formData.append('currentPage', currentpage);
+        formData.append('sortMethod', sortMethod);
+        formData.append('sortByName', sortByName);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryEmployeeByCondition",
+            url: "/person/queryOutClockInByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -198,61 +195,34 @@
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
-                        tr.append("<td>" + isNull(data[num].sexStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].birthDayStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
-                        tr.append("<td>" + isNull(data[num].isQuitStr) + "</td>");
-
-
-                        td2 = "";
-                        if (eduLe <= 0) {
-                            td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
+                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
+                        if (data[num].amOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += " <td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>" + data[num].educationLeStr + "</a></td>";
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>有</a></td>");
                         }
-
-                        if (safeLe > 0) {
-                            td2 += " <td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>" + data[num].sateListAndLeaCertiStr + "</a></td>";
+                        tr.append("<td>" + isNull(data[num].clockInDatePMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddrPMOn) + "</td>");
+                        if (data[num].pmOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += "<td align=\"center\">" + isNull(data[num].sateListAndLeaCertiStr) + "</td>\n"
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>有</a></td>");
                         }
-                        if (otherLe > 0) {
-                            td2 += "<td> <a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>" + data[num].otherCertiStr + "</a></td>";
-
+                        tr.append("<td>" + isNull(data[num].clockInDateNMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddNMOn) + "</td>");
+                        if (data[num].nmOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += "<td align=\"center\">" + isNull(data[num].otherCertiStr) + "</td>\n"
-
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>有</a></td>");
                         }
-
-                        td = "<td>";
-                        if (userType == 1) {
-                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                                " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
-                                "  </td>";
-                        } else {
-                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                                " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
-                                "  </td>";
-                        }
-                        tr.append(td2);
-                        tr.append(td);
                         tr.appendTo(tbody);
                     });
                     $("#currentpagespan").html(currentPage);
@@ -311,26 +281,23 @@
     var sortMethod;
     var sortByName;
 
-    function queryEmployeeByCondition() {
+    function queryOutClockInByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
         formData.append('nameIds', $("#name").val());
-        formData.append('sexIds', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        // formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-        // formData.append('endIncomDateStr', $("#endIncomDateStr").val());
-        formData.append('sortMethod', sortMethod);
-        formData.append('sortByName', sortByName);
         formData.append('workTypes', $("#workType").val());
         formData.append('isQuits', $("#isQuit").val());
         formData.append('currentPage', 1);
+        formData.append('sortMethod', sortMethod);
+        formData.append('sortByName', sortByName);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryEmployeeByCondition",
+            url: "/person/queryOutClockInByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -379,62 +346,34 @@
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
-                        tr.append("<td>" + isNull(data[num].sexStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].empNo) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionAttrIdStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].birthDayStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].incomdateStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].nativePlaStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].contactPhone) + "</td>");
-                        tr.append("<td>" + isNull(data[num].isQuitStr) + "</td>");
-
-
-                        td2 = "";
-                        if (eduLe <= 0) {
-                            td2 += "<td align=\"center\">" + isNull(data[num].educationLeStr) + "</td>\n"
+                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
+                        if (data[num].amOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += " <td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>" + data[num].educationLeStr + "</a></td>";
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>有</a></td>");
                         }
-
-                        if (safeLe > 0) {
-                            td2 += " <td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>" + data[num].sateListAndLeaCertiStr + "</a></td>";
+                        tr.append("<td>" + isNull(data[num].clockInDatePMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddrPMOn) + "</td>");
+                        if (data[num].pmOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += "<td align=\"center\">" + isNull(data[num].sateListAndLeaCertiStr) + "</td>\n"
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>有</a></td>");
                         }
-                        if (otherLe > 0) {
-                            td2 += "<td> <a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>" + data[num].otherCertiStr + "</a></td>";
-
+                        tr.append("<td>" + isNull(data[num].clockInDateNMOnStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].clockInAddNMOn) + "</td>");
+                        if (data[num].nmOnUrlInt == 0) {
+                            tr.append("<td align=\"center\">无</td>");
                         } else {
-                            td2 += "<td align=\"center\">" + isNull(data[num].otherCertiStr) + "</td>\n"
-
+                            tr.append("<td><a href='javascript:void(0)';" +
+                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>有</a></td>");
                         }
-
-                        td = "<td>";
-                        if (userType == 1) {
-                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-xs btn-primary\"\n" +
-                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                                " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
-                                "  </td>";
-                        } else {
-                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateEmployee(" + data[num].id + ");\">编辑</a>\n" +
-                                "  <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                " onclick=\"deleteEmployee(" + data[num].id + ");\">删除</a>\n" +
-                                " &nbsp;&nbsp;&nbsp;\n" +
-                                "                        <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
-                                "  </td>";
-                        }
-
-                        tr.append(td2);
-                        tr.append(td);
                         tr.appendTo(tbody);
                     });
                     $("#currentpagespan").html(currentPage);
@@ -524,13 +463,17 @@
     function sortByAsc(titlename) {
         sortMethod = 'asc';
         sortByName = titlename;
-        queryEmployeeByCondition();
+        queryOutClockInByCondition();
     }
 
     function sortByDesc(titlename) {
         sortMethod = 'desc';
         sortByName = titlename;
-        queryEmployeeByCondition();
+        queryOutClockInByCondition();
+    }
+
+    function showPNG(id, type) {
+        window.open("/person/showImageByClockInId?id=" + id + "&type=" + type);
     }
 
 </script>
@@ -619,27 +562,11 @@
                                 <option th:value="1">办公区</option>
                             </select>
                         </td>
-                        <td style="text-align: right;">
-                            <input type="checkbox" value="1" name="pipeioutsheet" id="pipeioutsheet">
-                        </td>
-                        <td>
-                            <label>&nbsp;&nbsp;匹配因公外出单</label>
-                        </td>
 
 
                         <td colspan="2" style="text-align: right">
                             <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryEmployeeByCondition()">查找</a>
-                            <!--<input type="button" value="查找" class="btn btn-primary">-->
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               th:disabled="${userInfo.type ne 1}"
-                               href="/person/toaddpersonpage">新增</a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               th:disabled="${userInfo.type ne 1}"
-                               href="javascript:void(0);" onclick="deleteEmpByBatch()">批量删除</a>
-                            <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
+                               href="javascript:void(0);" onclick="queryOutClockInByCondition()">查找</a>
                         </td>
                         <td>
                             <div style="display: none" id="errormessage">
@@ -737,17 +664,41 @@
                     <td align="center" th:text="${employ.name}"></td>
                     <td align="center" th:text="${employ.deptName}"></td>
                     <td align="center" th:text="${employ.positionName}"></td>
-                    <td align="center" th:text="${employ.outLeaveSheet}"></td>
+                    <td align="center" th:text="${employ.beginLeaveStr}+' '+${employ.endLeaveStr}"></td>
                     <td align="center" th:text="${employ.clockInDateStr}"></td>
                     <td align="center" th:text="${employ.clockInDateAMOnStr}"></td>
                     <td align="center" th:text="${employ.clockInAddrAMOn}"></td>
-                    <td align="center" th:text="${employ.amOnUrl}"></td>
+                    <div th:if="${employ.amOnUrlInt eq 1}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],1);">有</a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.amOnUrlInt eq 0}">
+                        <td align="center">无</td>
+                    </div>
                     <td align="center" th:text="${employ.clockInDatePMOnStr}"></td>
                     <td align="center" th:text="${employ.clockInAddrPMOn}"></td>
-                    <td align="center" th:text="${employ.pmOnUrl}"></td>
+                    <div th:if="${employ.pmOnUrlInt eq 1}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],2);">有</a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.pmOnUrlInt eq 0}">
+                        <td align="center">无</td>
+                    </div>
                     <td align="center" th:text="${employ.clockInDateNMOnStr}"></td>
                     <td align="center" th:text="${employ.clockInAddNMOn}"></td>
-                    <td align="center" th:text="${employ.nmOnUrl}"></td>
+                    <div th:if="${employ.nmOnUrlInt eq 1}">
+                        <td align="center">
+                            <a href="javascript:void(0);"
+                               th:onclick="showPNG([[${employ.id}]],3);">有</a>
+                        </td>
+                    </div>
+                    <div th:if="${employ.nmOnUrlInt eq 0}">
+                        <td align="center">无</td>
+                    </div>
                 </tr>
             </div>
         </div>

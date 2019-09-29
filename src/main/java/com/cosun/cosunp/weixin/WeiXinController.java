@@ -1,9 +1,14 @@
 package com.cosun.cosunp.weixin;
 
 import com.cosun.cosunp.entity.ClockInSetUp;
+import com.cosun.cosunp.entity.Employee;
 import com.cosun.cosunp.entity.Leave;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.Constants;
+import com.cosun.cosunp.tool.DateUtil;
+import com.cosun.cosunp.tool.HttpUtil;
+import com.cosun.cosunp.tool.JSONUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONArray;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,6 +26,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -104,7 +111,112 @@ public class WeiXinController {
         }
     }
 
-    //
+    public MassMsgResult sendTextToOpenid() {
+        MassMsgResult result = null;
+        try {
+            pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+            jedis = pool.getResource();
+            String accessToken = jedis.get(Constants.accessToken);
+            List<String> allOpenIds = personServ.findAllOpenId();
+            TreeMap<String, String> params = new TreeMap<>();
+            params.put("access_token", accessToken);
+            String preDay01;
+            String preDay02;
+            String preDay03;
+            String preDay04;
+            String today;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, -4);
+            Date time = c.getTime();
+            preDay01 = sdf.format(time);
+            c.add(Calendar.DATE, -3);
+            time = c.getTime();
+            preDay02 = sdf.format(time);
+            c.add(Calendar.DATE, -2);
+            time = c.getTime();
+            preDay03 = sdf.format(time);
+            c.add(Calendar.DATE, -1);
+            time = c.getTime();
+            preDay04 = sdf.format(time);
+            c.add(Calendar.DATE, 0);
+            time = c.getTime();
+            today = sdf.format(time);
+            List<Employee> employeeList = personServ.findLeaveDataUionOutClockData(preDay01, preDay02, preDay03, preDay04, today);
+            List<ClockInSetUp> clockInSetUpList = personServ.findAllClockInSetUp();
+            List<Leave> leaveList = personServ.findAllLeave(preDay01, preDay02, preDay03, preDay04, today);
+            Employee ee = null;
+            List<String> leaveDateStrs = new ArrayList<String>();
+            Map<String, String> sb = new TreeMap<String, String>();
+            String name;
+            String empNo;
+            int clockTimes;
+            Long xiangChaDays;
+            String leaveDate;
+            boolean isClockIn = false;
+            int dayClockTimes = 0;
+            String openId = null;
+            for (int i = 0; i < leaveList.size(); i++) {
+                name = leaveList.get(i).getName();
+                empNo = leaveList.get(i).getEmpNo();
+                xiangChaDays = DateUtil.startToEnd(leaveList.get(0).getBeginLeave(), leaveList.get(0).getEndLeave());
+                clockTimes = ComputeClockTimesByLeaveDays(xiangChaDays, clockInSetUpList);
+                leaveDateStrs.addAll(DateUtil.toDatePriodTranstoDays(leaveList.get(0).getBeginLeaveStr(), leaveList.get(0).getEndLeaveStr()));
+                StringBuilder sbStr = new StringBuilder("");
+                for (int a = 0; a < leaveDateStrs.size(); a++) {
+                    isClockIn = false;
+                    leaveDate = leaveDateStrs.get(a);
+                    for (int j = 0; j < employeeList.size(); j++) {
+                        ee = employeeList.get(j);
+                        openId = ee.getGongzhonghaoId();
+                        if (leaveDate.equals(ee.getClockInDateStr()) && empNo.equals(ee.getEmpNo())) {
+                            isClockIn = true;
+                            if (ee.getClockInDateAMOnStr() != null || ee.getClockInAddrAMOn() != null) {
+                                dayClockTimes++;
+                            }
+                            if (ee.getClockInDatePMOnStr() != null || ee.getClockInAddrPMOn() != null) {
+                                dayClockTimes++;
+                            }
+                            if (ee.getClockInDateNMOnStr() != null || ee.getClockInAddNMOn() != null) {
+                                dayClockTimes++;
+                            }
+                        }
+                    }
+                    if (!isClockIn) {
+                        sbStr.append(leaveDate + "一整天未打卡");
+                    } else if (dayClockTimes < clockTimes) {
+                        sbStr.append(leaveDate + "规定打卡" + clockTimes + "次,但您只打卡" + dayClockTimes + "次");
+                    }
+
+                }
+                sb.put(openId + " " + name, sbStr.toString());
+            }
+            System.out.println(sb.toString());
+            // post 提交的参数
+            Map<String, Object> textParams = new HashMap<>();
+            textParams.put("content", sb);
+            TreeMap<String, Object> dataParams = new TreeMap<>();
+            dataParams.put("touser", allOpenIds);
+            dataParams.put("text", textParams);
+            dataParams.put("msgtype", "text");
+            String data = JSONUtils.toJSONString(dataParams);
+            String path = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=" + accessToken;
+            String json = HttpUtil.HttpsDefaultExecute(path, "POST", params, data);
+            result = JSONUtils.toBean(json, MassMsgResult.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public int ComputeClockTimesByLeaveDays(Long xiangChaDays, List<ClockInSetUp> cis) {
+        for (int a = 0; a < cis.size(); a++) {
+            if (cis.get(a).getOutDays() >= xiangChaDays) {
+                return cis.get(a).getDayClockInTimes();
+            }
+        }
+        return 0;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/saveOutPhoto")
@@ -128,51 +240,53 @@ public class WeiXinController {
         outClockIn.setWeixinNo(openId);
         if (hour < 12 && hour >= 6) {//上午
             outClockIn.setAmOnUrl(folderName + serverId + ".jpg");
-            int isPhotoInAlready = personServ.isClockInAlready(openId,dateStr1, "amOnUrl");
+            int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "amOnUrl");
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                mav.addObject("flag", "您上午已经摄过像,不能重复摄像!");
+                //mav.addObject("flag", "您上午已经摄过像,不能重复摄像!");
+                mav = new ModelAndView("failed");
                 return mav;
             }
         } else if (hour >= 12 && hour <= 18) {//下午
             outClockIn.setPmOnUrl(folderName + serverId + ".jpg");
-            int isPhotoInAlready = personServ.isClockInAlready(openId,dateStr1, "pmOnUrl");
+            int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "pmOnUrl");
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                mav.addObject("flag", "您下午已经摄过像,不能重复摄像!");
+                //mav.addObject("flag", "您下午已经摄过像,不能重复摄像!");
+                mav = new ModelAndView("failed");
                 return mav;
             }
         } else if (hour > 18 && hour <= 24) {//晚上
             outClockIn.setNmOnUrl(folderName + serverId + ".jpg");
-            int isPhotoInAlready = personServ.isClockInAlready(openId,dateStr1, "nmOnUrl");
+            int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "nmOnUrl");
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                mav.addObject("flag", "您晚上已经摄过像,不能重复摄像!");
+                //mav.addObject("flag", "您晚上已经摄过像,不能重复摄像!");
+                mav = new ModelAndView("failed");
                 return mav;
             }
         }
-        mav.addObject("flag", "已摄像!");
+        //mav.addObject("flag", "已摄像!");
         return mav;
     }
 
     @ResponseBody
     @RequestMapping(value = "/punchClock")
-    public ModelAndView punchClock(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void punchClock(@RequestBody(required = true) Location location, HttpServletRequest request, HttpServletResponse response) throws Exception {
         //22.77200698852539
         //114.3155288696289
-        Double latitude = Double.valueOf(request.getParameter("latitude"));
-        Double longitude = Double.valueOf(request.getParameter("longitude"));
-        String openId = request.getParameter("openId");
-        ModelAndView mav = new ModelAndView("success");
         String code = request.getParameter("code");
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
+        int isClock = 0;
         AccessToken accessToken = WeiXinUtil.getTheCode(code, jedis);
+        String addr = null;
         // Map<String, String> map = WeiXinUtil.xmlToMap(request);
-        Map<String, String> address = MapUtil.getCityByLonLat(latitude, longitude);
+        Map<String, String> address = MapUtil.getCityByLonLat(location.getLatitude(), location.getLongitude());
+        List<Location> locations = new ArrayList<Location>();
         if (address != null) {
             OutClockIn outClockIn = new OutClockIn();
             Date date = new Date();
@@ -181,57 +295,62 @@ public class WeiXinController {
             String dateStr = format.format(date);
             String dateStr1 = format1.format(date);
             String hourStr = dateStr.split(" ")[1];
-            String addr = address.get("province") + address.get("city") + address.get("district") +
+            addr = address.get("province") + address.get("city") + address.get("district") +
                     address.get("street");
             Integer hour = Integer.valueOf(hourStr.split(":")[0]);
             outClockIn.setClockInDateStr(dateStr1);
-            outClockIn.setWeixinNo(openId);
+            outClockIn.setWeixinNo(location.getOpenId());
             if (hour < 12 && hour >= 6) {
                 //视为上午打卡
                 outClockIn.setClockInDateAMOnStr(dateStr);
                 outClockIn.setClockInAddrAMOn(addr);
-                int isClockInAlready = personServ.isClockInAlready(openId,dateStr1, "clockInDateAMOn");
+                int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDateAMOn");
                 if (isClockInAlready == 0) {
                     personServ.saveOrUpdateOutClockInData(outClockIn);
                 } else {
-                    mav.addObject("flag", "您已经打过卡,不能重复打卡!");
-                    return mav;
+                    isClock = 1;
                 }
             } else if (hour >= 12 && hour <= 18) {
                 //视为下午打卡
                 outClockIn.setClockInDatePMOnStr(dateStr);
                 outClockIn.setClockInAddrPMOn(addr);
-                int isClockInAlready = personServ.isClockInAlready(openId,dateStr1, "clockInDatePMOn");
+                int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDatePMOn");
                 if (isClockInAlready == 0) {
                     personServ.saveOrUpdateOutClockInData(outClockIn);
                 } else {
-                    mav.addObject("flag", "您已经打过卡,不能重复打卡!");
-                    return mav;
+                    isClock = 1;
                 }
             } else if (hour > 18 && hour <= 24) {
                 //视为晚上打卡
                 outClockIn.setClockInDateNMOnStr(dateStr);
                 outClockIn.setClockInAddNMOn(addr);
-                int isClockInAlready = personServ.isClockInAlready(openId,dateStr1, "clockInDateNMOn");
+                int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDateNMOn");
                 if (isClockInAlready == 0) {
                     personServ.saveOrUpdateOutClockInData(outClockIn);
                 } else {
-                    mav.addObject("flag", "您已经打过卡,不能重复打卡!");
-                    return mav;
+                    isClock = 1;
                 }
             } else {
-                mav.addObject("flag", "您打卡的时间不在规定时间段内!");
-                return mav;
+                isClock = 1;
             }
-
-            mav.addObject("flag", "您打卡成功,打卡地址为:" + address.get("province") + address.get("city") + address.get("district") +
-                    address.get("street"));
-
-
         } else {
-            mav.addObject("flag", "打卡失败，请稍后重试!");
+            isClock = 0;
         }
-        return mav;
+        location.setIsClock(isClock);
+        location.setAddress(addr);
+        locations.add(location);
+        String str = null;
+        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        try {
+            str = x.writeValueAsString(locations);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str); //返回前端ajax
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.debug(e.getMessage());
+            throw e;
+        }
     }
 
 

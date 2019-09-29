@@ -16,8 +16,36 @@ public class Location implements Serializable {
     private Integer id;
     private Double latitude;
     private Double longitude;
+    private String openId;
     private long speed;
     private long accuracy;
+    private String address;
+    private Integer isClock;
+
+
+    public Integer getIsClock() {
+        return isClock;
+    }
+
+    public void setIsClock(Integer isClock) {
+        this.isClock = isClock;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
 
     public Integer getId() {
         return id;

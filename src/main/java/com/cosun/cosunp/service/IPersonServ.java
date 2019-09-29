@@ -77,6 +77,8 @@ public interface IPersonServ {
 
     int findAllEmployeeOutClockInCount(Employee employee) throws Exception;
 
+    OutClockIn getOutClockInById(Integer id) throws Exception;
+
     boolean saveClockInSetUp(ClockInSetUp clockInSetUp) throws Exception;
 
     Employee getEmployeeByEmpno(String empNo) throws Exception;
@@ -111,13 +113,25 @@ public interface IPersonServ {
 
     List<Employee> queryGongZhongHaoByCondition(Employee employee) throws Exception;
 
+    List<Employee> queryOutClockInByCondition(Employee employee) throws Exception;
+
+    int queryOutClockInByConditionCount(Employee employee) throws Exception;
+
     List<OutClockIn> findAllOutClockInByOpenId(String openId) throws Exception;
 
     int queryGongZhongHaoByConditionCount(Employee employee) throws Exception;
 
+    List<String> findAllOpenId() throws Exception;
+
+    List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception;
+
+    List<ClockInSetUp> findAllClockInSetUp() throws Exception;
+
+    List<Leave> findAllLeave(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception;
+
     List<WorkSet> queryWorkSetByCondition(WorkSet workSet) throws Exception;
 
-    int isClockInAlready(String openId,String dateStr, String titileName) throws Exception;
+    int isClockInAlready(String openId, String dateStr, String titileName) throws Exception;
 
     void saveOrUpdateOutClockInData(OutClockIn outClockIn) throws Exception;
 

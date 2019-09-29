@@ -134,8 +134,8 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.queryGongZhongHaoByConditionCount(employee);
     }
 
-    public int isClockInAlready(String openId,String dateStr, String titileName) throws Exception {
-        return personMapper.isClockInAlready(openId,dateStr, titileName);
+    public int isClockInAlready(String openId, String dateStr, String titileName) throws Exception {
+        return personMapper.isClockInAlready(openId, dateStr, titileName);
     }
 
     public void saveOrUpdateOutClockInDataUrl(OutClockIn outClockIn) throws Exception {
@@ -170,12 +170,39 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public int findAllEmployeeOutClockInCount(Employee employee) throws Exception {
-        return 1;
-        //return personMapper.findAllEmployeeOutClockInCount(employee);
+        return personMapper.findAllEmployeeOutClockInCount(employee);
+    }
+
+    public List<String> findAllOpenId() throws Exception {
+        return personMapper.findAllOpenId();
+    }
+
+    public List<Leave> findAllLeave(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception {
+        return personMapper.findAllLeaveA(monday,tuesday,wednesday,thurday,today);
+    }
+
+    public List<ClockInSetUp> findAllClockInSetUp() throws Exception {
+        return personMapper.findAllClockInSetUp();
+    }
+
+    public List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception {
+        return personMapper.findLeaveDataUionOutClockData(monday,tuesday,wednesday,thurday,today);
+    }
+
+    public OutClockIn getOutClockInById(Integer id) throws Exception {
+        return personMapper.getOutClockInById(id);
     }
 
     public List<OutClockIn> findAllOutClockInByOpenId(String openId) throws Exception {
         return personMapper.findAllOutClockInByOpenId(openId);
+    }
+
+    public List<Employee> queryOutClockInByCondition(Employee employee) throws Exception {
+        return personMapper.queryOutClockInByCondition(employee);
+    }
+
+    public int queryOutClockInByConditionCount(Employee employee) throws Exception {
+        return personMapper.queryOutClockInByConditionCount(employee);
     }
 
     public void saveOrUpdateOutClockInData(OutClockIn outClockIn) throws Exception {

@@ -41,7 +41,7 @@
 <div id='app'>
     <form>
         <div class="panel-heading" style="background-color:lightsteelblue;text-align: center">
-            <h3 class="panel-title" th:text="${name}+'外出考勤表'"><font color="#00008b" size="2px"></font></h3>
+            <h3 class="panel-title" style="font-size: 30px;color: #2a6496" th:text="${name}+'外出考勤表'"></h3>
         </div>
         <table class="table table-bordered table-hover table-striped text-center hongmei"
                id="showlistbody"
@@ -49,23 +49,23 @@
             <thead style="background-color:lightsteelblue">
             <tr>
                 <th style="text-align: center">
-                    序号
+                    <font color="black" size="5">序号</font>
                 </th>
 
                 <th style="text-align: center">
-                    日期
+                    <font color="black" size="5">日期</font>
                 </th>
 
                 <th style="text-align: center">
-                    上午考勤记录
+                    <font color="black" size="5">上午考勤记录</font>
                 </th>
 
                 <th style="text-align: center">
-                    下午考勤记录
+                    <font color="black" size="5">下午考勤记录</font>
                 </th>
 
                 <th style="text-align: center">
-                    晚上考勤记录
+                    <font color="black" size="5">晚上考勤记录</font>
                 </th>
 
             </tr>
@@ -75,21 +75,21 @@
             <div th:unless="${#lists.isEmpty(outClockInList)}">
                 <div th:each="order,iterStat: ${outClockInList}" align="center">
                     <tr>
-                        <td align="center"
+                        <td style="font-size: 23px;color: #2a6496" align="center"
                             th:text="${(iterStat.index+1)}"></td>
-                        <td align="center" th:text="${order.clockInDateStr}"></td>
-                        <td align="center"
+                        <td style="font-size: 23px;color: #2a6496" align="center" th:text="${order.clockInDateStr}"></td>
+                        <td style="font-size: 23px;color: #2a6496" align="center"
                             th:text="${order.clockInDateAMOnStr}+${order.clockInAddrAMOn}+',照相:'+${order.amOnUrl}"></td>
-                        <td align="center"
+                        <td style="font-size: 23px;color: #2a6496" align="center"
                             th:text="${order.clockInDatePMOnStr}+${order.clockInAddrPMOn}+',照相:'+${order.pmOnUrl}"></td>
-                        <td align="center"
+                        <td style="font-size: 23px;color: #2a6496" align="center"
                             th:text="${order.clockInDateNMOnStr}+${order.clockInAddNMOn}+',照相:'+${order.nmOnUrl}"></td>
                     </tr>
                 </div>
             </div>
             <div th:if="${#lists.isEmpty(outClockInList)}">
                 <tr>
-                    <td colspan="5">
+                    <td colspan="5" style="font-size: 23px;color: #2a6496">
                         暂无外出打卡记录
                     </td>
                 </tr>
@@ -97,10 +97,8 @@
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="5">
-                    <font size="2px" color="red">
+                <td colspan="5" style="font-size: 23px;color: red">
                         *在人事最终考勤核算中,只有您交了因公外出单,此考勤对人事才有效.
-                    </font>
                 </td>
             </tr>
             </tfoot>

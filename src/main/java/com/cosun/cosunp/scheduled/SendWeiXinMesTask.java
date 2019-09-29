@@ -1,17 +1,14 @@
 package com.cosun.cosunp.scheduled;
 
-import com.cosun.cosunp.tool.FileUtil;
-import org.springframework.beans.factory.annotation.Value;
+import com.cosun.cosunp.weixin.WeiXinController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 /**
  * @author:homey Wong
- * @date:2019/07/27
+ * @date:2019-09-26
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -20,16 +17,13 @@ import java.time.LocalDateTime;
 @Component
 @Configuration
 @EnableScheduling
-public class RestartLinuxTask {
+public class SendWeiXinMesTask {
 
     //@Scheduled(fixedRate=5000)
-    @Scheduled(cron = "0 0 07 * * ?")
+    @Scheduled(cron = "0 0 18 ? * Fri")
     private void configureTasks() {
         try {
-            Runtime.getRuntime().exec("reboot");//linux 每天定时重启服务器
-            //每天启动oppenoffic服务
-           //String com  mand = "/opt/openoffice4/program/soffice --headless --accept=\"socket,host=0.0.0.0,port=8100;urp;\" --nofirststartwizard &";
-            //Runtime.getRuntime().exec(command);
+            new WeiXinController().sendTextToOpenid();
         } catch (Exception e) {
             e.printStackTrace();
         }

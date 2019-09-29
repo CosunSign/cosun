@@ -35,14 +35,21 @@
         white-space: nowrap;
     }
 
+    img {
+        margin: 0 auto;
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 40%;
+        left: 40%;
+    }
+
 </style>
 <body>
 
-<div id='app'>
-    <form>
-        <input type="text" style="border:none;width: 800px;font-size: 20px" id="flag" name="flag" th:value="${flag}" >
-    </form>
-</div>
+<img src="/images/page/success.jpg" align="middle" border="0"
+     style="width: 20%; height: 12%; vertical-align: middle"/>
+
 
 </body>
 </html>
