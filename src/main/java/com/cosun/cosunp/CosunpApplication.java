@@ -56,7 +56,7 @@ public class CosunpApplication extends SpringBootServletInitializer {
             public void run(String... args) throws Exception {
                 fileUploadAndDownServ.deleteAll();
                 fileUploadAndDownServ.init();
-                new AccessTokenServlet().init();
+                //new AccessTokenServlet().init();
             }
         };
     }

@@ -67,6 +67,8 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployeeAll() throws Exception;
 
+    void saveBeforeDayZhongKongData(List<ZhongKongBean> zkbList) throws Exception;
+
     List<ClockInSetUp> findAllCLockInSetUp() throws Exception;
 
     List<Leave> findAllLeaveByWeiXinId(String openId) throws Exception;

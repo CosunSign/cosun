@@ -178,7 +178,7 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public List<Leave> findAllLeave(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception {
-        return personMapper.findAllLeaveA(monday,tuesday,wednesday,thurday,today);
+        return personMapper.findAllLeaveA(monday, tuesday, wednesday, thurday, today);
     }
 
     public List<ClockInSetUp> findAllClockInSetUp() throws Exception {
@@ -186,7 +186,7 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today) throws Exception {
-        return personMapper.findLeaveDataUionOutClockData(monday,tuesday,wednesday,thurday,today);
+        return personMapper.findLeaveDataUionOutClockData(monday, tuesday, wednesday, thurday, today);
     }
 
     public OutClockIn getOutClockInById(Integer id) throws Exception {
@@ -327,6 +327,12 @@ public class PersonServiceImpl implements IPersonServ {
             return personMapper.findAllDept(dept);
         } else {
             return personMapper.queryDeptByNameA(dept);
+        }
+    }
+
+    public void saveBeforeDayZhongKongData(List<ZhongKongBean> zkbList) throws Exception {
+        for(ZhongKongBean zkb : zkbList) {
+            personMapper.saveBeforeDayZhongKongData(zkb);
         }
     }
 

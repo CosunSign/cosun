@@ -2,6 +2,7 @@ package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.weixin.OutClockIn;
+import com.sun.org.glassfish.gmbal.IncludeSubclass;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -191,7 +192,7 @@ public interface PersonMapper {
             "LEFT JOIN outclockin oc ON oc.weixinNo = gg.gongzhonghaoId\n" +
             "AND oc.clockInDate >= date_format(ld.beginleave, '%Y-%m-%d')\n" +
             "AND oc.clockInDate <= date_format(ld.endleave, '%Y-%m-%d')\n" +
-            " where oc.clockInDate in(#{monday},#{tuesday},#{wednesday},#{thurday},#{today})"+
+            " where oc.clockInDate in(#{monday},#{tuesday},#{wednesday},#{thurday},#{today})" +
             "ORDER BY\n" +
             "\tee.empno  ASC")
     List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today);
@@ -644,6 +645,9 @@ public interface PersonMapper {
 
     @SelectProvider(type = PseronDaoProvider.class, method = "findAllPositionByConditionCount")
     int findAllPositionByConditionCount(Position position);
+
+    @Insert("insert into zhongkongbean (EnrollNumber,Date,timeStr) values(#{EnrollNumber},#{dateStr},#{timeStr})")
+    void saveBeforeDayZhongKongData(ZhongKongBean zkb);
 
     @Select("select count(*) from dept where deptname like  CONCAT('%',#{deptname},'%') ")
     int findAllDeptByConditionCount(Dept dept);
