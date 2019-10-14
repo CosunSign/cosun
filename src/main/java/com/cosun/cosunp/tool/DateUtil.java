@@ -86,8 +86,35 @@ public class DateUtil {
     public static void main(String[] arg) {
         // boolean isWeekEnd = isWeekend("2019-04-26");
         // System.out.println(isWeekEnd ? "周末" : "周日");
-        toDatePriodTranstoDays("2019-08-20", "2019-09-08");
+        //toDatePriodTranstoDays("2019-08-20", "2019-09-08");
+        try {
+            System.out.println(getWeek("2019-10-01"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
+
+    public static int getWeek(String pTime) throws Exception {
+        String[] weeks = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        int dayForWeek = 0;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            c.setTime(format.parse(pTime));
+            if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+                dayForWeek = 7;
+            } else {
+                dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+        // return weeks[dayForWeek];
+        return dayForWeek;
+    }
+
 
 }

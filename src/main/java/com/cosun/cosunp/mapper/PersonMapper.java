@@ -86,6 +86,24 @@ public interface PersonMapper {
     @Select("select count(*) from position where positionName like  CONCAT('%',#{positionName},'%') ")
     int findSaveOrNot(Position position);
 
+    @Select("SELECT\n" +
+            "\te.empno\n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "LEFT JOIN dept t ON e.deptId = t.id\n" +
+            "WHERE\n" +
+            "\te. NAME = #{name} " +
+            "AND t.deptname = #{deptName} limit 1 ")
+    String getEmpNoByDeptNameAndName(String name, String deptName);
+
+    @Select("SELECT\n" +
+            "\te.empno\n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "WHERE\n" +
+            "\te. NAME = #{name}  ")
+    List<String> getEmpNoByName(String name);
+
     @Select("select count(*) from dept where deptName like  CONCAT('%',#{deptName},'%') ")
     int findSaveOrNot2(String deptName);
 
@@ -94,6 +112,9 @@ public interface PersonMapper {
 
     @Insert("insert into dept (deptName) values (#{deptName})")
     void saveDept(String deptName);
+
+    @Insert("insert into zhongkongemployee (EnrollNumber,empNo) values (#{EnrollNumber},#{empNo})")
+    void saveZKBandDing(Employee ee);
 
     @Select("select count(*) from position")
     int findAllPositionConditionCount();
@@ -161,6 +182,12 @@ public interface PersonMapper {
 
     @Select("select gongzhonghaoId from gongzhonghao")
     List<String> findAllOpenId();
+
+    @Select("select * from workset where month = #{yearMonth} ")
+    List<WorkSet> getAllWorkSetListByYearMonth(String yearMonth);
+
+    @Select("select * from workdate where month = #{yearMonth }")
+    List<WorkDate> getAllWorkDateListByYearMonth(String yearMonth);
 
     @Select("select * from clockinsetup order by outDays desc")
     List<ClockInSetUp> findAllClockInSetUp();
@@ -345,6 +372,21 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryGongZhongHaoByConditionCount")
     int queryGongZhongHaoByConditionCount(Employee employee);
 
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryZhongKongByCondition")
+    List<Employee> queryZhongKongByCondition(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryZhongKongByConditionCount")
+    int queryZhongKongByConditionCount(Employee employee);
+
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryZKOUTDataByCondition")
+    List<Employee> queryZKOUTDataByCondition(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryZKOUTDataByConditionCount")
+    int queryZKOUTDataByConditionCount(Employee employee);
+
+
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeSalaryByCondition")
     List<Employee> queryEmployeeSalaryByCondition(Employee employee);
 
@@ -379,17 +421,35 @@ public interface PersonMapper {
     @Select("select count(*) from gongzhonghao where empNo = #{empNo}")
     int getGongZhongHaoByEmpNo(String empNo);
 
+    @Select("select count(*) from zhongkongemployee where empNo = #{empNo}")
+    int getZhongKongByEmpNo(String empNo);
+
+    @Select("select count(*) from zhongkongemployee where EnrollNumber = #{EnrollNumber}")
+    int getBeanByEnrollNumber(Integer EnrollNumber);
+
 
     @Insert("INSERT into gongzhonghao (empNo,gongzhonghaoId)\n" +
             " values(#{empNo},#{gongzhonghaoId})\n")
     void saveGongZhongHaoByBean(GongZhongHao gongZhongHao);
 
 
+    @Insert("INSERT into zhongkongemployee (empNo,EnrollNumber)\n" +
+            " values(#{empNo},#{EnrollNumber})\n")
+    void saveZhongKongByBean(ZhongKongEmployee zhongKongEmployee);
+
+
     @Delete("delete from gongzhonghao where empNo = #{empNo} ")
     void deleteGongZhongHaoByEmpNo(String empNo);
 
-    @Update(" update gongzhonghao set gongzhonghaoId = #{gongzhonghaoId} where empNo = #{empNo} ")
+    @Delete("delete from zhongkongemployee where empNo = #{empNo} ")
+    void deleteZhongKongByEmpNo(String empNo);
+
+    @Update(" update gongzhonghao set EnrollNumber = #{EnrollNumber} where empNo = #{empNo} ")
     void updateGongZhongHaoByEmpNo(GongZhongHao gongZhongHao);
+
+
+    @Update(" update zhongkongemployee set gongzhonghaoId = #{gongzhonghaoId} where empNo = #{empNo} ")
+    void updateZhongKongByEmpNo(ZhongKongEmployee zhongKongEmployee);
 
     @Select("select * from dept order by deptname desc limit #{currentPageTotalNum},#{pageSize} ")
     List<Dept> findAllDept(Dept dept);
@@ -465,24 +525,46 @@ public interface PersonMapper {
     List<Employee> findAllEmployee(Employee employee);
 
 
-//    SELECT
-//    e. NAME,
-//    d.deptname AS deptName,
-//    n.positionName AS positionName,
-//    e.empno,
-//
-//
-//    FROM
-//    employee e
-//    LEFT JOIN dept d ON e.deptId = d.id
-//    LEFT JOIN position n ON e.positionId = n.id
-//    LEFT JOIN gongzhonghao h ON e.empno = h.empNo
-//    left join outclockin o on o.weixinNo = h.gongzhonghaoId
-//    left join leavedata l on l.employeeid = e.id
-//    where l.type = 1
-//    ORDER BY
-//    e.empno ASC
-//    LIMIT 0,10
+    @Select("SELECT\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\te.otherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "  e.id AS id,\n" +
+            "\td.deptname AS deptName,\n" +
+            "\tn.positionName AS positionName,\n" +
+            "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "\te.empno AS empNo," +
+            "e.isQuit," +
+            "h.EnrollNumber " +
+            "\t\tFROM\n" +
+            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
+            "LEFT JOIN position n on e.positionId = n.id " +
+            " left join zhongkongemployee h on e.empno = h.empNo where e.isQuit = 0 " +
+            "\t\tORDER BY\n" +
+            "\t\t\te.empno asc limit #{currentPageTotalNum},#{pageSize}")
+    List<Employee> findAllEmployeeZhongKong(Employee employee);
+
 
     @Select("SELECT\n" +
             "\to.id,\n" +
@@ -621,6 +703,31 @@ public interface PersonMapper {
     @Select("select group_concat(workDate,',') as workDate from workdate where month = #{month} and positionLevel = #{positionLevel} and type in(0,1) ")
     WorkDate getWorkDateByMonthAnPositionLevelandType(String month, String positionLevel);
 
+    @Select("SELECT\n" +
+            "\tee.`name`,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname,\n" +
+            "\tn.positionName,\n" +
+            "\tzk.EnrollNumber AS enrollNumber,\n" +
+            "\tzk.Date AS dateStr,\n" +
+            "\tzk.timeStr,\n" +
+            "\tzk.yearMonth\n" +
+            "FROM\n" +
+            "\tzhongkongbean zk\n" +
+            "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+            "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+            "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+            "LEFT JOIN position n ON n.id = ee.positionId\n" +
+            "WHERE\n" +
+            "\tzk.date = #{date}\n" +
+            "ORDER BY\n" +
+            "\tzk.EnrollNumber ASC")
+    List<KQBean> getAllKQDataByYearMonthDay(String date);
+
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "getAllKQDataByYearMonthDays")
+    List<KQBean> getAllKQDataByYearMonthDays(List<String> dates);
+
     @Select("select * from workdate where month = #{month}")
     List<WorkDate> findAllWorkDateListByMonth(String month);
 
@@ -636,6 +743,9 @@ public interface PersonMapper {
     @Select("select count(*) from employee ")
     int findAllEmployeeCount();
 
+    @Select("select count(*) from employee ")
+    int findAllEmployeeZhongKongCount();
+
     @Select("select * from userinfo  where empno = #{empNo} limit 1 ")
     UserInfo getUserInfoByEmpno(String empNo);
 
@@ -646,8 +756,33 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "findAllPositionByConditionCount")
     int findAllPositionByConditionCount(Position position);
 
-    @Insert("insert into zhongkongbean (EnrollNumber,Date,timeStr) values(#{EnrollNumber},#{dateStr},#{timeStr})")
+    @Insert("insert into zhongkongbean (EnrollNumber,Date,timeStr,yearMonth) values(#{EnrollNumber},#{dateStr},#{timeStr},#{yearMonth})")
     void saveBeforeDayZhongKongData(ZhongKongBean zkb);
+
+    @Select("SELECT\n" +
+            "\tzk.yearMonth,\n" +
+            "\tzk.EnrollNumber AS enrollNumber1,\n" +
+            "\tzk.Date AS dateStr,\n" +
+            "\tzk.timeStr,\n" +
+            "\tee.`name`,\n" +
+            "\tt.deptname\n" +
+            "FROM\n" +
+            "\tzhongkongbean zk\n" +
+            "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+            "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+            "LEFT JOIN dept t ON ee.deptid = t.id\n" +
+            "ORDER BY\n" +
+            "\tzk.yearMonth DESC,\n" +
+            "\tzk.EnrollNumber ASC limit #{currentPageTotalNum},#{pageSize} ")
+    List<Employee> findAllZKAndOutData(Employee employee);
+
+    @Select("SELECT count(*) " +
+            "FROM\n" +
+            "\tzhongkongbean zk\n" +
+            "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+            "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+            "LEFT JOIN dept t ON ee.deptid = t.id")
+    int findAllZKAndOutDataCount();
 
     @Select("select count(*) from dept where deptname like  CONCAT('%',#{deptname},'%') ")
     int findAllDeptByConditionCount(Dept dept);
@@ -742,6 +877,121 @@ public interface PersonMapper {
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
             "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
     Leave getLeaveByEmIdAndMonthA(Integer employeeId, String dataStr);
+
+
+    @Select("SELECT\n" +
+            "\toc.id,\n" +
+            "\toc.weixinNo,\n" +
+            "\toc.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+            "\toc.clockInAddrAMOn,\n" +
+            "\toc.amOnUrl,\n" +
+            "\toc.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl,\n" +
+            "\toc.clockInDateNmon AS clockInDateNmonStr,\n" +
+            "\toc.clockInAddNMOn,\n" +
+            "\toc.nmOnUrl,\n" +
+            "\tclockInDate AS clockInDateStr\n" +
+            "\n" +
+            "FROM\n" +
+            "\temployee ee\n" +
+            "LEFT JOIN gongzhonghao gg ON gg.empNo = ee.empno\n" +
+            "LEFT JOIN outclockin oc ON oc.weixinNo = gg.gongzhonghaoId\n" +
+            "WHERE\n" +
+            "\toc.clockInDate = #{yearMonthDay} \n" +
+            "AND ee.id = #{employeeId} ")
+    OutClockIn getOutClockInByEmpNoandDate(Integer employeeId, String yearMonthDay);
+
+
+    @Insert("insert into kqbean (enrollNumber,\n" +
+            "\tyearMonth,\n" +
+            "\tdateStr,\n" +
+            "\t`week`,\n" +
+            "\ttimeStr,\n" +
+            "\tclockResult,\n" +
+            "\textWorkHours,\n" +
+            "\tremark,\n" +
+            "\taOnTime,\n" +
+            "\taOffTime,\n" +
+            "\tpOnTime,\n" +
+            "\tpOffTime,\n" +
+            "\textWorkOnTime,\n" +
+            "\textWorkOffTime,\n" +
+            "\trensheCheck) values (" +
+            "#{enrollNumber},\n" +
+            "\t#{yearMonth},\n" +
+            "\t#{dateStr},\n" +
+            "\t#{week},\n" +
+            "\t#{timeStr},\n" +
+            "\t#{clockResult},\n" +
+            "\t#{extWorkHours},\n" +
+            "\t#{remark},\n" +
+            "\t#{aOnTime},\n" +
+            "\t#{aOffTime},\n" +
+            "\t#{pOnTime},\n" +
+            "\t#{pOffTime},\n" +
+            "\t#{extWorkOnTime},\n" +
+            "\t#{extWorkOffTime},\n" +
+            "\t#{rensheCheck})")
+    void saveAllNewKQBeansToMysql(KQBean kqBean);
+
+
+    @Select("SELECT\n" +
+            "\tee.`name` AS NAME,\n" +
+            "\tdeptname AS deptName,\n" +
+            "\tkq.enrollNumber,\n" +
+            "\tkq.yearMonth,\n" +
+            "\tkq.dateStr,\n" +
+            "\tkq.`week`,\n" +
+            "\tkq.timeStr,\n" +
+            "\tIFNULL(\n" +
+            "\t\tkq.clockResultByRenShi,\n" +
+            "\t\tkq.clockResult\n" +
+            "\t) as clockResult,\n" +
+            "\tkq.extWorkHours,\n" +
+            "\tkq.remark,\n" +
+            "\tkq.aOnTime,\n" +
+            "\tkq.aOffTime,\n" +
+            "\tkq.pOnTime,\n" +
+            "\tkq.pOffTime,\n" +
+            "\tkq.extWorkOnTime,\n" +
+            "\tkq.extWorkOffTime,\n" +
+            "\tkq.rensheCheck\n" +
+            "FROM\n" +
+            "\tkqbean kq\n" +
+            "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+            "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+            "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+            "ORDER BY\n" +
+            "\tkq.yearMonth DESC,\n" +
+            "\tkq.enrollNumber ASC limit #{currentPageTotalNum},#{pageSize}")
+    List<KQBean> findAllKQBData(Employee employee);
+
+    @Select("SELECT\n" +
+            "\tdateStr\n" +
+            "FROM\n" +
+            "\tkqbean\n" +
+            "GROUP BY\n" +
+            "\tdateStr\n" +
+            "ORDER BY\n" +
+            "\tdateStr DESC\n" +
+            "LIMIT 30")
+    List<String> getAllKQDateList();
+
+    @Select("SELECT count(*) " +
+            "FROM\n" +
+            "\tkqbean kq\n" +
+            "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+            "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+            "LEFT JOIN dept t ON t.id = ee.deptId ")
+    int findAllKQBDataCount();
+
+    @Update("update kqbean set extWorkHours = #{extHours},clockResultByRenShi = #{state} where id = #{id}")
+    void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "deleteKQBeanOlderDateByDates")
+    void deleteKQBeanOlderDateByDates(List<String> dateStrs);
+
 
     @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
             "nativePla,homeAddr,valiPeriodOfID,nation,marriaged,contactPhone,educationLe,\n" +
@@ -908,7 +1158,7 @@ public interface PersonMapper {
     @Select("select count(id) from leavedata ")
     int findAllLeaveCount();
 
-    @Select("select * from employee ")
+    @Select("select id,name from employee ")
     List<Employee> findAllEmployees();
 
     @Update("update position set positionName =  #{positionName},positionLevel=#{positionLevel} where id = #{id} ")
@@ -1418,6 +1668,145 @@ public interface PersonMapper {
                     }
                 } else if ("gongzhonghaoId".equals(employee.getSortByName())) {
                     sb.append(" order by h.gongzhonghaoId ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" order by e.empno asc ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+
+        public String queryZhongKongByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT count(*) FROM \n" +
+                    "\temployee e\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id ");
+            if (employee.getIsZhongKongBangDing() != null
+                    && employee.getIsZhongKongBangDing().size() > 0
+                    && employee.getIsZhongKongBangDing().get(0) == 1
+            ) {
+                sb.append("  join zhongkongemployee h on e.empno = h.empNo ");
+            } else {
+                sb.append(" left join zhongkongemployee h on e.empno = h.empNo ");
+            }
+
+            sb.append(" where  e.isQuit = 0   ");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+            return sb.toString();
+        }
+
+        public String queryZhongKongByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT\te. NAME,\n" +
+                    "\te. NAME AS namea,\n" +
+                    "\te.sex,\n" +
+                    "\te.deptId,\n" +
+                    "\te.empno,\n" +
+                    "\te.positionId,\n" +
+                    "\te.incompdate,\n" +
+                    "\te.conExpDate,\n" +
+                    "\te.birthDay,\n" +
+                    "\te.ID_NO,\n" +
+                    "\te.nativePla,\n" +
+                    "\te.homeAddr,\n" +
+                    "\te.valiPeriodOfID,\n" +
+                    "\te.nation,\n" +
+                    "\te.marriaged,\n" +
+                    "\te.contactPhone,\n" +
+                    "\te.educationLe,\n" +
+                    "\te.educationLeUrl,\n" +
+                    "\te.screAgreement,\n" +
+                    "\te.healthCerti,\n" +
+                    "\te.sateListAndLeaCerti,\n" +
+                    "\te.sateListAndLeaCertiUrl,\n" +
+                    "\te.otherCerti,\n" +
+                    "\te.otherCertiUrl,\n" +
+                    "\te.positionAttrId,\n" +
+                    "  e.id AS id,\n" +
+                    "\td.deptname AS deptName,\n" +
+                    "\tn.positionName AS positionName,\n" +
+                    "\tdate_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+                    "\te.empno AS empNo," +
+                    "e.isQuit," +
+                    "h.EnrollNumber as enrollNumber1 " +
+                    "\t\t FROM \n" +
+                    "\temployee e\n" +
+                    "LEFT JOIN dept d ON e.deptId = d.id\n" +
+                    "LEFT JOIN position n ON e.positionId = n.id ");
+            if (employee.getIsZhongKongBangDing() != null
+                    && employee.getIsZhongKongBangDing().size() > 0
+                    && employee.getIsZhongKongBangDing().get(0) == 1
+            ) {
+                sb.append("  join zhongkongemployee h on e.empno = h.empNo ");
+            } else {
+                sb.append(" left join zhongkongemployee h on e.empno = h.empNo ");
+            }
+
+            sb.append(" where  e.isQuit = 0  ");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
+                    sb.append(" order by e.name ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("empNo".equals(employee.getSortByName())) {
+                    sb.append(" order by e.empno ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by d.deptname ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("positionName".equals(employee.getSortByName())) {
+                    sb.append(" order by n.positionName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("EnrollNumber".equals(employee.getSortByName())) {
+                    sb.append(" order by h.EnrollNumber ");
                     if ("asc".equals(employee.getSortMethod())) {
                         sb.append(" asc ");
                     } else if ("desc".equals(employee.getSortMethod())) {
@@ -1976,6 +2365,148 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+
+        public String queryZKOUTDataByCondition(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tzk.yearMonth,\n" +
+                    "\tzk.EnrollNumber AS enrollNumber1,\n" +
+                    "\tzk.Date AS dateStr,\n" +
+                    "\tzk.timeStr,\n" +
+                    "\tee.`name`,\n" +
+                    "\tt.deptname\n" +
+                    "FROM\n" +
+                    "\tzhongkongbean zk\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+                    "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+                    "LEFT JOIN dept t ON ee.deptid = t.id where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and ee.sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and ee.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate  >= #{startIncomDateStr} and ee.incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate <= #{endIncomDateStr}");
+            }
+            if (employee.getSortMethod() != null && !"undefined".equals(employee.getSortMethod()) && !"undefined".equals(employee.getSortByName()) && employee.getSortByName() != null) {
+                if ("name".equals(employee.getSortByName())) {
+                    sb.append(" order by ee.name ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("yearMonth".equals(employee.getSortByName())) {
+                    sb.append(" order by zk.yearMonth ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("deptName".equals(employee.getSortByName())) {
+                    sb.append(" order by t.deptName ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("enrollNumber".equals(employee.getSortByName())) {
+                    sb.append(" order by zk.enrollNumber ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("dateStr".equals(employee.getSortByName())) {
+                    sb.append(" order by zk.dateStr ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("timeStr".equals(employee.getSortByName())) {
+                    sb.append(" order by zk.timeStr ");
+                    if ("asc".equals(employee.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(employee.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" ORDER BY\n" +
+                        "\tzk.yearMonth DESC,\n" +
+                        "\tzk.EnrollNumber ASC ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+
+        public String queryZKOUTDataByConditionCount(Employee employee) {
+            StringBuilder sb = new StringBuilder("SELECT count(*) " +
+                    "FROM\n" +
+                    "\tzhongkongbean zk\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+                    "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+                    "LEFT JOIN dept t ON ee.deptid = t.id where 1=1");
+            if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (employee.getSexIds() != null && employee.getSexIds().size() > 0) {
+                sb.append(" and ee.sex in (" + StringUtils.strip(employee.getSexIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getEmpNo() != null && employee.getEmpNo() != "" && employee.getEmpNo().trim().length() > 0) {
+                sb.append(" and ee.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (employee.getDeptIds() != null && employee.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(employee.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getWorkTypes() != null && employee.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(employee.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (employee.getPositionIds() != null && employee.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(employee.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0 && employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate  >= #{startIncomDateStr} and ee.incompdate  <= #{endIncomDateStr}");
+            } else if (employee.getStartIncomDateStr() != null && employee.getStartIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate >= #{startIncomDateStr}");
+            } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
+                sb.append(" and ee.incompdate <= #{endIncomDateStr}");
+            }
+            return sb.toString();
+        }
+
         public String findAllLeaveA(String monday, String tuesday, String wednesday, String thurday, String today) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
                     "\tld.beginleave AS beginleave,\n" +
@@ -2000,6 +2531,53 @@ public interface PersonMapper {
                     "AND date_format(ld.endleave, '%Y-%m-%d') >= #{thurday}) \n" +
                     "OR (date_format(ld.beginleave, '%Y-%m-%d') <= #{today} \n" +
                     "AND date_format(ld.endleave, '%Y-%m-%d') >= #{today})) ");
+            return sb.toString();
+        }
+
+        public String getAllKQDataByYearMonthDays(List<String> dateStr) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tee.`name`,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname,\n" +
+                    "\tn.positionName,\n" +
+                    "\tzk.EnrollNumber AS enrollNumber,\n" +
+                    "\tzk.Date AS dateStr,\n" +
+                    "\tzk.timeStr,\n" +
+                    "\tzk.yearMonth\n" +
+                    "FROM\n" +
+                    "\tzhongkongbean zk\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+                    "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+                    "LEFT JOIN position n ON n.id = ee.positionId where 1=1 \n");
+            if (dateStr != null && dateStr.size() > 0) {
+                if (dateStr.size() == 1) {
+                    sb.append(" and zk.date in ('" + dateStr.get(0) + "')");
+                } else if (dateStr.size() >= 2) {
+                    sb.append(" and zk.date in (");
+                    for (int i = 0; i < dateStr.size() - 1; i++) {
+                        sb.append("'" + dateStr.get(i) + "'" + ",");
+                    }
+                    sb.append("'" + dateStr.get(dateStr.size() - 1) + "')");
+                }
+            }
+            sb.append(" ORDER BY zk.EnrollNumber ASC");
+            return sb.toString();
+        }
+
+        public String deleteKQBeanOlderDateByDates(List<String> dateStrs) {
+            StringBuilder sb = new StringBuilder("delete from kqbean where 1=1 and ");
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  dateStr in ('" + dateStrs.get(0) + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  dateStr in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i) + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1) + "')");
+                }
+            }
             return sb.toString();
         }
     }

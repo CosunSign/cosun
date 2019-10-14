@@ -16,6 +16,15 @@ public class Employee implements Serializable {
 
     private static final long serialVersionUID = 3941220683407513983L;
 
+
+    private Integer EnrollNumber;
+
+    private Integer enrollNumber1;
+
+    private String yearMonth;
+    private String dateStr;
+    private String timeStr;
+
     private Integer id;
     private String name;//姓名
     private Integer sex;//性别
@@ -47,11 +56,10 @@ public class Employee implements Serializable {
 
 
     private String gongzhonghaoId;
-
     private List<Integer> isgongzhonghaoBangDing;
+    private List<Integer> isZhongKongBangDing;
 
     private String remark;
-
     private String educationLeUrl;
     private String sateListAndLeaCertiUrl;
     private String otherCertiUrl;
@@ -135,6 +143,53 @@ public class Employee implements Serializable {
     private Integer amOnUrlInt;
     private Integer pmOnUrlInt;
     private Integer nmOnUrlInt;
+
+
+    public Integer getEnrollNumber() {
+        return EnrollNumber;
+    }
+
+    public void setEnrollNumber(Integer enrollNumber) {
+        EnrollNumber = enrollNumber;
+    }
+    public Integer getEnrollNumber1() {
+        return enrollNumber1;
+    }
+
+    public void setEnrollNumber1(Integer enrollNumber1) {
+        this.enrollNumber1 = enrollNumber1;
+    }
+    public List<Integer> getIsZhongKongBangDing() {
+        return isZhongKongBangDing;
+    }
+
+    public String getYearMonth() {
+        return yearMonth;
+    }
+
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
+    }
+
+    public String getDateStr() {
+        return dateStr;
+    }
+
+    public void setDateStr(String dateStr) {
+        this.dateStr = dateStr;
+    }
+
+    public String getTimeStr() {
+        return timeStr;
+    }
+
+    public void setTimeStr(String timeStr) {
+        this.timeStr = timeStr;
+    }
+
+    public void setIsZhongKongBangDing(List<Integer> isZhongKongBangDing) {
+        this.isZhongKongBangDing = isZhongKongBangDing;
+    }
 
 
     public Integer getAmOnUrlInt() {
@@ -297,7 +352,7 @@ public class Employee implements Serializable {
     }
 
     public Integer getEducationLeUrlInt() {
-        if (this.getEducationLeUrl()==null || this.getEducationLeUrl().trim().length() <= 0 || "0".equals(this.getEducationLeUrl().trim())) {
+        if (this.getEducationLeUrl() == null || this.getEducationLeUrl().trim().length() <= 0 || "0".equals(this.getEducationLeUrl().trim())) {
             return 0;
         }
         return 1;

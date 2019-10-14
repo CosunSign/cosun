@@ -14,7 +14,7 @@ import java.net.URL;
 
 /**
  * @author:homey Wong
- * @date:2019/07/27
+ * @date:2019/10/07
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -25,7 +25,7 @@ import java.net.URL;
 @EnableScheduling
 public class ZhongKongDATAToSQLTask {
 
-    //@Scheduled(fixedRate = 20000)
+    //@Scheduled(fixedRate = 50000)
     @Scheduled(cron = "0 0 05 * * ?")
     private void configureTasks() {
         try {

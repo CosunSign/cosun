@@ -1,6 +1,7 @@
 package com.cosun.cosunp.controller;
 
 import com.cosun.cosunp.entity.*;
+import com.cosun.cosunp.service.IFinanceServ;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.*;
 import com.cosun.cosunp.weixin.OutClockIn;
@@ -46,9 +47,11 @@ public class PersonController {
 
     private static Integer zkPort = 4370;
 
-
     @Autowired
     IPersonServ personServ;
+
+    @Autowired
+    IFinanceServ financeServ;
 
     private Integer flag;
 
@@ -57,6 +60,7 @@ public class PersonController {
 
     public void getBeforeDayZhongKongData() throws Exception {
         String beforDay = DateUtil.getBeforeDay();
+        //String beforDay = "2019-10-11";
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
         List<ZhongKongBean> strList = new ArrayList<ZhongKongBean>();
@@ -135,11 +139,18 @@ public class PersonController {
                 zkb.setEnrollNumber(zkb01.getEnrollNumber());
                 zkb.setDateStr(zkb01.getDateStr());
                 zkb.setTimeStr(zkb01.getTimeStr());
+                zkb.setYearMonth(zkb01.getYearMonth());
                 toDataBaseList.add(zkb);
             }
         }
         IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
         testDomainMapper.saveBeforeDayZhongKongData(toDataBaseList);
+
+        List<KQBean> kqBeanList = new ArrayList<KQBean>();
+        KQBean kq = null;
+        List<KQBean> kqBeans = testDomainMapper.getAllKQDataByYearMonthDay(toDataBaseList.get(0).getDateStr());
+        List<KQBean> newKQBeans = testDomainMapper.getAfterOperatorDataByOriginData(kqBeans);
+        testDomainMapper.saveAllNewKQBeansToMysql(newKQBeans);
     }
 
     @ResponseBody
@@ -242,6 +253,144 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/queryZKOUTDataByCondition", method = RequestMethod.POST)
+    public void queryZKOUTDataByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<Employee> financeImportDataList = personServ.queryZKOUTDataByCondition(employee);
+            int recordCount = personServ.queryZKOUTDataByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (financeImportDataList.size() > 0) {
+                financeImportDataList.get(0).setMaxPage(maxPage);
+                financeImportDataList.get(0).setRecordCount(recordCount);
+                financeImportDataList.get(0).setCurrentPage(employee.getCurrentPage());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(financeImportDataList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/toCompreAttenRecordPage")
+    public ModelAndView toCompreAttenRecordPage(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("compreattenrecorddata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<String> kqDateList = personServ.getAllKQDateList();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
+        int recordCount = personServ.findAllKQBDataCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("kqDateList", kqDateList);
+        return view;
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/reComputeAttenClockByDate")
+    public ModelAndView reComputeAttenClockByDate(String[] clockDateArray, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("compreattenrecorddata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+
+        List<String> clockDates = new ArrayList<String>();
+        for (String str : clockDateArray) {
+            clockDates.add(str);
+        }
+        //重新计算
+        personServ.deleteKQBeanOlderDateByDates(clockDates);
+        List<KQBean> kqBeans = personServ.getAllKQDataByYearMonthDays(clockDates);
+        List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(kqBeans);
+        personServ.saveAllNewKQBeansToMysql(newKQBeans);
+
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<String> kqDateList = personServ.getAllKQDateList();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
+        int recordCount = personServ.findAllKQBDataCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("kqDateList", kqDateList);
+        view.addObject("flag", "重新计算" + clockDates.toString() + "考勤成功!");
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/toZKandOutDataAll")
+    public ModelAndView toZKandOutDataAll(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("zkandoutdata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<Employee> financeImportDataList = personServ.findAllZKAndOutData(employee);
+        int recordCount = personServ.findAllZKAndOutDataCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/updateKQBeanDataByRenShi")
+    public ModelAndView updateKQBeanDataByRenShi(KQBean kqBean, HttpSession session) throws Exception {
+        Employee employee = new Employee();
+        personServ.updateKQBeanDataByRenShi(kqBean.getId(), kqBean.getExtWorkHours(), kqBean.getClockResultByRenShi());
+        employee.setCurrentPage(kqBean.getCurrentPage());
+        ModelAndView view = new ModelAndView("compreattenrecorddata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
+        int recordCount = personServ.findAllKQBDataCount();
+        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+        employee.setMaxPage(maxPage);
+        employee.setRecordCount(recordCount);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        return view;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/saveClockInSetUp", method = RequestMethod.POST)
     public void saveClockInSetUp(ClockInSetUp clockInSetUp, HttpServletResponse response, HttpSession session) throws Exception {
         try {
@@ -279,6 +428,37 @@ public class PersonController {
         view.addObject("flag", 0);
         view.addObject("clockInSetUpList", clockInSetUpList);
         return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/saveOrUpdateZhongKongNumByEmpNo")
+    public ModelAndView saveOrUpdateZhongKongNumByEmpNo(ZhongKongEmployee zhongKongEmployee, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("zhongkong");
+        try {
+            int isSaveOrUpdate = personServ.saveOrUpdateZhongKongIdByEmpNo(zhongKongEmployee);
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Employee> employeeList = personServ.findAllEmployeeZhongKong(employee);
+            int recordCount = personServ.findAllEmployeeZhongKongCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("employeeList", employeeList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("flag", isSaveOrUpdate);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @ResponseBody
@@ -324,6 +504,36 @@ public class PersonController {
             List<Employee> empList = personServ.findAllEmployeeAll();
             List<Employee> employeeList = personServ.findAllEmployee(employee);
             int recordCount = personServ.findAllEmployeeCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("employeeList", employeeList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/toZhongKong")
+    public ModelAndView toZhongKong(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("zhongkong");
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Employee> employeeList = personServ.findAllEmployeeZhongKong(employee);
+            int recordCount = personServ.findAllEmployeeZhongKongCount();
             int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
             employee.setMaxPage(maxPage);
             employee.setRecordCount(recordCount);
@@ -802,6 +1012,24 @@ public class PersonController {
 
             view.addObject("compute", new Compute());
             view.addObject("flag1", 10);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/dataInMysqlZK", method = RequestMethod.POST)
+    public ModelAndView dataInMysqlZK(@RequestParam("file3") List<MultipartFile> file1, HttpServletResponse response) throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("computeworkdate");
+            List<Employee> employeeList = personServ.translateTabletoEmployeeBeanZK(file1);
+            personServ.saveZKNumEmpNoBangDing(employeeList);
+            view.addObject("compute", new Compute());
+            view.addObject("flag3", 11);
             return view;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -1575,6 +1803,33 @@ public class PersonController {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryGongZhongHaoByCondition(employee);
             int recordCount = personServ.queryGongZhongHaoByConditionCount(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            if (employeeList.size() > 0) {
+                employeeList.get(0).setMaxPage(maxPage);
+                employeeList.get(0).setRecordCount(recordCount);
+                employeeList.get(0).setCurrentPage(employee.getCurrentPage());
+                employeeList.get(0).setType(userInfo.getType());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(employeeList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryZhongKongByCondition", method = RequestMethod.POST)
+    public void queryZhongKongByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<Employee> employeeList = personServ.queryZhongKongByCondition(employee);
+            int recordCount = personServ.queryZhongKongByConditionCount(employee);
             int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
             if (employeeList.size() > 0) {
                 employeeList.get(0).setMaxPage(maxPage);

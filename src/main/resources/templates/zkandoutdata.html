@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>外出考勤</title>
+    <title>考勤数据</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -18,6 +18,10 @@
 <style type="text/css">
     td, th {
         white-space: nowrap;
+    }
+
+    th {
+        font-size: 11px;
     }
 </style>
 <script>
@@ -52,29 +56,29 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goPriPageone() {
         $("#n_currentPage").val(1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function isNull(arg1) {
@@ -105,32 +109,32 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryOutClockInByCondition2();
+            queryZKOUTDataByCondition2();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryOutClockInByCondition2();
+        queryZKOUTDataByCondition2();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryOutClockInByCondition2() {
+    function queryZKOUTDataByCondition2() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -138,15 +142,16 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('workTypes', $("#workType").val());
-        formData.append('isQuits', $("#isQuit").val());
-        formData.append('currentPage', currentpage);
+        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
+        formData.append('workTypes', $("#workType").val());
+        formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryOutClockInByCondition",
+            url: "/person/queryZKOUTDataByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -189,40 +194,24 @@
                     var safeLe;
                     var otherLe;
                     $.each(data, function (num) {
-                        eduLe = data[num].educationLeUrlInt;
-                        safeLe = data[num].sateListAndLeaCertiUrlInt;
-                        otherLe = data[num].otherCertiUrlInt;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
-                        if (data[num].amOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
+                        tr.append("<td>" + isNull(data[num].enrollNumber1) + "</td>");
+                        tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
+                        tr.append("<td align='left'>" + isNull(data[num].timeStr) + "</td>");
+                        td = "<td>";
+                        userType = 1;
+                        if (userType == 1) {
+                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
+                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
                         } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>有</a></td>");
+                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
+                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
                         }
-                        tr.append("<td>" + isNull(data[num].clockInDatePMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddrPMOn) + "</td>");
-                        if (data[num].pmOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
-                        } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>有</a></td>");
-                        }
-                        tr.append("<td>" + isNull(data[num].clockInDateNMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddNMOn) + "</td>");
-                        if (data[num].nmOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
-                        } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>有</a></td>");
-                        }
+                        tr.append(td);
                         tr.appendTo(tbody);
                     });
                     $("#currentpagespan").html(currentPage);
@@ -281,7 +270,7 @@
     var sortMethod;
     var sortByName;
 
-    function queryOutClockInByCondition() {
+    function queryZKOUTDataByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -289,15 +278,16 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('workTypes', $("#workType").val());
-        formData.append('isQuits', $("#isQuit").val());
-        formData.append('currentPage', 1);
+        formData.append('startIncomDateStr', $("#startIncomDateStr").val());
+        formData.append('endIncomDateStr', $("#endIncomDateStr").val());
         formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
+        formData.append('workTypes', $("#workType").val());
+        formData.append('currentPage', 1);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryOutClockInByCondition",
+            url: "/person/queryZKOUTDataByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -340,40 +330,24 @@
                     var safeLe;
                     var otherLe;
                     $.each(data, function (num) {
-                        eduLe = data[num].educationLeUrlInt;
-                        safeLe = data[num].sateListAndLeaCertiUrlInt;
-                        otherLe = data[num].otherCertiUrlInt;
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
-                        if (data[num].amOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
+                        tr.append("<td>" + isNull(data[num].enrollNumber1) + "</td>");
+                        tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
+                        tr.append("<td align='left'>" + isNull(data[num].timeStr) + "</td>");
+                        td = "<td>";
+                        userType = 1;
+                        if (userType == 1) {
+                            td += " <a class=\"btn btn-xs btn-primary\" \n" +
+                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
                         } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 1 + ")';>有</a></td>");
+                            td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
+                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
                         }
-                        tr.append("<td>" + isNull(data[num].clockInDatePMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddrPMOn) + "</td>");
-                        if (data[num].pmOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
-                        } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 2 + ")';>有</a></td>");
-                        }
-                        tr.append("<td>" + isNull(data[num].clockInDateNMOnStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].clockInAddNMOn) + "</td>");
-                        if (data[num].nmOnUrlInt == 0) {
-                            tr.append("<td align=\"center\">无</td>");
-                        } else {
-                            tr.append("<td><a href='javascript:void(0)';" +
-                                " onclick='showPNG(" + data[num].id + "," + 3 + ")';>有</a></td>");
-                        }
+                        tr.append(td);
                         tr.appendTo(tbody);
                     });
                     $("#currentpagespan").html(currentPage);
@@ -428,22 +402,25 @@
         });
     }
 
-    function updateEmployee(employeeId) {
-        window.location.href = "/person/toupdateEmployeeById?Id=" + employeeId;
+    function updateFinanceImportData(id) {
+        window.location.href = "/finance/toupdateFinanceImportDataById?id=" + id;
 
     }
 
-    function deleteEmployee(employeeId) {
-        window.location.href = "/person/deleteEmployeeById?id=" + employeeId;
+    function deleteFinanceImportData(id) {
+        window.location.href = "/finance/deleteFinanceImportData?id=" + id;
     }
 
-    function deleteEmpByBatch() {
+    function deleteFinanceImportDataByBatch() {
         var deleteBatch = document.getElementsByName("deleteBatch");
         var check_val = [];
         var k;
         for (k in deleteBatch) {
-            if (deleteBatch[k].checked)
-                check_val.push(deleteBatch[k].value);
+            if (deleteBatch[k].checked) {
+                if (deleteBatch[k].value != "null") {
+                    check_val.push(deleteBatch[k].value);
+                }
+            }
         }
         if (check_val.length <= 0) {
             $("#errormessage").show();
@@ -452,7 +429,7 @@
             errormessagediv.style.color = "red";
         } else {
             $("#errormessage").hide();
-            window.location.href = "/person/deleteEmpByBatch?ids=" + check_val;
+            window.location.href = "/finance/deleteFinanceImportDataByBatch?ids=" + check_val;
         }
     }
 
@@ -463,17 +440,13 @@
     function sortByAsc(titlename) {
         sortMethod = 'asc';
         sortByName = titlename;
-        queryOutClockInByCondition();
+        queryZKOUTDataByCondition2();
     }
 
     function sortByDesc(titlename) {
         sortMethod = 'desc';
         sortByName = titlename;
-        queryOutClockInByCondition();
-    }
-
-    function showPNG(id, type) {
-        window.open("/person/showImageByClockInId?id=" + id + "&type=" + type);
+        queryZKOUTDataByCondition2();
     }
 
 </script>
@@ -485,21 +458,20 @@
             <input type="hidden" id="maxPage" th:value="${employee.maxPage}">
             <input type="hidden" id="userType" th:value="${userInfo.type}">
             <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${employee.currentPage}"/>
+
             <ul id="myTab" class="nav nav-tabs">
-                <li>
-                    <a th:href="@{/person/toZKandOutDataAll}">厂内原始考勤</a>
-                </li>
                 <li class="active">
-                    <a href="#outAttendRecord" data-toggle="tab">厂外原始考勤</a>
+                    <a href="#innerCompany" data-toggle="tab">厂内原始考勤</a>
                 </li>
                 <li>
-                    <a th:href="@{/person/toCompreAttenRecordPage}">综合考勤</a>
+                    <a th:href="@{/person/toOutClockInListQuery}">厂外原始考勤</a>
                 </li>
+                <li><a th:href="@{/person/toCompreAttenRecordPage}">综合考勤</a></li>
             </ul>
             <br>
             <p>
 
-            <div id="outAttendRecord">
+            <div id="innerCompany">
                 <div class="panel panel-primary">
                     <div class="panel-body form-inline">
                         <table>
@@ -543,8 +515,7 @@
                                     <label>职位：</label>
                                 </td>
                                 <td>
-                                    <select id="positionId" style="width: 100px" multiple
-                                            class="selectpicker show-tick form-control"
+                                    <select id="positionId" multiple class="selectpicker show-tick form-control"
                                             data-live-search="true" data-actions-box="true"
                                             data-selected-text-format="count > 1">
                                         　　
@@ -552,20 +523,29 @@
                                                 th:text="${c.positionName}"></option>
                                     </select>
                                 </td>
-                                <td>
-                                    <label>&nbsp;&nbsp;在职状态：</label>
-                                </td>
-                                <td>
-                                    <select id="isQuit" multiple class="selectpicker show-tick form-control"
-                                            data-live-search="true" data-actions-box="true"
-                                            data-selected-text-format="count > 2">
-                                        　　
-                                        <option th:value="0">在职</option>
-                                        <option th:value="1">离职</option>
-                                    </select>
-                                </td>
                             </tr>
                             <tr>
+                                <td>
+                                    <label>入职时间起：</label>
+                                </td>
+                                <td>
+                                    <input type="text" id="startIncomDateStr"
+                                           style="width:130px;height: 34px;text-align: center"
+                                           class="Wdate"
+                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endIncomDateStr\')}'})"/>
+
+                                </td>
+                                <td>
+                                    <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>
+                                </td>
+                                <td>
+                                    <input type="text" id="endIncomDateStr"
+                                           style="width:140px;height: 34px;text-align: center" class="Wdate"
+                                           onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startIncomDateStr\')}'})"/>
+
+                                </td>
+
+
                                 <td>
                                     <label>&nbsp;&nbsp;工作方式：</label>
                                 </td>
@@ -579,10 +559,10 @@
                                     </select>
                                 </td>
 
-
                                 <td colspan="2" style="text-align: right">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="btn btn-primary"
-                                       href="javascript:void(0);" onclick="queryOutClockInByCondition()">查找</a>
+                                       href="javascript:void(0);" onclick="queryZKOUTDataByCondition()">查找</a>
                                 </td>
                                 <td>
                                     <div style="display: none" id="errormessage">
@@ -599,6 +579,11 @@
             <tr>
                 <th style="text-align: center"> 序号</th>
                 <th style="text-align: center">
+                    <i class="fa fa-sort-asc" onclick="sortByAsc('yearMonth')" aria-hidden="true"></i>
+                    年月
+                    <i class="fa fa-sort-desc" onclick="sortByDesc('yearMonth')" aria-hidden="true"></i>
+                </th>
+                <th style="text-align: center">
                     <i class="fa fa-sort-asc" onclick="sortByAsc('name')" aria-hidden="true"></i>
                     姓名
                     <i class="fa fa-sort-desc" onclick="sortByDesc('name')" aria-hidden="true"></i>
@@ -609,118 +594,48 @@
                     <i class="fa fa-sort-desc" onclick="sortByDesc('deptName')" aria-hidden="true"></i>
                 </th>
                 <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('positionName')" aria-hidden="true"></i>
-                    职位
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('positionName')" aria-hidden="true"></i>
+                    <i class="fa fa-sort-asc" onclick="sortByAsc('enrollNumber1')" aria-hidden="true"></i>
+                    考勤机号码
+                    <i class="fa fa-sort-desc" onclick="sortByDesc('enrollNumber1')" aria-hidden="true"></i>
                 </th>
                 <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('outLeaveSheet')" aria-hidden="true"></i>
-                    因公外出单
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('outLeaveSheet')" aria-hidden="true"></i>
+                    <i class="fa fa-sort-asc" onclick="sortByAsc('dateStr')" aria-hidden="true"></i>
+                    打卡日期
+                    <i class="fa fa-sort-desc" onclick="sortByDesc('dateStr')" aria-hidden="true"></i>
                 </th>
                 <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInDateStr')" aria-hidden="true"></i>
-                    打卡时期
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInDateStr')" aria-hidden="true"></i>
+                    <i class="fa fa-sort-asc" onclick="sortByAsc('timeStr')" aria-hidden="true"></i>
+                    打卡时间
+                    <i class="fa fa-sort-desc" onclick="sortByDesc('timeStr')" aria-hidden="true"></i>
                 </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInDateAMOnStr')" aria-hidden="true"></i>
-                    上午打卡时间
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInDateAMOnStr')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInAddrAMOn')" aria-hidden="true"></i>
-                    上午打卡地点
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInAddrAMOn')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('amOnUrl')" aria-hidden="true"></i>
-                    上午打卡照片
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('amOnUrl')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInDatePMOnStr')" aria-hidden="true"></i>
-                    下午打卡时间
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInDatePMOnStr')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInAddrPMOn')" aria-hidden="true"></i>
-                    下午打卡地点
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInAddrPMOn')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('pmOnUrl')" aria-hidden="true"></i>
-                    下午打卡照片
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('pmOnUrl')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInDateNMOnStr')" aria-hidden="true"></i>
-                    晚上打卡时间
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInDateNMOnStr')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('clockInAddNMOn')" aria-hidden="true"></i>
-                    晚上打卡地点
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('clockInAddNMOn')" aria-hidden="true"></i>
-                </th>
-                <th style="text-align: center">
-                    <i class="fa fa-sort-asc" onclick="sortByAsc('nmOnUrl')" aria-hidden="true"></i>
-                    晚上打卡照片
-                    <i class="fa fa-sort-desc" onclick="sortByDesc('nmOnUrl')" aria-hidden="true"></i>
-                </th>
+
+                <th style="text-align: center">操作</th>
             </tr>
             </thead>
             <tbody id="tabletblody">
             <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
-            <div th:unless="${#lists.isEmpty(employeeList)}">
-                <div th:each="employ ,iterStat: ${employeeList}" align="center">
+            <div th:unless="${#lists.isEmpty(financeImportDataList)}">
+                <div th:each="empH ,iterStat: ${financeImportDataList}" align="center">
                     <tr>
                         <td align="center"
                             th:text="${(iterStat.index+1)}+${employee.currentPage-1}*${employee.pageSize}"></td>
-                        <td align="center" th:text="${employ.name}"></td>
-                        <td align="center" th:text="${employ.deptName}"></td>
-                        <td align="center" th:text="${employ.positionName}"></td>
-                        <td align="center" th:text="${employ.beginLeaveStr}+' '+${employ.endLeaveStr}"></td>
-                        <td align="center" th:text="${employ.clockInDateStr}"></td>
-                        <td align="center" th:text="${employ.clockInDateAMOnStr}"></td>
-                        <td align="center" th:text="${employ.clockInAddrAMOn}"></td>
-                        <div th:if="${employ.amOnUrlInt eq 1}">
-                            <td align="center">
-                                <a href="javascript:void(0);"
-                                   th:onclick="showPNG([[${employ.id}]],1);">有</a>
-                            </td>
-                        </div>
-                        <div th:if="${employ.amOnUrlInt eq 0}">
-                            <td align="center">无</td>
-                        </div>
-                        <td align="center" th:text="${employ.clockInDatePMOnStr}"></td>
-                        <td align="center" th:text="${employ.clockInAddrPMOn}"></td>
-                        <div th:if="${employ.pmOnUrlInt eq 1}">
-                            <td align="center">
-                                <a href="javascript:void(0);"
-                                   th:onclick="showPNG([[${employ.id}]],2);">有</a>
-                            </td>
-                        </div>
-                        <div th:if="${employ.pmOnUrlInt eq 0}">
-                            <td align="center">无</td>
-                        </div>
-                        <td align="center" th:text="${employ.clockInDateNMOnStr}"></td>
-                        <td align="center" th:text="${employ.clockInAddNMOn}"></td>
-                        <div th:if="${employ.nmOnUrlInt eq 1}">
-                            <td align="center">
-                                <a href="javascript:void(0);"
-                                   th:onclick="showPNG([[${employ.id}]],3);">有</a>
-                            </td>
-                        </div>
-                        <div th:if="${employ.nmOnUrlInt eq 0}">
-                            <td align="center">无</td>
-                        </div>
+                        <td align="center" th:text="${empH.yearMonth}"></td>
+                        <td align="center" th:text="${empH.name}"></td>
+                        <td align="center" th:text="${empH.deptName}"></td>
+                        <td align="center" th:text="${empH.enrollNumber1}"></td>
+                        <td align="center" th:text="${empH.dateStr}"></td>
+                        <td align="left" th:text="${empH.timeStr}"></td>
+                        <td align="center">
+                            <a class="btn btn-xs btn-primary"
+                               th:disabled="${userInfo.type ne 1}"
+                               th:onclick="updateFinanceImportData([[${empH.id}]]);">编辑</a>
+                        </td>
                     </tr>
                 </div>
             </div>
-            <div th:if="${#lists.isEmpty(employeeList)}">
+            <div th:if="${#lists.isEmpty(financeImportDataList)}">
                 <tr>
-                    <td colspa n="15">
+                    <td colspan="8">
                         查无数据
                     </td>
                 </tr>
@@ -730,7 +645,7 @@
             <tfoot id="s_tfoot">
             <tr id="showdiv">
 
-                <td colspan="16" align="center">
+                <td colspan="8" align="center">
                     <span>第</span>
                     <span th:text="${employee.currentPage}" id="currentpagespan"> </span>
                     <span>页|共</span>
@@ -786,7 +701,7 @@
 
 
             <tr style="display:none;" id="nodatadiv">
-                <td colspan="16" align="center">
+                <td colspan="8" align="center">
                     查无数据
                 </td>
             </tr>

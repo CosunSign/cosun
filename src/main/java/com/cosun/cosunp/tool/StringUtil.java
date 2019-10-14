@@ -1,5 +1,7 @@
 package com.cosun.cosunp.tool;
 
+import com.cosun.cosunp.weixin.OutClockIn;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,9 +19,9 @@ import java.util.regex.Pattern;
 public class StringUtil {
 
 
-    public static String increateFinishiNoByOrldFinishiNo(String oldnewestProdNo,String shortEngName) throws Exception {
+    public static String increateFinishiNoByOrldFinishiNo(String oldnewestProdNo, String shortEngName) throws Exception {
         //C190815ZT01
-        if(oldnewestProdNo!=null) {
+        if (oldnewestProdNo != null) {
             String newestOrder;
             String beforStr = oldnewestProdNo.substring(0, 9);
             String afterNum = oldnewestProdNo.substring(9, oldnewestProdNo.length());
@@ -33,20 +35,38 @@ public class StringUtil {
             }
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
-        }else {
+        } else {
             //COSUN20190108WW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
-            dateStr = dateStr.substring(2,dateStr.length());
-            String orderName = "C"+dateStr+shortEngName+"01";
+            dateStr = dateStr.substring(2, dateStr.length());
+            String orderName = "C" + dateStr + shortEngName + "01";
             return orderName;
         }
     }
 
 
-    public static String increateOrderByOlderOrderNo(String oldNewestNo,String shortEngName) throws Exception {
+    public static String onlyTimeStr(OutClockIn outClockIn) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        //2019-10-09 11:56:29
+        if (outClockIn != null) {
+            if (outClockIn.getClockInDateAMOnStr() != null) {
+                sb.append(outClockIn.getClockInDateAMOnStr().split(" ")).append(" ");
+            }
+            if (outClockIn.getClockInDatePMOnStr() != null) {
+                sb.append(outClockIn.getClockInDatePMOnStr().split(" ")).append(" ");
+            }
+            if (outClockIn.getClockInDateNMOnStr() != null) {
+                sb.append(outClockIn.getClockInDatePMOnStr().split(" "));
+            }
+        }
+        return "";
+    }
+
+
+    public static String increateOrderByOlderOrderNo(String oldNewestNo, String shortEngName) throws Exception {
         //COSUN2019XXXXZTXX
-        if(oldNewestNo!=null) {
+        if (oldNewestNo != null) {
             String newestOrder;
             String beforStr = oldNewestNo.substring(0, 15);
             String afterNum = oldNewestNo.substring(15, oldNewestNo.length());
@@ -60,18 +80,18 @@ public class StringUtil {
             }
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
-        }else {
+        } else {
             //COSUN20190108WW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
-            String orderName = "COSUN"+dateStr+shortEngName+"01";
+            String orderName = "COSUN" + dateStr + shortEngName + "01";
             return orderName;
         }
     }
 
-    public static String increateProdNoByOlderProductNo(String oldNewestNo,String shortEngName) throws Exception {
+    public static String increateProdNoByOlderProductNo(String oldNewestNo, String shortEngName) throws Exception {
         //C190822HW01
-        if(oldNewestNo!=null) {
+        if (oldNewestNo != null) {
             String newestOrder;
             String beforStr = oldNewestNo.substring(0, 9);
             String afterNum = oldNewestNo.substring(9, oldNewestNo.length());
@@ -85,18 +105,19 @@ public class StringUtil {
             }
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
-        }else {
+        } else {
             //C190822HW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
-            dateStr = dateStr.substring(2,dateStr.length());
-            String orderName = "C"+dateStr+shortEngName+"01";
+            dateStr = dateStr.substring(2, dateStr.length());
+            String orderName = "C" + dateStr + shortEngName + "01";
             return orderName;
         }
     }
 
     /**
      * 功能描述:业务员名单暂放JAVA里，日后再建员工数据库
+     *
      * @auther: homey Wong
      * @date: 2019/1/16 0016 下午 2:09
      * @param:
@@ -180,7 +201,7 @@ public class StringUtil {
     public static String subMyString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         int index = str.lastIndexOf(a);
-        if(index>=1) {
+        if (index >= 1) {
             return str.substring(0, index + 1);
         }
         return null;
@@ -189,7 +210,7 @@ public class StringUtil {
     public static String subMyString1(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         int index = str.lastIndexOf(a);
-        if(index>=1) {
+        if (index >= 1) {
             return str.substring(0, index);
         }
         return null;
@@ -198,9 +219,9 @@ public class StringUtil {
 
     public static String subAfterString(String str, String a) {
         //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名
-        if(str.contains(a)) {
+        if (str.contains(a)) {
             int index = str.lastIndexOf(a);
-            if(index>=1) {
+            if (index >= 1) {
                 str = str.substring(index + 1, str.length());
                 return str;
             }
@@ -208,28 +229,30 @@ public class StringUtil {
         return str;
 
     }
+
     /**
      * 利用正则表达式判断字符串是否是数字
+     *
      * @param str
      * @return
      */
-    public static boolean isNumeric(String str){
+    public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ){
+        if (!isNum.matches()) {
             return false;
         }
         return true;
     }
 
     //查找字符串出现某字符的个数
-    public static int searchStrNum(String str,String strRes) {
+    public static int searchStrNum(String str, String strRes) {
         int n = 0;//计数器
         int index = 0;//指定字符的长度
         index = str.indexOf(strRes);
-        while(index!=-1) {
+        while (index != -1) {
             n++;
-            index = str.indexOf(strRes,index+1);
+            index = str.indexOf(strRes, index + 1);
         }
 
         return n;

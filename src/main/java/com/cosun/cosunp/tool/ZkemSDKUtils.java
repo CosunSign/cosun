@@ -144,6 +144,7 @@ public class ZkemSDKUtils {
                         m.setDateStr(dwYear.getIntRef() + "-" + dwMonth.getIntRef() + "-" + dwDay.getIntRef());
                         m.setTimeStr(dwHour.getIntRef() + ":" + dwMinute.getIntRef() + ":" + dwSecond.getIntRef());
                         m.setTimeTime(ti.parse(dwHour.getIntRef() + ":" + dwMinute.getIntRef() + ":" + dwSecond.getIntRef()));
+                        m.setYearMonth(dwYear.getIntRef() + "-" + dwMonth.getIntRef());
                         m.setVerifyMode(dwVerifyMode.getIntRef());
                         m.setInOutMode(dwInOutMode.getIntRef());
                         m.setYear(dwYear.getIntRef());

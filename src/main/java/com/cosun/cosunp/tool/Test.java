@@ -24,9 +24,9 @@ public class Test {
             "	\"ftp://admin:FL33771@192.168.0.152/admin/201906/凡钟俊/03063247/COSUN20190108WW26/IntelliJ IDEA 2018.5.zip\":\"E:/myFile/111/IntelliJ IDEA 2018.5.zip\"\r\n}";
 
     public static void main(String[] arg) {
-        File javaFile = new File("E:\\WAMP\\wamp\\www\\cosunp\\src\\main\\resources\\templates");
+        File javaFile = new File("E:\\WAMP\\wamp\\www\\cosunp\\src\\main\\java\\com\\cosun\\cosunp");
         try {
-            int num = getProjectFileNumber(javaFile, ".html");
+            int num = getProjectFileNumber(javaFile, ".java");
             System.out.println(num);
         }catch (Exception e) {
             e.printStackTrace();

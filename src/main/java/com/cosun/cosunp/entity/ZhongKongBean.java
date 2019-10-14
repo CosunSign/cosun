@@ -16,12 +16,15 @@ public class ZhongKongBean implements Serializable {
     private static final long serialVersionUID = 7955171496150175628L;
 
     private Integer id;
+    private String yearMonth;
+    private Integer EnrollNumber;
+    private String dateStr;
+    private String timeStr;
+    private Date timeTime;
+    private Date date;
+
     private Integer VerifyMode;
     private Integer InOutMode;
-    private Integer EnrollNumber;
-    private Date date;
-    private String timeStr;
-
     private Integer Year;
     private String Month;
     private Integer Day;
@@ -30,11 +33,14 @@ public class ZhongKongBean implements Serializable {
     private Integer Hour;
     private String Time;
 
-    private Date timeTime;
 
+    public String getYearMonth() {
+        return yearMonth;
+    }
 
-    private String dateStr;
-
+    public void setYearMonth(String yearMonth) {
+        this.yearMonth = yearMonth;
+    }
 
     public Date getTimeTime() {
         return timeTime;

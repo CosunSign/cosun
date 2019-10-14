@@ -21,6 +21,10 @@ public interface IPersonServ {
 
     String checkEmpNoOrEmpNameRepeat(List<Employee> employeeList) throws Exception;
 
+    void saveZKNumEmpNoBangDing(List<Employee> employeeList) throws Exception;
+
+    List<Employee> translateTabletoEmployeeBeanZK(List<MultipartFile> files) throws Exception;
+
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
 
     List<SmallEmployee> findAllEmployeeByPositionLevel(String positionLevel) throws Exception;
@@ -40,6 +44,12 @@ public interface IPersonServ {
     int checkEmployNoIsExsit(String empoyeeNo) throws Exception;
 
     List<Position> findAllPositionAll() throws Exception;
+
+    List<String> getAllKQDateList() throws Exception;
+
+    void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state) throws Exception;
+
+    int saveOrUpdateZhongKongIdByEmpNo(ZhongKongEmployee zhongKongEmployee) throws Exception;
 
     void deleteLeaveByBatch(List<Integer> ids) throws Exception;
 
@@ -66,6 +76,36 @@ public interface IPersonServ {
     void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
+
+    List<KQBean> findAllKQBData(Employee employee) throws Exception;
+
+    int findAllKQBDataCount() throws Exception;
+
+    List<WorkSet> getAllWorkSetListByYearMonth(String yearMonth) throws Exception;
+
+    List<WorkDate> getAllWorkDateListByYearMonth(String yearMonth) throws Exception;
+
+    List<KQBean> getAllKQDataByYearMonthDay(String date) throws Exception;
+
+    List<KQBean> getAfterOperatorDataByOriginData(List<KQBean> kqBeans) throws Exception;
+
+    List<KQBean> getAllKQDataByYearMonthDays(List<String> clockDates) throws Exception;
+
+    void deleteKQBeanOlderDateByDates(List<String> dateStr) throws Exception;
+
+    void saveAllNewKQBeansToMysql(List<KQBean> kqBeanList) throws Exception;
+
+    List<Employee> queryZKOUTDataByCondition(Employee employee) throws Exception;
+
+    int queryZKOUTDataByConditionCount(Employee employee) throws Exception;
+
+    List<Employee> findAllZKAndOutData(Employee employee) throws Exception;
+
+    int findAllZKAndOutDataCount() throws Exception;
+
+    List<Employee> findAllEmployeeZhongKong(Employee employee) throws Exception;
+
+    int findAllEmployeeZhongKongCount() throws Exception;
 
     void saveBeforeDayZhongKongData(List<ZhongKongBean> zkbList) throws Exception;
 
@@ -114,6 +154,10 @@ public interface IPersonServ {
     List<Employee> queryEmployeeByCondition(Employee employee) throws Exception;
 
     List<Employee> queryGongZhongHaoByCondition(Employee employee) throws Exception;
+
+    List<Employee> queryZhongKongByCondition(Employee employee) throws Exception;
+
+    int queryZhongKongByConditionCount(Employee employee) throws Exception;
 
     List<Employee> queryOutClockInByCondition(Employee employee) throws Exception;
 
