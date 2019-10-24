@@ -140,67 +140,92 @@
 <div id='app'>
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
-        <div class="panel panel-primary">
-            <div class="panel-body form-inline">
-                <table style="width: 100%">
-                    <tr>
-                        <td style="width: 20%;text-align: center"><a class="btn btn-primary" id="addbutton"
-                                                                     href="javascript:void(0);" onclick="addTableRow()">新增</a>
-                        </td>
-                        <td>
-                            <div id="errormessage" style="display: none">
 
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        <ul id="myTab" class="nav nav-tabs">
+            <li>
+                <a th:href="@{/person/toworksetpage}">考勤设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toworkdatepage}">排班设置</a>
+            </li>
+            <li  class="active">
+                <a href="#compreAttendRecord" data-toggle="tab">外出考勤设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/togongzhonghao}">公众号绑定</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toZhongKong}">考勤机绑定</a>
+            </li>
+        </ul>
+        <br>
+        <p>
 
-        <table class="table table-bordered table-hover table-striped text-center hongmei" id="showlistbody">
-            <thead style="background-color:lightsteelblue">
-            <tr>
-                <th style="text-align: center"> 操作</th>
-                <th style="text-align: center"> 序号</th>
-                <th style="text-align: center"> 外出天数</th>
-                <th style="text-align: center"> 日打卡次数</th>
-                <th style="text-align: center"> 备注</th>
-            </tr>
-            </thead>
-            <tbody id="tabletbody">
-            <div th:unless="${#lists.isEmpty(clockInSetUpList)}">
-                <div th:each="clocksetup ,iterStat: ${clockInSetUpList}" align="center">
-                    <tr>
-                        <td>
-                            <a id="savebutton" href="javascript:void(0);"
-                               th:onclick="saveDateToMysql(this,[[${iterStat.index+1}]]);">保存</a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="javascript:void(0);" th:onclick="deleteTR(this,[[${iterStat.index+1}]]);">删除</a>
-                        </td>
-                        <td align="center" th:text="${iterStat.index+1}"></td>
-                        <td><=<input type='text' th:onblur='checkisNum(this,[[${iterStat.index+1}]])'
-                                     placeholder='请输入天数' th:value="${clocksetup.outDays}">天
-                        </td>
-                        <td><=<input type='text' th:onblur='checkisNum2(this,[[${iterStat.index+1}]])'
-                                     placeholder='请输入打卡次数' th:value="${clocksetup.dayClockInTimes}">次
-                        </td>
+        <div id="compreAttendRecord">
+            <div class="panel panel-primary">
+                <div class="panel-body form-inline">
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 20%;text-align: center"><a class="btn btn-primary" id="addbutton"
+                                                                         href="javascript:void(0);"
+                                                                         onclick="addTableRow()">新增</a>
+                            </td>
+                            <td>
+                                <div id="errormessage" style="display: none">
 
-                        <td>
-                            <input type='text' placeholder='请输入备注' th:value="${clocksetup.remark}">
-                        </td>
-                    </tr>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div th:if="${#lists.isEmpty(clockInSetUpList)}">
-                <tr>
-                    <td colspan="5">查无数据</td>
-                </tr>
-            </div>
 
-            </tbody>
-        </table>
+            <table class="table table-bordered table-hover table-striped text-center hongmei" id="showlistbody">
+                <thead style="background-color:lightsteelblue">
+                <tr>
+                    <th style="text-align: center"> 操作</th>
+                    <th style="text-align: center"> 序号</th>
+                    <th style="text-align: center"> 外出天数</th>
+                    <th style="text-align: center"> 日打卡次数</th>
+                    <th style="text-align: center"> 备注</th>
+                </tr>
+                </thead>
+                <tbody id="tabletbody">
+                <div th:unless="${#lists.isEmpty(clockInSetUpList)}">
+                    <div th:each="clocksetup ,iterStat: ${clockInSetUpList}" align="center">
+                        <tr>
+                            <td>
+                                <a id="savebutton" href="javascript:void(0);"
+                                   th:onclick="saveDateToMysql(this,[[${iterStat.index+1}]]);">保存</a>
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="javascript:void(0);"
+                                   th:onclick="deleteTR(this,[[${iterStat.index+1}]]);">删除</a>
+                            </td>
+                            <td align="center" th:text="${iterStat.index+1}"></td>
+                            <td><=<input type='text' th:onblur='checkisNum(this,[[${iterStat.index+1}]])'
+                                         placeholder='请输入天数' th:value="${clocksetup.outDays}">天
+                            </td>
+                            <td><=<input type='text' th:onblur='checkisNum2(this,[[${iterStat.index+1}]])'
+                                         placeholder='请输入打卡次数' th:value="${clocksetup.dayClockInTimes}">次
+                            </td>
+
+                            <td>
+                                <input type='text' placeholder='请输入备注' th:value="${clocksetup.remark}">
+                            </td>
+                        </tr>
+                    </div>
+                </div>
+                <div th:if="${#lists.isEmpty(clockInSetUpList)}">
+                    <tr>
+                        <td colspan="5">查无数据</td>
+                    </tr>
+                </div>
+
+                </tbody>
+            </table>
+        </div>
     </form>
 </div>
-
+</div>
 </body>
 </html>

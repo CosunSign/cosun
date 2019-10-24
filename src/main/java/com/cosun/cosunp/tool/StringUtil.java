@@ -1,7 +1,12 @@
 package com.cosun.cosunp.tool;
 
+import com.cosun.cosunp.entity.KQBean;
+import com.cosun.cosunp.entity.QianKa;
+import com.cosun.cosunp.entity.WorkSet;
+import com.cosun.cosunp.entity.ZhongKongBean;
 import com.cosun.cosunp.weixin.OutClockIn;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,19 +51,201 @@ public class StringUtil {
     }
 
 
+    public static int checkIsNeed(String timeStr, WorkSet ws, KQBean kq) throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date d = format.parse(timeStr);
+        Time timeNew = new java.sql.Time(d.getTime());
+        if ((timeNew.after(ws.getMorningOnFrom()) && timeNew.before(ws.getMorningOnEnd())) || timeNew == ws.getMorningOnFrom() || timeNew == ws.getMorningOnEnd()) {
+            if (kq.getaOnTime() != null) {
+                return 4;
+            }
+        }
+
+        if ((timeNew.after(ws.getMorningOffFrom()) && timeNew.before(ws.getMorningOffEnd())) || timeNew == ws.getMorningOffFrom() || timeNew == ws.getMorningOffEnd()) {
+            if (kq.getaOffTime() != null) {
+                return 4;
+            }
+        }
+
+        if ((timeNew.after(ws.getNoonOnFrom()) && timeNew.before(ws.getNoonOnEnd())) || timeNew == ws.getNoonOnFrom() || timeNew == ws.getNoonOnEnd()) {
+            if (kq.getpOnTime() != null) {
+                return 4;
+            }
+        }
+
+        if ((timeNew.after(ws.getNoonOffFrom()) && timeNew.before(ws.getNoonOffEnd())) || timeNew == ws.getNoonOffFrom() || timeNew == ws.getNoonOffEnd()) {
+            if (kq.getpOffTime() != null) {
+                return 4;
+            }
+        }
+
+        if ((timeNew.after(ws.getExtworkonFrom()) && timeNew.before(ws.getExtworkonEnd())) || timeNew == ws.getExtworkonFrom() || timeNew == ws.getExtworkonEnd()) {
+            if (kq.getExtWorkOnTime() != null) {
+                return 4;
+            }
+        }
+
+        return 0;
+
+    }
+
+    public static int checkIsRepeatQianKa(QianKa oldQK, QianKa newQk, WorkSet ws) throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date d = format.parse(newQk.getTimeStr());
+        Time timeNew = new java.sql.Time(d.getTime());
+        int isHow = 0;
+        if ((timeNew.after(ws.getMorningOnFrom()) && timeNew.before(ws.getMorningOnEnd())) || timeNew == ws.getMorningOnFrom() || timeNew == ws.getMorningOnEnd()) {
+            isHow = 1;
+        }
+
+        if ((timeNew.after(ws.getMorningOffFrom()) && timeNew.before(ws.getMorningOffEnd())) || timeNew == ws.getMorningOffFrom() || timeNew == ws.getMorningOffEnd()) {
+            isHow = 2;
+        }
+
+        if ((timeNew.after(ws.getNoonOnFrom()) && timeNew.before(ws.getNoonOnEnd())) || timeNew == ws.getNoonOnFrom() || timeNew == ws.getNoonOnEnd()) {
+            isHow = 3;
+        }
+
+        if ((timeNew.after(ws.getNoonOffFrom()) && timeNew.before(ws.getNoonOffEnd())) || timeNew == ws.getNoonOffFrom() || timeNew == ws.getNoonOffEnd()) {
+            isHow = 4;
+        }
+
+        if ((timeNew.after(ws.getExtworkonFrom()) && timeNew.before(ws.getExtworkonEnd())) || timeNew == ws.getExtworkonFrom() || timeNew == ws.getExtworkonEnd()) {
+            isHow = 5;
+        }
+
+        List<String> allStr = new ArrayList<String>();
+        String[] strs = oldQK.getTimeStr().split(" ");
+        for (String s : strs) {
+            allStr.add(s);
+        }
+        List<Time> times = formTime(allStr);
+
+        if (isHow == 1) {
+            for (Time ti : times) {
+                if ((ti.after(ws.getMorningOnFrom()) && ti.before(ws.getMorningOnEnd())) || ti == ws.getMorningOnFrom() || ti == ws.getMorningOnEnd()) {
+                    return 1;
+                }
+            }
+        }
+
+        if (isHow == 2) {
+            for (Time ti : times) {
+                if ((ti.after(ws.getMorningOffFrom()) && ti.before(ws.getMorningOffEnd())) || ti == ws.getMorningOffFrom() || ti == ws.getMorningOffEnd()) {
+                    return 1;
+                }
+            }
+        }
+
+        if (isHow == 3) {
+            for (Time ti : times) {
+                if ((ti.after(ws.getNoonOnFrom()) && ti.before(ws.getNoonOnEnd())) || ti == ws.getNoonOnFrom() || ti == ws.getNoonOnEnd()) {
+                    return 1;
+                }
+            }
+        }
+
+        if (isHow == 4) {
+            for (Time ti : times) {
+                if ((ti.after(ws.getNoonOffFrom()) && ti.before(ws.getNoonOffEnd())) || ti == ws.getNoonOffFrom() || ti == ws.getNoonOffEnd()) {
+                    return 1;
+                }
+            }
+        }
+
+
+        if (isHow == 5) {
+            for (Time ti : times) {
+                if ((ti.after(ws.getExtworkonFrom()) && ti.before(ws.getExtworkonEnd())) || ti == ws.getExtworkonFrom() || ti == ws.getExtworkonEnd()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+
+    public static int checkIsIn(String time, WorkSet ws) throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date d = format.parse(time);
+        Time timeNew = new java.sql.Time(d.getTime());
+        if ((timeNew.after(ws.getMorningOnFrom()) && timeNew.before(ws.getMorningOnEnd())) || timeNew == ws.getMorningOnFrom() || timeNew == ws.getMorningOnEnd()) {
+            return 1;
+        }
+
+        if ((timeNew.after(ws.getMorningOffFrom()) && timeNew.before(ws.getMorningOffEnd())) || timeNew == ws.getMorningOffFrom() || timeNew == ws.getMorningOffEnd()) {
+            return 1;
+        }
+
+        if ((timeNew.after(ws.getNoonOnFrom()) && timeNew.before(ws.getNoonOnEnd())) || timeNew == ws.getNoonOnFrom() || timeNew == ws.getNoonOnEnd()) {
+            return 1;
+        }
+
+        if ((timeNew.after(ws.getNoonOffFrom()) && timeNew.before(ws.getNoonOffEnd())) || timeNew == ws.getNoonOffFrom() || timeNew == ws.getNoonOffEnd()) {
+            return 1;
+        }
+
+        if ((timeNew.after(ws.getExtworkonFrom()) && timeNew.before(ws.getExtworkonEnd())) || timeNew == ws.getExtworkonFrom() || timeNew == ws.getExtworkonEnd()) {
+            return 1;
+        }
+        return 3;
+    }
+
+    public static String sortTimes(String qiankaStr, String timeStr) throws Exception {
+        List<String> allStr = new ArrayList<String>();
+        String[] strs = qiankaStr.split(" ");
+        for (String s : strs) {
+            allStr.add(s);
+        }
+        allStr.add(timeStr);
+        List<Time> times = formTime(allStr);
+        for (int i = 0; i < times.size() - 1; i++) {
+            for (int j = 0; j < times.size() - 1 - i; j++) {
+                if (times.get(j).after(times.get(j + 1))) {
+                    Time temp = times.get(j + 1);
+                    times.set(j + 1, times.get(j));
+                    times.set(j, temp);
+                }
+            }
+        }
+
+        StringBuilder returnStr = new StringBuilder();
+        for (Time Ti : times) {
+            returnStr.append(Ti.toString() + " ");
+        }
+
+        return returnStr.toString();
+    }
+
+
+    public static List<Time> formTime(List<String> times) throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        List<Time> timeList = new ArrayList<Time>();
+        Time time = null;
+        Date d = null;
+        for (String str : times) {
+            d = format.parse(str);
+            time = new java.sql.Time(d.getTime());
+            timeList.add(time);
+        }
+        return timeList;
+    }
+
     public static String onlyTimeStr(OutClockIn outClockIn) throws Exception {
         StringBuilder sb = new StringBuilder();
         //2019-10-09 11:56:29
         if (outClockIn != null) {
             if (outClockIn.getClockInDateAMOnStr() != null) {
-                sb.append(outClockIn.getClockInDateAMOnStr().split(" ")).append(" ");
+                sb.append(outClockIn.getClockInDateAMOnStr().split(" ")[1]).append(" ");
             }
             if (outClockIn.getClockInDatePMOnStr() != null) {
-                sb.append(outClockIn.getClockInDatePMOnStr().split(" ")).append(" ");
+                sb.append(outClockIn.getClockInDatePMOnStr().split(" ")[1]).append(" ");
             }
             if (outClockIn.getClockInDateNMOnStr() != null) {
-                sb.append(outClockIn.getClockInDatePMOnStr().split(" "));
+                sb.append(outClockIn.getClockInDateNMOnStr().split(" ")[1]);
             }
+            return sb.toString();
         }
         return "";
     }

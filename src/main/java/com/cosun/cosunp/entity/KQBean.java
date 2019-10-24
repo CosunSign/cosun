@@ -27,6 +27,8 @@ public class KQBean implements Serializable {
     private String remark;//说明
     private Integer clockResultByRenShi;
 
+    private String nameReal;
+
     private String aOnTime;
     private String aOnRemark;
 
@@ -66,6 +68,61 @@ public class KQBean implements Serializable {
     private String sortMethod;
     private String sortByName;
 
+
+    private List<Integer> deptIds;
+    private List<Integer> positionIds;
+    private List<Integer> nameIds;
+    private List<Integer> workTypes;
+    private List<String> clockDates;
+
+
+    public String getNameReal() {
+        return nameReal;
+    }
+
+    public void setNameReal(String nameReal) {
+        this.nameReal = nameReal;
+    }
+
+    public List<Integer> getDeptIds() {
+        return deptIds;
+    }
+
+    public void setDeptIds(List<Integer> deptIds) {
+        this.deptIds = deptIds;
+    }
+
+    public List<Integer> getPositionIds() {
+        return positionIds;
+    }
+
+    public void setPositionIds(List<Integer> positionIds) {
+        this.positionIds = positionIds;
+    }
+
+    public List<Integer> getNameIds() {
+        return nameIds;
+    }
+
+    public void setNameIds(List<Integer> nameIds) {
+        this.nameIds = nameIds;
+    }
+
+    public List<Integer> getWorkTypes() {
+        return workTypes;
+    }
+
+    public void setWorkTypes(List<Integer> workTypes) {
+        this.workTypes = workTypes;
+    }
+
+    public List<String> getClockDates() {
+        return clockDates;
+    }
+
+    public void setClockDates(List<String> clockDates) {
+        this.clockDates = clockDates;
+    }
 
     public Integer getClockResultByRenShi() {
         return clockResultByRenShi;
@@ -383,27 +440,33 @@ public class KQBean implements Serializable {
     }
 
     public String getClockResultStr() {
-        if(this.clockResult!=null) {
-            if(clockResult==1) {
+        if (this.clockResult != null) {
+            if (clockResult == 1) {
                 return "正常出勤";
-            }else if(clockResult==2) {
-                return "因公外出";
-            }else if(clockResult==3) {
+            } else if (clockResult == 2) {
+                return "因公外出(省内)";
+            } else if (clockResult == 3) {
                 return "带薪年假";
-            }else if(clockResult==4) {
+            } else if (clockResult == 4) {
                 return "法定节假日";
-            }else if(clockResult==5) {
+            } else if (clockResult == 5) {
                 return "放假";
-            }else if(clockResult==6) {
-                return "请假";
-            }else if(clockResult==7) {
+            } else if (clockResult == 6) {
+                return "请假(事假)";
+            } else if (clockResult == 7) {
                 return "未正常打卡";
-            }else if(clockResult==8) {
+            } else if (clockResult == 8) {
                 return "旷工";
-            }else if(clockResult==9) {
+            } else if (clockResult == 9) {
                 return "法定节假日加班";
-            }else if(clockResult==10) {
+            } else if (clockResult == 10) {
                 return "无此人打卡记录";
+            } else if (clockResult == 11) {
+                return "请假(病假)";
+            } else if (clockResult == 12) {
+                return "因公外出(省外)";
+            } else if (clockResult == 13) {
+                return "夜班";
             }
         }
         return clockResultStr;

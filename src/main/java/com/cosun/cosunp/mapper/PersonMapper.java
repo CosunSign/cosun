@@ -2,7 +2,6 @@ package com.cosun.cosunp.mapper;
 
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.weixin.OutClockIn;
-import com.sun.org.glassfish.gmbal.IncludeSubclass;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -125,8 +124,21 @@ public interface PersonMapper {
     @Select("select count(*) from clockinsetup where outDays = #{outDays}")
     int findIfExsit(ClockInSetUp clockInSetUp);
 
+    @Select("select count(*) from qianka where empNo = #{empNo} and date = #{dateStr} and timeStr like CONCAT('%',#{timeStr},'%') ")
+    int findIfExsitQianKa(QianKa qianKa);
+
+
     @Insert("insert into clockinsetup (outDays,dayClockInTimes,remark) values (#{outDays},#{dayClockInTimes},#{remark})")
     void saveClockInSetUp(ClockInSetUp clockInSetUp);
+
+    @Insert("insert into qianka (empNo,date,timeStr,type,remark) values (#{empNo},#{dateStr},#{timeStr},#{type},#{remark}) ")
+    void saveQianKa(QianKa qianKa);
+
+    @Select("select * from qianka where date = #{dateStr} and empNo = #{empNo} ")
+    QianKa getQianKaByDateAndEmpno(QianKa qianKa);
+
+    @Insert("update qianka  set timeStr = #{timeStr},type = #{type},remark = #{remark} where id = #{id}")
+    void updateQianKa(QianKa qianKa);
 
     @Update("update clockinsetup set dayClockInTimes = #{dayClockInTimes},remark = #{remark} where outDays = #{outDays}")
     void updateClockInSetUp(ClockInSetUp clockInSetUp);
@@ -320,6 +332,35 @@ public interface PersonMapper {
     @Delete("delete from clockinsetup where outDays = #{outDays}")
     void deleteClockSetInByOutDays(Double outDays);
 
+
+    @Select("SELECT\n" +
+            "\tid,\n" +
+            "\tworkLevel,\n" +
+            "\t`month`,\n" +
+            "\tupdatedate as updateDate,\n" +
+            "\tmorningon as morningOn,\n" +
+            "\tmorningonfrom as morningOnFrom,\n" +
+            "\tmorningonend as morningOnEnd,\n" +
+            "\tmorningoff as morningOff,\n" +
+            "\tmorningofffrom as morningOffFrom,\n" +
+            "\tmorningoffend as morningOffEnd,\n" +
+            "\tnoonon as noonOn,\n" +
+            "\tnoononfrom as noonOnFrom,\n" +
+            "\tnoononend as noonOnEnd,\n" +
+            "\tnoonoff as noonOff,\n" +
+            "\tnoonofffrom as noonOffFrom,\n" +
+            "\tnoonoffend as noonOffEnd,\n" +
+            "\textworkon as extworkon,\n" +
+            "\textworkonfrom as extworkonFrom,\n" +
+            "\textworkonend as extworkonEnd,\n" +
+            "\textworkoff as extworkoff,\n" +
+            "\tremark as remark\n" +
+            "FROM\n" +
+            "\tworkset\n" +
+            "WHERE\n" +
+            "\t workLevel = #{positionLevel} and month = #{yearMonth}")
+    WorkSet getWorkSetByYearMonthAndPositionLevel(String yearMonth, String positionLevel);
+
     @Select("SELECT\n" +
             "\tid,\n" +
             "\tworkLevel,\n" +
@@ -386,6 +427,12 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryZKOUTDataByConditionCount")
     int queryZKOUTDataByConditionCount(Employee employee);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryKQBeanDataByCondition")
+    List<KQBean> queryKQBeanDataByCondition(KQBean kqBean);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryKQBeanDataByConditionCount")
+    int queryKQBeanDataByConditionCount(KQBean kqBean);
+
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryEmployeeSalaryByCondition")
     List<Employee> queryEmployeeSalaryByCondition(Employee employee);
@@ -399,8 +446,30 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLeaveByCondition")
     List<Leave> queryLeaveByCondition(Leave leave);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryQKByConditionCount")
+    int queryQKByConditionCount(QianKa qianKa);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryQKByCondition")
+    List<QianKa> queryQKByCondition(QianKa qianKa);
+
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryLBByConditionCount")
+    int queryLBByConditionCount(LianBan lianBan);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryLBByCondition")
+    List<LianBan> queryLBByCondition(LianBan qianKa);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryJBByConditionCount")
+    int queryJBByConditionCount(JiaBan jiaBan);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryJBByCondition")
+    List<JiaBan> queryJBByCondition(JiaBan jiaBan);
+
     @SelectProvider(type = PseronDaoProvider.class, method = "checkBeginLeaveRight")
     int checkBeginLeaveRight(Leave leave);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "getJiaBanDanByEmpIdAndFromDateAndEndDate")
+    int getJiaBanDanByEmpIdAndFromDateAndEndDate(Integer empId, String extDateFromStr, String extDateEndStr);
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLeaveByConditionCount")
     int queryLeaveByConditionCount(Leave leave);
@@ -726,7 +795,7 @@ public interface PersonMapper {
 
 
     @SelectProvider(type = PseronDaoProvider.class, method = "getAllKQDataByYearMonthDays")
-    List<KQBean> getAllKQDataByYearMonthDays(List<String> dates);
+    List<KQBean> getAllKQDataByYearMonthDays(@Param("dateStr") List<OutClockIn> dateStr);
 
     @Select("select * from workdate where month = #{month}")
     List<WorkDate> findAllWorkDateListByMonth(String month);
@@ -873,6 +942,14 @@ public interface PersonMapper {
             "from leavedata where employeeid = #{employeeId} and  beginleave<= #{dataStrStart} and endleave>= #{dataEnd} limit 1 ")
     Leave getLeaveByEmIdAndMonth(Integer employeeId, String dataStrStart, String dataEnd);
 
+    @Select("SELECT\n" +
+            "\tmk.*, ee.`name` AS nameReal\n" +
+            "FROM\n" +
+            "\tmonthkqinfo mk\n" +
+            "LEFT JOIN employee ee ON ee.empno = mk.empNo" +
+            " where mk.empNo = #{empNo}  and mk.yearMonth = #{yearMonth} limit 1 ")
+    MonthKQInfo getMonthKqInfoByEmpNoandYearMonth(String empNo, String yearMonth);
+
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
             "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
@@ -901,6 +978,56 @@ public interface PersonMapper {
             "\toc.clockInDate = #{yearMonthDay} \n" +
             "AND ee.id = #{employeeId} ")
     OutClockIn getOutClockInByEmpNoandDate(Integer employeeId, String yearMonthDay);
+
+    @Insert("insert into monthkqinfo (empNo,\n" +
+            "\t`name`,\n" +
+            "\tyearMonth,\n" +
+            "\tzhengbanHours,\n" +
+            "\tusualExtHours,\n" +
+            "\tworkendHours,\n" +
+            "\tchinaPaidLeave,\n" +
+            "\totherPaidLeave,\n" +
+            "\tleaveOfAbsense,\n" +
+            "\tsickLeave,\n" +
+            "\totherAllo,\n" +
+            "\tfullWorkReword,\n" +
+            "\thighTempAllow,\n" +
+            "\tremark," +
+            "${daytitleSql}" +
+            ") values (" +
+            " #{empNo}," +
+            " #{nameReal}," +
+            " #{yearMonth}," +
+            " #{zhengbanHours}," +
+            " #{usualExtHours}," +
+            " #{workendHours}," +
+            " #{chinaPaidLeave}," +
+            " #{otherPaidLeave}," +
+            " #{leaveOfAbsense}," +
+            " #{sickLeave}," +
+            " #{otherAllo}," +
+            " #{fullWorkReword}," +
+            " #{highTempAllow}," +
+            " #{remark}," +
+            " #{dayNum} " +
+            ")")
+    void saveMonthKQInfoByCheckKQBean(MonthKQInfo mk);
+
+
+    @Update("update monthkqinfo   " +
+            " set zhengbanHours = #{zhengbanHours}," +
+            "  usualExtHours = #{usualExtHours}," +
+            "  workendHours = #{workendHours}," +
+            "  chinaPaidLeave = #{chinaPaidLeave}," +
+            "  leaveOfAbsense = #{leaveOfAbsense}," +
+            "  sickLeave = #{sickLeave}," +
+            "  otherAllo = #{otherAllo}," +
+            "  fullWorkReword = #{fullWorkReword}," +
+            "  highTempAllow = #{highTempAllow}," +
+            "  remark = #{remark}, " +
+            "  ${daytitleSql} = #{dayNum} " +
+            "where yearMonth = #{yearMonth} and empNo = #{empNo}")
+    void updateMonthKQInfoByCheckKQBean(MonthKQInfo mk);
 
 
     @Insert("insert into kqbean (enrollNumber,\n" +
@@ -937,6 +1064,7 @@ public interface PersonMapper {
 
 
     @Select("SELECT\n" +
+            "\tkq.id,\n" +
             "\tee.`name` AS NAME,\n" +
             "\tdeptname AS deptName,\n" +
             "\tkq.enrollNumber,\n" +
@@ -961,7 +1089,7 @@ public interface PersonMapper {
             "\tkqbean kq\n" +
             "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
             "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
-            "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+            "LEFT JOIN dept t ON t.id = ee.deptId  \n" +
             "ORDER BY\n" +
             "\tkq.yearMonth DESC,\n" +
             "\tkq.enrollNumber ASC limit #{currentPageTotalNum},#{pageSize}")
@@ -989,8 +1117,25 @@ public interface PersonMapper {
     @Update("update kqbean set extWorkHours = #{extHours},clockResultByRenShi = #{state} where id = #{id}")
     void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state);
 
-    @SelectProvider(type = PseronDaoProvider.class, method = "deleteKQBeanOlderDateByDates")
-    void deleteKQBeanOlderDateByDates(List<String> dateStrs);
+    @Select("SELECT\n" +
+            "\tmk.*, t.deptname\n" +
+            "FROM\n" +
+            "\tmonthkqinfo mk\n" +
+            "LEFT JOIN employee ee ON mk.empNo = ee.empno\n" +
+            "LEFT JOIN dept t  ON t.id = ee.deptId where yearMonth = #{yearMonth} ")
+    List<MonthKQInfo> findAllMonthKQData(String yearMonth);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "getKQBeanByDateStrs")
+    List<KQBean> getKQBeanByDateStrs(@Param("dateStrs") List<OutClockIn> dateStrs);
+
+    @DeleteProvider(type = PseronDaoProvider.class, method = "deleteKQBeanOlderDateByDates")
+    void deleteKQBeanOlderDateByDates(@Param("dateStrs") List<OutClockIn> dateStrs);
+
+    @UpdateProvider(type = PseronDaoProvider.class, method = "saveCheckKQBeanListByDates")
+    void saveCheckKQBeanListByDates(@Param("dateStrs") List<OutClockIn> dateStrs);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "getAlReadyCheckDatestr")
+    String getAlReadyCheckDatestr(@Param("dateStrs") List<OutClockIn> dateStrs);
 
 
     @Insert("insert into employee (name,sex,deptId,empno,positionId,incompdate,conExpDate,birthDay,ID_NO,\n" +
@@ -1079,6 +1224,132 @@ public interface PersonMapper {
             "where e.id = #{id}")
     List<Employee> getEmployeeById(Integer id);
 
+
+    @Select("SELECT\n" +
+            "\te. NAME,\n" +
+            "\te. NAME AS namea,\n" +
+            "\te.sex,\n" +
+            "\te.deptId,\n" +
+            "\te.empno,\n" +
+            "\te.positionId,\n" +
+            "\te.incompdate,\n" +
+            "\te.conExpDate,\n" +
+            "\te.birthDay,\n" +
+            "\te.ID_NO,\n" +
+            "\te.nativePla,\n" +
+            "\te.homeAddr,\n" +
+            "\te.valiPeriodOfID,\n" +
+            "\te.nation,\n" +
+            "\te.marriaged,\n" +
+            "\te.contactPhone,\n" +
+            "\te.educationLe,\n" +
+            "\te.educationLeUrl,\n" +
+            "\te.screAgreement,\n" +
+            "\te.healthCerti,\n" +
+            "\te.sateListAndLeaCerti,\n" +
+            "\te.sateListAndLeaCertiUrl,\n" +
+            "\te.otherCerti,\n" +
+            "\totherCertiUrl,\n" +
+            "\te.positionAttrId,\n" +
+            "\to.username,\n" +
+            "\to.userpwd AS passowrd,\n" +
+            "\to.userpwd AS passowrd22,\n" +
+            "\ts.compresalary,\n" +
+            "\ts.possalary,\n" +
+            "\ts.jobsalary,\n" +
+            "\ts.meritsalary,\n" +
+            "\tn.positionname,\n" +
+            "\tt.deptname,\n" +
+            "\tn.positionlevel,\n" +
+            "\ts.remark,\n" +
+            "\ts.state,e.isQuit \n" +
+            "FROM\n" +
+            "\temployee e\n" +
+            "LEFT JOIN salary s ON e.empno = s.empno\n" +
+            "LEFT JOIN userinfo o ON o.empno = e.empno " +
+            "LEFT JOIN position n ON n.id = e.positionId " +
+            "LEFT JOIN dept t ON t.id = e.deptId " +
+            "where e.id = #{id}")
+    Employee getEmployeeOneById(Integer id);
+
+
+    @Delete("delete from qianka where id = #{id}")
+    void deleteQianKaDateToMysql(Integer id);
+
+    @Delete("delete from lianban where id = #{id}")
+    void deleteLianBanDateToMysql(Integer id);
+
+    @Delete("delete from jiaban where id = #{id}")
+    void deleteJiaBanDateToMysql(Integer id);
+
+
+    @Select("SELECT\n" +
+            "\tkq.id,\n" +
+            "\tkq.enrollNumber,\n" +
+            "\tkq.yearMonth,\n" +
+            "\tkq.dateStr,\n" +
+            "\tkq.`week`,\n" +
+            "\tkq.timeStr,\n" +
+            "\tIFNULL(\n" +
+            "\t\tkq.clockResultByRenShi,\n" +
+            "\t\tkq.clockResult\n" +
+            "\t) AS clockResult,\n" +
+            "\tkq.extWorkHours,\n" +
+            "\tkq.remark,\n" +
+            "\tkq.aOnTime,\n" +
+            "\tkq.aOffTime,\n" +
+            "\tkq.pOnTime,\n" +
+            "\tkq.pOffTime,\n" +
+            "\tkq.extWorkOnTime,\n" +
+            "\tkq.extWorkOffTime,\n" +
+            "\tkq.rensheCheck\n" +
+            "FROM\n" +
+            "\tkqbean kq\n" +
+            "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+            " where  kq.dateStr = #{dateStr} and zke.empNo =  #{empNo} limit 1 ")
+    KQBean getKQBeanByDateStrAndEmpNo(String dateStr, String empNo);
+
+    @Select("select * from lianban where empNo = #{empNo} and date = #{dateStr} ")
+    LianBan getLianBanByEmpNoAndDateStr(String empNo, String dateStr);
+
+
+    @Insert(" insert into lianban (empNo,\n" +
+            "\tdate,\n" +
+            "\tnoonHours,\n" +
+            "\tnightHours,\n" +
+            "\ttype,\n" +
+            "\tremark) values (" +
+            "  #{empNo},\n" +
+            "\t#{dateStr},\n" +
+            "\t#{noonHours},\n" +
+            "\t#{nightHours},\n" +
+            "\t#{type},\n" +
+            "\t#{remark})")
+    void saveLianBanBeanToSql(LianBan lianBan);
+
+    @Insert(" insert into jiaBan (empNo,\n" +
+            "\ttype,\n" +
+            "\textDateFrom,\n" +
+            "\textDateEnd,\n" +
+            "\textWorkHours,\n" +
+            "\tremark) values (" +
+            "  #{empNo},\n" +
+            "\t#{type},\n" +
+            "\t#{extDateFromStr},\n" +
+            "\t#{extDateEndStr},\n" +
+            "\t#{extWorkHours},\n" +
+            "\t#{remark})")
+    void saveJiaBanDateToMysql(JiaBan jiaBan);
+
+    @Update(" update lianban set" +
+            " noonHours = #{noonHours}," +
+            "nightHours = #{nightHours}, " +
+            "type = #{type}, " +
+            "remark = #{remark} " +
+            "where empNo = #{empNo} and date = #{dateStr} ")
+    void updateLianBanBean(LianBan lianBan);
+
+
     @Select("SELECT\n" +
             "\te. NAME,\n" +
             "\te. NAME AS namea,\n" +
@@ -1125,6 +1396,16 @@ public interface PersonMapper {
             "where e.empNo = #{empNo}")
     Employee getEmployeeByEmpno(String empNo);
 
+    @Select("SELECT\n" +
+            "\tee.empno,\n" +
+            "\tzk.EnrollNumber AS enrollNumber\n" +
+            "FROM\n" +
+            "\temployee ee\n" +
+            "JOIN zhongkongemployee zk ON ee.empno = zk.empNo\n" +
+            "WHERE\n" +
+            "\tee.isQuit = 0")
+    List<Employee> findAllEmployeeNotIsQuitandhaveEnrollNum();
+
     @Select("SELECT e.* " +
             "FROM employee e left join dept t on e.deptId = t.id left join position n on n.id = e.positionId" +
             " where e.empno = #{empNo }")
@@ -1154,6 +1435,73 @@ public interface PersonMapper {
             "ORDER BY\n" +
             "\te.name DESC limit #{currentPageTotalNum},#{pageSize} ")
     List<Leave> findAllLeave(Leave leave);
+
+
+    @Select(" SELECT\n" +
+            "\tqk.id,\n" +
+            "\tee.`name` as name,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname as deptName,\n" +
+            "\tqk.date AS dateStr,\n" +
+            "\tqk.timeStr AS timeStr,\n" +
+            "\tqk.type,\n" +
+            "\tqk.remark\n" +
+            "FROM\n" +
+            "\tqianka qk\n" +
+            "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+            "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<QianKa> findAllQianKa(QianKa qianKa);
+
+
+    @Select(" SELECT\n" +
+            "\tqk.id,\n" +
+            "\tee.`name` as name,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname as deptName,\n" +
+            "\tqk.extDateFrom AS extDateFromStr,\n" +
+            "\tqk.extDateEnd AS extDateEndStr,\n" +
+            "\tqk.extWorkHours,\n" +
+            "\tqk.type,\n" +
+            "\tqk.remark\n" +
+            "FROM\n" +
+            "\tjiaban qk\n" +
+            "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+            "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<JiaBan> findAllJiaBan(JiaBan jiaBan);
+
+    @Select(" SELECT\n" +
+            "\tqk.id,\n" +
+            "\tee.`name` as name,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname as deptName,\n" +
+            "\tqk.date AS dateStr,\n" +
+            "\tqk.noonHours,\n" +
+            "\tqk.nightHours,\n" +
+            "\tqk.type,\n" +
+            "\tqk.remark\n" +
+            "FROM\n" +
+            "\tlianban qk\n" +
+            "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+            "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<LianBan> findAllLianBan(LianBan lianBan);
+
+
+    @Select("select count(*) from jiaban ")
+    int findAllJiaBanCount();
+
+    @Select("select count(*) from lianban ")
+    int findAllLianBanCount();
+
+    @Select("select count(id) from qianka ")
+    int findAllQianKaCount();
+
+    @Select("SELECT\n" +
+            "\tt.deptName\n" +
+            "FROM\n" +
+            "\temployee ee left join dept t on t.id = ee.deptId \n" +
+            "WHERE\n" +
+            "\tee.id = #{id} ")
+    String getDeptNameByEmployId(Integer id);
 
     @Select("select count(id) from leavedata ")
     int findAllLeaveCount();
@@ -1230,6 +1578,186 @@ public interface PersonMapper {
             } else if (employee.getEndIncomDateStr() != null && employee.getEndIncomDateStr().length() > 0) {
                 sb.append(" and incompdate <= #{endIncomDateStr}");
             }
+            return sb.toString();
+        }
+
+
+        public String queryKQBeanDataByCondition(KQBean kqBean) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tkq.id,\n" +
+                    "\tee.`name` AS NAME,\n" +
+                    "\tdeptname AS deptName,\n" +
+                    "\tkq.enrollNumber,\n" +
+                    "\tkq.yearMonth,\n" +
+                    "\tkq.dateStr,\n" +
+                    "\tkq.`week`,\n" +
+                    "\tkq.timeStr,\n" +
+                    "\tIFNULL(\n" +
+                    "\t\tkq.clockResultByRenShi,\n" +
+                    "\t\tkq.clockResult\n" +
+                    "\t) AS clockResult,\n" +
+                    "\tkq.extWorkHours,\n" +
+                    "\tkq.remark,\n" +
+                    "\tkq.aOnTime,\n" +
+                    "\tkq.aOffTime,\n" +
+                    "\tkq.pOnTime,\n" +
+                    "\tkq.pOffTime,\n" +
+                    "\tkq.extWorkOnTime,\n" +
+                    "\tkq.extWorkOffTime,\n" +
+                    "\tkq.rensheCheck\n" +
+                    "FROM\n" +
+                    "\tkqbean kq\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+                    "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+                    " where 1=1");
+            if (kqBean.getNameIds() != null && kqBean.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(kqBean.getNameIds().toString(), "[]") + ") ");
+
+            }
+
+            if (kqBean.getEmpNo() != null && kqBean.getEmpNo() != "" && kqBean.getEmpNo().trim().length() > 0) {
+                sb.append(" and ee.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (kqBean.getDeptIds() != null && kqBean.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(kqBean.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getWorkTypes() != null && kqBean.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(kqBean.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getPositionIds() != null && kqBean.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(kqBean.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getClockDates() != null && kqBean.getClockDates().size() > 0) {
+                if (kqBean.getClockDates().size() == 1 && !"undefined".equals(kqBean.getClockDates().get(0))) {
+                    sb.append(" and  kq.dateStr in ('" + kqBean.getClockDates().get(0) + "')");
+                } else if (kqBean.getClockDates().size() >= 2) {
+                    sb.append(" and  kq.dateStr in (");
+                    for (int i = 0; i < kqBean.getClockDates().size() - 1; i++) {
+                        sb.append("'" + kqBean.getClockDates().get(i) + "'" + ",");
+                    }
+                    sb.append("'" + kqBean.getClockDates().get(kqBean.getClockDates().size() - 1) + "')");
+                }
+            }
+
+            if (kqBean.getSortMethod() != null && !"undefined".equals(kqBean.getSortMethod()) && !"undefined".equals(kqBean.getSortByName()) && kqBean.getSortByName() != null) {
+                if ("name".equals(kqBean.getSortByName())) {
+                    sb.append(" order by ee.name ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("yearMonth".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.yearMonth ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("deptName".equals(kqBean.getSortByName())) {
+                    sb.append(" order by t.deptName ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("dateStr".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.dateStr ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("week".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.week ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("timeStr".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.timeStr ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("clockResult".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.clockResult ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("extWorkHours".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.extWorkHours ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                } else if ("remark".equals(kqBean.getSortByName())) {
+                    sb.append(" order by kq.remark ");
+                    if ("asc".equals(kqBean.getSortMethod())) {
+                        sb.append(" asc ");
+                    } else if ("desc".equals(kqBean.getSortMethod())) {
+                        sb.append(" desc ");
+                    }
+                }
+            } else {
+                sb.append(" ORDER BY\n" +
+                        "\tkq.yearMonth DESC,\n" +
+                        "\tkq.enrollNumber ASC ");
+            }
+            sb.append("  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+        public String queryKQBeanDataByConditionCount(KQBean kqBean) {
+            StringBuilder sb = new StringBuilder("select count(*) " +
+                    "FROM\n" +
+                    "\tkqbean kq\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+                    "LEFT JOIN dept t ON t.id = ee.deptId\n" +
+                    " where 1=1 ");
+            if (kqBean.getNameIds() != null && kqBean.getNameIds().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(kqBean.getNameIds().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getEmpNo() != null && kqBean.getEmpNo() != "" && kqBean.getEmpNo().trim().length() > 0) {
+                sb.append(" and ee.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (kqBean.getDeptIds() != null && kqBean.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(kqBean.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getWorkTypes() != null && kqBean.getWorkTypes().size() > 0) {
+                sb.append(" and ee.worktype in (" + StringUtils.strip(kqBean.getWorkTypes().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getPositionIds() != null && kqBean.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(kqBean.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (kqBean.getClockDates() != null && kqBean.getClockDates().size() > 0) {
+                if (kqBean.getClockDates().size() == 1 && !"undefined".equals(kqBean.getClockDates().get(0))) {
+                    sb.append(" and  kq.dateStr in ('" + kqBean.getClockDates().get(0) + "')");
+                } else if (kqBean.getClockDates().size() >= 2) {
+                    sb.append(" and  kq.dateStr in (");
+                    for (int i = 0; i < kqBean.getClockDates().size() - 1; i++) {
+                        sb.append("'" + kqBean.getClockDates().get(i) + "'" + ",");
+                    }
+                    sb.append("'" + kqBean.getClockDates().get(kqBean.getClockDates().size() - 1) + "')");
+                }
+            }
+
             return sb.toString();
         }
 
@@ -2222,6 +2750,256 @@ public interface PersonMapper {
         }
 
 
+        public String queryQKByConditionCount(QianKa qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT count(*) " +
+                    "FROM\n" +
+                    "\tqianka qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getTypes() != null && qianKa.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(qianKa.getTypes().toString(), "[]") + ") ");
+            }
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getBeginQianKaStr() != null && qianKa.getBeginQianKaStr().length() > 0 && qianKa.getEndQianKaStr() != null && qianKa.getEndQianKaStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginQianKaStr} and qk.date  <= #{endQianKaStr}");
+            } else if (qianKa.getBeginQianKaStr() != null && qianKa.getBeginQianKaStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginQianKaStr}");
+            } else if (qianKa.getEndQianKaStr() != null && qianKa.getEndQianKaStr().length() > 0) {
+                sb.append(" and qk.date <= #{endQianKaStr}");
+            }
+            return sb.toString();
+
+        }
+
+        public String queryLBByConditionCount(LianBan qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT count(*) " +
+                    "FROM\n" +
+                    "\tlianban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getTypes() != null && qianKa.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(qianKa.getTypes().toString(), "[]") + ") ");
+            }
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getBeginLianBanStr() != null && qianKa.getBeginLianBanStr().length() > 0 && qianKa.getEndLianBanStr() != null && qianKa.getEndLianBanStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginLianBanStr} and qk.date  <= #{endLianBanStr}");
+            } else if (qianKa.getBeginLianBanStr() != null && qianKa.getBeginLianBanStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginLianBanStr}");
+            } else if (qianKa.getEndLianBanStr() != null && qianKa.getEndLianBanStr().length() > 0) {
+                sb.append(" and qk.date <= #{endLianBanStr}");
+            }
+            return sb.toString();
+        }
+
+
+        public String queryLBByCondition(LianBan qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT\n" +
+                    "\tqk.id,\n" +
+                    "\tee.`name` as name,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname as deptName,\n" +
+                    "\tqk.date AS dateStr,\n" +
+                    "\tqk.noonHours,\n" +
+                    "\tqk.nightHours,\n" +
+                    "\tqk.type,\n" +
+                    "\tqk.remark\n" +
+                    "FROM\n" +
+                    "\tlianban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getTypes() != null && qianKa.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(qianKa.getTypes().toString(), "[]") + ") ");
+            }
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getBeginLianBanStr() != null && qianKa.getBeginLianBanStr().length() > 0 && qianKa.getEndLianBanStr() != null && qianKa.getEndLianBanStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginLianBanStr} and qk.date  <= #{endLianBanStr}");
+            } else if (qianKa.getBeginLianBanStr() != null && qianKa.getBeginLianBanStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginLianBanStr}");
+            } else if (qianKa.getEndLianBanStr() != null && qianKa.getEndLianBanStr().length() > 0) {
+                sb.append(" and qk.date <= #{endLianBanStr}");
+            }
+            sb.append(" order by qk.empNo asc,qk.date desc  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+
+        public String queryJBByCondition(JiaBan jiaBan) {
+            StringBuilder sb = new StringBuilder(" SELECT\n" +
+                    "\tqk.id,\n" +
+                    "\tee.`name` as name,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname as deptName,\n" +
+                    "\tqk.extWorkHours,\n" +
+                    "\tqk.extDateFrom as extDateFromStr,\n" +
+                    "\tqk.extDateEnd as extDateEndStr,\n" +
+                    "\tqk.type,\n" +
+                    "\tqk.remark\n" +
+                    "FROM\n" +
+                    "\tjiaban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (jiaBan.getNames() != null && jiaBan.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(jiaBan.getNames().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getEmpNo() != null && jiaBan.getEmpNo() != "" && jiaBan.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (jiaBan.getDeptIds() != null && jiaBan.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(jiaBan.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getTypes() != null && jiaBan.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(jiaBan.getTypes().toString(), "[]") + ") ");
+            }
+            if (jiaBan.getPositionIds() != null && jiaBan.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(jiaBan.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getExtDateFromStr() != null && jiaBan.getExtDateFromStr().length() > 0 && jiaBan.getExtDateEndStr() != null && jiaBan.getExtDateEndStr().length() > 0) {
+                sb.append(" and qk.extDateFrom  >= #{extDateFromStr} and qk.extDateEnd  <= #{extDateEndStr}");
+            } else if (jiaBan.getExtDateFromStr() != null && jiaBan.getExtDateFromStr().length() > 0) {
+                sb.append(" and qk.extDateFrom >= #{extDateFromStr}");
+            } else if (jiaBan.getExtDateEndStr() != null && jiaBan.getExtDateEndStr().length() > 0) {
+                sb.append(" and qk.extDateEnd <= #{extDateEndStr}");
+            }
+            sb.append(" order by qk.empNo asc,qk.extDateFrom desc limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+
+        public String queryJBByConditionCount(JiaBan jiaBan) {
+            StringBuilder sb = new StringBuilder(" SELECT count(*) " +
+                    "FROM\n" +
+                    "\tjiaban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (jiaBan.getNames() != null && jiaBan.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(jiaBan.getNames().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getEmpNo() != null && jiaBan.getEmpNo() != "" && jiaBan.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (jiaBan.getDeptIds() != null && jiaBan.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(jiaBan.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getTypes() != null && jiaBan.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(jiaBan.getTypes().toString(), "[]") + ") ");
+            }
+            if (jiaBan.getPositionIds() != null && jiaBan.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(jiaBan.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (jiaBan.getExtDateFromStr() != null && jiaBan.getExtDateFromStr().length() > 0 && jiaBan.getExtDateEndStr() != null && jiaBan.getExtDateEndStr().length() > 0) {
+                sb.append(" and qk.extDateFrom  >= #{extDateFromStr} and qk.extDateEnd  <= #{extDateEndStr}");
+            } else if (jiaBan.getExtDateFromStr() != null && jiaBan.getExtDateFromStr().length() > 0) {
+                sb.append(" and qk.extDateFrom >= #{extDateFromStr}");
+            } else if (jiaBan.getExtDateEndStr() != null && jiaBan.getExtDateEndStr().length() > 0) {
+                sb.append(" and qk.extDateEnd <= #{extDateEndStr}");
+            }
+            return sb.toString();
+        }
+
+        public String queryQKByCondition(QianKa qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT\n" +
+                    "\tqk.id,\n" +
+                    "\tee.`name` as name,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname as deptName,\n" +
+                    "\tqk.date AS dateStr,\n" +
+                    "\tqk.timeStr AS timeStr,\n" +
+                    "\tqk.type,\n" +
+                    "\tqk.remark\n" +
+                    "FROM\n" +
+                    "\tqianka qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getTypes() != null && qianKa.getTypes().size() > 0) {
+                sb.append(" and qk.type in (" + StringUtils.strip(qianKa.getTypes().toString(), "[]") + ") ");
+            }
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getBeginQianKaStr() != null && qianKa.getBeginQianKaStr().length() > 0 && qianKa.getEndQianKaStr() != null && qianKa.getEndQianKaStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginQianKaStr} and qk.date  <= #{endQianKaStr}");
+            } else if (qianKa.getBeginQianKaStr() != null && qianKa.getBeginQianKaStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginQianKaStr}");
+            } else if (qianKa.getEndQianKaStr() != null && qianKa.getEndQianKaStr().length() > 0) {
+                sb.append(" and qk.date <= #{endQianKaStr}");
+            }
+            sb.append(" order by qk.empNo asc,qk.date desc  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+
+        }
+
         public String queryLeaveByCondition(Leave leave) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
                     "\ta.id AS id,\n" +
@@ -2315,6 +3093,15 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+        public String getJiaBanDanByEmpIdAndFromDateAndEndDate(Integer empId, String extDateFromStr, String extDateEndStr) {
+            StringBuilder sb = new StringBuilder("select count(*) from jiaban a left join employee e on e.empno = a.empNo where e.id = #{empId} ");
+            if (extDateFromStr != null && extDateFromStr.length() > 0 && extDateFromStr != null && extDateFromStr.length() > 0) {
+                sb.append(" and (a.extDateFrom  <= #{extDateFromStr} and a.extDateEnd  >= #{extDateFromStr}");
+                sb.append(" or a.extDateFrom  <= #{extDateEndStr} and a.extDateEnd  >= #{extDateEndStr})");
+            }
+            return sb.toString();
+        }
+
         public String checkBeginLeaveRight(Leave leave) {
             StringBuilder sb = new StringBuilder("select count(*) from leavedata a where a.employeeid = #{employeeId}");
             if (leave.getBeginLeaveStr() != null && leave.getBeginLeaveStr().length() > 0 && leave.getEndLeaveStr() != null && leave.getEndLeaveStr().length() > 0) {
@@ -2378,7 +3165,7 @@ public interface PersonMapper {
                     "\tzhongkongbean zk\n" +
                     "LEFT JOIN zhongkongemployee zke ON zk.EnrollNumber = zke.EnrollNumber\n" +
                     "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
-                    "LEFT JOIN dept t ON ee.deptid = t.id where 1=1");
+                    "LEFT JOIN dept t ON ee.deptid = t.id where 1=1 ");
             if (employee.getNameIds() != null && employee.getNameIds().size() > 0) {
                 sb.append(" and ee.id in (" + StringUtils.strip(employee.getNameIds().toString(), "[]") + ") ");
 
@@ -2534,7 +3321,7 @@ public interface PersonMapper {
             return sb.toString();
         }
 
-        public String getAllKQDataByYearMonthDays(List<String> dateStr) {
+        public String getAllKQDataByYearMonthDays(List<OutClockIn> dateStr) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
                     "\tee.`name`,\n" +
                     "\tee.empno,\n" +
@@ -2552,30 +3339,141 @@ public interface PersonMapper {
                     "LEFT JOIN position n ON n.id = ee.positionId where 1=1 \n");
             if (dateStr != null && dateStr.size() > 0) {
                 if (dateStr.size() == 1) {
-                    sb.append(" and zk.date in ('" + dateStr.get(0) + "')");
+                    sb.append(" and zk.date in ('" + dateStr.get(0).getClockInDateStr() + "')");
                 } else if (dateStr.size() >= 2) {
                     sb.append(" and zk.date in (");
                     for (int i = 0; i < dateStr.size() - 1; i++) {
-                        sb.append("'" + dateStr.get(i) + "'" + ",");
+                        sb.append("'" + dateStr.get(i).getClockInDateStr() + "'" + ",");
                     }
-                    sb.append("'" + dateStr.get(dateStr.size() - 1) + "')");
+                    sb.append("'" + dateStr.get(dateStr.size() - 1).getClockInDateStr() + "')");
                 }
             }
             sb.append(" ORDER BY zk.EnrollNumber ASC");
             return sb.toString();
         }
 
-        public String deleteKQBeanOlderDateByDates(List<String> dateStrs) {
-            StringBuilder sb = new StringBuilder("delete from kqbean where 1=1 and ");
+        public String saveCheckKQBeanListByDates(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("update kqbean set rensheCheck = 1 where ");
             if (dateStrs != null && dateStrs.size() > 0) {
                 if (dateStrs.size() == 1) {
-                    sb.append("  dateStr in ('" + dateStrs.get(0) + "')");
+                    sb.append("  dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
                 } else if (dateStrs.size() >= 2) {
                     sb.append("  dateStr in (");
                     for (int i = 0; i < dateStrs.size() - 1; i++) {
-                        sb.append("'" + dateStrs.get(i) + "'" + ",");
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
                     }
-                    sb.append("'" + dateStrs.get(dateStrs.size() - 1) + "')");
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
+                }
+            }
+            return sb.toString();
+        }
+
+
+        public String getAlReadyCheckDatestr(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tGROUP_CONCAT(dateStr)\n" +
+                    "FROM\n" +
+                    "\t(\n" +
+                    "\t\tSELECT\n" +
+                    "\t\t\tdateStr AS dateStr\n" +
+                    "\t\tFROM\n" +
+                    "\t\t\tkqbean\n" +
+                    "\t\tWHERE rensheCheck = 1 and \n");
+
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  dateStr in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
+                }
+            }
+            sb.append(" GROUP BY\n" +
+                    "\t\t\tdateStr\n" +
+                    "\t) AS a ");
+
+            return sb.toString();
+        }
+
+
+        public String getKQBeanByDateStrs(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tkb.yearMonth,\n" +
+                    "\tkb.dateStr,\n" +
+                    "\tkb. WEEK,\n" +
+                    "\tkb.timeStr,\n" +
+                    "\tkb.clockResult,\n" +
+                    "\tkb.clockResultByRenShi,\n" +
+                    "\tkb.extWorkHours,\n" +
+                    "\tkb.remark,\n" +
+                    "\tkb.aOnTime,\n" +
+                    "\tkb.aOffTime,\n" +
+                    "\tkb.pOnTime,\n" +
+                    "\tkb.pOffTime,\n" +
+                    "\tkb.extWorkOnTime,\n" +
+                    "\tkb.extWorkOffTime,\n" +
+                    "\tkb.rensheCheck,\n" +
+                    "\tee.empno,\n" +
+                    "\tee.`name` AS nameReal\n" +
+                    "FROM\n" +
+                    "\tkqbean kb\n" +
+                    "LEFT JOIN zhongkongemployee zke ON kb.enrollNumber = zke.EnrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo where  ");
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  kb.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  kb.dateStr in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
+                }
+            }
+            return sb.toString();
+        }
+
+
+        public String deleteKQBeanOlderDateByDates(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tkq.id,\n" +
+                    "\tee.`name` AS NAME,\n" +
+                    "  ee.empno as empno,\n" +
+                    "\tdeptname AS deptName,\n" +
+                    "\tkq.yearMonth,\n" +
+                    "\tkq.dateStr,\n" +
+                    "\tkq.`week`,\n" +
+                    "\tkq.timeStr,\n" +
+                    "\tIFNULL(\n" +
+                    "\t\tkq.clockResultByRenShi,\n" +
+                    "\t\tkq.clockResult\n" +
+                    "\t) AS clockResult,\n" +
+                    "\tkq.extWorkHours,\n" +
+                    "\tkq.remark,\n" +
+                    "\tkq.aOnTime,\n" +
+                    "\tkq.aOffTime,\n" +
+                    "\tkq.pOnTime,\n" +
+                    "\tkq.pOffTime,\n" +
+                    "\tkq.extWorkOnTime,\n" +
+                    "\tkq.extWorkOffTime,\n" +
+                    "\tkq.rensheCheck\n" +
+                    "FROM\n" +
+                    "\tkqbean kq\n" +
+                    "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
+                    "LEFT JOIN dept t ON t.id = ee.deptId where ");
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  kq.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  kq.dateStr in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
                 }
             }
             return sb.toString();

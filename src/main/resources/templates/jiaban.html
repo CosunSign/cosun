@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>请假信息</title>
+    <title>加班单</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -51,24 +51,24 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function isNull(arg1) {
@@ -98,48 +98,47 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryLeaveByCondition();
+            queryJBByCondition();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryLeaveByCondition();
+        queryJBByCondition();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryLeaveByCondition() {
+    function queryJBByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
         formData.append('names', $("#name").val());
-        formData.append('sexs', $("#sexId").val());
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('beginLeaveStr', $("#startLeaveId").val());
-        formData.append('endLeaveStr', $("#endLeaveId").val());
-        formData.append('currentPage', currentpage);
+        formData.append('extDateFromStr', $("#startLeaveId").val());
+        formData.append('extDateEndStr', $("#endLeaveId").val());
         formData.append('types', $("#leaveType").val());
+        formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryLeaveByCondition",
+            url: "/person/queryJBByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -176,29 +175,24 @@
                     n_currentPage.val(currentPage);
                     inputpage.val(currentPage);
                     $.each(data, function (num) {
-                        tr = $("<tr id='" + data[num].id + "'></tr>");
-                        tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
-                        tr.append("<td>" + isNull(data[num].name) + "</td>");
-                        tr.append("<td>" + isNull(data[num].empNo) + "</td>");
-                        tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].typeStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].endLeaveStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].leaveLong) + "</td>");
-                        tr.append("<td>" + isNull(data[num].leaveDescrip) + "</td>");
-                        tr.append("<td>" + isNull(data[num].remark) + "</td>");
-                        td = "<td>";
-                        td += " <a href=\"javascript:void(0);\"\n" +
-                            "onclick=\"updateLeave(" + data[num].id + ");\">编辑</a>\n" +
-                            "  <a href=\"javascript:void(0);\"\n" +
-                            " onclick=\"deleteLeave(" + data[num].id + ");\">删除</a>\n" +
-                            " &nbsp;&nbsp;&nbsp;\n" +
-                            "   <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
-                            "  </td>";
-                        tr.append(td);
-                        tr.appendTo(tbody);
-                    });
+                            tr = $("<tr id='" + data[num].id + "'></tr>");
+                            tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                            tr.append("<td>" + isNull(data[num].name) + "</td>");
+                            tr.append("<td>" + isNull(data[num].deptName) + "</td>");
+                            tr.append("<td>" + isNull(data[num].extDateFromStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].extDateEndStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].extWorkHours) + "</td>");
+                            tr.append("<td>" + isNull(data[num].typeStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].remark) + "</td>");
+                            td = "<td>";
+                            td += " <a href=\"javascript:void(0);\"\n" +
+                                "  onclick=\"saveJiaBanDateToMysql(this);\">保存</a>\n" +
+                                "  <a href=\"javascript:void(0);\"\n" +
+                                "   onclick=\"deleteJiaBanDateToMysql(" + data[num].id + ");\">删除</a></td>";
+                            tr.append(td);
+                            tr.appendTo(tbody);
+                        }
+                    );
                     $("#currentpagespan").html(currentPage);
                     $("#maxpagespan").html(totalPage);
                     $("#recordcountspan").html(totaldata);
@@ -247,7 +241,8 @@
                 errormessagediv.style.color = "red";
             }
 
-        });
+        })
+        ;
     }
 
 
@@ -259,23 +254,268 @@
         window.location.href = "/person/toUpdateLeaveById?id=" + leaveId;
     }
 
-    function deleteLeaveByBatch() {
-        var deleteBatch = document.getElementsByName("deleteBatch");
-        var check_val = [];
-        var k;
-        for (k in deleteBatch) {
-            if (deleteBatch[k].checked)
-                check_val.push(deleteBatch[k].value);
-        }
-        if (check_val.length <= 0) {
+    function showdeptNameByName(obj) {
+        var formData = new FormData();
+        formData.append('id', obj.value);
+        $.ajax({
+            data: formData,
+            type: "POST",
+            url: "/person/getDeptNameByEmployId",
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (msg) {
+                $(obj).parent().parent().find("td").eq(2).text(msg.substring(1, msg.length - 1));
+            },
+            error: function (msg) {
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
+            }
+
+        });
+    }
+
+    var len;
+
+    function checkIsNumA(obj) {
+        $("#errormessage").hide();
+        var reg = new RegExp("^[0-9]+(.[0-9]{1,3})?$");
+        if (!reg.test(obj.value)) {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请输入数字!";
             errormessagediv.style.color = "red";
-        } else {
-            $("#errormessage").hide();
-            window.location.href = "/person/deleteLeaveByBatch?ids=" + check_val;
+            obj.value = "0.0";
+            return;
         }
+    }
+
+
+    function datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+        var dateSpan,
+            tempDate,
+            iDays;
+        sDate1 = Date.parse(sDate1);
+        sDate2 = Date.parse(sDate2);
+        dateSpan = sDate2 - sDate1;
+        dateSpan = Math.abs(dateSpan);
+        iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+        return iDays + 1;
+    }
+
+    function jisuanjiabanHours1(obj) {
+        var leaveLong = 0;
+        var objval = obj.value;
+        if (objval.trim().length > 0) {
+            var objval2 = $(obj).parent().parent().find("td").eq(4).find("input").eq(0).val();
+            if (objval2.trim().length > 0) {
+                var endLeaveStr = new Date(objval2);
+                var splitA = objval2.split("T");
+                var splitC = splitA[0].split(" ");
+                var splitEndDate = splitC[0]
+                var splitAA = objval.split("T");
+                var splitCC = splitAA[0].split(" ");
+                var splitBeginDate = splitCC[0]
+                var beginLeaveStr = new Date(objval);
+                var leaveLong = 0;
+                if (endLeaveStr != null && beginLeaveStr != null) {
+                    if (splitBeginDate == splitEndDate) {
+                        var ms = endLeaveStr.getTime() - beginLeaveStr.getTime();
+                        console.log(ms);
+                        if (ms < 0) leaveLong = 0;
+                        leaveLong = Math.floor(ms / 1000 / 60 / 60);
+                        if (ms >= 32400000) {
+                            leaveLong = leaveLong - 1;
+                        }
+                        if (!isNaN(leaveLong))
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(leaveLong);
+                    } else {
+                        var interDay = datedifference(splitBeginDate, splitEndDate);
+                        var sampleBegin = new Date(splitBeginDate + " 08:30:00").getTime();
+                        var sampleEnd = new Date(splitEndDate + " 17:30:00").getTime();
+                        if (sampleBegin >= beginLeaveStr.getTime() && sampleEnd <= endLeaveStr.getTime()) {
+                            leaveLong = interDay * 8;
+                            if (!isNaN(leaveLong))
+                                $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(leaveLong);
+                        } else if (sampleBegin < beginLeaveStr.getTime() && sampleEnd > endLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        } else if (sampleBegin < beginLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        } else if (sampleEnd > endLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        }
+
+                    }
+                }
+
+                var weekJi = getWeekJiByDateA(objval.split(" ")[0]);
+                if (weekJi == 1 || weekJi == 2 || weekJi == 3 || weekJi == 4 || weekJi == 5) {
+                    $(obj).parent().parent().find("td").eq(6).find("select").eq(0).val(1);
+                } else {
+                    $(obj).parent().parent().find("td").eq(6).find("select").eq(0).val(2);
+                }
+            }
+
+        }
+    }
+
+    function jisuanjiabanHours2(obj) {
+        var leaveLong = 0;
+        var objval2 = obj.value;
+        if (objval2.trim().length > 0) {
+            var objval = $(obj).parent().parent().find("td").eq(3).find("input").eq(0).val();
+            if (objval.trim().length > 0) {
+                var endLeaveStr = new Date(objval2);
+                var splitA = objval2.split("T");
+                var splitC = splitA[0].split(" ");
+                var splitEndDate = splitC[0]
+                var splitAA = objval.split("T");
+                var splitCC = splitAA[0].split(" ");
+                var splitBeginDate = splitCC[0]
+                var beginLeaveStr = new Date(objval);
+                var leaveLong = 0;
+                if (endLeaveStr != null && beginLeaveStr != null) {
+                    if (splitBeginDate == splitEndDate) {
+                        var ms = endLeaveStr.getTime() - beginLeaveStr.getTime();
+                        console.log(ms);
+                        if (ms < 0) leaveLong = 0;
+                        leaveLong = Math.floor(ms / 1000 / 60 / 60);
+                        if (ms >= 32400000) {
+                            leaveLong = leaveLong - 1;
+                        }
+                        if (!isNaN(leaveLong))
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(leaveLong);
+                    } else {
+                        var interDay = datedifference(splitBeginDate, splitEndDate);
+                        var sampleBegin = new Date(splitBeginDate + " 08:30:00").getTime();
+                        var sampleEnd = new Date(splitEndDate + " 17:30:00").getTime();
+                        if (sampleBegin >= beginLeaveStr.getTime() && sampleEnd <= endLeaveStr.getTime()) {
+                            leaveLong = interDay * 8;
+                            if (!isNaN(leaveLong))
+                                $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(leaveLong);
+                        } else if (sampleBegin < beginLeaveStr.getTime() && sampleEnd > endLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        } else if (sampleBegin < beginLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        } else if (sampleEnd > endLeaveStr.getTime()) {
+                            $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val(interDay * 8);
+                        }
+
+                    }
+                }
+
+                var weekJi = getWeekJiByDateA(objval.split(" ")[0]);
+                if (weekJi == 1 || weekJi == 2 || weekJi == 3 || weekJi == 4 || weekJi == 5) {
+                    $(obj).parent().parent().find("td").eq(6).find("select").eq(0).val(1);
+                } else {
+                    $(obj).parent().parent().find("td").eq(6).find("select").eq(0).val(2);
+                }
+            }
+
+        }
+    }
+
+    function addJiaBanRow() {
+        var empList = $("#empList1").val();
+        var data = eval("(" + empList + ")");
+        len = $("#tabletblody > tr").length;
+        len++;
+        var tbody = $("#tabletblody");
+        var tr = $("<tr id='tr" + len + "'></tr>");
+        tr.append("<td id='tr" + len + "'>" + len + "</td>");
+        var td;
+        td = "<td><select id=\"name\" onchange='showdeptNameByName(this)'  class=\"selectpicker show-tick form-control\"\n" +
+            "   data-live-search=\"true\" data-actions-box=\"true\"\n" +
+            "   data-selected-text-format=\"count > 1\">\n";
+        for (var a = 0; a < data.length; a++) {
+            td += "  <option value=\"" + data[a].id + "\">" + data[a].name + "</option>\n";
+        }
+        td += "  </select></td> ";
+
+        tr.append(td);
+        tr.append("<td></td>");
+        tr.append("<td> <input type=\"text\" " +
+            "               style=\"width:160px;height: 34px;text-align: center\" class=\"Wdate\" " +
+            "  onchange='jisuanjiabanHours1(this)' id=\'startLeaveId\'" +
+            "  onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',maxDate:'#F{$dp.$D(\\'endLeaveId\\')}'})\"/></td>");
+        tr.append("<td> <input type=\"text\" " +
+            "               style=\"width:160px;height: 34px;text-align: center\" class=\"Wdate\" " +
+            "  id=\'endLeaveId\' onchange='jisuanjiabanHours2(this)'" +
+            " onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',maxDate:'#F{$dp.$D(\\'startLeaveId\\')}'})\"/></td>");
+        tr.append("<td><input type=\"text\"  class=\"form-control\" onblur='checkIsNumA(this)'  style=\"width:80px\"></td>");
+        tr.append("<td><select ><option value='1'>平时加班</option>" +
+            "<option value='2'>周末加班</option>" +
+            "<option value='3'>法定假日加班</option>" +
+            "</select></td>");
+        tr.append("<td> <input type='text' placeholder='备注选填'></td>")
+        tr.append("<td>   \n" +
+            "    <a id=\"savebutton\"\n" +
+            "    href=\"javascript:void(0);\" onclick=\"saveJiaBanDateToMysql(this)\">保存</a>" +
+            " <a href=\"javascript:void(0);\"\n" +
+            "    onclick=\"deleteTRA(this," + len + ");\">删除</a></td>");
+        tr.appendTo(tbody);
+        $('.selectpicker').selectpicker('refresh');
+    }
+
+
+    function deleteTRA(obj, len) {
+        obj.parentElement.parentElement.remove();
+        len--;
+    }
+
+    function saveJiaBanDateToMysql(obj) {
+        $("#errormessage").hide();
+        var formData = new FormData();
+        formData.append("empId", $(obj).parent().parent().find("td").eq(1).find("select").eq(0).val());
+        formData.append("type", $(obj).parent().parent().find("td").eq(6).find("select").eq(0).val());
+        formData.append("remark", $(obj).parent().parent().find("td").eq(7).find("input").eq(0).val());
+        formData.append("extDateFromStr", $(obj).parent().parent().find("td").eq(3).find("input").eq(0).val());
+        formData.append("extDateEndStr", $(obj).parent().parent().find("td").eq(4).find("input").eq(0).val());
+        formData.append("extWorkHours", $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val());
+
+        $.ajax({
+            data: formData,
+            type: "POST",
+            url: "/person/saveJiaBanDateToMysql",
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (msg) {
+                if (msg == 1) {
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;保存成功!";
+                    errormessagediv.style.color = "green";
+                } else if (msg == 2) {
+                    $("#errormessage").show();
+                    var errormessagediv = document.getElementById("errormessage");
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;已存在加班单!";
+                    errormessagediv.style.color = "red";
+                }
+            },
+            error: function (msg) {
+                $("#errormessagee").show();
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
+            }
+
+        });
+    }
+
+    function getWeekJiByDateA(KingVal) {
+        var DateYear = parseInt(KingVal.split("-")[0]);
+        var DateMonth = parseInt(KingVal.split("-")[1]);
+        var DateDay = parseInt(KingVal.split("-")[2]);
+        var NewDate = new Date(DateYear, DateMonth - 1, DateDay);
+        return NewDate.getDay();
+    }
+
+    function deleteJiaBanDateToMysql(id) {
+        window.location.href = "/person/deleteJiaBanDateToMysql?id=" + id;
     }
 </script>
 <body>
@@ -283,12 +523,13 @@
 <div id='app'>
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
-        <input type="hidden" id="maxPage" th:value="${leave.maxPage}">
-        <input type="hidden" id="n_currentPage" th:value="${leave.currentPage}"/>
+        <input type="hidden" id="maxPage" th:value="${jiaBan.maxPage}">
+        <input type="hidden" id="n_currentPage" th:value="${jiaBan.currentPage}"/>
+        <input type="hidden" id="empList1" th:value="${empList1}"/>
 
         <ul id="myTab" class="nav nav-tabs">
-            <li class="active">
-                <a href="#compreAttendRecord" data-toggle="tab">请假单</a>
+            <li>
+                <a th:href="@{/person/toleavepage}">请假单</a>
             </li>
             <li>
                 <a th:href="@{/person/toqiankadan}">签卡单</a>
@@ -296,8 +537,8 @@
             <li>
                 <a th:href="@{/person/tolianbandan}">连班单</a>
             </li>
-            <li>
-                <a th:href="@{/person/toplusworkdan}">加班申请单</a>
+            <li class="active">
+                <a href="#compreAttendRecord" data-toggle="tab">加班申请单</a>
             </li>
             <li>
                 <a th:href="@{/person/tonightworkdan}">夜班申请</a>
@@ -322,23 +563,14 @@
                                             th:text="${c.name}"></option>
                                 </select>
                             </td>
-                            <td style="text-align: right">
-                                <label>性别：</label>
-                            </td>
-                            <td>
-                                <select id="sexId" multiple class="selectpicker show-tick form-control"
-                                        data-live-search="true" style="width: 100px">
-                                    　　
-                                    <option th:value="1">男</option>
-                                    <option th:value="0">女</option>
-                                </select>
-                            </td>
+
                             <td style="text-align: right">
                                 <label>工号：</label>
                             </td>
                             <td>
                                 <label><input type="text" id="empNo" class="form-control" style="width:150px"></label>
                             </td>
+
                             <td style="text-align: right">
                                 <label>部门：</label>
                             </td>
@@ -364,10 +596,21 @@
                                             th:text="${c.positionName}"></option>
                                 </select>
                             </td>
+                            <td><label>加班类型：</label></td>
+                            <td>
+                                <select id="leaveType" multiple class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true"
+                                        data-selected-text-format="count > 1">　
+                                    <option value="1">平常加班</option>
+                                    <option value="2">周末加班</option>
+                                    <option value="3">法定假日加班</option>
+                                </select>
+
+                            </td>
                         </tr>
                         <tr>
                             <td>
-                                <label>请假时间起：</label>
+                                <label>加班时间起：</label>
                             </td>
                             <td>
                                 <input type="text" id="startLeaveId"
@@ -377,7 +620,7 @@
 
                             </td>
                             <td>
-                                <label>请假时间止：</label>
+                                <label>加班时间止：</label>
                             </td>
                             <td>
                                 <input type="text" id="endLeaveId"
@@ -385,30 +628,13 @@
                                        onclick="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startLeaveId\')}'})"/>
 
                             </td>
-                            <td><label>请假类别：</label></td>
-                            <td>
-                                <select id="leaveType" multiple class="selectpicker show-tick form-control"
-                                        data-live-search="true" data-actions-box="true"
-                                        data-selected-text-format="count > 1">
-                                    　　
-                                    <option value="0">正常请假</option>
-                                    <option value="1">因公外出</option>
-                                    <option value="2">带薪年假</option>
-                                </select>
-
-                            </td>
                             <td style="text-align: right" colspan="3">
                                 <a class="btn btn-primary"
-                                   href="javascript:void(0);" onclick="queryLeaveByCondition()">查找</a>
-                                <!--<input type="button" value="查找" class="btn btn-primary">-->
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="btn btn-primary"
-                                   href="/person/toaddleavepage">新增</a>
-                                <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
-
+                                   href="javascript:void(0);" onclick="queryJBByCondition()">查找</a>
                                 &nbsp;&nbsp;&nbsp;
                                 <a class="btn btn-primary"
-                                   href="javascript:void(0);" onclick="deleteLeaveByBatch()">批量删除</a>
+                                   href="javascript:void(0);"
+                                   onclick="addJiaBanRow()">新增</a>
                             </td>
                             <td>
                                 <div style="display: none" id="errormessage">
@@ -425,61 +651,58 @@
         <tr>
             <th style="text-align: center">序号</th>
             <th style="text-align: center">姓名</th>
-            <th style="text-align: center">工号</th>
             <th style="text-align: center">部门</th>
-            <th style="text-align: center">职位</th>
-            <th style="text-align: center">请假类型</th>
-            <th style="text-align: center">请假时间始</th>
-            <th style="text-align: center">请假时间止</th>
-            <th style="text-align: center">请假工时(H)</th>
-            <th style="text-align: center">请假原因</th>
+            <th style="text-align: center">加班时间起</th>
+            <th style="text-align: center">加班时间止</th>
+            <th style="text-align: center">加班工时</th>
+            <th style="text-align: center">加班类型</th>
             <th style="text-align: center">备注</th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody id="tabletblody">
         <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
-        <div th:unless="${#lists.isEmpty(leaveList)}">
-            <div th:each="leavea ,iterStat: ${leaveList}" align="center">
+        <div th:unless="${#lists.isEmpty(jiaBanList)}">
+            <div th:each="leavea ,iterStat: ${jiaBanList}" align="center">
                 <tr>
                     <td align="center"
-                        th:text="${(iterStat.index+1)}+${leave.currentPage-1}*${leave.pageSize}"></td>
+                        th:text="${(iterStat.index+1)}+${jiaBan.currentPage-1}*${jiaBan.pageSize}"></td>
                     <td align="center" th:text="${leavea.name}"></td>
-                    <td align="center" th:text="${leavea.empNo}"></td>
                     <td align="center" th:text="${leavea.deptName}"></td>
-                    <td align="center" th:text="${leavea.positionName}"></td>
+                    <td align="center" th:text="${leavea.extDateFromStr}"></td>
+                    <td align="center" th:text="${leavea.extDateEndStr}"></td>
+                    <td align="center" th:text="${leavea.extWorkHours}"></td>
                     <td align="center" th:text="${leavea.typeStr}"></td>
-                    <td align="center" th:text="${leavea.beginLeaveStr}"></td>
-                    <td align="center" th:text="${leavea.endLeaveStr}"></td>
-                    <td align="center" th:text="${leavea.leaveLong}"></td>
-                    <td align="center" th:text="${leavea.leaveDescrip}"></td>
                     <td align="center" th:text="${leavea.remark}"></td>
                     <td align="center">
                         <a href="javascript:void(0);"
-                           th:onclick="updateLeave([[${leavea.id}]]);">编辑</a>
+                           th:onclick="saveJiaBanDateToMysql(this);">保存</a>
                         <a href="javascript:void(0);"
-                           th:onclick="deleteLeave([[${leavea.id}]]);">删除</a>
-                        &nbsp;&nbsp;&nbsp;
-                        <input type="checkbox" name="deleteBatch" th:value="${leavea.id}">
+                           th:onclick="deleteJiaBanDateToMysql([[${leavea.id}]]);">删除</a>
                     </td>
                 </tr>
             </div>
+        </div>
+        <div th:if="${#lists.isEmpty(jiaBanList)}">
+            <tr>
+                <td align="center" colspan="9">查无数据</td>
+            </tr>
         </div>
         </tbody>
 
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="12" align="center">
+            <td colspan="9" align="center">
                 <span>第</span>
-                <span th:text="${leave.currentPage}" id="currentpagespan"> </span>
+                <span th:text="${jiaBan.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${leave.maxPage}" id="maxpagespan"> </span>
+                <span th:text="${jiaBan.maxPage}" id="maxpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${leave.recordCount}" id="recordcountspan"> </span>
+                <span th:text="${jiaBan.recordCount}" id="recordcountspan"> </span>
                 <span>条记录 </span>
                 <span id="image01">
-                            <span th:if="${leave.currentPage gt 1}">
+                            <span th:if="${jiaBan.currentPage gt 1}">
                                     <img src="/images/page/sy-2.jpg" align="middle" border="0"
                                          style="width: 20px; height: 20px; vertical-align: middle"
                                          onClick="goPageone()"/>
@@ -489,7 +712,7 @@
                                 </span>
                                 </span>
                 <span id="image02">
-                            <span th:if="${leave.currentPage le 1}">
+                            <span th:if="${jiaBan.currentPage le 1}">
                                 <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
@@ -497,7 +720,7 @@
                             </span>
                             </span>
                 <span id="image03">
-                            <span th:if="${leave.currentPage lt leave.maxPage}">
+                            <span th:if="${jiaBan.currentPage lt jiaBan.maxPage}">
                                     <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>
                                     <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
@@ -505,7 +728,7 @@
                             </span>
                                 </span>
                 <span id="image04">
-                            <span th:if="${leave.currentPage ge leave.maxPage}">
+                            <span th:if="${jiaBan.currentPage ge jiaBan.maxPage}">
                                 <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
@@ -516,7 +739,7 @@
                 |&nbsp;到第
                 <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
                        style="width: 50px"
-                       id="_tp" th:name="currentPage" type="text" th:value="${leave.currentPage}"/>
+                       id="_tp" th:name="currentPage" type="text" th:value="${jiaBan.currentPage}"/>
                 页&nbsp;
                 <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
                      style="width:20px;height:20px;vertical-align:middle">
@@ -526,7 +749,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="8" align="center">
+            <td colspan="9" align="center">
                 查无数据
             </td>
         </tr>

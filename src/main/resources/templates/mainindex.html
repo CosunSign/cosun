@@ -165,7 +165,7 @@
 
         </div>
 
-        <div id="renshidiv" style="display: none">
+        <div id="renshidiv" >
             <li data-popover="false"
                 data-content="Items in this group require a <strong><a href='http://portnine.com/bootstrap-themes/aircraft' target='blank'>premium license</a><strong>."
                 rel="popover" data-placement="right"><a href="#" data-target=".premium-menuforfilea"
@@ -178,35 +178,20 @@
                         <a th:href="@{/person/tomainpage}" target="targetText"><span
                                 class="fa fa-caret-right"></span>员工信息</a></li>
                     <li>
+                        <a th:href="@{/person/topositanddeptpage}" target="targetText"><span
+                                class="fa fa-caret-right"></span>职位/部门</a></li>
+                    <li>
                         <a th:href="@{/person/toworksetpage}" target="targetText"><span
                                 class="fa fa-caret-right"></span>考勤设置</a></li>
                     <li>
-                        <a th:href="@{/person/toworkdatepage}" target="targetText"><span
-                                class="fa fa-caret-right"></span>排班设置</a></li>
-                    <li>
                         <a th:href="@{/person/toleavepage}" target="targetText"><span
-                                class="fa fa-caret-right"></span>请假单</a></li>
+                                class="fa fa-caret-right"></span>考勤管理</a></li>
                     <li>
                         <a th:href="@{/person/tocomputeworkdate}" target="targetText"><span
                                 class="fa fa-caret-right"></span>考勤计算</a></li>
                     <li>
-                        <a th:href="@{/person/topositanddeptpage}" target="targetText"><span
-                                class="fa fa-caret-right"></span>职位/部门</a></li>
-                    <li>
                         <a th:href="@{/finance/toupdatesalary}" target="targetText"><span
                                 class="fa fa-caret-right"></span>工资调整</a></li>
-                    <li>
-                        <a th:href="@{/person/tooutsetpage}" target="targetText"><span
-                                class="fa fa-caret-right"></span>外出考勤设置</a></li>
-                    <li>
-                        <a th:href="@{/person/togongzhonghao}" target="targetText"><span
-                                class="fa fa-caret-right"></span>公众号绑定</a></li>
-                    <li>
-                        <a th:href="@{/person/toZhongKong}" target="targetText"><span
-                                class="fa fa-caret-right"></span>考勤机绑定</a></li>
-                    <!--<li>-->
-                        <!--<a th:href="@{/person/toOutClockInListQuery}" target="targetText"><span-->
-                                <!--class="fa fa-caret-right"></span>外出考勤查询</a></li>-->
                     <li>
                         <a th:href="@{/person/toZKandOutDataAll}" target="targetText"><span
                                 class="fa fa-caret-right"></span>考勤数据</a></li>

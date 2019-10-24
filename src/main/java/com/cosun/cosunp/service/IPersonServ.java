@@ -25,6 +25,8 @@ public interface IPersonServ {
 
     List<Employee> translateTabletoEmployeeBeanZK(List<MultipartFile> files) throws Exception;
 
+    String getDeptNameByEmployId(Integer id) throws Exception;
+
     WorkDate getWorkDateByMonth(WorkDate workDate) throws Exception;
 
     List<SmallEmployee> findAllEmployeeByPositionLevel(String positionLevel) throws Exception;
@@ -45,6 +47,18 @@ public interface IPersonServ {
 
     List<Position> findAllPositionAll() throws Exception;
 
+    void deleteJiaBanDateToMysql(Integer id) throws Exception;
+
+    void deleteLianBanDateToMysql(Integer id) throws Exception;
+
+    void deleteQianKaDateToMysql(Integer id) throws Exception;
+
+    List<MonthKQInfo> findAllMonthKQData(String yearMonth) throws Exception;
+
+    void saveCheckKQBeanListByDates(List<OutClockIn> outClockIns) throws Exception;
+
+    void saveMonthKQInfoByCheckKQBean(List<OutClockIn> outClockInList) throws Exception;
+
     List<String> getAllKQDateList() throws Exception;
 
     void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state) throws Exception;
@@ -63,6 +77,10 @@ public interface IPersonServ {
 
     List<Dept> findAllDeptAll() throws Exception;
 
+    List<QianKa> findAllQianKa(QianKa qianKa) throws Exception;
+
+    int findAllQianKaCount() throws Exception;
+
     void deleteClockSetInByOutDays(Double outDays) throws Exception;
 
     List<ClockInSetUp> findAllOutClockInSetUp() throws Exception;
@@ -77,6 +95,18 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployeeAll() throws Exception;
 
+    List<LianBan> findAllLianBan(LianBan lianBan) throws Exception;
+
+    int findAllLianBanCount() throws Exception;
+
+    List<JiaBan> findAllJiaBan(JiaBan jiaBan) throws Exception;
+
+    int findAllJiaBanCount() throws Exception;
+
+    List<KQBean> queryKQBeanDataByCondition(KQBean kqBean) throws Exception;
+
+    int queryKQBeanDataByConditionCount(KQBean kqBean) throws Exception;
+
     List<KQBean> findAllKQBData(Employee employee) throws Exception;
 
     int findAllKQBDataCount() throws Exception;
@@ -89,9 +119,11 @@ public interface IPersonServ {
 
     List<KQBean> getAfterOperatorDataByOriginData(List<KQBean> kqBeans) throws Exception;
 
-    List<KQBean> getAllKQDataByYearMonthDays(List<String> clockDates) throws Exception;
+    List<KQBean> getAllKQDataByYearMonthDays(List<OutClockIn> clockDates) throws Exception;
 
-    void deleteKQBeanOlderDateByDates(List<String> dateStr) throws Exception;
+    String getAlReadyCheckDatestr(List<OutClockIn> clockDates) throws Exception;
+
+    void deleteKQBeanOlderDateByDates(List<OutClockIn> clockDates) throws Exception;
 
     void saveAllNewKQBeansToMysql(List<KQBean> kqBeanList) throws Exception;
 
@@ -109,6 +141,8 @@ public interface IPersonServ {
 
     void saveBeforeDayZhongKongData(List<ZhongKongBean> zkbList) throws Exception;
 
+    List<Employee> findAllEmployeeNotIsQuitandhaveEnrollNum() throws Exception;
+
     List<ClockInSetUp> findAllCLockInSetUp() throws Exception;
 
     List<Leave> findAllLeaveByWeiXinId(String openId) throws Exception;
@@ -122,6 +156,12 @@ public interface IPersonServ {
     OutClockIn getOutClockInById(Integer id) throws Exception;
 
     boolean saveClockInSetUp(ClockInSetUp clockInSetUp) throws Exception;
+
+    int saveQianKaDateToMysql(QianKa qianKa) throws Exception;
+
+    int saveLianBanDateToMysql(LianBan lianBan) throws Exception;
+
+    int saveJiaBanDateToMysql(JiaBan jiaBan) throws Exception;
 
     Employee getEmployeeByEmpno(String empNo) throws Exception;
 
@@ -196,6 +236,18 @@ public interface IPersonServ {
     void deleteDeptByBatch(List<Integer> ids) throws Exception;
 
     int checkBeginLeaveRight(Leave leave) throws Exception;
+
+    List<QianKa> queryQKByCondition(QianKa qianKa) throws Exception;
+
+    List<LianBan> queryLBByCondition(LianBan lianBan) throws Exception;
+
+    List<JiaBan> queryJBByCondition(JiaBan jiaBan)  throws Exception;
+
+    int queryJBByConditionCount(JiaBan jiaBan) throws Exception;
+
+    int queryLBByConditionCount(LianBan lianBan) throws Exception;
+
+    int queryQKByConditionCount(QianKa qianKa) throws Exception;
 
     void deleteEmployeetById(Integer deleteEmployeetById) throws Exception;
 

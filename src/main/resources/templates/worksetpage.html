@@ -307,7 +307,7 @@
         white-space: nowrap;
     }
 
-    table tr td{
+    table tr td {
         white-space: nowrap;
     }
 </style>
@@ -318,70 +318,93 @@
         <input type="hidden" id="flag" th:value="${flag}">
         <input type="hidden" id="maxPage" th:value="${workSet.maxPage}">
         <input type="hidden" id="n_currentPage" th:value="${workSet.currentPage}"/>
-        <div class="panel panel-primary">
-            <div class="panel-body form-inline">
-                <table style="border-collapse:separate; border-spacing:2px;">
-                    <tr>
-                        <td style="text-align: right">
-                            <label>职位类别：</label>
-                        </td>
-                        <td>
-                            <!---->
-                            <select id="positionLevel"  class="selectpicker show-tick form-control"
-                                    data-live-search="true" onchange="showDateByWorkLevelAndMonth()" data-selected-text-format="count > 5">
-                                <option th:value="A">A</option>
-                                <option th:value="B">B</option>
-                                <option th:value="C">C</option>
-                                <option th:value="D">D</option>
-                                <option th:value="E">E</option>
-                            </select>
-                        </td>
-                        <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
-                        <td>
-                            <input type="text" id="monthId" onchange="showDateByWorkLevelAndMonth()"
-                                   style="width:130px;height: 34px;text-align: center"
-                                   class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
-                                   />
-                        </td>
+
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active">
+                <a href="#compreAttendRecord" data-toggle="tab">考勤设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toworkdatepage}">排班设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/tooutsetpage}">外出考勤设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/togongzhonghao}">公众号绑定</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toZhongKong}">考勤机绑定</a>
+            </li>
+        </ul>
+        <br>
+        <p>
+        <div id="compreAttendRecord">
+            <div class="panel panel-primary">
+                <div class="panel-body form-inline">
+                    <table style="border-collapse:separate; border-spacing:2px;">
+                        <tr>
+                            <td style="text-align: right">
+                                <label>职位类别：</label>
+                            </td>
+                            <td>
+                                <!---->
+                                <select id="positionLevel" class="selectpicker show-tick form-control"
+                                        data-live-search="true" onchange="showDateByWorkLevelAndMonth()"
+                                        data-selected-text-format="count > 5">
+                                    <option th:value="A">A</option>
+                                    <option th:value="B">B</option>
+                                    <option th:value="C">C</option>
+                                    <option th:value="D">D</option>
+                                    <option th:value="E">E</option>
+                                </select>
+                            </td>
+                            <td><label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年月选择:</label></td>
+                            <td>
+                                <input type="text" id="monthId" onchange="showDateByWorkLevelAndMonth()"
+                                       style="width:130px;height: 34px;text-align: center"
+                                       class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM'})"
+                                />
+                            </td>
                             <!--onchange="showDateByMonth()"-->
-                        <td style="text-align: right">
-                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a class="btn btn-primary"
-                                                                 href="javascript:void(0);"
-                                                                 onclick="queryWorkSetByCondition()">查找</a>
-                            <!--<input type="button" value="查找" class="btn btn-primary">-->
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary"
-                               href="/person/toaddworksetpage">新增</a>
-                            <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
-                        </td>
-                        <td>
-                            <div style="display: none" id="errormessage">
+                            <td style="text-align: right">
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a class="btn btn-primary"
+                                                                     href="javascript:void(0);"
+                                                                     onclick="queryWorkSetByCondition()">查找</a>
+                                <!--<input type="button" value="查找" class="btn btn-primary">-->
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-primary"
+                                   href="/person/toaddworksetpage">新增</a>
+                                <!--<input type="button" value="新增" class="btn btn-primary" onclick="showAddPersonDiv()">-->
+                            </td>
+                            <td>
+                                <div style="display: none" id="errormessage">
 
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>职位：</label>
-                        </td>
-                        <td colspan="5">
-                            <input type="text" id="workDateStr" class="form-control" disabled style="width:900px"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>职位：</label>
+                            </td>
+                            <td colspan="5">
+                                <input type="text" id="workDateStr" class="form-control" disabled style="width:900px"/>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>工作日：</label>
-                        </td>
-                        <td colspan="5">
-                            <input type="text" id="positionLevelId" class="form-control" disabled style="width:900px"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>工作日：</label>
+                            </td>
+                            <td colspan="5">
+                                <input type="text" id="positionLevelId" class="form-control" disabled
+                                       style="width:900px"/>
 
-                        </td>
+                            </td>
 
-                    </tr>
-                </table>
+                        </tr>
+                    </table>
+                </div>
             </div>
-        </div>
     </form>
     <table class="table table-bordered table-hover table-striped text-center" style="word-break: keep-all"
            id="showlistbody">
@@ -442,9 +465,9 @@
             </div>
         </div>
         <div th:if="${#lists.isEmpty(workSetList)}">
-                <tr>
-                    <td align="center" colspan="19">查无数据</td>
-                </tr>
+            <tr>
+                <td align="center" colspan="19">查无数据</td>
+            </tr>
         </div>
         </tbody>
 
@@ -513,6 +536,7 @@
         </tr>
         </tfoot>
     </table>
+</div>
 </div>
 
 </body>

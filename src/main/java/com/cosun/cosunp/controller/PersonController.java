@@ -6,14 +6,11 @@ import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.*;
 import com.cosun.cosunp.weixin.OutClockIn;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.sf.json.JSONObject;
-import org.apache.commons.collections.MapUtils;
+import net.sf.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.PropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -60,7 +58,8 @@ public class PersonController {
 
     public void getBeforeDayZhongKongData() throws Exception {
         String beforDay = DateUtil.getBeforeDay();
-        //String beforDay = "2019-10-11";
+        //String beforDay = "2019-10-20";
+        String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
         List<ZhongKongBean> strList = new ArrayList<ZhongKongBean>();
@@ -144,6 +143,32 @@ public class PersonController {
             }
         }
         IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
+
+
+        //对于没有打卡的人员，录入带名的空打卡数据
+        List<Employee> employeeList = testDomainMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
+        boolean isComin = false;
+        ZhongKongBean zkbb = null;
+        for (Employee ee : employeeList) {
+            isComin = false;
+            for (ZhongKongBean zk : toDataBaseList) {
+                if (ee.getEnrollNumber().equals(zk.getEnrollNumber())) {
+                    isComin = true;
+                    break;
+                }
+            }
+            if (!isComin) {
+                zkbb = new ZhongKongBean();
+                zkbb.setEnrollNumber(ee.getEnrollNumber());
+                zkbb.setYearMonth(afterDay[0] + "-" + afterDay[1]);
+                zkbb.setDateStr(beforDay);
+                zkbb.setTimeStr("");
+                toDataBaseList.add(zkbb);
+            }
+        }
+
+        System.out.println(toDataBaseList.size());
+        //return;
         testDomainMapper.saveBeforeDayZhongKongData(toDataBaseList);
 
         List<KQBean> kqBeanList = new ArrayList<KQBean>();
@@ -254,16 +279,16 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryZKOUTDataByCondition", method = RequestMethod.POST)
-    public void queryZKOUTDataByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryZKOUTDataByCondition(KQBean kqBean, HttpServletResponse response, HttpSession session) throws Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            List<Employee> financeImportDataList = personServ.queryZKOUTDataByCondition(employee);
-            int recordCount = personServ.queryZKOUTDataByConditionCount(employee);
-            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            List<KQBean> financeImportDataList = personServ.queryKQBeanDataByCondition(kqBean);
+            int recordCount = personServ.queryKQBeanDataByConditionCount(kqBean);
+            int maxPage = recordCount % kqBean.getPageSize() == 0 ? recordCount / kqBean.getPageSize() : recordCount / kqBean.getPageSize() + 1;
             if (financeImportDataList.size() > 0) {
                 financeImportDataList.get(0).setMaxPage(maxPage);
                 financeImportDataList.get(0).setRecordCount(recordCount);
-                financeImportDataList.get(0).setCurrentPage(employee.getCurrentPage());
+                financeImportDataList.get(0).setCurrentPage(kqBean.getCurrentPage());
             }
             String str1;
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
@@ -276,6 +301,31 @@ public class PersonController {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @ResponseBody
+    @RequestMapping("/toMonthKQList")
+    public ModelAndView toMonthKQList(HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("monthkqinfo");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String today = format.format(new Date());
+        String[] yearMonth = today.split("-");
+        Employee employee = new Employee();
+        List<Position> positionList = personServ.findAllPositionAll();
+        List<String> kqDateList = personServ.getAllKQDateList();
+        List<Dept> deptList = personServ.findAllDeptAll();
+        List<Employee> empList = personServ.findAllEmployeeAll();
+        List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQData(yearMonth[0] + "-" + yearMonth[1]);
+        view.addObject("financeImportDataList", financeImportDataList);
+        view.addObject("empList", empList);
+        view.addObject("employee", employee);
+        view.addObject("positionList", positionList);
+        view.addObject("deptList", deptList);
+        view.addObject("userInfo", userInfo);
+        view.addObject("kqDateList", kqDateList);
+        view.addObject("today", today);
+        return view;
     }
 
     @ResponseBody
@@ -305,39 +355,101 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping("/checkAttenClockByDate")
+    public ModelAndView checkAttenClockByDate(String[] clockDateArray, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("compreattenrecorddata");
+        UserInfo userInfo = (UserInfo) session.getAttribute("account");
+
+        List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
+        OutClockIn oc = null;
+        StringBuilder sb = new StringBuilder();
+        for (String str : clockDateArray) {
+            oc = new OutClockIn();
+            oc.setClockInDateStr(str);
+            clockDates.add(oc);
+            sb.append(str + " ");
+        }
+
+
+        try {
+            personServ.saveCheckKQBeanListByDates(clockDates);
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<String> kqDateList = personServ.getAllKQDateList();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
+            int recordCount = personServ.findAllKQBDataCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("kqDateList", kqDateList);
+            view.addObject("flagb", "启用" + sb.toString() + "考勤成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return view;
+    }
+
+    @ResponseBody
     @RequestMapping("/reComputeAttenClockByDate")
     public ModelAndView reComputeAttenClockByDate(String[] clockDateArray, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("compreattenrecorddata");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
 
-        List<String> clockDates = new ArrayList<String>();
+        List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
+        OutClockIn oc = null;
+        StringBuilder sb = new StringBuilder();
         for (String str : clockDateArray) {
-            clockDates.add(str);
+            oc = new OutClockIn();
+            oc.setClockInDateStr(str);
+            clockDates.add(oc);
+            sb.append(str + " ");
         }
-        //重新计算
-        personServ.deleteKQBeanOlderDateByDates(clockDates);
-        List<KQBean> kqBeans = personServ.getAllKQDataByYearMonthDays(clockDates);
-        List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(kqBeans);
-        personServ.saveAllNewKQBeansToMysql(newKQBeans);
 
-        Employee employee = new Employee();
-        List<Position> positionList = personServ.findAllPositionAll();
-        List<String> kqDateList = personServ.getAllKQDateList();
-        List<Dept> deptList = personServ.findAllDeptAll();
-        List<Employee> empList = personServ.findAllEmployeeAll();
-        List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
-        int recordCount = personServ.findAllKQBDataCount();
-        int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
-        employee.setMaxPage(maxPage);
-        employee.setRecordCount(recordCount);
-        view.addObject("financeImportDataList", financeImportDataList);
-        view.addObject("empList", empList);
-        view.addObject("employee", employee);
-        view.addObject("positionList", positionList);
-        view.addObject("deptList", deptList);
-        view.addObject("userInfo", userInfo);
-        view.addObject("kqDateList", kqDateList);
-        view.addObject("flag", "重新计算" + clockDates.toString() + "考勤成功!");
+        //计算前检查
+        String isAlreadyCheck = personServ.getAlReadyCheckDatestr(clockDates);
+
+        if (isAlreadyCheck == null || isAlreadyCheck.trim().length() == 0) {
+            //重新计算
+            personServ.deleteKQBeanOlderDateByDates(clockDates);
+            List<KQBean> kqBeans = personServ.getAllKQDataByYearMonthDays(clockDates);
+            List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(kqBeans);
+            personServ.saveAllNewKQBeansToMysql(newKQBeans);
+            view.addObject("flagb", "重新计算" + sb.toString() + "考勤成功!");
+        } else {
+            sb = new StringBuilder(isAlreadyCheck);
+            view.addObject("flagb", "无法重新计算,因为" + sb.toString() + "的考勤已启用");
+        }
+
+
+        try {
+            Employee employee = new Employee();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<String> kqDateList = personServ.getAllKQDateList();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
+            int recordCount = personServ.findAllKQBDataCount();
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("kqDateList", kqDateList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return view;
     }
 
@@ -387,7 +499,66 @@ public class PersonController {
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
         view.addObject("userInfo", userInfo);
+        view.addObject("flag", 3);
         return view;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/saveQianKaDateToMysql", method = RequestMethod.POST)
+    public void saveQianKaDateToMysql(QianKa qianKa, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            int isSave = personServ.saveQianKaDateToMysql(qianKa); //1正常保存 2.已存在  3.签卡时间不在规定范围内
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/saveLianBanDateToMysql", method = RequestMethod.POST)
+    public void saveLianBanDateToMysql(LianBan lianBan, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            int isSave = personServ.saveLianBanDateToMysql(lianBan); //1正常保存 2.正常更新
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/saveJiaBanDateToMysql", method = RequestMethod.POST)
+    public void saveJiaBanDateToMysql(JiaBan jiaBan, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            int isSave = personServ.saveJiaBanDateToMysql(jiaBan); //1正常保存 2.已存在
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @ResponseBody
@@ -648,6 +819,185 @@ public class PersonController {
             throw e;
         }
     }
+
+    @ResponseBody
+    @RequestMapping("/toplusworkdan")
+    public ModelAndView toplusworkdan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("jiaban");
+            JiaBan jiaBan = new JiaBan();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<JiaBan> jiaBanList = personServ.findAllJiaBan(jiaBan);
+            int recordCount = personServ.findAllJiaBanCount();
+            int maxPage = recordCount % jiaBan.getPageSize() == 0 ? recordCount / jiaBan.getPageSize() : recordCount / jiaBan.getPageSize() + 1;
+            jiaBan.setMaxPage(maxPage);
+            jiaBan.setRecordCount(recordCount);
+            view.addObject("jiaBanList", jiaBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("jiaBan", jiaBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/tolianbandan")
+    public ModelAndView tolianbandan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("lianban");
+            LianBan lianBan = new LianBan();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<LianBan> lianBanList = personServ.findAllLianBan(lianBan);
+            int recordCount = personServ.findAllLianBanCount();
+            int maxPage = recordCount % lianBan.getPageSize() == 0 ? recordCount / lianBan.getPageSize() : recordCount / lianBan.getPageSize() + 1;
+            lianBan.setMaxPage(maxPage);
+            lianBan.setRecordCount(recordCount);
+            view.addObject("lianBanList", lianBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("lianBan", lianBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/toqiankadan")
+    public ModelAndView toqiankadan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("qianka");
+            QianKa qianKa = new QianKa();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<QianKa> qianKaList = personServ.findAllQianKa(qianKa);
+            int recordCount = personServ.findAllQianKaCount();
+            int maxPage = recordCount % qianKa.getPageSize() == 0 ? recordCount / qianKa.getPageSize() : recordCount / qianKa.getPageSize() + 1;
+            qianKa.setMaxPage(maxPage);
+            qianKa.setRecordCount(recordCount);
+            view.addObject("qianKaList", qianKaList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("qianKa", qianKa);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteJiaBanDateToMysql")
+    public ModelAndView deleteJiaBanDateToMysql(JiaBan jiaBan) throws Exception {
+        try {
+            personServ.deleteJiaBanDateToMysql(jiaBan.getId());
+            ModelAndView view = new ModelAndView("jiaban");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<JiaBan> jiaBanList = personServ.findAllJiaBan(jiaBan);
+            int recordCount = personServ.findAllJiaBanCount();
+            int maxPage = recordCount % jiaBan.getPageSize() == 0 ? recordCount / jiaBan.getPageSize() : recordCount / jiaBan.getPageSize() + 1;
+            jiaBan.setMaxPage(maxPage);
+            jiaBan.setRecordCount(recordCount);
+            view.addObject("jiaBanList", jiaBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("jiaBan", jiaBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/deleteLianBanDateToMysql")
+    public ModelAndView deleteLianBanDateToMysql(LianBan lianBan) throws Exception {
+        try {
+            personServ.deleteLianBanDateToMysql(lianBan.getId());
+            ModelAndView view = new ModelAndView("lianban");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<LianBan> lianBanList = personServ.findAllLianBan(lianBan);
+            int recordCount = personServ.findAllLianBanCount();
+            int maxPage = recordCount % lianBan.getPageSize() == 0 ? recordCount / lianBan.getPageSize() : recordCount / lianBan.getPageSize() + 1;
+            lianBan.setMaxPage(maxPage);
+            lianBan.setRecordCount(recordCount);
+            view.addObject("lianBanList", lianBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("lianBan", lianBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteQianKaDateToMysql")
+    public ModelAndView deleteQianKaDateToMysql(QianKa qianKa) throws Exception {
+        try {
+            personServ.deleteQianKaDateToMysql(qianKa.getId());
+            ModelAndView view = new ModelAndView("qianka");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<QianKa> qianKaList = personServ.findAllQianKa(qianKa);
+            int recordCount = personServ.findAllQianKaCount();
+            int maxPage = recordCount % qianKa.getPageSize() == 0 ? recordCount / qianKa.getPageSize() : recordCount / qianKa.getPageSize() + 1;
+            qianKa.setMaxPage(maxPage);
+            qianKa.setRecordCount(recordCount);
+            view.addObject("qianKaList", qianKaList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("qianKa", qianKa);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping("/toleavepage")
@@ -1038,6 +1388,22 @@ public class PersonController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/getDeptNameByEmployId", method = RequestMethod.POST)
+    public void getDeptNameByEmployId(QianKa qianKa, HttpSession session, HttpServletResponse response) throws Exception {
+        try {
+            String deptName = personServ.getDeptNameByEmployId(qianKa.getId());
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(deptName);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/checkAndSave", method = RequestMethod.POST)
@@ -1952,6 +2318,82 @@ public class PersonController {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/queryQKByCondition", method = RequestMethod.POST)
+    public void queryQKByCondition(QianKa qianKa, HttpServletResponse response) throws Exception {
+        try {
+            List<QianKa> leaveList = personServ.queryQKByCondition(qianKa);
+            int recordCount = personServ.queryQKByConditionCount(qianKa);
+            int maxPage = recordCount % qianKa.getPageSize() == 0 ? recordCount / qianKa.getPageSize() : recordCount / qianKa.getPageSize() + 1;
+            if (leaveList.size() > 0) {
+                leaveList.get(0).setMaxPage(maxPage);
+                leaveList.get(0).setRecordCount(recordCount);
+                leaveList.get(0).setCurrentPage(qianKa.getCurrentPage());
+            }
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+
+            str1 = x.writeValueAsString(leaveList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryLBByCondition", method = RequestMethod.POST)
+    public void queryLBByCondition(LianBan lianBan, HttpServletResponse response) throws Exception {
+        try {
+            List<LianBan> leaveList = personServ.queryLBByCondition(lianBan);
+            int recordCount = personServ.queryLBByConditionCount(lianBan);
+            int maxPage = recordCount % lianBan.getPageSize() == 0 ? recordCount / lianBan.getPageSize() : recordCount / lianBan.getPageSize() + 1;
+            if (leaveList.size() > 0) {
+                leaveList.get(0).setMaxPage(maxPage);
+                leaveList.get(0).setRecordCount(recordCount);
+                leaveList.get(0).setCurrentPage(lianBan.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(leaveList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryJBByCondition", method = RequestMethod.POST)
+    public void queryJBByCondition(JiaBan jiaBan, HttpServletResponse response) throws Exception {
+        try {
+            List<JiaBan> leaveList = personServ.queryJBByCondition(jiaBan);
+            int recordCount = personServ.queryJBByConditionCount(jiaBan);
+            int maxPage = recordCount % jiaBan.getPageSize() == 0 ? recordCount / jiaBan.getPageSize() : recordCount / jiaBan.getPageSize() + 1;
+            if (leaveList.size() > 0) {
+                leaveList.get(0).setMaxPage(maxPage);
+                leaveList.get(0).setRecordCount(recordCount);
+                leaveList.get(0).setCurrentPage(jiaBan.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(leaveList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/queryLeaveByCondition", method = RequestMethod.POST)

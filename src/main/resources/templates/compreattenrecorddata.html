@@ -30,6 +30,7 @@
             window.parent.document.getElementById('content').style.display = "block";
             window.parent.document.getElementById('contentnew').style.display = "none";
             var flag = $("#flag").val();
+            var flagb = $("#flagb").val();
             var aflag = eval(flag)
             if (aflag == 1) {
                 $("#errormessage").show();
@@ -51,10 +52,10 @@
                 var errormessagediv = document.getElementById("errormessage");
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
                 errormessagediv.style.color = "green";
-            } else if (flag.contains("重新计算")) {
+            } else if (flagb.length > 0) {
                 $("#errormessage").show();
                 var errormessagediv = document.getElementById("errormessage");
-                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;" + flag;
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;" + flagb;
                 errormessagediv.style.color = "green";
             }
         });
@@ -147,11 +148,10 @@
             formData.append('empNo', $("#empNo").val());
             formData.append('deptIds', $("#deptId").val());
             formData.append('positionIds', $("#positionId").val());
-            formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-            formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+            formData.append('workTypes', $("#workType").val());
+            formData.append('clockDates', $("#clockDate").val());
             formData.append('sortMethod', sortMethod);
             formData.append('sortByName', sortByName);
-            formData.append('workTypes', $("#workType").val());
             formData.append('currentPage', currentpage);
             $.ajax({
                 data: formData,
@@ -199,24 +199,41 @@
                         var safeLe;
                         var otherLe;
                         $.each(data, function (num) {
-                            tr = $("<tr id='" + data[num].id + "'></tr>");
+                            tr = $("<tr></tr>");
                             tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                             tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                             tr.append("<td>" + isNull(data[num].name) + "</td>");
                             tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                            tr.append("<td>" + isNull(data[num].enrollNumber1) + "</td>");
                             tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].weekStr) + "</td>");
                             tr.append("<td align='left'>" + isNull(data[num].timeStr) + "</td>");
-                            td = "<td>";
-                            userType = 1;
-                            if (userType == 1) {
-                                td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                    "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
-                            } else {
-                                td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                    "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
-                            }
+                            td = ("<td align=\"center\">");
+                            td += ("<select id=\""+data[num].id+"\">");
+                            td += ("<option value=\"1\" "+((data[num].clockResult== 1)?'selected':'')+">正常出勤</option>");
+                            td += ("<option value=\"2\" "+((data[num].clockResult== 2)?'selected':'')+">因公外出</option>");
+                            td += ("<option value=\"3\" "+((data[num].clockResult== 3)?'selected':'')+">带薪年假</option>");
+                            td += ("<option value=\"4\" "+((data[num].clockResult== 4)?'selected':'')+">法定节假日</option>");
+                            td += ("<option value=\"5\" "+((data[num].clockResult== 5)?'selected':'')+">放假</option>");
+                            td += ("<option value=\"6\" "+((data[num].clockResult== 6)?'selected':'')+">请假</option>");
+                            td += ("<option value=\"7\" "+((data[num].clockResult== 7)?'selected':'')+">未正常打卡</option>");
+                            td += ("<option value=\"8\" "+((data[num].clockResult== 8)?'selected':'')+">旷工</option>");
+                            td += ("<option value=\"9\" "+((data[num].clockResult== 9)?'selected':'')+">法定节假日加班</option>");
+                            td += ("<option value=\"10\" "+((data[num].clockResult== 10)?'selected':'')+">无此人打卡记录</option>");
+                            td += ("</select>");
+                            td += ("</td>");
+
                             tr.append(td);
+                            tr.append("<td align=\"center\"><input type=\"text\" style=\"width:50px;height: 25px\" className=\"form-control\" value=\""+isNull(data[num].extWorkHours)+"\"></td>");
+                            tr.append("<td align=\"center\"><a class=\"btn btn-xs btn-primary\" "+((data[num].rensheCheck == 1)?'disabled':'') +" onclick=\"updateKQBeanData(this);\">保存</a></td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].remark)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].aOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].aOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].pOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].pOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkHours)+"</td>");
+
                             tr.appendTo(tbody);
                         });
                         $("#currentpagespan").html(currentPage);
@@ -283,11 +300,10 @@
             formData.append('empNo', $("#empNo").val());
             formData.append('deptIds', $("#deptId").val());
             formData.append('positionIds', $("#positionId").val());
-            formData.append('startIncomDateStr', $("#startIncomDateStr").val());
-            formData.append('endIncomDateStr', $("#endIncomDateStr").val());
+            formData.append('workTypes', $("#workType").val());
+            formData.append('clockDates', $("#clockDate").val());
             formData.append('sortMethod', sortMethod);
             formData.append('sortByName', sortByName);
-            formData.append('workTypes', $("#workType").val());
             formData.append('currentPage', 1);
             $.ajax({
                 data: formData,
@@ -335,24 +351,41 @@
                         var safeLe;
                         var otherLe;
                         $.each(data, function (num) {
-                            tr = $("<tr id='" + data[num].id + "'></tr>");
+                            tr = $("<tr></tr>");
                             tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
                             tr.append("<td>" + isNull(data[num].yearMonth) + "</td>");
                             tr.append("<td>" + isNull(data[num].name) + "</td>");
                             tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                            tr.append("<td>" + isNull(data[num].enrollNumber1) + "</td>");
                             tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
+                            tr.append("<td>" + isNull(data[num].weekStr) + "</td>");
                             tr.append("<td align='left'>" + isNull(data[num].timeStr) + "</td>");
-                            td = "<td>";
-                            userType = 1;
-                            if (userType == 1) {
-                                td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                    "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
-                            } else {
-                                td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                    "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
-                            }
+                            td = ("<td align=\"center\">");
+                            td += ("<select id=\""+data[num].id+"\">");
+                            td += ("<option value=\"1\" "+((data[num].clockResult== 1)?'selected':'')+">正常出勤</option>");
+                            td += ("<option value=\"2\" "+((data[num].clockResult== 2)?'selected':'')+">因公外出</option>");
+                            td += ("<option value=\"3\" "+((data[num].clockResult== 3)?'selected':'')+">带薪年假</option>");
+                            td += ("<option value=\"4\" "+((data[num].clockResult== 4)?'selected':'')+">法定节假日</option>");
+                            td += ("<option value=\"5\" "+((data[num].clockResult== 5)?'selected':'')+">放假</option>");
+                            td += ("<option value=\"6\" "+((data[num].clockResult== 6)?'selected':'')+">请假</option>");
+                            td += ("<option value=\"7\" "+((data[num].clockResult== 7)?'selected':'')+">未正常打卡</option>");
+                            td += ("<option value=\"8\" "+((data[num].clockResult== 8)?'selected':'')+">旷工</option>");
+                            td += ("<option value=\"9\" "+((data[num].clockResult== 9)?'selected':'')+">法定节假日加班</option>");
+                            td += ("<option value=\"10\" "+((data[num].clockResult== 10)?'selected':'')+">无此人打卡记录</option>");
+                            td += ("</select>");
+                            td += ("</td>");
+
                             tr.append(td);
+                            tr.append("<td align=\"center\"><input type=\"text\" style=\"width:50px;height: 25px\" className=\"form-control\" value=\""+isNull(data[num].extWorkHours)+"\"></td>");
+                            tr.append("<td align=\"center\"><a class=\"btn btn-xs btn-primary\" "+((data[num].rensheCheck == 1)?'disabled':'') +" onclick=\"updateKQBeanData(this);\">保存</a></td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].remark)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].aOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].aOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].pOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].pOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkOnTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkOffTime)+"</td>");
+                            tr.append("<td align=\"center\" >"+isNull(data[num].extWorkHours)+"</td>");
+
                             tr.appendTo(tbody);
                         });
                         $("#currentpagespan").html(currentPage);
@@ -445,13 +478,13 @@
         function sortByAsc(titlename) {
             sortMethod = 'asc';
             sortByName = titlename;
-            queryZKOUTDataByCondition2();
+            queryZKOUTDataByCondition();
         }
 
         function sortByDesc(titlename) {
             sortMethod = 'desc';
             sortByName = titlename;
-            queryZKOUTDataByCondition2();
+            queryZKOUTDataByCondition();
         }
 
         function updateKQBeanData(obj) {
@@ -480,12 +513,22 @@
             }
         }
 
+        function checkZKOUTDataByCondition() {
+            var clockDate = $("#clockDate").val();
+            if (clockDate.length > 0) {
+                window.location.href = "/person/checkAttenClockByDate?clockDateArray=" + clockDate;
+            } else {
+                alert("请先选择您启用的打卡日期!")
+            }
+        }
+
     </script>
     <div>
 
         <div id='app'>
             <form>
                 <input type="hidden" id="flag" th:value="${flag}">
+                <input type="hidden" id="flagb" th:value="${flagb}">
                 <input type="hidden" id="maxPage" th:value="${employee.maxPage}">
                 <input type="hidden" id="userType" th:value="${userInfo.type}">
                 <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${employee.currentPage}"/>
@@ -499,6 +542,12 @@
                     </li>
                     <li class="active">
                         <a href="#compreAttendRecord" data-toggle="tab">综合考勤</a>
+                    </li>
+                    <li >
+                        <a th:href="@{/person/toMonthKQList}">月考勤明细</a>
+                    </li>
+                    <li >
+                        <a th:href="@{/person/toMonthKQSignList}">月考勤签字单</a>
                     </li>
                 </ul>
                 <br>
@@ -586,11 +635,15 @@
 
 
                                         <td colspan="2" style="text-align: right">
+                                            &nbsp;&nbsp;
+                                            <a class="btn btn-primary"
+                                               href="javascript:void(0);" onclick="queryZKOUTDataByCondition()">查找</a>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <a class="btn btn-primary"
                                                href="javascript:void(0);" onclick="reComputeAttenClockByDate()">重新计算</a>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <a class="btn btn-primary"
-                                               href="javascript:void(0);" onclick="queryZKOUTDataByCondition()">查找</a>
+                                               href="javascript:void(0);" onclick="checkZKOUTDataByCondition()">启用</a>
                                         </td>
                                         <td>
                                             <div style="display: none" id="errormessage">
@@ -730,7 +783,7 @@
 
                             <td align="center">
                                 <a class="btn btn-xs btn-primary"
-                                   th:disabled="${userInfo.type ne 1}"
+                                   th:disabled="${empH.rensheCheck eq 1}"
                                    th:onclick="updateKQBeanData(this);">保存</a>
                             </td>
                             <td align="center" th:text="${empH.remark}"></td>

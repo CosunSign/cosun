@@ -431,82 +431,103 @@
         <input type="hidden" id="maxPage" th:value="${employee.maxPage}">
         <input type="hidden" id="userType" th:value="${userInfo.type}">
         <input type="hidden" id="n_currentPage" name="view.currentPage" th:value="${employee.currentPage}"/>
-        <div class="panel panel-primary">
-            <div class="panel-body form-inline">
-                <table width="100%">
-                    <tr>
-                        <td style="text-align: right">
-                            <label>姓名：</label>
-                        </td>
-                        <td>
-                            <label>
-                                <select id="name" multiple class="selectpicker show-tick form-control"
+
+        <ul id="myTab" class="nav nav-tabs">
+            <li>
+                <a th:href="@{/person/toworksetpage}">考勤设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toworkdatepage}">排班设置</a>
+            </li>
+            <li>
+                <a th:href="@{/person/tooutsetpage}">外出考勤设置</a>
+            </li>
+            <li class="active">
+                <a href="#compreAttendRecord" data-toggle="tab">公众号绑定</a>
+            </li>
+            <li>
+                <a th:href="@{/person/toZhongKong}">考勤机绑定</a>
+            </li>
+        </ul>
+        <br>
+        <p>
+        <div id="compreAttendRecord">
+            <div class="panel panel-primary">
+                <div class="panel-body form-inline">
+                    <table width="100%">
+                        <tr>
+                            <td style="text-align: right">
+                                <label>姓名：</label>
+                            </td>
+                            <td>
+                                <label>
+                                    <select id="name" multiple class="selectpicker show-tick form-control"
+                                            data-live-search="true" data-actions-box="true"
+                                            data-selected-text-format="count > 2">
+                                        　　
+                                        <option th:each="c:${empList}" th:value="${c.id}"
+                                                th:text="${c.name}"></option>
+                                    </select>
+                                </label>
+                            </td>
+
+                            <td style="text-align: right">
+                                <label>工号：</label>
+                            </td>
+                            <td>
+                                <label><input type="text" id="empNo" class="form-control" style="width:150px"></label>
+                            </td>
+                            <td style="text-align: right">
+                                <label>部门：</label>
+                            </td>
+                            <td>
+                                <select id="deptId" multiple class="selectpicker show-tick form-control"
                                         data-live-search="true" data-actions-box="true"
                                         data-selected-text-format="count > 2">
                                     　　
-                                    <option th:each="c:${empList}" th:value="${c.id}"
-                                            th:text="${c.name}"></option>
+                                    <option th:each="c:${deptList}" th:value="${c.id}"
+                                            th:text="${c.deptname}"></option>
                                 </select>
-                            </label>
-                        </td>
+                            </td>
 
-                        <td style="text-align: right">
-                            <label>工号：</label>
-                        </td>
-                        <td>
-                            <label><input type="text" id="empNo" class="form-control" style="width:150px"></label>
-                        </td>
-                        <td style="text-align: right">
-                            <label>部门：</label>
-                        </td>
-                        <td>
-                            <select id="deptId" multiple class="selectpicker show-tick form-control"
-                                    data-live-search="true" data-actions-box="true"
-                                    data-selected-text-format="count > 2">
-                                　　
-                                <option th:each="c:${deptList}" th:value="${c.id}"
-                                        th:text="${c.deptname}"></option>
-                            </select>
-                        </td>
+                            <td style="text-align: right">
+                                <label>职位：</label>
+                            </td>
+                            <td>
+                                <select id="positionId" style="width: 100px" multiple
+                                        class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true"
+                                        data-selected-text-format="count > 1">
+                                    <option th:each="c:${positionList}" th:value="${c.id}"
+                                            th:text="${c.positionName}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">
+                                <label>&nbsp;&nbsp;已绑定公众号：</label>
+                            </td>
+                            <td>
+                                <select id="isgongzhonghaoBangDing" class="selectpicker show-tick form-control"
+                                        data-live-search="true" data-actions-box="true">
+                                    <option value="0" selected>请选择</option>
+                                    <option th:value="1">已绑定</option>
+                                </select>
+                            </td>
 
-                        <td style="text-align: right">
-                            <label>职位：</label>
-                        </td>
-                        <td>
-                            <select id="positionId" style="width: 100px" multiple
-                                    class="selectpicker show-tick form-control"
-                                    data-live-search="true" data-actions-box="true"
-                                    data-selected-text-format="count > 1">
-                                <option th:each="c:${positionList}" th:value="${c.id}"
-                                        th:text="${c.positionName}"></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right">
-                            <label>&nbsp;&nbsp;已绑定公众号：</label>
-                        </td>
-                        <td>
-                            <select id="isgongzhonghaoBangDing" class="selectpicker show-tick form-control"
-                                    data-live-search="true" data-actions-box="true">
-                                <option value="0" selected>请选择</option>
-                                <option th:value="1">已绑定</option>
-                            </select>
-                        </td>
+                            <td colspan="1" style="text-align: center">
+                                <a class="btn btn-primary"
+                                   href="javascript:void(0);" onclick="queryEmployeeByCondition()">查找</a>
+                            </td>
+                            <td>
+                                <div style="display: none" id="errormessage">
 
-                        <td colspan="1" style="text-align: center">
-                            <a class="btn btn-primary"
-                               href="javascript:void(0);" onclick="queryEmployeeByCondition()">查找</a>
-                        </td>
-                        <td>
-                            <div style="display: none" id="errormessage">
-
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-        </div>
     </form>
     <table class="table table-bordered table-hover table-striped text-center hongmei" id="showlistbody">
         <thead style="background-color:lightsteelblue">
@@ -639,6 +660,6 @@
         </tfoot>
     </table>
 </div>
-
+</div>
 </body>
 </html>

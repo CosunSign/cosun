@@ -376,6 +376,14 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.queryZKOUTDataByCondition(employee);
     }
 
+    public List<KQBean> queryKQBeanDataByCondition(KQBean kqBean) throws Exception {
+        return personMapper.queryKQBeanDataByCondition(kqBean);
+    }
+
+    public int queryKQBeanDataByConditionCount(KQBean kqBean) throws Exception {
+        return personMapper.queryKQBeanDataByConditionCount(kqBean);
+    }
+
     public int queryZKOUTDataByConditionCount(Employee employee) throws Exception {
         return personMapper.queryZKOUTDataByConditionCount(employee);
     }
@@ -727,11 +735,82 @@ public class PersonServiceImpl implements IPersonServ {
 
     public List<Leave> queryLeaveByCondition(Leave leave) throws Exception {
         return personMapper.queryLeaveByCondition(leave);
-        //queryEmployeeByCondition()
+    }
+
+    public List<LianBan> findAllLianBan(LianBan lianBan) throws Exception {
+        return personMapper.findAllLianBan(lianBan);
+    }
+
+    public int saveLianBanDateToMysql(LianBan lianBan) throws Exception {
+        //1正常保存 2.正常更新
+        Employee ee = personMapper.getEmployeeOneById(lianBan.getEmpId());
+        lianBan.setEmpNo(ee.getEmpNo());
+        LianBan lb = personMapper.getLianBanByEmpNoAndDateStr(ee.getEmpNo(), lianBan.getDateStr());
+        if (lb == null) {
+            personMapper.saveLianBanBeanToSql(lianBan);
+            return 1;
+        } else {
+            personMapper.updateLianBanBean(lianBan);
+            return 2;
+        }
+    }
+
+
+    public List<LianBan> queryLBByCondition(LianBan lianBan) throws Exception {
+        return personMapper.queryLBByCondition(lianBan);
+    }
+
+
+    public List<JiaBan> findAllJiaBan(JiaBan jiaBan) throws Exception {
+        return personMapper.findAllJiaBan(jiaBan);
+    }
+
+    public int findAllJiaBanCount() throws Exception {
+        return personMapper.findAllJiaBanCount();
+    }
+
+
+    public int queryLBByConditionCount(LianBan lianBan) throws Exception {
+        return personMapper.queryLBByConditionCount(lianBan);
+    }
+
+    public void deleteLianBanDateToMysql(Integer id) throws Exception {
+        personMapper.deleteLianBanDateToMysql(id);
+    }
+
+    public int findAllLianBanCount() throws Exception {
+        return personMapper.findAllLianBanCount();
     }
 
     public int checkBeginLeaveRight(Leave leave) throws Exception {
         return personMapper.checkBeginLeaveRight(leave);
+    }
+
+
+    public List<JiaBan> queryJBByCondition(JiaBan jiaBan) throws Exception {
+        return personMapper.queryJBByCondition(jiaBan);
+    }
+
+    public int queryJBByConditionCount(JiaBan jiaBan) throws Exception {
+        return personMapper.queryJBByConditionCount(jiaBan);
+    }
+
+    public void deleteJiaBanDateToMysql(Integer id) throws Exception {
+        personMapper.deleteJiaBanDateToMysql(id);
+    }
+
+    public int saveJiaBanDateToMysql(JiaBan jiaBan) throws Exception {
+        //查看加班申请单有无重复
+        int oldJiaBanCount = personMapper.getJiaBanDanByEmpIdAndFromDateAndEndDate(jiaBan.getEmpId(), jiaBan.getExtDateFromStr(), jiaBan.getExtDateEndStr());
+        Employee employee = personMapper.getEmployeeOneById(jiaBan.getEmpId());
+        //没有重复保存
+        if (oldJiaBanCount == 0) {
+            jiaBan.setEmpNo(employee.getEmpNo());
+            personMapper.saveJiaBanDateToMysql(jiaBan);
+            return 1;
+        } else {
+            return 2;
+        }
     }
 
 
@@ -1573,7 +1652,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setIsAonOk("正常");
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setIsAonOk("周末加班");
                                                                 } else {
                                                                     otw.setIsAonOk("周末不上班");
@@ -1610,7 +1689,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setIsAoffOk("正常");
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setIsAoffOk("周末加班");
                                                                 } else {
                                                                     otw.setIsAoffOk("周末不上班");
@@ -1649,7 +1728,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setIsPOnOk("正常");
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setIsPOnOk("周末加班");
                                                                 } else {
                                                                     otw.setIsPOnOk("周末不上班");
@@ -1688,7 +1767,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setIsPOffOk("正常");
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setIsPOffOk("周末加班");
                                                                 } else {
                                                                     otw.setIsPOffOk("周末不上班");
@@ -1849,7 +1928,7 @@ public class PersonServiceImpl implements IPersonServ {
                                             }
 
                                         } else {
-                                            Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", "2019-" + monstr + "-" + date + " " + "17:30:00");
+                                            Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", yearMonth + "-" + date + " " + "17:30:00");
                                             if (leave != null) {
                                                 if (leave.getType() == 0) {
                                                     otw.setLeaveDateStart(leave.getBeginLeaveStr());
@@ -2053,6 +2132,10 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.getEmployeeByEmpno(empNo);
     }
 
+    public List<Employee> findAllEmployeeNotIsQuitandhaveEnrollNum() throws Exception {
+        return personMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
+    }
+
     public List<KQBean> getAfterOperatorDataByOriginData(List<KQBean> kqBeans) throws Exception {
         List<KQBean> kqBeanList = new ArrayList<KQBean>();
         KQBean aaa = new KQBean();
@@ -2103,6 +2186,21 @@ public class PersonServiceImpl implements IPersonServ {
                                     otw.setDateStr(kqBeans.get(k).getDateStr());
                                     workSet = personMapper.getWorkSetByMonthAndPositionLevel2(yearMonth, em.getPositionLevel());
                                     Time time = null;
+
+                                    if (workDate.getType() == 2) {
+                                        otw.setRemark("法定假日");
+                                        otw.setClockResult(4);
+                                        otw.setaOnRemark("法定假日");
+                                        otw.setClockResult(4);
+                                        otw.setaOffRemark("法定假日");
+                                        otw.setClockResult(4);
+                                        otw.setpOnRemark("法定假日");
+                                        otw.setClockResult(4);
+                                        otw.setpOffRemark("法定假日");
+                                        otw.setClockResult(4);
+                                        kqBeanList.add(otw);
+                                        continue;
+                                    }
                                     if (workSet != null) {
                                         if (kqBeans.get(k).getTimeStr() != null && kqBeans.get(k).getTimeStr().length() > 0) {
                                             otw.setTimeStr(kqBeans.get(k).getTimeStr());
@@ -2124,7 +2222,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setClockResult(1);
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setaOnRemark("周末加班");
                                                                     otw.setClockResult(1);
                                                                 } else {
@@ -2159,7 +2257,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setClockResult(1);
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setaOffRemark("周末加班");
                                                                     otw.setClockResult(1);
                                                                 } else {
@@ -2192,7 +2290,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setClockResult(1);
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setpOnRemark("周末加班");
                                                                     otw.setClockResult(1);
                                                                 } else {
@@ -2225,7 +2323,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                                     otw.setClockResult(1);
                                                                 }
                                                             } else if (type == 1) {
-                                                                if (workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
                                                                     otw.setpOffRemark("周末加班");
                                                                     otw.setClockResult(1);
                                                                 } else {
@@ -2593,6 +2691,7 @@ public class PersonServiceImpl implements IPersonServ {
         return kqBeanList;
     }
 
+    @Transactional
     public void saveAllNewKQBeansToMysql(List<KQBean> kqBeanList) throws Exception {
         for (KQBean kqBean : kqBeanList) {
             personMapper.saveAllNewKQBeansToMysql(kqBean);
@@ -2607,11 +2706,21 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.getAllKQDateList();
     }
 
-    public void deleteKQBeanOlderDateByDates(List<String> dateStr) throws Exception {
+    @Transactional
+    public void saveCheckKQBeanListByDates(List<OutClockIn> outClockIns) throws Exception {
+        personMapper.saveCheckKQBeanListByDates(outClockIns);
+        saveMonthKQInfoByCheckKQBean(outClockIns);
+    }
+
+    public String getAlReadyCheckDatestr(List<OutClockIn> clockDates) throws Exception {
+        return personMapper.getAlReadyCheckDatestr(clockDates);
+    }
+
+    public void deleteKQBeanOlderDateByDates(List<OutClockIn> dateStr) throws Exception {
         personMapper.deleteKQBeanOlderDateByDates(dateStr);
     }
 
-    public List<KQBean> getAllKQDataByYearMonthDays(List<String> clockDates) throws Exception {
+    public List<KQBean> getAllKQDataByYearMonthDays(List<OutClockIn> clockDates) throws Exception {
         return personMapper.getAllKQDataByYearMonthDays(clockDates);
     }
 
@@ -2623,6 +2732,178 @@ public class PersonServiceImpl implements IPersonServ {
         personMapper.updateKQBeanDataByRenShi(id, extHours, state);
     }
 
+    public List<MonthKQInfo> findAllMonthKQData(String yearMonth) throws Exception {
+        return personMapper.findAllMonthKQData(yearMonth);
+    }
+
+    public void saveMonthKQInfoByCheckKQBean(List<OutClockIn> outClockInList) throws Exception {
+        //取
+        List<KQBean> kqBeanList = personMapper.getKQBeanByDateStrs(outClockInList);
+
+        //计算
+        MonthKQInfo mkf = null;
+        List<MonthKQInfo> monthKQInfoList = new ArrayList<MonthKQInfo>();
+        String dayStr = null;
+        String daytitleSql = null;
+        String dayremarktitleSql = null;
+        String dayNum = null;
+        String dayNumRemark = null;
+        for (KQBean kqb : kqBeanList) {
+            dayNum = "";
+            mkf = personMapper.getMonthKqInfoByEmpNoandYearMonth(kqb.getEmpNo(), kqb.getYearMonth());
+            if (mkf == null) {
+                mkf = new MonthKQInfo();
+            }
+            dayStr = kqb.getDateStr().split("-")[2];
+            mkf.setEmpNo(kqb.getEmpNo());
+            mkf.setName(kqb.getName());
+            mkf.setYearMonth(kqb.getYearMonth());
+            mkf.setUsualExtHours((mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+            mkf.setRemark(kqb.getRemark());
+
+            daytitleSql = "day".concat(dayStr);
+            dayremarktitleSql = daytitleSql.concat("Remark");
+
+            if (kqb.getWeek() == 6 || kqb.getWeek() == 7) {
+                if (kqb.getClockResult() == 1) {
+                    mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                    dayNum = "18,18,";
+                } else if (kqb.getClockResult() == 4) {
+                    mkf.setChinaPaidLeave((mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
+                    dayNum = "4,4,";
+                } else if (kqb.getClockResult() == 6) {
+                    mkf.setLeaveOfAbsense((mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
+                    dayNum = "6,6,";
+                } else if (kqb.getClockResult() == 11) {
+                    mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
+                    dayNum = "11,11,";
+                } else if (kqb.getClockResult() == 2) {
+                    mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                    dayNum = "2,2,";
+                } else if (kqb.getClockResult() == 12) {
+                    mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                    dayNum = "12,12,";
+                } else if (kqb.getClockResult() == 3) {
+                    mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
+                    dayNum = "3,3,";
+                } else if (kqb.getClockResult() == 7) {
+                    dayNum = "7,7,";
+                } else if (kqb.getClockResult() == 8) {
+                    dayNum = "8,8,";
+                }
+                dayNum = dayNum.concat(8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                mkf.setDayNum(dayNum);
+                mkf.setDaytitleSql(daytitleSql);
+                mkf.setWorkendHours(8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+            } else {
+                if (kqb.getClockResult() == 1) {
+                    mkf.setZhengbanHours((mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours()) + 8.0);
+                    dayNum = "1,1,";
+                } else if (kqb.getClockResult() == 4) {
+                    mkf.setChinaPaidLeave((mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
+                    dayNum = "4,4,";
+                } else if (kqb.getClockResult() == 6) {
+                    mkf.setLeaveOfAbsense((mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
+                    dayNum = "6,6,";
+                } else if (kqb.getClockResult() == 11) {
+                    mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
+                    dayNum = "11,11,";
+                } else if (kqb.getClockResult() == 2) {
+                    mkf.setZhengbanHours((mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours()) + 8.0);
+                    dayNum = "2,2,";
+                } else if (kqb.getClockResult() == 12) {
+                    mkf.setZhengbanHours(8.0);
+                    dayNum = "12,12,";
+                } else if (kqb.getClockResult() == 3) {
+                    mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
+                    dayNum = "15,15,";
+                } else if (kqb.getClockResult() == 7) {
+                    dayNum = "7,7,";
+                } else if (kqb.getClockResult() == 8) {
+                    dayNum = "8,8,";
+                }
+                dayNum = dayNum.concat((kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                mkf.setDayNum(dayNum);
+                mkf.setDaytitleSql(daytitleSql);
+                mkf.setUsualExtHours((mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+            }
+            monthKQInfoList.add(mkf);
+
+            if (mkf.getId() != null) {
+                mkf.setNameReal(kqb.getNameReal());
+                personMapper.updateMonthKQInfoByCheckKQBean(mkf);
+            } else {
+                mkf.setNameReal(kqb.getNameReal());
+                personMapper.saveMonthKQInfoByCheckKQBean(mkf);
+            }
+        }
+
+    }
+
+    public void deleteQianKaDateToMysql(Integer id) throws Exception {
+        personMapper.deleteQianKaDateToMysql(id);
+    }
+
+    public int saveQianKaDateToMysql(QianKa qianKa) throws Exception {
+        Employee employee = personMapper.getEmployeeOneById(qianKa.getEmpId());
+        qianKa.setEmpNo(employee.getEmpNo());
+        String[] strDay = qianKa.getDateStr().split("-");
+        KQBean kqb = personMapper.getKQBeanByDateStrAndEmpNo(qianKa.getDateStr(), qianKa.getEmpNo());
+        WorkSet ws = personMapper.getWorkSetByYearMonthAndPositionLevel(strDay[0] + "-" + strDay[1], employee.getPositionLevel());
+        int isNeed = 0;
+        if (kqb != null) {
+            isNeed = StringUtil.checkIsNeed(qianKa.getTimeStr(), ws, kqb);
+        }
+        if (isNeed == 4) {
+            return isNeed;
+        }
+        QianKa qianKaOld = personMapper.getQianKaByDateAndEmpno(qianKa);
+        //看签卡的时间是否在有效范围内
+        int isIn = StringUtil.checkIsIn(qianKa.getTimeStr(), ws);
+        if (isIn == 3) {
+            return isIn;
+        }
+
+        int len = 0;
+        if (qianKaOld != null) {
+            len = StringUtil.checkIsRepeatQianKa(qianKaOld, qianKa, ws);
+        }
+        //1正常保存 2.已存在  3.签卡时间不在规定范围内
+        if (len == 0) {
+            QianKa qk = personMapper.getQianKaByDateAndEmpno(qianKa);
+            if (qk == null) {
+                personMapper.saveQianKa(qianKa);
+            } else {
+                String timeStr = StringUtil.sortTimes(qianKa.getTimeStr(), qk.getTimeStr());
+                qianKa.setTimeStr(timeStr);
+                qianKa.setId(qk.getId());
+                personMapper.updateQianKa(qianKa);
+            }
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    public List<QianKa> findAllQianKa(QianKa qianKa) throws Exception {
+        return personMapper.findAllQianKa(qianKa);
+    }
+
+    public String getDeptNameByEmployId(Integer id) throws Exception {
+        return personMapper.getDeptNameByEmployId(id);
+    }
+
+    public int findAllQianKaCount() throws Exception {
+        return personMapper.findAllQianKaCount();
+    }
+
+    public List<QianKa> queryQKByCondition(QianKa qianKa) throws Exception {
+        return personMapper.queryQKByCondition(qianKa);
+    }
+
+    public int queryQKByConditionCount(QianKa qianKa) throws Exception {
+        return personMapper.queryQKByConditionCount(qianKa);
+    }
 
 }
 
