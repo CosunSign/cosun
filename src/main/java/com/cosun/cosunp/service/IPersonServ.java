@@ -51,6 +51,8 @@ public interface IPersonServ {
 
     void deleteLianBanDateToMysql(Integer id) throws Exception;
 
+    void deletePinShiDateToMysql(Integer id) throws Exception;
+
     void deleteYeBanDateToMysql(Integer id) throws Exception;
 
     void deleteQianKaDateToMysql(Integer id) throws Exception;
@@ -96,6 +98,12 @@ public interface IPersonServ {
     void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
+
+    List<PinShiJiaBanBGS> findAllPinShi(PinShiJiaBanBGS ps) throws Exception;
+
+    List<Employee> findAllEmployeeAllOnlyBanGong() throws Exception;
+
+    int findAllPinShiCount() throws Exception;
 
     List<YeBan> findAllYeBan(YeBan yeBan) throws Exception;
 
@@ -166,6 +174,8 @@ public interface IPersonServ {
     int saveQianKaDateToMysql(QianKa qianKa) throws Exception;
 
     int saveLianBanDateToMysql(LianBan lianBan) throws Exception;
+
+    int savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception;
 
     int saveJiaBanDateToMysql(JiaBan jiaBan) throws Exception;
 
@@ -259,6 +269,11 @@ public interface IPersonServ {
 
 
     List<YeBan> queryYBByCondition(YeBan yeBan) throws Exception;
+
+
+    List<PinShiJiaBanBGS> queryPSByCondition(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception;
+
+    int queryPSByConditionCount(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception;
 
     int queryYBByConditionCount(YeBan yeBan) throws Exception;
 

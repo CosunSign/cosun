@@ -384,6 +384,24 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.queryKQBeanDataByConditionCount(kqBean);
     }
 
+    public int savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception {
+        Employee ee = personMapper.getEmployeeOneById(pinShiJiaBanBGS.getEmpId());
+        pinShiJiaBanBGS.setEmpNo(ee.getEmpNo());
+        PinShiJiaBanBGS oldPS = personMapper.getPinShiByEmpNo(pinShiJiaBanBGS.getEmpNo());
+        if (oldPS == null) {
+            personMapper.savePinShiDateToMysql(pinShiJiaBanBGS);
+            return 1;
+        } else {
+            personMapper.updatePinShiDateToMysql(pinShiJiaBanBGS);
+            return 2;
+        }
+    }
+
+
+    public void deletePinShiDateToMysql(Integer id) throws Exception {
+        personMapper.deletePinShiDateToMysql(id);
+    }
+
     public int queryZKOUTDataByConditionCount(Employee employee) throws Exception {
         return personMapper.queryZKOUTDataByConditionCount(employee);
     }
@@ -392,12 +410,32 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.getAllWorkSetListByYearMonth(yearMonth);
     }
 
+    public List<PinShiJiaBanBGS> queryPSByCondition(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception {
+        return personMapper.queryPSByCondition(pinShiJiaBanBGS);
+    }
+
+    public int queryPSByConditionCount(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception {
+        return personMapper.queryPSByConditionCount(pinShiJiaBanBGS);
+    }
+
+    public List<Employee> findAllEmployeeAllOnlyBanGong() throws Exception {
+        return personMapper.findAllEmployeeAllOnlyBanGong();
+    }
+
     public List<WorkDate> getAllWorkDateListByYearMonth(String yearMonth) throws Exception {
         return personMapper.getAllWorkDateListByYearMonth(yearMonth);
     }
 
     public int findAllZKAndOutDataCount() throws Exception {
         return personMapper.findAllZKAndOutDataCount();
+    }
+
+    public List<PinShiJiaBanBGS> findAllPinShi(PinShiJiaBanBGS ps) throws Exception {
+        return personMapper.findAllPinShi(ps);
+    }
+
+    public int findAllPinShiCount() throws Exception {
+        return personMapper.findAllPinShiCount();
     }
 
     public List<Employee> translateTabletoEmployeeBeanZK(List<MultipartFile> files) throws Exception {

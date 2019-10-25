@@ -395,6 +395,10 @@ public interface PersonMapper {
     @Select("select count(*) from employee where name = #{name}")
     int checkEmployIsExsit(String name);
 
+    @Delete("delete from pinshijiabanbgs where id = #{id} ")
+    void deletePinShiDateToMysql(Integer id);
+
+
     @Select("select count(*) from employee where empno = #{empoyeeNo}")
     int checkEmployNoIsExsit(String empoyeeNo);
 
@@ -426,6 +430,13 @@ public interface PersonMapper {
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryZKOUTDataByConditionCount")
     int queryZKOUTDataByConditionCount(Employee employee);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryPSByCondition")
+    List<PinShiJiaBanBGS> queryPSByCondition(PinShiJiaBanBGS pinShiJiaBanBGS);
+
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryPSByConditionCount")
+    int queryPSByConditionCount(PinShiJiaBanBGS pinShiJiaBanBGS);
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryKQBeanDataByCondition")
     List<KQBean> queryKQBeanDataByCondition(KQBean kqBean);
@@ -759,6 +770,23 @@ public interface PersonMapper {
             "\t\tORDER BY\n" +
             "\t\t\tNAME ASC ")
     List<Employee> findAllEmployeeAll();
+
+
+    @Select("SELECT\n" +
+            "\te.id AS id,\n" +
+            "\tname AS name,\n" +
+            "\tsex as sex,\n" +
+            "  d.deptname as deptName,\n" +
+            "  n.positionName as positionName,\n" +
+            "  n.positionLevel as positionLevel,\n" +
+            "  date_format(e.incompdate, '%Y-%m-%d') AS incomdateStr,\n" +
+            "  e.empno as empNo,worktype as workType,e.isQuit \n" +
+            "\t\tFROM\n" +
+            "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
+            "LEFT JOIN position n on e.positionId = n.id\n" +
+            "\t\t  where e.worktype = 1   ORDER BY\n" +
+            "\t\t\tNAME ASC ")
+    List<Employee> findAllEmployeeAllOnlyBanGong();
 
     @Select("select * from workdate where month = #{month} and positionLevel = #{positionLevel}")
     WorkDate getWorkDateByMonthAnPositionLevel(String month, String positionLevel);
@@ -1280,6 +1308,18 @@ public interface PersonMapper {
     Employee getEmployeeOneById(Integer id);
 
 
+    @Insert(" insert into pinshijiabanbgs (empNo,remark) values (#{empNo},#{remark}) ")
+    void savePinShiDateToMysql(PinShiJiaBanBGS ps);
+
+
+    @Update(" update pinshijiabanbgs set remark = {remark} where empNo = #{empNo} ")
+    void updatePinShiDateToMysql(PinShiJiaBanBGS ps);
+
+
+    @Select("select * from pinshijiabanbgs where empNo = #{empNo} ")
+    PinShiJiaBanBGS getPinShiByEmpNo(String empNo);
+
+
     @Select("select count(*) from yeban where empNo = #{empNo} and date = #{dateStr}")
     int getYeBanByEmpNoAndDateStr(String empNo, String dateStr);
 
@@ -1508,6 +1548,26 @@ public interface PersonMapper {
             "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
             "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
     List<LianBan> findAllLianBan(LianBan lianBan);
+
+
+    @Select(" SELECT\n" +
+            "\tqk.id,\n" +
+            "\tee.`name` as name,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname as deptName,\n" +
+            "\tn.positionname,\n" +
+            "\tqk.remark\n" +
+            "FROM\n" +
+            "\tpinshijiabanbgs qk\n" +
+            "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+            "LEFT JOIN dept t ON ee.deptId = t.id " +
+            "LEFT JOIN position n ON ee.positionId = n.id " +
+            "order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<PinShiJiaBanBGS> findAllPinShi(PinShiJiaBanBGS ps);
+
+
+    @Select("select count(*) from  pinshijiabanbgs  ")
+    int findAllPinShiCount();
 
 
     @Select(" SELECT\n" +
@@ -2942,6 +3002,64 @@ public interface PersonMapper {
             return sb.toString();
         }
 
+        public String queryPSByConditionCount(PinShiJiaBanBGS qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT count(*) " +
+                    "FROM\n" +
+                    "\tlianban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            sb.append(" order by qk.empNo asc,qk.date desc  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
+        public String queryPSByCondition(PinShiJiaBanBGS qianKa) {
+            StringBuilder sb = new StringBuilder(" SELECT\n" +
+                    "\tqk.id,\n" +
+                    "\tee.`name` as name,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname as deptName,\n" +
+                    "\tqk.remark\n" +
+                    "FROM\n" +
+                    "\tlianban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (qianKa.getNames() != null && qianKa.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(qianKa.getNames().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getEmpNo() != null && qianKa.getEmpNo() != "" && qianKa.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (qianKa.getDeptIds() != null && qianKa.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(qianKa.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (qianKa.getPositionIds() != null && qianKa.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(qianKa.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            sb.append(" order by qk.empNo asc,qk.date desc  limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
 
         public String queryLBByCondition(LianBan qianKa) {
             StringBuilder sb = new StringBuilder(" SELECT\n" +

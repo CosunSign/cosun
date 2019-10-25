@@ -57,8 +57,8 @@ public class PersonController {
     private String finalDirPath;
 
     public void getBeforeDayZhongKongData() throws Exception {
-        String beforDay = DateUtil.getBeforeDay();
-        //String beforDay = "2019-10-20";
+        //String beforDay = DateUtil.getBeforeDay();
+        String beforDay = "2019-10-24";
         String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
@@ -562,6 +562,25 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/savePinShiDateToMysql", method = RequestMethod.POST)
+    public void savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            int isSave = personServ.savePinShiDateToMysql(pinShiJiaBanBGS); //1正常保存 2.正常更新
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/saveJiaBanDateToMysql", method = RequestMethod.POST)
     public void saveJiaBanDateToMysql(JiaBan jiaBan, HttpServletResponse response, HttpSession session) throws Exception {
         try {
@@ -926,6 +945,36 @@ public class PersonController {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping("/toBanGongShiPinShiJiaBanRenYuan")
+    public ModelAndView toBanGongShiPinShiJiaBanRenYuan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("pingshijiabanBGS");
+            PinShiJiaBanBGS pinShiJiaBanBGS = new PinShiJiaBanBGS();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAllOnlyBanGong();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<PinShiJiaBanBGS> pinShiJiaBanBGSList = personServ.findAllPinShi(pinShiJiaBanBGS);
+            int recordCount = personServ.findAllPinShiCount();
+            int maxPage = recordCount % pinShiJiaBanBGS.getPageSize() == 0 ? recordCount / pinShiJiaBanBGS.getPageSize() : recordCount / pinShiJiaBanBGS.getPageSize() + 1;
+            pinShiJiaBanBGS.setMaxPage(maxPage);
+            pinShiJiaBanBGS.setRecordCount(recordCount);
+            view.addObject("pinShiJiaBanBGSList", pinShiJiaBanBGSList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("pinShiJiaBanBGS", pinShiJiaBanBGS);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/toqiankadan")
     public ModelAndView toqiankadan() throws Exception {
@@ -1005,6 +1054,36 @@ public class PersonController {
             view.addObject("empList1", empList1);
             view.addObject("empList", empList);
             view.addObject("lianBan", lianBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/deletePinShiDateToMysql")
+    public ModelAndView deletePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception {
+        try {
+            personServ.deletePinShiDateToMysql(pinShiJiaBanBGS.getId());
+            ModelAndView view = new ModelAndView("pingshijiabanBGS");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAllOnlyBanGong();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<PinShiJiaBanBGS> pinShiJiaBanBGSList = personServ.findAllPinShi(pinShiJiaBanBGS);
+            int recordCount = personServ.findAllPinShiCount();
+            int maxPage = recordCount % pinShiJiaBanBGS.getPageSize() == 0 ? recordCount / pinShiJiaBanBGS.getPageSize() : recordCount / pinShiJiaBanBGS.getPageSize() + 1;
+            pinShiJiaBanBGS.setMaxPage(maxPage);
+            pinShiJiaBanBGS.setRecordCount(recordCount);
+            view.addObject("pinShiJiaBanBGSList", pinShiJiaBanBGSList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("pinShiJiaBanBGS", pinShiJiaBanBGS);
             view.addObject("positionList", positionList);
             view.addObject("deptList", deptList);
             view.addObject("flag", 2);
@@ -2450,6 +2529,29 @@ public class PersonController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/queryPSByCondition", method = RequestMethod.POST)
+    public void queryPSByCondition(PinShiJiaBanBGS pinShiJiaBanBGS, HttpServletResponse response) throws Exception {
+        try {
+            List<PinShiJiaBanBGS> pinShiJiaBanBGSList = personServ.queryPSByCondition(pinShiJiaBanBGS);
+            int recordCount = personServ.queryPSByConditionCount(pinShiJiaBanBGS);
+            int maxPage = recordCount % pinShiJiaBanBGS.getPageSize() == 0 ? recordCount / pinShiJiaBanBGS.getPageSize() : recordCount / pinShiJiaBanBGS.getPageSize() + 1;
+            if (pinShiJiaBanBGSList.size() > 0) {
+                pinShiJiaBanBGSList.get(0).setMaxPage(maxPage);
+                pinShiJiaBanBGSList.get(0).setRecordCount(recordCount);
+                pinShiJiaBanBGSList.get(0).setCurrentPage(pinShiJiaBanBGS.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(pinShiJiaBanBGSList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     @ResponseBody
     @RequestMapping(value = "/queryLBByCondition", method = RequestMethod.POST)
