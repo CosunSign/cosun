@@ -814,6 +814,34 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
 
+    public List<YeBan> findAllYeBan(YeBan yeBan) throws Exception {
+        return personMapper.findAllYeBan(yeBan);
+    }
+
+    public int saveYeBanDateToMysql(YeBan yeBan) throws Exception {
+        Employee ee = personMapper.getEmployeeOneById(yeBan.getEmpId());
+        yeBan.setEmpNo(ee.getEmpNo());
+        //查看有没
+        int num = personMapper.getYeBanByEmpNoAndDateStr(ee.getEmpNo(), yeBan.getDateStr());
+        //有 更新
+        if (num == 0) {
+            personMapper.saveYeBanDateToMysql(yeBan);
+            return 1;
+        } else {
+            personMapper.updateYeBanDateToMysql(yeBan);
+            return 2;
+        }
+        //没有 保存
+    }
+
+    public void deleteYeBanDateToMysql(Integer id) throws Exception {
+        personMapper.deleteYeBanDateToMysql(id);
+    }
+
+    public int findAllYeBanCount() throws Exception {
+        return personMapper.findAllYeBanCount();
+    }
+
     public int queryLeaveByConditionCount(Leave leave) throws Exception {
         return personMapper.queryLeaveByConditionCount(leave);
     }
@@ -2905,6 +2933,13 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.queryQKByConditionCount(qianKa);
     }
 
+    public List<YeBan> queryYBByCondition(YeBan yeBan) throws Exception {
+        return personMapper.queryYBByCondition(yeBan);
+    }
+
+    public int queryYBByConditionCount(YeBan yeBan) throws Exception {
+        return personMapper.queryYBByConditionCount(yeBan);
+    }
 }
 
 

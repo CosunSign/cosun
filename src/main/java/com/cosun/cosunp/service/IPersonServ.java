@@ -51,6 +51,8 @@ public interface IPersonServ {
 
     void deleteLianBanDateToMysql(Integer id) throws Exception;
 
+    void deleteYeBanDateToMysql(Integer id) throws Exception;
+
     void deleteQianKaDateToMysql(Integer id) throws Exception;
 
     List<MonthKQInfo> findAllMonthKQData(String yearMonth) throws Exception;
@@ -94,6 +96,10 @@ public interface IPersonServ {
     void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
+
+    List<YeBan> findAllYeBan(YeBan yeBan) throws Exception;
+
+    int findAllYeBanCount() throws Exception;
 
     List<LianBan> findAllLianBan(LianBan lianBan) throws Exception;
 
@@ -162,6 +168,8 @@ public interface IPersonServ {
     int saveLianBanDateToMysql(LianBan lianBan) throws Exception;
 
     int saveJiaBanDateToMysql(JiaBan jiaBan) throws Exception;
+
+    int saveYeBanDateToMysql(YeBan yeBan) throws Exception;
 
     Employee getEmployeeByEmpno(String empNo) throws Exception;
 
@@ -241,13 +249,18 @@ public interface IPersonServ {
 
     List<LianBan> queryLBByCondition(LianBan lianBan) throws Exception;
 
-    List<JiaBan> queryJBByCondition(JiaBan jiaBan)  throws Exception;
+    List<JiaBan> queryJBByCondition(JiaBan jiaBan) throws Exception;
 
     int queryJBByConditionCount(JiaBan jiaBan) throws Exception;
 
     int queryLBByConditionCount(LianBan lianBan) throws Exception;
 
     int queryQKByConditionCount(QianKa qianKa) throws Exception;
+
+
+    List<YeBan> queryYBByCondition(YeBan yeBan) throws Exception;
+
+    int queryYBByConditionCount(YeBan yeBan) throws Exception;
 
     void deleteEmployeetById(Integer deleteEmployeetById) throws Exception;
 

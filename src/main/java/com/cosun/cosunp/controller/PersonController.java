@@ -523,6 +523,24 @@ public class PersonController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/saveYeBanDateToMysql", method = RequestMethod.POST)
+    public void saveYeBanDateToMysql(YeBan yeBan, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            int isSave = personServ.saveYeBanDateToMysql(yeBan); //1正常保存 2.正常更新
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/saveLianBanDateToMysql", method = RequestMethod.POST)
@@ -850,6 +868,36 @@ public class PersonController {
     }
 
     @ResponseBody
+    @RequestMapping("/tonightworkdan")
+    public ModelAndView tonightworkdan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("yeban");
+            YeBan yeBan = new YeBan();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<YeBan> yeBanList = personServ.findAllYeBan(yeBan);
+            int recordCount = personServ.findAllYeBanCount();
+            int maxPage = recordCount % yeBan.getPageSize() == 0 ? recordCount / yeBan.getPageSize() : recordCount / yeBan.getPageSize() + 1;
+            yeBan.setMaxPage(maxPage);
+            yeBan.setRecordCount(recordCount);
+            view.addObject("yeBanList", yeBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("yeBan", yeBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
     @RequestMapping("/tolianbandan")
     public ModelAndView tolianbandan() throws Exception {
         try {
@@ -967,6 +1015,38 @@ public class PersonController {
             throw e;
         }
     }
+
+
+    @ResponseBody
+    @RequestMapping("/deleteYeBanDateToMysql")
+    public ModelAndView deleteYeBanDateToMysql(YeBan yeBan) throws Exception {
+        try {
+            personServ.deleteYeBanDateToMysql(yeBan.getId());
+            ModelAndView view = new ModelAndView("yeban");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<YeBan> yeBanList = personServ.findAllYeBan(yeBan);
+            int recordCount = personServ.findAllYeBanCount();
+            int maxPage = recordCount % yeBan.getPageSize() == 0 ? recordCount / yeBan.getPageSize() : recordCount / yeBan.getPageSize() + 1;
+            yeBan.setMaxPage(maxPage);
+            yeBan.setRecordCount(recordCount);
+            view.addObject("yeBanList", yeBanList);
+            view.addObject("empList1", empList1);
+            view.addObject("empList", empList);
+            view.addObject("yeBan", yeBan);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("flag", 2);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping("/deleteQianKaDateToMysql")
@@ -2335,6 +2415,31 @@ public class PersonController {
             ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
 
             str1 = x.writeValueAsString(leaveList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryYBByCondition", method = RequestMethod.POST)
+    public void queryYBByCondition(YeBan yeBan, HttpServletResponse response) throws Exception {
+        try {
+            List<YeBan> leaveList = personServ.queryYBByCondition(yeBan);
+            int recordCount = personServ.queryYBByConditionCount(yeBan);
+            int maxPage = recordCount % yeBan.getPageSize() == 0 ? recordCount / yeBan.getPageSize() : recordCount / yeBan.getPageSize() + 1;
+            if (leaveList.size() > 0) {
+                leaveList.get(0).setMaxPage(maxPage);
+                leaveList.get(0).setRecordCount(recordCount);
+                leaveList.get(0).setCurrentPage(yeBan.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            String str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
             response.getWriter().print(str1); //返回前端ajax

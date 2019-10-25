@@ -453,6 +453,13 @@ public interface PersonMapper {
     List<QianKa> queryQKByCondition(QianKa qianKa);
 
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryYBByConditionCount")
+    int queryYBByConditionCount(YeBan yeBan);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryYBByCondition")
+    List<YeBan> queryYBByCondition(YeBan yeBan);
+
+
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLBByConditionCount")
     int queryLBByConditionCount(LianBan lianBan);
 
@@ -1273,6 +1280,10 @@ public interface PersonMapper {
     Employee getEmployeeOneById(Integer id);
 
 
+    @Select("select count(*) from yeban where empNo = #{empNo} and date = #{dateStr}")
+    int getYeBanByEmpNoAndDateStr(String empNo, String dateStr);
+
+
     @Delete("delete from qianka where id = #{id}")
     void deleteQianKaDateToMysql(Integer id);
 
@@ -1326,6 +1337,19 @@ public interface PersonMapper {
             "\t#{type},\n" +
             "\t#{remark})")
     void saveLianBanBeanToSql(LianBan lianBan);
+
+
+    @Insert(" insert into yeban (" +
+            "empNo,\n" +
+            "\tdate,\n" +
+            "\tremark) values (" +
+            "  #{empNo},\n" +
+            "\t#{dateStr},\n" +
+            "\t#{remark})")
+    void saveYeBanDateToMysql(YeBan yeBan);
+
+    @Update(" update yeban set remark = #{remark} where empNo = #{empNo} and date = #{dateStr}")
+    void updateYeBanDateToMysql(YeBan yeBan);
 
     @Insert(" insert into jiaBan (empNo,\n" +
             "\ttype,\n" +
@@ -1484,6 +1508,27 @@ public interface PersonMapper {
             "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
             "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
     List<LianBan> findAllLianBan(LianBan lianBan);
+
+
+    @Select(" SELECT\n" +
+            "\tqk.id,\n" +
+            "\tee.`name` as name,\n" +
+            "\tee.empno,\n" +
+            "\tt.deptname as deptName,\n" +
+            "\tqk.date AS dateStr,\n" +
+            "\tqk.remark\n" +
+            "FROM\n" +
+            "\tyeban qk\n" +
+            "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+            "LEFT JOIN dept t ON ee.deptId = t.id order by ee.empNo asc limit #{currentPageTotalNum},#{pageSize}")
+    List<YeBan> findAllYeBan(YeBan yeBan);
+
+    @Select("select count(*) from yeban")
+    int findAllYeBanCount();
+
+
+    @Delete(" delete from yeban where id = #{id} ")
+    void deleteYeBanDateToMysql(Integer id);
 
 
     @Select("select count(*) from jiaban ")
@@ -2820,6 +2865,80 @@ public interface PersonMapper {
             } else if (qianKa.getEndLianBanStr() != null && qianKa.getEndLianBanStr().length() > 0) {
                 sb.append(" and qk.date <= #{endLianBanStr}");
             }
+            return sb.toString();
+        }
+
+
+        public String queryYBByConditionCount(YeBan yeBan) {
+            StringBuilder sb = new StringBuilder(" SELECT count(*) " +
+                    "FROM\n" +
+                    "\tyeban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (yeBan.getNames() != null && yeBan.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(yeBan.getNames().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getEmpNo() != null && yeBan.getEmpNo() != "" && yeBan.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (yeBan.getDeptIds() != null && yeBan.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(yeBan.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getPositionIds() != null && yeBan.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(yeBan.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getBeginYeBanStr() != null && yeBan.getBeginYeBanStr().length() > 0 && yeBan.getEndYeBanStr() != null && yeBan.getEndYeBanStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginYeBanStr} and qk.date  <= #{endYeBanStr}");
+            } else if (yeBan.getBeginYeBanStr() != null && yeBan.getBeginYeBanStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginYeBanStr}");
+            } else if (yeBan.getEndYeBanStr() != null && yeBan.getEndYeBanStr().length() > 0) {
+                sb.append(" and qk.date <= #{endYeBanStr}");
+            }
+            return sb.toString();
+        }
+
+        public String queryYBByCondition(YeBan yeBan) {
+            StringBuilder sb = new StringBuilder(" SELECT\n" +
+                    "\tqk.id,\n" +
+                    "\tee.`name` as name,\n" +
+                    "\tee.empno,\n" +
+                    "\tt.deptname as deptName,\n" +
+                    "\tqk.date AS dateStr,\n" +
+                    "\tqk.remark\n" +
+                    "FROM\n" +
+                    "\tyeban qk\n" +
+                    "LEFT JOIN employee ee ON ee.empno = qk.empNo\n" +
+                    "LEFT JOIN dept t ON ee.deptId = t.id " +
+                    "left join position n on ee.positionId = n.id where 1=1 ");
+            if (yeBan.getNames() != null && yeBan.getNames().size() > 0) {
+                sb.append(" and ee.id in (" + StringUtils.strip(yeBan.getNames().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getEmpNo() != null && yeBan.getEmpNo() != "" && yeBan.getEmpNo().trim().length() > 0) {
+                sb.append(" and qk.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (yeBan.getDeptIds() != null && yeBan.getDeptIds().size() > 0) {
+                sb.append(" and ee.deptId in (" + StringUtils.strip(yeBan.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getPositionIds() != null && yeBan.getPositionIds().size() > 0) {
+                sb.append(" and ee.positionId in (" + StringUtils.strip(yeBan.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (yeBan.getBeginYeBanStr() != null && yeBan.getBeginYeBanStr().length() > 0 && yeBan.getEndYeBanStr() != null && yeBan.getEndYeBanStr().length() > 0) {
+                sb.append(" and qk.date  >= #{beginYeBanStr} and qk.date  <= #{endYeBanStr}");
+            } else if (yeBan.getBeginYeBanStr() != null && yeBan.getBeginYeBanStr().length() > 0) {
+                sb.append(" and qk.date >= #{beginYeBanStr}");
+            } else if (yeBan.getEndYeBanStr() != null && yeBan.getEndYeBanStr().length() > 0) {
+                sb.append(" and qk.date <= #{endYeBanStr}");
+            }
+            sb.append(" order by qk.empNo asc,qk.date desc  limit #{currentPageTotalNum},#{pageSize}");
             return sb.toString();
         }
 
