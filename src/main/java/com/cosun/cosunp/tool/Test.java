@@ -1,6 +1,8 @@
 package com.cosun.cosunp.tool;
 
 import com.alibaba.fastjson.JSON;
+import com.cosun.cosunp.entity.KQBean;
+import com.cosun.cosunp.service.IPersonServ;
 
 import java.awt.*;
 import java.io.*;
@@ -8,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,11 +27,10 @@ public class Test {
             "	\"ftp://admin:FL33771@192.168.0.152/admin/201906/凡钟俊/03063247/COSUN20190108WW26/IntelliJ IDEA 2018.5.zip\":\"E:/myFile/111/IntelliJ IDEA 2018.5.zip\"\r\n}";
 
     public static void main(String[] arg) {
-        File javaFile = new File("E:\\WAMP\\wamp\\www\\cosunp\\src\\main\\java\\com\\cosun\\cosunp");
         try {
-            int num = getProjectFileNumber(javaFile, ".java");
-            System.out.println(num);
-        }catch (Exception e) {
+            File file = new File("E:\\WAMP\\wamp\\www\\cosunp\\src\\main\\resources\\templates");
+            System.out.println(getProjectFileNumber(file,"html"));
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

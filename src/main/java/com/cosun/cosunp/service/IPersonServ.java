@@ -131,7 +131,7 @@ public interface IPersonServ {
 
     List<KQBean> getAllKQDataByYearMonthDay(String date) throws Exception;
 
-    List<KQBean> getAfterOperatorDataByOriginData(List<KQBean> kqBeans) throws Exception;
+    List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates ,List<KQBean> kqBeans) throws Exception;
 
     List<KQBean> getAllKQDataByYearMonthDays(List<OutClockIn> clockDates) throws Exception;
 

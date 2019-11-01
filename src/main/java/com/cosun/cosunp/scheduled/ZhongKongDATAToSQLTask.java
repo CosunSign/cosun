@@ -25,11 +25,12 @@ import java.net.URL;
 @EnableScheduling
 public class ZhongKongDATAToSQLTask {
 
-    //@Scheduled(fixedRate = 50000)
+    //@Scheduled(fixedRate = 500000)
     @Scheduled(cron = "0 0 05 * * ?")
     private void configureTasks() {
         try {
             new PersonController().getBeforeDayZhongKongData();
+            //new PersonController().getKQBean();
         } catch (Exception e) {
             e.printStackTrace();
         }

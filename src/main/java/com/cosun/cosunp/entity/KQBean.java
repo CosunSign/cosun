@@ -26,6 +26,9 @@ public class KQBean implements Serializable {
     private Double extWorkHours;//加班工时
     private String remark;//说明
     private Integer clockResultByRenShi;
+    private String havePinShi;
+
+    private String positionLevel;
 
     private String nameReal;
 
@@ -75,6 +78,22 @@ public class KQBean implements Serializable {
     private List<Integer> workTypes;
     private List<String> clockDates;
 
+
+    public String getHavePinShi() {
+        return havePinShi;
+    }
+
+    public void setHavePinShi(String havePinShi) {
+        this.havePinShi = havePinShi;
+    }
+
+    public String getPositionLevel() {
+        return positionLevel;
+    }
+
+    public void setPositionLevel(String positionLevel) {
+        this.positionLevel = positionLevel;
+    }
 
     public String getNameReal() {
         return nameReal;

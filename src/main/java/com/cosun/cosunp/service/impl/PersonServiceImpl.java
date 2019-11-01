@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,6 +94,7 @@ public class PersonServiceImpl implements IPersonServ {
     Integer otherCertiTitleIndex;
     String attributeTitle = "属性";
     Integer attributeTitleIndex;
+    private String timeStrDy2;
 
 
     public void saveZKNumEmpNoBangDing(List<Employee> employeeList) throws Exception {
@@ -2202,7 +2204,8 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
     }
 
-    public List<KQBean> getAfterOperatorDataByOriginData(List<KQBean> kqBeans) throws Exception {
+    @Transactional
+    public List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates, List<KQBean> kqBeans) throws Exception {
         List<KQBean> kqBeanList = new ArrayList<KQBean>();
         KQBean aaa = new KQBean();
         List<Employee> employeeList = personMapper.findAllEmployeeAll();
@@ -2222,12 +2225,17 @@ public class PersonServiceImpl implements IPersonServ {
         KQBean otw = null;
         OutClockIn outClockIn = null;
         String outtimeStr = "";
+        YeBan yb = null;
+        String abcd = null;
+        String[] allNum = null;
+        String intNum = "";
+        String deciNum = "";
 
         for (int i = 0; i < emLen; i++) {
             em = employeeList.get(i);
             workDateList = personMapper.getWorkDateByMonthAnPositionLevelList(yearMonth, em.getPositionLevel());
             for (WorkDate workDate : workDateList) {
-                int type = workDate.getType();//0正常工时  1 周末加班  2 法定假日
+                int type = workDate.getType();
                 if (workDate != null) {
                     for (int j = 0; j < workDate.getWorkDatess().length; j++) {
                         date = Integer.valueOf(workDate.getWorkDatess()[j]);
@@ -2253,199 +2261,426 @@ public class PersonServiceImpl implements IPersonServ {
                                     workSet = personMapper.getWorkSetByMonthAndPositionLevel2(yearMonth, em.getPositionLevel());
                                     Time time = null;
 
-                                    if (workDate.getType() == 2) {
-                                        otw.setRemark("法定假日");
-                                        otw.setClockResult(4);
-                                        otw.setaOnRemark("法定假日");
-                                        otw.setClockResult(4);
-                                        otw.setaOffRemark("法定假日");
-                                        otw.setClockResult(4);
-                                        otw.setpOnRemark("法定假日");
-                                        otw.setClockResult(4);
-                                        otw.setpOffRemark("法定假日");
-                                        otw.setClockResult(4);
+                                    yb = personMapper.getYeBanByEmpNoAndDateStrNew(co.getEmpNo(), co.getDateStr());
+                                    if (yb != null) {
+                                        Double zhengBanHours = 0.0;
+                                        Double extHourss = 0.0;
+                                        String remark = "";
+                                        List<Time> timeListYe = getTimeList(co.getTimeStr());
+                                        for (Time tim : timeListYe) {
+                                            if (tim.before(workSet.getMorningOnEnd()) && tim.after(workSet.getMorningOnFrom())) {
+                                                aon = true;
+                                            }
+                                            if (tim.before(workSet.getMorningOffEnd()) && tim.after(workSet.getMorningOffFrom())) {
+                                                aoff = true;
+                                            }
+                                            if (tim.before(workSet.getNoonOnEnd()) && tim.after(workSet.getNoonOnFrom())) {
+                                                pon = true;
+                                            }
+                                            if (tim.before(workSet.getNoonOffEnd()) && tim.after(workSet.getNoonOffFrom())) {
+                                                poff = true;
+                                            }
+
+                                        }
+
+                                        if (aon && (aoff || pon || poff)) {
+                                            zhengBanHours = 4.0;
+                                            Time offTime = null;
+                                            for (int aa = timeListYe.size() - 1; aa >= 0; aa--) {
+                                                if (timeListYe.get(aa).before(workSet.getNoonOffEnd())) {
+                                                    offTime = timeListYe.get(aa);
+                                                    break;
+                                                }
+                                            }
+                                            if (offTime != null) {
+                                                Long abc = offTime.getTime() - workSet.getNoonOn().getTime();
+                                                extHourss = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                abcd = String.format("%.1f", extHourss);
+                                                if (abcd != null && !extHourss.equals("0.0")) {
+                                                    String ccc = String.valueOf(abcd);
+                                                    allNum = String.valueOf(abcd).split("\\.");
+                                                    intNum = allNum[0];
+                                                    deciNum = allNum[1];
+                                                    if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                        deciNum = "0";
+                                                    } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                        deciNum = "5";
+                                                    }
+                                                    zhengBanHours += Double.valueOf(intNum + "." + deciNum);
+                                                }
+                                            }
+                                        }
+
+                                        Time yeBanStar = timeListYe.get(timeListYe.size() - 1);
+                                        Time yeBanEnd = null;
+                                        String day2 = DateUtil.getAfterDay(co.getDateStr());
+                                        ZhongKongBean timeStrDy2 = personMapper.getZKBeanByEmpNoAndDateStr(co.getEmpNo(), day2);
+                                        if (timeStrDy2 != null && timeStrDy2.getTimeStr() != null && timeStrDy2.getTimeStr().trim().length() > 0) {
+                                            List<Time> timeList2 = getTimeList(timeStrDy2.getTimeStr());
+                                            yeBanEnd = timeList2.get(0);
+                                        }
+
+                                        if (yeBanEnd != null) {
+                                            String dayTimeBefor = co.getDateStr() + " " + yeBanStar;
+                                            String dayTimeAfter = day2 + " " + yeBanEnd;
+                                            DateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                            Date dayBeF = dft.parse(dayTimeBefor);
+                                            Date dayAfT = dft.parse(dayTimeAfter);
+                                            Long abc = dayAfT.getTime() - dayBeF.getTime();
+                                            extHourss = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                            abcd = String.format("%.1f", extHourss);
+                                            if (abcd != null && !extHourss.equals("0.0")) {
+                                                String ccc = String.valueOf(abcd);
+                                                allNum = String.valueOf(abcd).split("\\.");
+                                                intNum = allNum[0];
+                                                deciNum = allNum[1];
+                                                if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                    deciNum = "0";
+                                                } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                    deciNum = "5";
+                                                }
+                                                zhengBanHours += Double.valueOf(intNum + "." + deciNum);
+                                            }
+                                        }
+                                        otw.setClockResult(13);
+                                        otw.setExtWorkHours(zhengBanHours);
+                                        otw.setTimeStr(co.getTimeStr());
                                         kqBeanList.add(otw);
-                                        continue;
-                                    }
-                                    if (workSet != null) {
-                                        if (kqBeans.get(k).getTimeStr() != null && kqBeans.get(k).getTimeStr().length() > 0) {
-                                            otw.setTimeStr(kqBeans.get(k).getTimeStr());
-                                            List<Time> timeList = this.getTimeList(kqBeans.get(k).getTimeStr());
-                                            for (int a = 0; a < timeList.size(); a++) {
-                                                time = timeList.get(a);
-                                                //上午上班
-                                                if (workSet.getMorningOn() != null) {
-                                                    if (workSet.getMorningOnFrom() != null && workSet.getMorningOnEnd() != null) {
-                                                        if (time.after(workSet.getMorningOnFrom()) && !time.after(workSet.getMorningOnEnd()) || (time.equals(workSet.getMorningOn()))) {
-                                                            aon = true;
-                                                            otw.setaOnTime(time.toString());
-                                                            if (type == 0) {
-                                                                if (isWeekEnd && em.getWorkType() == 0) {
-                                                                    otw.setaOnRemark("周六加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setaOnRemark("正常");
-                                                                    otw.setClockResult(1);
+                                        //7:41:33 12:4:22 13:27:47 15:31:38 21:56:2
+                                        // 8:0:46 21:55:46
+
+                                    } else {
+                                        if (workDate.getType() == 2) {
+                                            otw.setRemark("法定假日");
+                                            otw.setClockResult(4);
+                                            otw.setaOnRemark("法定假日");
+                                            otw.setClockResult(4);
+                                            otw.setaOffRemark("法定假日");
+                                            otw.setClockResult(4);
+                                            otw.setpOnRemark("法定假日");
+                                            otw.setClockResult(4);
+                                            otw.setpOffRemark("法定假日");
+                                            otw.setClockResult(4);
+                                            kqBeanList.add(otw);
+                                            continue;
+                                        }
+                                        if (workSet != null) {
+                                            if (kqBeans.get(k).getTimeStr() != null && kqBeans.get(k).getTimeStr().length() > 0) {
+                                                otw.setTimeStr(kqBeans.get(k).getTimeStr());
+                                                List<Time> timeList = this.getTimeList(kqBeans.get(k).getTimeStr());
+                                                for (int a = 0; a < timeList.size(); a++) {
+                                                    time = timeList.get(a);
+                                                    if (workSet.getMorningOn() != null) {
+                                                        if (workSet.getMorningOnFrom() != null && workSet.getMorningOnEnd() != null) {
+                                                            if (time.after(workSet.getMorningOnFrom()) && !time.after(workSet.getMorningOnEnd()) || (time.equals(workSet.getMorningOn()))) {
+                                                                aon = true;
+                                                                otw.setaOnTime(time.toString());
+                                                                if (type == 0) {
+                                                                    if (isWeekEnd && em.getWorkType() == 0) {
+                                                                        otw.setaOnRemark("周六加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setaOnRemark("正常");
+                                                                        otw.setClockResult(1);
+                                                                    }
+                                                                } else if (type == 1) {
+                                                                    if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                        otw.setaOnRemark("周末加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setaOnRemark("周末不上班");
+                                                                        otw.setClockResult(5);
+                                                                    }
+                                                                } else if (type == 2) {
+                                                                    otw.setaOnRemark("法定假日加班");
+                                                                    otw.setClockResult(9);
                                                                 }
-                                                            } else if (type == 1) {
-                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
-                                                                    otw.setaOnRemark("周末加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setaOnRemark("周末不上班");
-                                                                    otw.setClockResult(5);
-                                                                }
-                                                            } else if (type == 2) {
-                                                                otw.setaOnRemark("法定假日加班");
-                                                                otw.setClockResult(9);
                                                             }
+                                                        } else {
+                                                            kqBeanList.add(aaa);
+                                                            return kqBeanList;
                                                         }
                                                     } else {
                                                         kqBeanList.add(aaa);
                                                         return kqBeanList;
                                                     }
-                                                } else {
-                                                    kqBeanList.add(aaa);
-                                                    return kqBeanList;
-                                                }
-                                                //上午下班
-                                                if (workSet.getMorningOff() != null) {
-                                                    if (workSet.getMorningOffFrom() != null && workSet.getMorningOffEnd() != null) {
-                                                        if (time.after(workSet.getMorningOffFrom()) && !time.after(workSet.getMorningOffEnd()) || (time.equals(workSet.getMorningOff()))) {
-                                                            aoff = true;
-                                                            otw.setaOffTime(time.toString());
-                                                            if (type == 0) {
-                                                                if (isWeekEnd && em.getWorkType() == 0) {
-                                                                    otw.setaOffRemark("周六加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setaOffRemark("正常");
-                                                                    otw.setClockResult(1);
+                                                    if (workSet.getMorningOff() != null) {
+                                                        if (workSet.getMorningOffFrom() != null && workSet.getMorningOffEnd() != null) {
+                                                            if (time.after(workSet.getMorningOffFrom()) && !time.after(workSet.getMorningOffEnd()) || (time.equals(workSet.getMorningOff()))) {
+                                                                aoff = true;
+                                                                otw.setaOffTime(time.toString());
+                                                                if (type == 0) {
+                                                                    if (isWeekEnd && em.getWorkType() == 0) {
+                                                                        otw.setaOffRemark("周六加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setaOffRemark("正常");
+                                                                        otw.setClockResult(1);
+                                                                    }
+                                                                } else if (type == 1) {
+                                                                    if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                        otw.setaOffRemark("周末加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setaOffRemark("周末不上班");
+                                                                        otw.setClockResult(5);
+                                                                    }
+                                                                } else if (type == 2) {
+                                                                    otw.setaOffRemark("法定假日加班");
+                                                                    otw.setClockResult(9);
                                                                 }
-                                                            } else if (type == 1) {
-                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
-                                                                    otw.setaOffRemark("周末加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setaOffRemark("周末不上班");
-                                                                    otw.setClockResult(5);
-                                                                }
-                                                            } else if (type == 2) {
-                                                                otw.setaOffRemark("法定假日加班");
-                                                                otw.setClockResult(9);
                                                             }
+                                                        } else {
+                                                            aoff = true;
                                                         }
                                                     } else {
                                                         aoff = true;
                                                     }
-                                                } else {
-                                                    aoff = true;
-                                                }
-                                                //下午上班
-                                                if (workSet.getNoonOn() != null) {
-                                                    if (workSet.getNoonOnFrom() != null && workSet.getNoonOnEnd() != null) {
-                                                        if (time.after(workSet.getNoonOnFrom()) && !time.after(workSet.getNoonOnEnd()) || (time.equals(workSet.getNoonOn()))) {
-                                                            pon = true;
-                                                            otw.setpOnTime(time.toString());
-                                                            if (type == 0) {
-                                                                if (isWeekEnd && em.getWorkType() == 0) {
-                                                                    otw.setpOnRemark("周六加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setpOnRemark("正常");
-                                                                    otw.setClockResult(1);
+                                                    if (workSet.getNoonOn() != null) {
+                                                        if (workSet.getNoonOnFrom() != null && workSet.getNoonOnEnd() != null) {
+                                                            if (time.after(workSet.getNoonOnFrom()) && !time.after(workSet.getNoonOnEnd()) || (time.equals(workSet.getNoonOn()))) {
+                                                                pon = true;
+                                                                otw.setpOnTime(time.toString());
+                                                                if (type == 0) {
+                                                                    if (isWeekEnd && em.getWorkType() == 0) {
+                                                                        otw.setpOnRemark("周六加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setpOnRemark("正常");
+                                                                        otw.setClockResult(1);
+                                                                    }
+                                                                } else if (type == 1) {
+                                                                    if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                        otw.setpOnRemark("周末加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setpOnRemark("周末不上班");
+                                                                        otw.setClockResult(5);
+                                                                    }
+                                                                } else if (type == 2) {
+                                                                    otw.setpOnRemark("法定假日加班");
+                                                                    otw.setClockResult(9);
                                                                 }
-                                                            } else if (type == 1) {
-                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
-                                                                    otw.setpOnRemark("周末加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setpOnRemark("周末不上班");
-                                                                    otw.setClockResult(5);
-                                                                }
-                                                            } else if (type == 2) {
-                                                                otw.setpOnRemark("法定假日加班");
-                                                                otw.setClockResult(9);
                                                             }
+                                                        } else {
+                                                            pon = true;
                                                         }
                                                     } else {
                                                         pon = true;
                                                     }
-                                                } else {
-                                                    pon = true;
-                                                }
-                                                //下午下班
-                                                if (workSet.getNoonOff() != null) {
-                                                    if (workSet.getNoonOffFrom() != null) {
-                                                        if (time.after(workSet.getNoonOffFrom()) || (time.equals(workSet.getNoonOff()))) {
-                                                            poff = true;
-                                                            otw.setpOffTime(time.toString());
-                                                            if (type == 0) {
-                                                                if (isWeekEnd && em.getWorkType() == 0) {
-                                                                    otw.setpOffRemark("周六加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setpOffRemark("正常");
-                                                                    otw.setClockResult(1);
+                                                    if (workSet.getNoonOff() != null) {
+                                                        if (workSet.getNoonOffFrom() != null) {
+                                                            if (time.after(workSet.getNoonOffFrom()) || (time.equals(workSet.getNoonOff()))) {
+                                                                poff = true;
+                                                                otw.setpOffTime(time.toString());
+                                                                if (type == 0) {
+                                                                    if (isWeekEnd && em.getWorkType() == 0) {
+                                                                        otw.setpOffRemark("周六加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setpOffRemark("正常");
+                                                                        otw.setClockResult(1);
+                                                                    }
+                                                                } else if (type == 1) {
+                                                                    if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
+                                                                        otw.setpOffRemark("周末加班");
+                                                                        otw.setClockResult(1);
+                                                                    } else {
+                                                                        otw.setpOffRemark("周末不上班");
+                                                                        otw.setClockResult(5);
+                                                                    }
+                                                                } else if (type == 2) {
+                                                                    otw.setpOffRemark("法定假日加班");
+                                                                    otw.setClockResult(9);
                                                                 }
-                                                            } else if (type == 1) {
-                                                                if (workDate.getEmpNostr() != null && workDate.getEmpNostr().contains(em.getEmpNo())) {
-                                                                    otw.setpOffRemark("周末加班");
-                                                                    otw.setClockResult(1);
-                                                                } else {
-                                                                    otw.setpOffRemark("周末不上班");
-                                                                    otw.setClockResult(5);
-                                                                }
-                                                            } else if (type == 2) {
-                                                                otw.setpOffRemark("法定假日加班");
-                                                                otw.setClockResult(9);
                                                             }
+                                                        } else {
+                                                            poff = true;
                                                         }
                                                     } else {
                                                         poff = true;
                                                     }
-                                                } else {
-                                                    poff = true;
-                                                }
-                                                //晚上加班
-                                                Double extHours = 0.0;
-                                                String abcd = null;
-                                                String[] allNum = null;
-                                                String intNum = "";
-                                                String deciNum = "";
-                                                if (workSet.getExtworkon() != null) {
-                                                    Time lastT = timeList.get(timeList.size() - 1);
-                                                    if (lastT.after(workSet.getExtworkon())) {
-                                                        if (lastT.after(workSet.getExtworkoff())) {
-                                                            lastT = workSet.getExtworkoff();
-                                                        }
-                                                        Long abc = lastT.getTime() - workSet.getExtworkon().getTime();
-                                                        extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
-                                                        abcd = String.format("%.1f", extHours);
-                                                        if (abcd != null && !extHours.equals("0.0")) {
-                                                            String ccc = String.valueOf(abcd);
-                                                            allNum = String.valueOf(abcd).split("\\.");
-                                                            intNum = allNum[0];
-                                                            deciNum = allNum[1];
-                                                            if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
-                                                                deciNum = "0";
-                                                            } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
-                                                                deciNum = "5";
+                                                    Double extHours = 0.0;
+                                                    abcd = null;
+                                                    allNum = null;
+                                                    intNum = "";
+                                                    deciNum = "";
+                                                    if (workSet.getExtworkon() != null) {
+                                                        Time lastT = timeList.get(timeList.size() - 1);
+                                                        if (lastT.after(workSet.getExtworkon())) {
+                                                            if (lastT.after(workSet.getExtworkoff())) {
+                                                                lastT = workSet.getExtworkoff();
                                                             }
-                                                            extHours = Double.valueOf(intNum + "." + deciNum);
+                                                            Long abc = lastT.getTime() - workSet.getExtworkon().getTime();
+                                                            extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                            abcd = String.format("%.1f", extHours);
+                                                            if (abcd != null && !extHours.equals("0.0")) {
+                                                                String ccc = String.valueOf(abcd);
+                                                                allNum = String.valueOf(abcd).split("\\.");
+                                                                intNum = allNum[0];
+                                                                deciNum = allNum[1];
+                                                                if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                                    deciNum = "0";
+                                                                } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                                    deciNum = "5";
+                                                                }
+                                                                extHours = Double.valueOf(intNum + "." + deciNum);
+                                                            }
+                                                            otw.setExtWorkOnTime(workSet.getExtworkon().toString());
+                                                            otw.setExtWorkOffTime(lastT.toString());
+                                                            if (extHours >= 0) {
+                                                                otw.setExtWorkHours(extHours);
+                                                            }
+                                                            // }
                                                         }
-                                                        otw.setExtWorkOnTime(workSet.getExtworkon().toString());
-                                                        otw.setExtWorkOffTime(lastT.toString());
-                                                        if (extHours >= 0) {
-                                                            otw.setExtWorkHours(extHours);
-                                                        }
-                                                        // }
                                                     }
                                                 }
-                                            }
 
-                                            if (!aon) {
-                                                Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn().toString());
+                                                if (!aon) {
+                                                    Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setaOnRemark("正常请假");
+                                                            otw.setRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setaOnRemark("因公外出");
+                                                            otw.setRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 1) {
+                                                            otw.setaOnRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
+                                                        }
+                                                    } else {
+                                                        //此填入未上满正班计正班工时代码
+
+
+                                                        otw.setaOnRemark("上午上班");
+                                                        otw.setRemark("打卡时间不在规定时间范围内");
+                                                        otw.setClockResult(7);
+                                                    }
+                                                }
+                                                if (!aoff) {
+                                                    Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOff().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setaOnRemark("正常请假");
+                                                            otw.setRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setaOffRemark("因公外出");
+                                                            otw.setRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 1) {
+                                                            otw.setaOffRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
+                                                        }
+                                                    } else {
+                                                        otw.setaOffRemark("上午下班");
+                                                        otw.setRemark("打卡时间不在规定时间范围内");
+                                                        otw.setClockResult(7);
+                                                    }
+                                                }
+
+                                                if (!pon) {
+                                                    Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOn().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setpOnRemark("正常请假");
+                                                            otw.setRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setpOnRemark("因公外出");
+                                                            otw.setRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 1) {
+                                                            otw.setpOnRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
+                                                        }
+                                                    } else {
+                                                        otw.setpOnRemark("下午上班");
+                                                        otw.setRemark("打卡时间不在规定时间范围内");
+                                                        otw.setClockResult(7);
+                                                    }
+                                                }
+
+                                                if (!poff) {
+                                                    Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOff().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setpOffRemark("正常请假");
+                                                            otw.setRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setpOffRemark("因公外出");
+                                                            otw.setRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 2) {
+                                                            otw.setpOffRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
+                                                        }
+                                                    } else {
+                                                        otw.setpOffRemark("下午下班");
+                                                        otw.setRemark("打卡时间不在规定时间范围内");
+                                                        otw.setClockResult(7);
+                                                    }
+                                                }
+
+                                            } else {
+                                                Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", "2019-" + monstr + "-" + date + " " + "17:30:00");
+                                                if (leave != null) {
+                                                    if (leave.getType() == 0) {
+                                                        otw.setRemark("正常请假");
+                                                        otw.setClockResult(6);
+                                                    } else if (leave.getType() == 1) {
+                                                        outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                        if (outClockIn != null) {
+                                                            outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                        }
+                                                        otw.setTimeStr(outtimeStr);
+                                                        otw.setRemark("因公外出");
+                                                        otw.setClockResult(2);
+                                                    } else if (leave.getType() == 2) {
+                                                        otw.setRemark("带薪年假");
+                                                        otw.setClockResult(3);
+                                                    }
+                                                } else {
+                                                    if (type == 0) {
+                                                        otw.setRemark("旷工");
+                                                        otw.setClockResult(8);
+                                                    } else if (type == 1) {
+                                                        otw.setRemark("周末不上班");
+                                                        otw.setClockResult(5);
+                                                    } else if (type == 2) {
+                                                        otw.setRemark("法定带薪假日");
+                                                        otw.setClockResult(4);
+                                                    }
+                                                }
+                                                leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn().toString());
                                                 if (leave != null) {
                                                     if (leave.getType() == 0) {
                                                         otw.setaOnRemark("正常请假");
@@ -2460,75 +2695,101 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setaOnRemark("因公外出");
                                                         otw.setRemark("因公外出");
                                                         otw.setClockResult(2);
-                                                    } else if (leave.getType() == 1) {
+                                                    } else if (leave.getType() == 2) {
                                                         otw.setaOnRemark("带薪年假");
                                                         otw.setRemark("带薪年假");
                                                         otw.setClockResult(3);
                                                     }
                                                 } else {
-                                                    otw.setaOnRemark("上午上班");
-                                                    otw.setRemark("打卡时间不在规定时间范围内");
-                                                    otw.setClockResult(7);
-                                                }
-                                            }
-                                            if (!aoff) {
-                                                Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOff().toString());
-                                                if (leave != null) {
-                                                    if (leave.getType() == 0) {
-                                                        otw.setaOnRemark("正常请假");
-                                                        otw.setRemark("正常请假");
-                                                        otw.setClockResult(6);
-                                                    } else if (leave.getType() == 1) {
-                                                        outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                        if (outClockIn != null) {
-                                                            outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                        }
-                                                        otw.setTimeStr(outtimeStr);
-                                                        otw.setaOffRemark("因公外出");
-                                                        otw.setRemark("因公外出");
-                                                        otw.setClockResult(2);
-                                                    } else if (leave.getType() == 1) {
-                                                        otw.setaOffRemark("带薪年假");
-                                                        otw.setRemark("带薪年假");
-                                                        otw.setClockResult(3);
+                                                    if (type == 0) {
+                                                        otw.setaOnRemark("上午旷工");
+                                                        otw.setRemark("旷工");
+                                                        otw.setClockResult(8);
+                                                    } else if (type == 1) {
+                                                        otw.setaOnRemark("周末不上班");
+                                                        otw.setRemark("周末不上班");
+                                                        otw.setClockResult(5);
+                                                    } else if (type == 2) {
+                                                        otw.setaOnRemark("法定带薪假");
+                                                        otw.setRemark("法定带薪假");
+                                                        otw.setClockResult(4);
                                                     }
-                                                } else {
-                                                    otw.setaOffRemark("上午下班");
-                                                    otw.setRemark("打卡时间不在规定时间范围内");
-                                                    otw.setClockResult(7);
                                                 }
-                                            }
-
-                                            if (!pon) {
-                                                Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOn().toString());
-                                                if (leave != null) {
-                                                    if (leave.getType() == 0) {
-                                                        otw.setpOnRemark("正常请假");
-                                                        otw.setRemark("正常请假");
-                                                        otw.setClockResult(6);
-                                                    } else if (leave.getType() == 1) {
-                                                        outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                        if (outClockIn != null) {
-                                                            outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                if (workSet.getMorningOff() != null) {
+                                                    leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOff().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setRemark("正常请假");
+                                                            otw.setaOffRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setRemark("因公外出");
+                                                            otw.setaOffRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 2) {
+                                                            otw.setaOffRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
                                                         }
-                                                        otw.setTimeStr(outtimeStr);
-                                                        otw.setpOnRemark("因公外出");
-                                                        otw.setRemark("因公外出");
-                                                        otw.setClockResult(2);
-                                                    } else if (leave.getType() == 1) {
-                                                        otw.setpOnRemark("带薪年假");
-                                                        otw.setRemark("带薪年假");
-                                                        otw.setClockResult(3);
+                                                    } else {
+                                                        if (type == 0) {
+                                                            otw.setaOffRemark("上午旷工");
+                                                            otw.setRemark("旷工");
+                                                            otw.setClockResult(8);
+                                                        } else if (type == 1) {
+                                                            otw.setaOffRemark("周末不上班");
+                                                            otw.setRemark("周末不上班");
+                                                            otw.setClockResult(5);
+                                                        } else if (type == 2) {
+                                                            otw.setaOffRemark("法定带薪假");
+                                                            otw.setRemark("法定带薪假");
+                                                            otw.setClockResult(4);
+                                                        }
                                                     }
-                                                } else {
-                                                    otw.setpOnRemark("下午上班");
-                                                    otw.setRemark("打卡时间不在规定时间范围内");
-                                                    otw.setClockResult(7);
                                                 }
-                                            }
-
-                                            if (!poff) {
-                                                Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOff().toString());
+                                                if (workSet.getNoonOn() != null) {
+                                                    leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOn().toString());
+                                                    if (leave != null) {
+                                                        if (leave.getType() == 0) {
+                                                            otw.setRemark("正常请假");
+                                                            otw.setpOnRemark("正常请假");
+                                                            otw.setClockResult(6);
+                                                        } else if (leave.getType() == 1) {
+                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                            if (outClockIn != null) {
+                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                            }
+                                                            otw.setTimeStr(outtimeStr);
+                                                            otw.setRemark("因公外出");
+                                                            otw.setpOnRemark("因公外出");
+                                                            otw.setClockResult(2);
+                                                        } else if (leave.getType() == 2) {
+                                                            otw.setpOnRemark("带薪年假");
+                                                            otw.setRemark("带薪年假");
+                                                            otw.setClockResult(3);
+                                                        }
+                                                    } else {
+                                                        if (type == 0) {
+                                                            otw.setpOnRemark("下午旷工");
+                                                            otw.setRemark("旷工");
+                                                            otw.setClockResult(8);
+                                                        } else if (type == 1) {
+                                                            otw.setpOnRemark("周末不上班");
+                                                            otw.setRemark("周末不上班");
+                                                            otw.setClockResult(5);
+                                                        } else if (type == 2) {
+                                                            otw.setpOnRemark("法定带薪假");
+                                                            otw.setRemark("法定带薪假");
+                                                            otw.setClockResult(4);
+                                                        }
+                                                    }
+                                                }
+                                                leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOff().toString());
                                                 if (leave != null) {
                                                     if (leave.getType() == 0) {
                                                         otw.setpOffRemark("正常请假");
@@ -2549,197 +2810,32 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setClockResult(3);
                                                     }
                                                 } else {
-                                                    otw.setpOffRemark("下午下班");
-                                                    otw.setRemark("打卡时间不在规定时间范围内");
-                                                    otw.setClockResult(7);
+                                                    if (type == 0) {
+                                                        otw.setpOffRemark("下午旷工");
+                                                        otw.setRemark("旷工");
+                                                        otw.setClockResult(8);
+                                                    } else if (type == 1) {
+                                                        otw.setpOffRemark("周末不上班");
+                                                        otw.setRemark("周末不上班");
+                                                        otw.setClockResult(5);
+                                                    } else if (type == 2) {
+                                                        otw.setpOffRemark("法定带薪假");
+                                                        otw.setRemark("法定带薪假");
+                                                        otw.setClockResult(3);
+                                                    }
                                                 }
                                             }
-
                                         } else {
-                                            Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", "2019-" + monstr + "-" + date + " " + "17:30:00");
-                                            if (leave != null) {
-                                                if (leave.getType() == 0) {
-                                                    otw.setRemark("正常请假");
-                                                    otw.setClockResult(6);
-                                                } else if (leave.getType() == 1) {
-                                                    outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                    if (outClockIn != null) {
-                                                        outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                    }
-                                                    otw.setTimeStr(outtimeStr);
-                                                    otw.setRemark("因公外出");
-                                                    otw.setClockResult(2);
-                                                } else if (leave.getType() == 2) {
-                                                    otw.setRemark("带薪年假");
-                                                    otw.setClockResult(3);
-                                                }
-                                            } else {
-                                                if (type == 0) {
-                                                    otw.setRemark("旷工");
-                                                    otw.setClockResult(8);
-                                                } else if (type == 1) {
-                                                    otw.setRemark("周末不上班");
-                                                    otw.setClockResult(5);
-                                                } else if (type == 2) {
-                                                    otw.setRemark("法定带薪假日");
-                                                    otw.setClockResult(4);
-                                                }
-                                            }
-                                            leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn().toString());
-                                            if (leave != null) {
-                                                if (leave.getType() == 0) {
-                                                    otw.setaOnRemark("正常请假");
-                                                    otw.setRemark("正常请假");
-                                                    otw.setClockResult(6);
-                                                } else if (leave.getType() == 1) {
-                                                    outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                    if (outClockIn != null) {
-                                                        outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                    }
-                                                    otw.setTimeStr(outtimeStr);
-                                                    otw.setaOnRemark("因公外出");
-                                                    otw.setRemark("因公外出");
-                                                    otw.setClockResult(2);
-                                                } else if (leave.getType() == 2) {
-                                                    otw.setaOnRemark("带薪年假");
-                                                    otw.setRemark("带薪年假");
-                                                    otw.setClockResult(3);
-                                                }
-                                            } else {
-                                                if (type == 0) {
-                                                    otw.setaOnRemark("上午旷工");
-                                                    otw.setRemark("旷工");
-                                                    otw.setClockResult(8);
-                                                } else if (type == 1) {
-                                                    otw.setaOnRemark("周末不上班");
-                                                    otw.setRemark("周末不上班");
-                                                    otw.setClockResult(5);
-                                                } else if (type == 2) {
-                                                    otw.setaOnRemark("法定带薪假");
-                                                    otw.setRemark("法定带薪假");
-                                                    otw.setClockResult(4);
-                                                }
-                                            }
-                                            if (workSet.getMorningOff() != null) {
-                                                leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOff().toString());
-                                                if (leave != null) {
-                                                    if (leave.getType() == 0) {
-                                                        otw.setRemark("正常请假");
-                                                        otw.setaOffRemark("正常请假");
-                                                        otw.setClockResult(6);
-                                                    } else if (leave.getType() == 1) {
-                                                        outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                        if (outClockIn != null) {
-                                                            outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                        }
-                                                        otw.setTimeStr(outtimeStr);
-                                                        otw.setRemark("因公外出");
-                                                        otw.setaOffRemark("因公外出");
-                                                        otw.setClockResult(2);
-                                                    } else if (leave.getType() == 2) {
-                                                        otw.setaOffRemark("带薪年假");
-                                                        otw.setRemark("带薪年假");
-                                                        otw.setClockResult(3);
-                                                    }
-                                                } else {
-                                                    if (type == 0) {
-                                                        otw.setaOffRemark("上午旷工");
-                                                        otw.setRemark("旷工");
-                                                        otw.setClockResult(8);
-                                                    } else if (type == 1) {
-                                                        otw.setaOffRemark("周末不上班");
-                                                        otw.setRemark("周末不上班");
-                                                        otw.setClockResult(5);
-                                                    } else if (type == 2) {
-                                                        otw.setaOffRemark("法定带薪假");
-                                                        otw.setRemark("法定带薪假");
-                                                        otw.setClockResult(4);
-                                                    }
-                                                }
-                                            }
-                                            if (workSet.getNoonOn() != null) {
-                                                leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOn().toString());
-                                                if (leave != null) {
-                                                    if (leave.getType() == 0) {
-                                                        otw.setRemark("正常请假");
-                                                        otw.setpOnRemark("正常请假");
-                                                        otw.setClockResult(6);
-                                                    } else if (leave.getType() == 1) {
-                                                        outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                        if (outClockIn != null) {
-                                                            outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                        }
-                                                        otw.setTimeStr(outtimeStr);
-                                                        otw.setRemark("因公外出");
-                                                        otw.setpOnRemark("因公外出");
-                                                        otw.setClockResult(2);
-                                                    } else if (leave.getType() == 2) {
-                                                        otw.setpOnRemark("带薪年假");
-                                                        otw.setRemark("带薪年假");
-                                                        otw.setClockResult(3);
-                                                    }
-                                                } else {
-                                                    if (type == 0) {
-                                                        otw.setpOnRemark("下午旷工");
-                                                        otw.setRemark("旷工");
-                                                        otw.setClockResult(8);
-                                                    } else if (type == 1) {
-                                                        otw.setpOnRemark("周末不上班");
-                                                        otw.setRemark("周末不上班");
-                                                        otw.setClockResult(5);
-                                                    } else if (type == 2) {
-                                                        otw.setpOnRemark("法定带薪假");
-                                                        otw.setRemark("法定带薪假");
-                                                        otw.setClockResult(4);
-                                                    }
-                                                }
-                                            }
-                                            leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOff().toString());
-                                            if (leave != null) {
-                                                if (leave.getType() == 0) {
-                                                    otw.setpOffRemark("正常请假");
-                                                    otw.setRemark("正常请假");
-                                                    otw.setClockResult(6);
-                                                } else if (leave.getType() == 1) {
-                                                    outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                    if (outClockIn != null) {
-                                                        outtimeStr = StringUtil.onlyTimeStr(outClockIn);
-                                                    }
-                                                    otw.setTimeStr(outtimeStr);
-                                                    otw.setpOffRemark("因公外出");
-                                                    otw.setRemark("因公外出");
-                                                    otw.setClockResult(2);
-                                                } else if (leave.getType() == 2) {
-                                                    otw.setpOffRemark("带薪年假");
-                                                    otw.setRemark("带薪年假");
-                                                    otw.setClockResult(3);
-                                                }
-                                            } else {
-                                                if (type == 0) {
-                                                    otw.setpOffRemark("下午旷工");
-                                                    otw.setRemark("旷工");
-                                                    otw.setClockResult(8);
-                                                } else if (type == 1) {
-                                                    otw.setpOffRemark("周末不上班");
-                                                    otw.setRemark("周末不上班");
-                                                    otw.setClockResult(5);
-                                                } else if (type == 2) {
-                                                    otw.setpOffRemark("法定带薪假");
-                                                    otw.setRemark("法定带薪假");
-                                                    otw.setClockResult(3);
-                                                }
-                                            }
+                                            otw.setRemark("没有此人打卡记录");
+                                            otw.setClockResult(10);
                                         }
-                                    } else {
-                                        otw.setRemark("没有此人打卡记录");
-                                        otw.setClockResult(10);
-                                    }
-                                    if (otw.getName() != null && otw.getName().trim().length() > 0) {
-                                        if (otw.getRemark() == null) {
-                                            otw.setRemark("正常");
-                                            otw.setClockResult(1);
+                                        if (otw.getName() != null && otw.getName().trim().length() > 0) {
+                                            if (otw.getRemark() == null) {
+                                                otw.setRemark("正常");
+                                                otw.setClockResult(1);
+                                            }
+                                            kqBeanList.add(otw);
                                         }
-                                        kqBeanList.add(otw);
                                     }
                                 }
                             }
@@ -2803,19 +2899,108 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public void saveMonthKQInfoByCheckKQBean(List<OutClockIn> outClockInList) throws Exception {
-        //取
         List<KQBean> kqBeanList = personMapper.getKQBeanByDateStrs(outClockInList);
-
-        //计算
-        MonthKQInfo mkf = null;
+        //List<JiaBan> jiaBanList = personMapper.getJiaBanDanByDates(outClockInList);
         List<MonthKQInfo> monthKQInfoList = new ArrayList<MonthKQInfo>();
+        String[] yearMos = outClockInList.get(0).getClockInDateStr().split("-");
+        WorkDate date = personMapper.getWorkDateByMonth3(yearMos[0] + "-" + yearMos[1], "B", 1);
+
+
+        List<YeBan> yeBanList = personMapper.getAllYeBanByDateStrs(outClockInList);
+
+        String[] days = date.getWorkDatess();
+        List<String> noWeekendButWeekEnd = new ArrayList<String>();
+        String da = null;
+        for (int a = 0; a < days.length; a++) {
+            if (Integer.valueOf(days[a]) < 10) {
+                da = "0" + days[a];
+            } else {
+                da = days[a];
+            }
+            if (!DateUtil.isWeekend(yearMos[0] + "-" + yearMos[1] + "-" + da)) {
+                noWeekendButWeekEnd.add(yearMos[0] + "-" + yearMos[1] + "-" + da);
+            }
+        }
+
+
+        List<JiaBan> jiaBanList = null;
+        ZhongKongBean zkb = null;
+        MonthKQInfo mkf = null;
         String dayStr = null;
-        String daytitleSql = null;
-        String dayremarktitleSql = null;
-        String dayNum = null;
-        String dayNumRemark = null;
+        String daytitleSql;
+        String[] yearM = null;
+        String dayNum;
+        Date dateFrom = null;
+        Date dateEnd = null;
+        Date dateFromOne = null;
+        Date dateEndOne = null;
+        List<DateSplit> dateSplitList = null;
+        String jiabanHours = null;
+        Double jiaHours = 0.0;
+        DateSplit nowDate = null;
+        for (OutClockIn ock : outClockInList) {
+            jiaBanList = personMapper.getJiaBanDanByDateStr(ock.getClockInDateStr());
+            for (JiaBan jb : jiaBanList) {
+                jiaHours = 0.0;
+                jiabanHours = "";
+                dateSplitList = DateUtil.splitDateToDateArray(jb.getExtDateFrom(), jb.getExtDateEnd());
+                zkb = personMapper.getZKBeanByEmpNoAndDateStr(jb.getEmpNo(), ock.getClockInDateStr());
+                if (zkb != null) {
+                    dayStr = ock.getClockInDateStr().split("-")[2];
+                    yearM = ock.getClockInDateStr().split("-");
+                    dayNum = "";
+                    mkf = personMapper.getMonthKqInfoByEmpNoandYearMonth(jb.getEmpNo(), yearM[0] + "-" + yearM[1]);
+                    if (mkf == null)
+                        mkf = new MonthKQInfo();
+                    daytitleSql = "day".concat(dayStr);
+                    for (DateSplit ds : dateSplitList) {
+                        if (ds.getDate().equals(ock.getClockInDateStr())) {
+                            nowDate = ds;
+                            break;
+                        }
+                    }
+                    if (zkb.getTimeStr() != null && zkb.getTimeStr().trim().length() > 0) {
+                        jiabanHours = DateUtil.getJiaBanHoursByDateSplitAndTimeStr(nowDate, zkb.getTimeStr());
+                        jiaHours = Double.valueOf(jiabanHours.split(",")[2]);
+                        dayNum = jiabanHours;
+                        mkf.setWorkendHours(mkf.getWorkendHours() + jiaHours);
+                    } else {
+                        dayNum = "";
+                        mkf.setWorkendHours(mkf.getWorkendHours() + 0.0);
+                    }
+                    mkf.setEmpNo(jb.getEmpNo());
+                    mkf.setDaytitleSql(daytitleSql);
+                    mkf.setDayNum(dayNum);
+                    mkf.setYearMonth(yearM[0] + "-" + yearM[1]);
+                    monthKQInfoList.add(mkf);
+
+                    if (mkf.getId() != null) {
+                        mkf.setNameReal(jb.getName());
+                        personMapper.updateMonthKQInfoByCheckKQBean(mkf);
+                    } else {
+                        mkf.setNameReal(jb.getName());
+                        personMapper.saveMonthKQInfoByCheckKQBean(mkf);
+                    }
+
+                }
+            }
+        }
+
+
+        List<String> timeList;
         for (KQBean kqb : kqBeanList) {
+            dayStr = null;
+            timeList = new ArrayList<String>();
+            List<Time> times = null;
+            daytitleSql = null;
+            String dayremarktitleSql = null;
             dayNum = "";
+            String[] timeStr = null;
+            String dayNumRemark = null;
+            WorkSet ws = null;
+            Double lianBanTotalH = 0.0;
+            QianKa qk;
+            LianBan lianBan = personMapper.getLianBanByEmpNoAndDateStr(kqb.getEmpNo(), kqb.getDateStr());
             mkf = personMapper.getMonthKqInfoByEmpNoandYearMonth(kqb.getEmpNo(), kqb.getYearMonth());
             if (mkf == null) {
                 mkf = new MonthKQInfo();
@@ -2824,22 +3009,42 @@ public class PersonServiceImpl implements IPersonServ {
             mkf.setEmpNo(kqb.getEmpNo());
             mkf.setName(kqb.getName());
             mkf.setYearMonth(kqb.getYearMonth());
-            mkf.setUsualExtHours((mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+            if (lianBan != null) {
+                if (lianBan.getNoonHours() != null) {
+                    lianBanTotalH += lianBan.getNoonHours();
+                }
+                if (lianBan.getNightHours() != null) {
+                    lianBanTotalH += lianBan.getNightHours();
+                }
+            }
+            if (!kqb.getHavePinShi().equals("1")) {
+                mkf.setUsualExtHours(lianBanTotalH + (mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+            } else {
+                mkf.setUsualExtHours(0.0);
+            }
             mkf.setRemark(kqb.getRemark());
-
             daytitleSql = "day".concat(dayStr);
             dayremarktitleSql = daytitleSql.concat("Remark");
 
+            String aOnStr = null;
+            String aOffStr = null;
+            String pOnStr = null;
+            String pOffStr = null;
+
+
             if (kqb.getWeek() == 6 || kqb.getWeek() == 7) {
                 if (kqb.getClockResult() == 1) {
-                    mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                    mkf.setWorkendHours(lianBanTotalH + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
                     dayNum = "18,18,";
                 } else if (kqb.getClockResult() == 4) {
-                    mkf.setChinaPaidLeave((mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
+                    mkf.setChinaPaidLeave(lianBanTotalH + (mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
                     dayNum = "4,4,";
                 } else if (kqb.getClockResult() == 6) {
-                    mkf.setLeaveOfAbsense((mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
+                    mkf.setLeaveOfAbsense(lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
                     dayNum = "6,6,";
+                } else if (kqb.getClockResult() == 13) {
+                    mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+                    dayNum = "13,13,";
                 } else if (kqb.getClockResult() == 11) {
                     mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
                     dayNum = "11,11,";
@@ -2853,45 +3058,314 @@ public class PersonServiceImpl implements IPersonServ {
                     mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
                     dayNum = "3,3,";
                 } else if (kqb.getClockResult() == 7) {
-                    dayNum = "7,7,";
+                    aOnStr = "77,"; //打卡时间不在范围内
+                    aOffStr = "77,";
+                    boolean isComin = false;
+                    qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
+                    ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                    if (qk != null && qk.getTimeStr() != null) {
+                        timeStr = qk.getTimeStr().split(" ");
+                        for (String str : timeStr) {
+                            timeList.add(str.trim());
+                        }
+                        times = StringUtil.formTime(timeList);
+                    }
+                    if (kqb.getaOnTime() == null) {
+                        //aOnStr = "7,";
+                        aOnStr = "77,";
+                        if (times != null)
+                            for (Time time : times) {
+                                if (time.after(ws.getMorningOnFrom()) && !time.after(ws.getMorningOnEnd()) || (time.equals(ws.getMorningOn()))) {
+                                    // aOnStr = "17,";
+                                    aOnStr = "67,";
+                                }
+                            }
+                    } else {
+                        //aOnStr = "1,";
+                        aOnStr = "61,";
+                    }
+                    aOffStr = aOnStr;
+                    if (kqb.getaOffTime() == null) {
+                        aOffStr = "77,";
+                        if (times != null)
+                            for (Time time : times) {
+                                if (time.after(ws.getMorningOffFrom()) && !time.after(ws.getMorningOffEnd()) || (time.equals(ws.getMorningOff()))) {
+                                    if (aOnStr.equals("77,")) {
+                                        aOffStr = "77,";
+                                    } else {
+                                        aOffStr = "67,";
+                                    }
+
+                                }
+                            }
+
+                    }
+
+
+                    pOnStr = "77,"; //打卡时间不在范围内
+                    pOffStr = "77,";
+                    if (kqb.getpOnTime() == null) {
+                        if (times != null)
+                            for (Time time : times) {
+                                if (time.after(ws.getNoonOnFrom()) && !time.after(ws.getNoonOnEnd()) || (time.equals(ws.getNoonOn()))) {
+                                    pOnStr = "67,";
+                                }
+                            }
+                    } else {
+                        pOnStr = "61,";
+                    }
+
+                    pOffStr = pOnStr;
+                    if (kqb.getpOffTime() == null) {
+                        if (times != null)
+                            for (Time time : times) {
+                                if (time.after(ws.getNoonOffFrom()) && !time.after(ws.getNoonOffEnd()) || (time.equals(ws.getNoonOff()))) {
+                                    if (pOnStr == "77,") {
+                                        pOffStr = "77,";
+                                    } else {
+                                        pOffStr = "67.";
+                                    }
+                                }
+                            }
+
+                    }
+                    dayNum = aOffStr + pOffStr;
                 } else if (kqb.getClockResult() == 8) {
                     dayNum = "8,8,";
                 }
-                dayNum = dayNum.concat(8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                if (kqb.getClockResult() == 13) {
+                    dayNum = dayNum.concat(kqb.getExtWorkHours().toString());
+                } else {
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
+                }
                 mkf.setDayNum(dayNum);
                 mkf.setDaytitleSql(daytitleSql);
-                mkf.setWorkendHours(8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+                mkf.setWorkendHours(lianBanTotalH + 8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
             } else {
-                if (kqb.getClockResult() == 1) {
-                    mkf.setZhengbanHours((mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours()) + 8.0);
-                    dayNum = "1,1,";
-                } else if (kqb.getClockResult() == 4) {
-                    mkf.setChinaPaidLeave((mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
-                    dayNum = "4,4,";
-                } else if (kqb.getClockResult() == 6) {
-                    mkf.setLeaveOfAbsense((mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
-                    dayNum = "6,6,";
-                } else if (kqb.getClockResult() == 11) {
-                    mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
-                    dayNum = "11,11,";
-                } else if (kqb.getClockResult() == 2) {
-                    mkf.setZhengbanHours((mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours()) + 8.0);
-                    dayNum = "2,2,";
-                } else if (kqb.getClockResult() == 12) {
-                    mkf.setZhengbanHours(8.0);
-                    dayNum = "12,12,";
-                } else if (kqb.getClockResult() == 3) {
-                    mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
-                    dayNum = "15,15,";
-                } else if (kqb.getClockResult() == 7) {
-                    dayNum = "7,7,";
-                } else if (kqb.getClockResult() == 8) {
-                    dayNum = "8,8,";
+                if (!noWeekendButWeekEnd.contains(kqb.getDateStr())) {
+                    if (kqb.getClockResult() == 1) {
+                        mkf.setZhengbanHours((lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours())) + 8.0);
+                        dayNum = "1,1,";
+                    } else if (kqb.getClockResult() == 4) {
+                        mkf.setChinaPaidLeave((lianBanTotalH + (mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave())) + 8.0);
+                        dayNum = "4,4,";
+                    } else if (kqb.getClockResult() == 6) {
+                        mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + 8.0);
+                        dayNum = "6,6,";
+                    } else if (kqb.getClockResult() == 11) {
+                        mkf.setSickLeave((lianBanTotalH + (mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave())) + 8.0);
+                        dayNum = "11,11,";
+                    } else if (kqb.getClockResult() == 2) {
+                        mkf.setZhengbanHours(lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours()) + 8.0);
+                        dayNum = "2,2,";
+                    } else if (kqb.getClockResult() == 13) {
+                        mkf.setZhengbanHours((lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours())) + 8.0);
+                        dayNum = "13,13,";
+                    } else if (kqb.getClockResult() == 12) {
+                        mkf.setZhengbanHours(lianBanTotalH + 8.0);
+                        dayNum = "12,12,";
+                    } else if (kqb.getClockResult() == 3) {
+                        mkf.setOtherPaidLeave(lianBanTotalH + (mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
+                        dayNum = "15,15,";
+                    } else if (kqb.getClockResult() == 7) {
+                        aOnStr = "7,"; //打卡时间不在范围内
+                        aOffStr = "7,";
+                        boolean isComin = false;
+                        qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
+                        ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                        if (qk != null && qk.getTimeStr() != null) {
+                            timeStr = qk.getTimeStr().split(" ");
+                            for (String str : timeStr) {
+                                timeList.add(str.trim());
+                            }
+                            times = StringUtil.formTime(timeList);
+                        }
+                        if (kqb.getaOnTime() == null) {
+                            aOnStr = "7,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOnFrom()) && !time.after(ws.getMorningOnEnd()) || (time.equals(ws.getMorningOn()))) {
+                                        aOnStr = "17,";
+                                    }
+                                }
+                        } else {
+                            aOnStr = "1,";
+                        }
+                        aOffStr = aOnStr;
+                        if (kqb.getaOffTime() == null) {
+                            aOffStr = "7,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOffFrom()) && !time.after(ws.getMorningOffEnd()) || (time.equals(ws.getMorningOff()))) {
+                                        if (aOnStr.equals("7,")) {
+                                            aOffStr = "7,";
+                                        } else {
+                                            aOffStr = "17,";
+                                        }
+
+                                    }
+                                }
+
+                        }
+
+
+                        pOnStr = "7,"; //打卡时间不在范围内
+                        pOffStr = "7,";
+                        if (kqb.getpOnTime() == null) {
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOnFrom()) && !time.after(ws.getNoonOnEnd()) || (time.equals(ws.getNoonOn()))) {
+                                        pOnStr = "17,";
+                                    }
+                                }
+                        } else {
+                            pOnStr = "1,";
+                        }
+
+                        pOffStr = pOnStr;
+                        if (kqb.getpOffTime() == null) {
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOffFrom()) && !time.after(ws.getNoonOffEnd()) || (time.equals(ws.getNoonOff()))) {
+                                        if (pOnStr == "7,") {
+                                            pOffStr = "7,";
+                                        } else {
+                                            pOffStr = "17.";
+                                        }
+                                    }
+                                }
+
+                        }
+                        dayNum = aOffStr + pOffStr;
+                    } else if (kqb.getClockResult() == 8) {
+                        dayNum = "8,8,";
+                    }
+                    if (kqb.getClockResult() == 13) {
+                        dayNum = dayNum.concat((kqb.getExtWorkHours() - 8.0) + "");
+                    } else {
+                        if (!kqb.getHavePinShi().equals("1")) {
+                            dayNum = dayNum.concat(lianBanTotalH + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                        } else {
+                            dayNum = dayNum.concat("0.0");
+                        }
+                    }
+                    mkf.setDayNum(dayNum);
+                    mkf.setDaytitleSql(daytitleSql);
+                    mkf.setUsualExtHours(lianBanTotalH + (mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+                } else {
+
+                    if (kqb.getClockResult() == 1) {
+                        mkf.setWorkendHours(lianBanTotalH + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                        dayNum = "18,18,";
+                    } else if (kqb.getClockResult() == 4) {
+                        mkf.setChinaPaidLeave(lianBanTotalH + (mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
+                        dayNum = "4,4,";
+                    } else if (kqb.getClockResult() == 6) {
+                        mkf.setLeaveOfAbsense(lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
+                        dayNum = "6,6,";
+                    } else if (kqb.getClockResult() == 11) {
+                        mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
+                        dayNum = "11,11,";
+                    } else if (kqb.getClockResult() == 2) {
+                        mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                        dayNum = "2,2,";
+                    } else if (kqb.getClockResult() == 12) {
+                        mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
+                        dayNum = "12,12,";
+                    } else if (kqb.getClockResult() == 3) {
+                        mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
+                        dayNum = "3,3,";
+                    } else if (kqb.getClockResult() == 7) {
+                        aOnStr = "77,"; //打卡时间不在范围内
+                        aOffStr = "77,";
+                        boolean isComin = false;
+                        qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
+                        ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                        if (qk != null && qk.getTimeStr() != null) {
+                            timeStr = qk.getTimeStr().split(" ");
+                            for (String str : timeStr) {
+                                timeList.add(str.trim());
+                            }
+                            times = StringUtil.formTime(timeList);
+                        }
+                        if (kqb.getaOnTime() == null) {
+                            //aOnStr = "7,";
+                            aOnStr = "77,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOnFrom()) && !time.after(ws.getMorningOnEnd()) || (time.equals(ws.getMorningOn()))) {
+                                        // aOnStr = "17,";
+                                        aOnStr = "67,";
+                                    }
+                                }
+                        } else {
+                            //aOnStr = "1,";
+                            aOnStr = "61,";
+                        }
+                        aOffStr = aOnStr;
+                        if (kqb.getaOffTime() == null) {
+                            aOffStr = "77,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOffFrom()) && !time.after(ws.getMorningOffEnd()) || (time.equals(ws.getMorningOff()))) {
+                                        if (aOnStr.equals("77,")) {
+                                            aOffStr = "77,";
+                                        } else {
+                                            aOffStr = "67,";
+                                        }
+
+                                    }
+                                }
+
+                        }
+
+
+                        pOnStr = "77,"; //打卡时间不在范围内
+                        pOffStr = "77,";
+                        if (kqb.getpOnTime() == null) {
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOnFrom()) && !time.after(ws.getNoonOnEnd()) || (time.equals(ws.getNoonOn()))) {
+                                        pOnStr = "67,";
+                                    }
+                                }
+                        } else {
+                            pOnStr = "61,";
+                        }
+
+                        pOffStr = pOnStr;
+                        if (kqb.getpOffTime() == null) {
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOffFrom()) && !time.after(ws.getNoonOffEnd()) || (time.equals(ws.getNoonOff()))) {
+                                        if (pOnStr == "77,") {
+                                            pOffStr = "77,";
+                                        } else {
+                                            pOffStr = "67.";
+                                        }
+                                    }
+                                }
+
+                        }
+                        dayNum = aOffStr + pOffStr;
+                    } else if (kqb.getClockResult() == 8) {
+                        dayNum = "8,8,";
+                    }
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
+                    mkf.setDayNum(dayNum);
+                    mkf.setDaytitleSql(daytitleSql);
+                    mkf.setWorkendHours(lianBanTotalH + 8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
+
+                    //*********************
                 }
-                dayNum = dayNum.concat((kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
-                mkf.setDayNum(dayNum);
-                mkf.setDaytitleSql(daytitleSql);
-                mkf.setUsualExtHours((mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
             }
             monthKQInfoList.add(mkf);
 

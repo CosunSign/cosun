@@ -137,6 +137,9 @@ public interface PersonMapper {
     @Select("select * from qianka where date = #{dateStr} and empNo = #{empNo} ")
     QianKa getQianKaByDateAndEmpno(QianKa qianKa);
 
+    @Select(" select * from qianka where date = #{dateStr} and empNo = #{empNo}  ")
+    QianKa getQianKaByDateAndEmpnoA(String empNo, String dateStr);
+
     @Insert("update qianka  set timeStr = #{timeStr},type = #{type},remark = #{remark} where id = #{id}")
     void updateQianKa(QianKa qianKa);
 
@@ -935,6 +938,10 @@ public interface PersonMapper {
             " and type = #{type} ")
     WorkDate getWorkDateByMonth(WorkDate workDate);
 
+    @Select("select * from workdate where month = #{yearMonth} and positionLevel = #{levelPosition} " +
+            " and type = #{type} ")
+    WorkDate getWorkDateByMonth3(String yearMonth, String levelPosition, Integer type);
+
 
     @Select("select *,GROUP_CONCAT(workdate) from workdate where month = #{month} and positionLevel = #{positionLevel} " +
             " limit 1 ")
@@ -971,6 +978,9 @@ public interface PersonMapper {
     WorkSet getWorkSetByMonthAndPositionLevel(WorkDate workDate);
 
     @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
+    WorkSet getWorkSetByMonthAndPositionLevelA(String month, String positionLevel);
+
+    @Select("select * from workset where month = #{month} and workLevel = #{positionLevel}")
     WorkSet getWorkSetByMonthAndPositionLevel2(String month, String positionLevel);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s') as beginLeaveStr ,date_format(endleave, '%Y-%m-%d %h:%i:%s') as endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type  " +
@@ -984,6 +994,42 @@ public interface PersonMapper {
             "LEFT JOIN employee ee ON ee.empno = mk.empNo" +
             " where mk.empNo = #{empNo}  and mk.yearMonth = #{yearMonth} limit 1 ")
     MonthKQInfo getMonthKqInfoByEmpNoandYearMonth(String empNo, String yearMonth);
+
+
+    @Select("SELECT\n" +
+            "\tjb.empNo,\n" +
+            "\tjb.remark,\n" +
+            "\tjb.type,\n" +
+            "\tee.`name`,\n" +
+            "\tdate_format(\n" +
+            "\t\tjb.extDateFrom,\n" +
+            "\t\t'%Y-%m-%d %H:%i:%s'\n" +
+            "\t) as extDateFrom,\n" +
+            "\tdate_format(\n" +
+            "\t\tjb.extDateEnd,\n" +
+            "\t\t'%Y-%m-%d %H:%i:%s'\n" +
+            "\t) as extDateEnd \n" +
+            "FROM\n" +
+            "\tjiaban jb\n" +
+            "LEFT JOIN employee ee ON jb.empNo = ee.empno\n" +
+            "WHERE\n" +
+            "\tdate_format(jb.extDateFrom, '%Y-%m-%d') <= #{dateStr}\n" +
+            "AND date_format(jb.extDateEnd, '%Y-%m-%d') >= #{dateStr}")
+    List<JiaBan> getJiaBanDanByDateStr(String dateStr);
+
+    @Select("SELECT\n" +
+            "\tee.`name`,\n" +
+            "\tee.empno,\n" +
+            "\tzk.Date AS dateStr,\n" +
+            "\tzk.yearMonth,\n" +
+            "\tzk.timeStr\n" +
+            "FROM\n" +
+            "\tzhongkongbean zk\n" +
+            "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = zk.EnrollNumber\n" +
+            "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+            "WHERE\n" +
+            "\tee.empno = #{empNo} and Date = #{dateStr} ")
+    ZhongKongBean getZKBeanByEmpNoAndDateStr(String empNo, String dateStr);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
@@ -1163,6 +1209,9 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "getKQBeanByDateStrs")
     List<KQBean> getKQBeanByDateStrs(@Param("dateStrs") List<OutClockIn> dateStrs);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "getAllYeBanByDateStrs")
+    List<YeBan> getAllYeBanByDateStrs(@Param("dateStrs") List<OutClockIn> outClockInList);
+
     @DeleteProvider(type = PseronDaoProvider.class, method = "deleteKQBeanOlderDateByDates")
     void deleteKQBeanOlderDateByDates(@Param("dateStrs") List<OutClockIn> dateStrs);
 
@@ -1322,6 +1371,10 @@ public interface PersonMapper {
 
     @Select("select count(*) from yeban where empNo = #{empNo} and date = #{dateStr}")
     int getYeBanByEmpNoAndDateStr(String empNo, String dateStr);
+
+
+    @Select("select empNo,date as dateStr from yeban where empNo = #{empNo} and date = #{dateStr}")
+    YeBan getYeBanByEmpNoAndDateStrNew(String empNo, String dateStr);
 
 
     @Delete("delete from qianka where id = #{id}")
@@ -3636,8 +3689,9 @@ public interface PersonMapper {
         }
 
 
-        public String getKQBeanByDateStrs(List<OutClockIn> dateStrs) {
+        public String getJiaBanDanByDates(List<OutClockIn> dateStrs) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tps.empNo AS havePinShi,\n" +
                     "\tkb.yearMonth,\n" +
                     "\tkb.dateStr,\n" +
                     "\tkb. WEEK,\n" +
@@ -3654,11 +3708,73 @@ public interface PersonMapper {
                     "\tkb.extWorkOffTime,\n" +
                     "\tkb.rensheCheck,\n" +
                     "\tee.empno,\n" +
-                    "\tee.`name` AS nameReal\n" +
+                    "\tee.`name` AS nameReal,\n" +
+                    "\tn.positionLevel AS positionLevel " +
                     "FROM\n" +
                     "\tkqbean kb\n" +
                     "LEFT JOIN zhongkongemployee zke ON kb.enrollNumber = zke.EnrollNumber\n" +
-                    "LEFT JOIN employee ee ON ee.empno = zke.empNo where  ");
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo " +
+                    "LEFT JOIN position n ON n.id = ee.positionId " +
+                    "LEFT JOIN pinshijiabanbgs ps ON ps.empNo = ee.empno " +
+                    "where  ");
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  kb.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  kb.dateStr in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
+                }
+            }
+            return sb.toString();
+        }
+
+        public String getAllYeBanByDateStrs(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("SELECT empNo,date as dateStr FROM yeban  where  ");
+            if (dateStrs != null && dateStrs.size() > 0) {
+                if (dateStrs.size() == 1) {
+                    sb.append("  date in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                } else if (dateStrs.size() >= 2) {
+                    sb.append("  date in (");
+                    for (int i = 0; i < dateStrs.size() - 1; i++) {
+                        sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
+                    }
+                    sb.append("'" + dateStrs.get(dateStrs.size() - 1).getClockInDateStr() + "')");
+                }
+            }
+            return sb.toString();
+        }
+
+        public String getKQBeanByDateStrs(List<OutClockIn> dateStrs) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\tifnull(ps.empNo,ee.worktype) AS havePinShi,\n" +
+                    "\tkb.yearMonth,\n" +
+                    "\tkb.dateStr,\n" +
+                    "\tkb.WEEK,\n" +
+                    "\tkb.timeStr,\n" +
+                    "\tkb.clockResult,\n" +
+                    "\tkb.clockResultByRenShi,\n" +
+                    "\tkb.extWorkHours,\n" +
+                    "\tkb.remark,\n" +
+                    "\tkb.aOnTime,\n" +
+                    "\tkb.aOffTime,\n" +
+                    "\tkb.pOnTime,\n" +
+                    "\tkb.pOffTime,\n" +
+                    "\tkb.extWorkOnTime,\n" +
+                    "\tkb.extWorkOffTime,\n" +
+                    "\tkb.rensheCheck,\n" +
+                    "\tee.empno,\n" +
+                    "\tee.`name` AS nameReal,\n" +
+                    "\tn.positionLevel AS positionLevel " +
+                    "FROM\n" +
+                    "\tkqbean kb\n" +
+                    "LEFT JOIN zhongkongemployee zke ON kb.enrollNumber = zke.EnrollNumber\n" +
+                    "LEFT JOIN employee ee ON ee.empno = zke.empNo " +
+                    "LEFT JOIN position n ON n.id = ee.positionId " +
+                    "LEFT JOIN pinshijiabanbgs ps ON ps.empNo = ee.empno " +
+                    "where  ");
             if (dateStrs != null && dateStrs.size() > 0) {
                 if (dateStrs.size() == 1) {
                     sb.append("  kb.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
@@ -3675,38 +3791,12 @@ public interface PersonMapper {
 
 
         public String deleteKQBeanOlderDateByDates(List<OutClockIn> dateStrs) {
-            StringBuilder sb = new StringBuilder("SELECT\n" +
-                    "\tkq.id,\n" +
-                    "\tee.`name` AS NAME,\n" +
-                    "  ee.empno as empno,\n" +
-                    "\tdeptname AS deptName,\n" +
-                    "\tkq.yearMonth,\n" +
-                    "\tkq.dateStr,\n" +
-                    "\tkq.`week`,\n" +
-                    "\tkq.timeStr,\n" +
-                    "\tIFNULL(\n" +
-                    "\t\tkq.clockResultByRenShi,\n" +
-                    "\t\tkq.clockResult\n" +
-                    "\t) AS clockResult,\n" +
-                    "\tkq.extWorkHours,\n" +
-                    "\tkq.remark,\n" +
-                    "\tkq.aOnTime,\n" +
-                    "\tkq.aOffTime,\n" +
-                    "\tkq.pOnTime,\n" +
-                    "\tkq.pOffTime,\n" +
-                    "\tkq.extWorkOnTime,\n" +
-                    "\tkq.extWorkOffTime,\n" +
-                    "\tkq.rensheCheck\n" +
-                    "FROM\n" +
-                    "\tkqbean kq\n" +
-                    "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
-                    "LEFT JOIN employee ee ON ee.empno = zke.empNo\n" +
-                    "LEFT JOIN dept t ON t.id = ee.deptId where ");
+            StringBuilder sb = new StringBuilder(" delete FROM kqbean  where ");
             if (dateStrs != null && dateStrs.size() > 0) {
                 if (dateStrs.size() == 1) {
-                    sb.append("  kq.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                    sb.append("  dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
                 } else if (dateStrs.size() >= 2) {
-                    sb.append("  kq.dateStr in (");
+                    sb.append("  dateStr in (");
                     for (int i = 0; i < dateStrs.size() - 1; i++) {
                         sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
                     }

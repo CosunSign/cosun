@@ -56,9 +56,34 @@ public class PersonController {
     @Value("${spring.servlet.multipart.location}")
     private String finalDirPath;
 
+    public void getKQBean() throws Exception {
+        IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
+        List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
+        OutClockIn oci = null;
+        try {
+            String day = null;
+            for (int a = 1; a <= 30; a++) {
+                if (a < 10) {
+                    day = "0" + a;
+                } else {
+                    day = "" + a;
+                }
+                oci = new OutClockIn();
+                oci.setClockInDateStr("2019-10-" + day);
+                clockDates.add(oci);
+                java.util.List<KQBean> kqBeans = testDomainMapper.getAllKQDataByYearMonthDay("2019-10-" + day);
+                List<KQBean> newKQBeans = testDomainMapper.getAfterOperatorDataByOriginData(clockDates, kqBeans);
+                testDomainMapper.saveAllNewKQBeansToMysql(newKQBeans);
+                clockDates.clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void getBeforeDayZhongKongData() throws Exception {
         //String beforDay = DateUtil.getBeforeDay();
-        String beforDay = "2019-10-24";
+        String beforDay = "2019-10-30";
         String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
@@ -171,11 +196,16 @@ public class PersonController {
         //return;
         testDomainMapper.saveBeforeDayZhongKongData(toDataBaseList);
 
+        List<OutClockIn> ociList = new ArrayList<OutClockIn>();
+        OutClockIn oc = new OutClockIn();
+        oc.setClockInDateStr(toDataBaseList.get(0).getDateStr());
+        ociList.add(oc);
         List<KQBean> kqBeanList = new ArrayList<KQBean>();
         KQBean kq = null;
         List<KQBean> kqBeans = testDomainMapper.getAllKQDataByYearMonthDay(toDataBaseList.get(0).getDateStr());
-        List<KQBean> newKQBeans = testDomainMapper.getAfterOperatorDataByOriginData(kqBeans);
+        List<KQBean> newKQBeans = testDomainMapper.getAfterOperatorDataByOriginData(ociList, kqBeans);
         testDomainMapper.saveAllNewKQBeansToMysql(newKQBeans);
+        ociList.clear();
     }
 
     @ResponseBody
@@ -420,7 +450,7 @@ public class PersonController {
             //重新计算
             personServ.deleteKQBeanOlderDateByDates(clockDates);
             List<KQBean> kqBeans = personServ.getAllKQDataByYearMonthDays(clockDates);
-            List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(kqBeans);
+            List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(clockDates, kqBeans);
             personServ.saveAllNewKQBeansToMysql(newKQBeans);
             view.addObject("flagb", "重新计算" + sb.toString() + "考勤成功!");
         } else {
