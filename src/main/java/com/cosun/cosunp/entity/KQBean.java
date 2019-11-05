@@ -486,6 +486,10 @@ public class KQBean implements Serializable {
                 return "因公外出(省外)";
             } else if (clockResult == 13) {
                 return "夜班";
+            } else if(clockResult == 16) {
+                return "正班未满勤但有请假条";
+            }else if(clockResult == 17) {
+                return "正班未满勤无请假条";
             }
         }
         return clockResultStr;

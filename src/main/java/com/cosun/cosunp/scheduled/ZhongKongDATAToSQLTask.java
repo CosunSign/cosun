@@ -25,7 +25,7 @@ import java.net.URL;
 @EnableScheduling
 public class ZhongKongDATAToSQLTask {
 
-    //@Scheduled(fixedRate = 500000)
+    //@Scheduled(fixedRate = 50000)
     @Scheduled(cron = "0 0 05 * * ?")
     private void configureTasks() {
         try {

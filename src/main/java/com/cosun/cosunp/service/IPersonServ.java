@@ -65,6 +65,8 @@ public interface IPersonServ {
 
     List<String> getAllKQDateList() throws Exception;
 
+    List<String> getAllKQMonthList() throws Exception;
+
     void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state) throws Exception;
 
     int saveOrUpdateZhongKongIdByEmpNo(ZhongKongEmployee zhongKongEmployee) throws Exception;
@@ -89,7 +91,11 @@ public interface IPersonServ {
 
     List<ClockInSetUp> findAllOutClockInSetUp() throws Exception;
 
+    void saveDAPCSetUp(DaKaPianCha daKaPianCha) throws Exception;
+
     void deleteLeaveById(Integer id) throws Exception;
+
+    DaKaPianCha getDaKaPianCha() throws Exception;
 
     void updateEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 

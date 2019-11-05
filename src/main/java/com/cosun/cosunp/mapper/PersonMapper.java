@@ -106,6 +106,15 @@ public interface PersonMapper {
     @Select("select count(*) from dept where deptName like  CONCAT('%',#{deptName},'%') ")
     int findSaveOrNot2(String deptName);
 
+    @Insert("insert into dakapiancha (pianChaMin) values (#{pianChaMin})")
+    void saveDAPCSetUp(DaKaPianCha daKaPianCha);
+
+    @Update("update dakapiancha set pianChaMin = #{pianChaMin}")
+    void updateDAPCSetUp(DaKaPianCha daKaPianCha);
+
+    @Select("select * from dakapiancha")
+    DaKaPianCha getDAPC();
+
     @Insert("insert into position (positionName,positionLevel) values (#{positionName},#{positionLevel})")
     void savePosition(Position position);
 
@@ -472,6 +481,9 @@ public interface PersonMapper {
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryYBByCondition")
     List<YeBan> queryYBByCondition(YeBan yeBan);
+
+    @Select("select * from dakapiancha")
+    DaKaPianCha getDaKaPianCha();
 
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLBByConditionCount")
@@ -1037,6 +1049,12 @@ public interface PersonMapper {
     Leave getLeaveByEmIdAndMonthA(Integer employeeId, String dataStr);
 
 
+    @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
+            "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
+            "  from leavedata where employeeid = #{empId} and beginleave <= #{leaveFrom} and endleave >= #{leaveEnd} limit 1 ")
+    Leave getLeaveByEmpIdAndDateStr(String leaveFrom, String leaveEnd, Integer empId);
+
+
     @Select("SELECT\n" +
             "\toc.id,\n" +
             "\toc.weixinNo,\n" +
@@ -1074,7 +1092,8 @@ public interface PersonMapper {
             "\tfullWorkReword,\n" +
             "\thighTempAllow,\n" +
             "\tremark," +
-            "${daytitleSql}" +
+            "${daytitleSql}," +
+            "${daytitleSqlRemark}" +
             ") values (" +
             " #{empNo}," +
             " #{nameReal}," +
@@ -1090,7 +1109,8 @@ public interface PersonMapper {
             " #{fullWorkReword}," +
             " #{highTempAllow}," +
             " #{remark}," +
-            " #{dayNum} " +
+            " #{dayNum}, " +
+            " #{dayNumRemark} " +
             ")")
     void saveMonthKQInfoByCheckKQBean(MonthKQInfo mk);
 
@@ -1106,7 +1126,8 @@ public interface PersonMapper {
             "  fullWorkReword = #{fullWorkReword}," +
             "  highTempAllow = #{highTempAllow}," +
             "  remark = #{remark}, " +
-            "  ${daytitleSql} = #{dayNum} " +
+            "  ${daytitleSql} = #{dayNum}, " +
+            "  ${daytitleSqlRemark} = #{dayNumRemark} " +
             "where yearMonth = #{yearMonth} and empNo = #{empNo}")
     void updateMonthKQInfoByCheckKQBean(MonthKQInfo mk);
 
@@ -1205,6 +1226,9 @@ public interface PersonMapper {
             "LEFT JOIN employee ee ON mk.empNo = ee.empno\n" +
             "LEFT JOIN dept t  ON t.id = ee.deptId where yearMonth = #{yearMonth} ")
     List<MonthKQInfo> findAllMonthKQData(String yearMonth);
+
+    @Select("select yearMonth from monthkqinfo group by yearMonth")
+    List<String> getAllKQMonthList();
 
     @SelectProvider(type = PseronDaoProvider.class, method = "getKQBeanByDateStrs")
     List<KQBean> getKQBeanByDateStrs(@Param("dateStrs") List<OutClockIn> dateStrs);

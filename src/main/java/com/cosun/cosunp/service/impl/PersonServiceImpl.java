@@ -2217,6 +2217,7 @@ public class PersonServiceImpl implements IPersonServ {
         Integer date = null;
         int clLen = kqBeans.size();
         WorkSet workSet = null;
+        WorkSet afterWS = null;
         List<WorkDate> workDateList = null;
         boolean aon = false;
         boolean aoff = false;
@@ -2230,6 +2231,11 @@ public class PersonServiceImpl implements IPersonServ {
         String[] allNum = null;
         String intNum = "";
         String deciNum = "";
+        Double aHours = 0.0;
+        Double pHours = 0.0;
+        Integer clockRes = 17;
+
+        DaKaPianCha dkpc = personMapper.getDaKaPianCha();
 
         for (int i = 0; i < emLen; i++) {
             em = employeeList.get(i);
@@ -2245,6 +2251,9 @@ public class PersonServiceImpl implements IPersonServ {
                             aoff = false;
                             pon = false;
                             poff = false;
+                            aHours = 0.0;
+                            pHours = 0.0;
+                            clockRes = 17;
                             co = kqBeans.get(k);
                             String[] coDay = co.getDateStr().split("-");
                             if (em.getName().equals(co.getName()) && date.equals(Integer.valueOf(coDay[2]))) {
@@ -2259,6 +2268,7 @@ public class PersonServiceImpl implements IPersonServ {
                                     otw.setEnrollNumber(kqBeans.get(k).getEnrollNumber());
                                     otw.setDateStr(kqBeans.get(k).getDateStr());
                                     workSet = personMapper.getWorkSetByMonthAndPositionLevel2(yearMonth, em.getPositionLevel());
+                                    afterWS = StringUtil.plusPianCha(workSet, dkpc);
                                     Time time = null;
 
                                     yb = personMapper.getYeBanByEmpNoAndDateStrNew(co.getEmpNo(), co.getDateStr());
@@ -2531,122 +2541,346 @@ public class PersonServiceImpl implements IPersonServ {
                                                             if (extHours >= 0) {
                                                                 otw.setExtWorkHours(extHours);
                                                             }
-                                                            // }
                                                         }
                                                     }
                                                 }
 
                                                 if (!aon) {
                                                     Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn().toString());
-                                                    if (leave != null) {
-                                                        if (leave.getType() == 0) {
-                                                            otw.setaOnRemark("正常请假");
-                                                            otw.setRemark("正常请假");
-                                                            otw.setClockResult(6);
-                                                        } else if (leave.getType() == 1) {
-                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                            if (outClockIn != null) {
-                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                    if (co.getTimeStr() == null || co.getTimeStr().trim().length() == 0) {
+                                                        if (leave != null) {
+                                                            if (leave.getType() == 0) {
+                                                                otw.setaOnRemark("正常请假");
+                                                                otw.setRemark("正常请假");
+                                                                otw.setClockResult(6);
+                                                            } else if (leave.getType() == 1) {
+                                                                outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                                if (outClockIn != null) {
+                                                                    outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                                }
+                                                                otw.setTimeStr(outtimeStr);
+                                                                otw.setaOnRemark("因公外出");
+                                                                otw.setRemark("因公外出");
+                                                                otw.setClockResult(2);
+                                                            } else if (leave.getType() == 1) {
+                                                                otw.setaOnRemark("带薪年假");
+                                                                otw.setRemark("带薪年假");
+                                                                otw.setClockResult(3);
                                                             }
-                                                            otw.setTimeStr(outtimeStr);
-                                                            otw.setaOnRemark("因公外出");
-                                                            otw.setRemark("因公外出");
-                                                            otw.setClockResult(2);
-                                                        } else if (leave.getType() == 1) {
-                                                            otw.setaOnRemark("带薪年假");
-                                                            otw.setRemark("带薪年假");
-                                                            otw.setClockResult(3);
                                                         }
                                                     } else {
-                                                        //此填入未上满正班计正班工时代码
+                                                        //7:37:57 9:2:52
+                                                        boolean isAOnH = false;
+                                                        a:
+                                                        for (Time tii : timeList) {
+                                                            if (tii.after(afterWS.getMorningOn()) && !tii.after(afterWS.getMorningOff())) {
+                                                                if (pon) {
+                                                                    aHours = DateUtil.calcuHours(tii, workSet.getMorningOff());
+                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                    if (le != null) {
+                                                                        clockRes = 16;
+                                                                    }
+                                                                    break a;
+                                                                } else {
+                                                                    if (pon || poff) {
+                                                                        aHours = DateUtil.calcuHours(tii, workSet.getMorningOff());
+                                                                        Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                        if (le != null) {
+                                                                            clockRes = 16;
+                                                                        }
+                                                                        break a;
+                                                                    } else {
+                                                                        for (int tiii = timeList.size() - 1; tiii < timeList.size(); tiii--) {
+                                                                            if (timeList.get(tiii).after(afterWS.getMorningOn()) && !timeList.get(tiii).after(afterWS.getMorningOff())) {
+                                                                                aHours = DateUtil.calcuHours(tii, timeList.get(tiii));
+                                                                                isAOnH = true;
+                                                                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                                if (le != null) {
+                                                                                    clockRes = 16;
+                                                                                }
+                                                                                break a;
+                                                                            }
+                                                                        }
 
+                                                                        if (!isAOnH) {
+                                                                            for (Time tiii : timeList) {
+                                                                                if (tiii.after(afterWS.getMorningOn())) {
+                                                                                    aHours = DateUtil.calcuHours(tiii, workSet.getMorningOff());
+                                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + tiii, em.getId());
+                                                                                    if (le != null) {
+                                                                                        clockRes = 16;
+                                                                                    }
+                                                                                    break a;
+                                                                                }
+                                                                            }
+                                                                        }
 
-                                                        otw.setaOnRemark("上午上班");
-                                                        otw.setRemark("打卡时间不在规定时间范围内");
-                                                        otw.setClockResult(7);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if (aHours != 0.0) {
+                                                            if (em.getWorkType() == 1) {
+                                                                aHours += 0.5;
+                                                            }
+                                                            otw.setaOnRemark(aHours.toString());
+                                                            otw.setRemark(aHours.toString() + "," + pHours.toString());
+                                                            otw.setClockResult(clockRes);
+                                                        } else {
+                                                            otw.setaOnRemark("上午上班");
+                                                            otw.setRemark("打卡时间不在规定时间范围内");
+                                                            otw.setClockResult(7);
+                                                        }
                                                     }
+
                                                 }
                                                 if (!aoff) {
                                                     Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOff().toString());
-                                                    if (leave != null) {
-                                                        if (leave.getType() == 0) {
-                                                            otw.setaOnRemark("正常请假");
-                                                            otw.setRemark("正常请假");
-                                                            otw.setClockResult(6);
-                                                        } else if (leave.getType() == 1) {
-                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                            if (outClockIn != null) {
-                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                    if (co.getTimeStr() == null || co.getTimeStr().trim().length() == 0) {
+                                                        if (leave != null) {
+                                                            if (leave.getType() == 0) {
+                                                                otw.setaOnRemark("正常请假");
+                                                                otw.setRemark("正常请假");
+                                                                otw.setClockResult(6);
+                                                            } else if (leave.getType() == 1) {
+                                                                outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                                if (outClockIn != null) {
+                                                                    outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                                }
+                                                                otw.setTimeStr(outtimeStr);
+                                                                otw.setaOffRemark("因公外出");
+                                                                otw.setRemark("因公外出");
+                                                                otw.setClockResult(2);
+                                                            } else if (leave.getType() == 1) {
+                                                                otw.setaOffRemark("带薪年假");
+                                                                otw.setRemark("带薪年假");
+                                                                otw.setClockResult(3);
                                                             }
-                                                            otw.setTimeStr(outtimeStr);
-                                                            otw.setaOffRemark("因公外出");
-                                                            otw.setRemark("因公外出");
-                                                            otw.setClockResult(2);
-                                                        } else if (leave.getType() == 1) {
-                                                            otw.setaOffRemark("带薪年假");
-                                                            otw.setRemark("带薪年假");
-                                                            otw.setClockResult(3);
                                                         }
                                                     } else {
-                                                        otw.setaOffRemark("上午下班");
-                                                        otw.setRemark("打卡时间不在规定时间范围内");
-                                                        otw.setClockResult(7);
+//13:53:9 19:12:12   王金云
+                                                        boolean isAOnH = false;
+                                                        a:
+                                                        for (Time tii : timeList) {
+                                                            if (tii.after(afterWS.getMorningOn()) && !tii.after(afterWS.getMorningOff())) {
+                                                                if (aon) {
+                                                                    aHours = DateUtil.calcuHours(workSet.getMorningOn(), tii);
+                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + tii, yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                    if (le != null) {
+                                                                        clockRes = 16;
+                                                                    }
+                                                                    break a;
+                                                                } else {
+                                                                    if (pon || poff) {
+                                                                        aHours = DateUtil.calcuHours(workSet.getMorningOn(), tii);
+                                                                        Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + tii, yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                        if (le != null) {
+                                                                            clockRes = 16;
+                                                                        }
+                                                                        break a;
+                                                                    } else {
+                                                                        for (int tiii = timeList.size() - 1; tiii < timeList.size(); tiii--) {
+                                                                            if (timeList.get(tiii).after(afterWS.getMorningOn()) && !timeList.get(tiii).after(afterWS.getMorningOff())) {
+                                                                                aHours = DateUtil.calcuHours(tii, timeList.get(tiii));
+                                                                                isAOnH = true;
+                                                                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + timeList.get(tiii), yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                                if (le != null) {
+                                                                                    clockRes = 16;
+                                                                                }
+                                                                                break a;
+                                                                            }
+                                                                        }
+
+                                                                        if (!isAOnH) {
+                                                                            for (Time tiii : timeList) {
+                                                                                if (tiii.after(afterWS.getMorningOn())) {
+                                                                                    aHours = DateUtil.calcuHours(tiii, workSet.getMorningOff());
+                                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + tiii, em.getId());
+                                                                                    if (le != null) {
+                                                                                        clockRes = 16;
+                                                                                    }
+                                                                                    break a;
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if (aHours != 0.0) {
+                                                            if (em.getWorkType() == 1) {
+                                                                aHours += 0.5;
+                                                            }
+                                                            otw.setaOnRemark(aHours.toString());
+                                                            otw.setRemark(aHours.toString() + "," + pHours.toString());
+                                                            otw.setClockResult(clockRes);
+                                                        } else {
+                                                            otw.setaOffRemark("上午下班");
+                                                            otw.setRemark("打卡时间不在规定时间范围内");
+                                                            otw.setClockResult(7);
+                                                        }
                                                     }
                                                 }
 
                                                 if (!pon) {
                                                     Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOn().toString());
-                                                    if (leave != null) {
-                                                        if (leave.getType() == 0) {
-                                                            otw.setpOnRemark("正常请假");
-                                                            otw.setRemark("正常请假");
-                                                            otw.setClockResult(6);
-                                                        } else if (leave.getType() == 1) {
-                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                            if (outClockIn != null) {
-                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                    if (co.getTimeStr() == null || co.getTimeStr().trim().length() == 0) {
+                                                        if (leave != null) {
+                                                            if (leave.getType() == 0) {
+                                                                otw.setpOnRemark("正常请假");
+                                                                otw.setRemark("正常请假");
+                                                                otw.setClockResult(6);
+                                                            } else if (leave.getType() == 1) {
+                                                                outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                                if (outClockIn != null) {
+                                                                    outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                                }
+                                                                otw.setTimeStr(outtimeStr);
+                                                                otw.setpOnRemark("因公外出");
+                                                                otw.setRemark("因公外出");
+                                                                otw.setClockResult(2);
+                                                            } else if (leave.getType() == 1) {
+                                                                otw.setpOnRemark("带薪年假");
+                                                                otw.setRemark("带薪年假");
+                                                                otw.setClockResult(3);
                                                             }
-                                                            otw.setTimeStr(outtimeStr);
-                                                            otw.setpOnRemark("因公外出");
-                                                            otw.setRemark("因公外出");
-                                                            otw.setClockResult(2);
-                                                        } else if (leave.getType() == 1) {
-                                                            otw.setpOnRemark("带薪年假");
-                                                            otw.setRemark("带薪年假");
-                                                            otw.setClockResult(3);
                                                         }
                                                     } else {
-                                                        otw.setpOnRemark("下午上班");
-                                                        otw.setRemark("打卡时间不在规定时间范围内");
-                                                        otw.setClockResult(7);
+                                                        //13:53:9 19:12:12   王金云
+                                                        //14:2:49 17:44:41   陈婷
+                                                        boolean isAOnH = false;
+                                                        a:
+                                                        for (Time tii : timeList) {
+                                                            if (tii.after(afterWS.getNoonOn()) && !tii.after(afterWS.getNoonOff())) {
+                                                                if (poff) {
+                                                                    pHours = DateUtil.calcuHours(tii, workSet.getNoonOff());
+                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getNoonOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                    if (le != null) {
+                                                                        clockRes = 16;
+                                                                    }
+                                                                    break a;
+                                                                } else {
+                                                                    if (aon || aoff) {
+                                                                        pHours = DateUtil.calcuHours(tii, workSet.getNoonOff());
+                                                                        Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getNoonOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                        if (le != null) {
+                                                                            clockRes = 16;
+                                                                        }
+                                                                        break a;
+                                                                    } else {
+                                                                        for (int tiii = timeList.size() - 1; tiii < timeList.size(); tiii--) {
+                                                                            if (timeList.get(tiii).after(afterWS.getNoonOn()) && !timeList.get(tiii).after(afterWS.getNoonOff())) {
+                                                                                pHours = DateUtil.calcuHours(tii, timeList.get(tiii));
+                                                                                isAOnH = true;
+                                                                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getNoonOn(), yearMonth + "-" + date + " " + tii, em.getId());
+                                                                                if (le != null) {
+                                                                                    clockRes = 16;
+                                                                                }
+                                                                                break a;
+                                                                            }
+                                                                        }
+
+                                                                        if (!isAOnH) {
+                                                                            for (Time tiii : timeList) {
+                                                                                if (tiii.after(afterWS.getNoonOn())) {
+                                                                                    pHours = DateUtil.calcuHours(tiii, workSet.getNoonOff());
+                                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + workSet.getNoonOn(), yearMonth + "-" + date + " " + tiii, em.getId());
+                                                                                    if (le != null) {
+                                                                                        clockRes = 16;
+                                                                                    }
+                                                                                    break a;
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if (pHours != 0.0) {
+                                                            otw.setaOnRemark(pHours.toString());
+                                                            otw.setRemark(aHours + "," + pHours.toString());
+                                                            otw.setClockResult(clockRes);
+                                                        } else {
+                                                            otw.setpOnRemark("下午上班");
+                                                            otw.setRemark("打卡时间不在规定时间范围内");
+                                                            otw.setClockResult(7);
+                                                        }
                                                     }
                                                 }
 
                                                 if (!poff) {
                                                     Leave leave = personMapper.getLeaveByEmIdAndMonthA(em.getId(), yearMonth + "-" + date + " " + workSet.getNoonOff().toString());
-                                                    if (leave != null) {
-                                                        if (leave.getType() == 0) {
-                                                            otw.setpOffRemark("正常请假");
-                                                            otw.setRemark("正常请假");
-                                                            otw.setClockResult(6);
-                                                        } else if (leave.getType() == 1) {
-                                                            outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
-                                                            if (outClockIn != null) {
-                                                                outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                    if (co.getTimeStr() == null || co.getTimeStr().trim().length() == 0) {
+                                                        if (leave != null) {
+                                                            if (leave.getType() == 0) {
+                                                                otw.setpOffRemark("正常请假");
+                                                                otw.setRemark("正常请假");
+                                                                otw.setClockResult(6);
+                                                            } else if (leave.getType() == 1) {
+                                                                outClockIn = personMapper.getOutClockInByEmpNoandDate(leave.getEmployeeId(), yearMonth + "-" + date);
+                                                                if (outClockIn != null) {
+                                                                    outtimeStr = StringUtil.onlyTimeStr(outClockIn);
+                                                                }
+                                                                otw.setTimeStr(outtimeStr);
+                                                                otw.setpOffRemark("因公外出");
+                                                                otw.setRemark("因公外出");
+                                                                otw.setClockResult(2);
+                                                            } else if (leave.getType() == 2) {
+                                                                otw.setpOffRemark("带薪年假");
+                                                                otw.setRemark("带薪年假");
+                                                                otw.setClockResult(3);
                                                             }
-                                                            otw.setTimeStr(outtimeStr);
-                                                            otw.setpOffRemark("因公外出");
-                                                            otw.setRemark("因公外出");
-                                                            otw.setClockResult(2);
-                                                        } else if (leave.getType() == 2) {
-                                                            otw.setpOffRemark("带薪年假");
-                                                            otw.setRemark("带薪年假");
-                                                            otw.setClockResult(3);
                                                         }
                                                     } else {
-                                                        otw.setpOffRemark("下午下班");
-                                                        otw.setRemark("打卡时间不在规定时间范围内");
-                                                        otw.setClockResult(7);
+                                                        //13:53:9 19:12:12   王金云
+                                                        //14:2:49 17:44:41   陈婷
+                                                        boolean isAOnH = false;
+                                                        a:
+                                                        for (Time tii : timeList) {
+                                                            if (tii.after(afterWS.getNoonOn()) && !tii.after(afterWS.getNoonOff())) {
+                                                                if (pon) {
+                                                                    pHours = DateUtil.calcuHours(workSet.getNoonOn(), tii);
+                                                                    Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + tii, yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                    if (le != null) {
+                                                                        clockRes = 16;
+                                                                    }
+                                                                    break a;
+                                                                } else {
+                                                                    if (aon || aoff) {
+                                                                        pHours = DateUtil.calcuHours(workSet.getNoonOn(), tii);
+                                                                        Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + tii, yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                        if (le != null) {
+                                                                            clockRes = 16;
+                                                                        }
+                                                                        break a;
+                                                                    } else {
+                                                                        for (int tiii = timeList.size() - 1; tiii < timeList.size(); tiii--) {
+                                                                            if (timeList.get(tiii).after(afterWS.getNoonOn()) && !timeList.get(tiii).after(afterWS.getNoonOff())) {
+                                                                                pHours = DateUtil.calcuHours(tii, timeList.get(tiii));
+                                                                                isAOnH = true;
+                                                                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(yearMonth + "-" + date + " " + timeList.get(tiii), yearMonth + "-" + date + " " + workSet.getNoonOff(), em.getId());
+                                                                                if (le != null) {
+                                                                                    clockRes = 16;
+                                                                                }
+                                                                                break a;
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if (pHours != 0.0) {
+                                                            otw.setaOnRemark(pHours.toString());
+                                                            otw.setRemark(aHours + "," + pHours.toString());
+                                                            otw.setClockResult(clockRes);
+                                                        } else {
+                                                            otw.setpOffRemark("下午下班");
+                                                            otw.setRemark("打卡时间不在规定时间范围内");
+                                                            otw.setClockResult(7);
+                                                        }
                                                     }
                                                 }
 
@@ -2842,8 +3076,6 @@ public class PersonServiceImpl implements IPersonServ {
 
                         }
                     }
-
-
                 } else {
                     kqBeanList.add(aaa);
                     return kqBeanList;
@@ -2898,6 +3130,12 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllMonthKQData(yearMonth);
     }
 
+
+    public List<String> getAllKQMonthList() throws Exception {
+        return personMapper.getAllKQMonthList();
+    }
+
+
     public void saveMonthKQInfoByCheckKQBean(List<OutClockIn> outClockInList) throws Exception {
         List<KQBean> kqBeanList = personMapper.getKQBeanByDateStrs(outClockInList);
         //List<JiaBan> jiaBanList = personMapper.getJiaBanDanByDates(outClockInList);
@@ -2928,6 +3166,7 @@ public class PersonServiceImpl implements IPersonServ {
         MonthKQInfo mkf = null;
         String dayStr = null;
         String daytitleSql;
+        String daytitleSqlRe;
         String[] yearM = null;
         String dayNum;
         Date dateFrom = null;
@@ -2953,6 +3192,7 @@ public class PersonServiceImpl implements IPersonServ {
                     if (mkf == null)
                         mkf = new MonthKQInfo();
                     daytitleSql = "day".concat(dayStr);
+                    daytitleSqlRe = daytitleSql.concat("Remark");
                     for (DateSplit ds : dateSplitList) {
                         if (ds.getDate().equals(ock.getClockInDateStr())) {
                             nowDate = ds;
@@ -2970,6 +3210,7 @@ public class PersonServiceImpl implements IPersonServ {
                     }
                     mkf.setEmpNo(jb.getEmpNo());
                     mkf.setDaytitleSql(daytitleSql);
+                    mkf.setDaytitleSqlRemark(daytitleSqlRe);
                     mkf.setDayNum(dayNum);
                     mkf.setYearMonth(yearM[0] + "-" + yearM[1]);
                     monthKQInfoList.add(mkf);
@@ -2993,6 +3234,7 @@ public class PersonServiceImpl implements IPersonServ {
             timeList = new ArrayList<String>();
             List<Time> times = null;
             daytitleSql = null;
+            daytitleSqlRe = null;
             String dayremarktitleSql = null;
             dayNum = "";
             String[] timeStr = null;
@@ -3024,7 +3266,7 @@ public class PersonServiceImpl implements IPersonServ {
             }
             mkf.setRemark(kqb.getRemark());
             daytitleSql = "day".concat(dayStr);
-            dayremarktitleSql = daytitleSql.concat("Remark");
+            daytitleSqlRe = daytitleSql.concat("Remark");
 
             String aOnStr = null;
             String aOffStr = null;
@@ -3144,6 +3386,7 @@ public class PersonServiceImpl implements IPersonServ {
                 }
                 mkf.setDayNum(dayNum);
                 mkf.setDaytitleSql(daytitleSql);
+                mkf.setDaytitleSqlRemark(daytitleSqlRe);
                 mkf.setWorkendHours(lianBanTotalH + 8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
             } else {
                 if (!noWeekendButWeekEnd.contains(kqb.getDateStr())) {
@@ -3171,6 +3414,56 @@ public class PersonServiceImpl implements IPersonServ {
                     } else if (kqb.getClockResult() == 3) {
                         mkf.setOtherPaidLeave(lianBanTotalH + (mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
                         dayNum = "15,15,";
+                    } else if (kqb.getClockResult() == 16) {
+                        Double ho = 0.0;
+                        String a;
+                        String b;
+                        String[] ab = kqb.getRemark().split(",");
+                        if (Double.valueOf(ab[0]) == 0.0) {
+                            a = "1,";
+                            ho += 4.0;
+                        } else {
+                            a = "16,";
+                            ho += Double.valueOf(ab[0]);
+                        }
+
+                        if (Double.valueOf(ab[1]) == 0.0) {
+                            b = "1,";
+                            ho += 4.0;
+                        } else {
+                            b = "16,";
+                            ho += Double.valueOf(ab[1]);
+                        }
+                        dayNum = a + b;
+                        mkf.setDayNumRemark(kqb.getRemark());
+                        mkf.setZhengbanHours((lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours())) + ho);
+                        mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
+                    } else if (kqb.getClockResult() == 17) {
+
+                        Double ho = 0.0;
+                        String a;
+                        String b;
+                        String[] ab = kqb.getRemark().split(",");
+                        if (Double.valueOf(ab[0]) == 0.0) {
+                            a = "1,";
+                            ho += 4.0;
+                        } else {
+                            a = "19,";
+                            ho += Double.valueOf(ab[0]);
+                        }
+
+                        if (Double.valueOf(ab[1]) == 0.0) {
+                            b = "1,";
+                            ho += 4.0;
+                        } else {
+                            b = "19,";
+                            ho += Double.valueOf(ab[1]);
+                        }
+                        dayNum = a + b;
+                        mkf.setDayNumRemark(kqb.getRemark());
+                        mkf.setZhengbanHours((lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours())) + ho);
+                        mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
+
                     } else if (kqb.getClockResult() == 7) {
                         aOnStr = "7,"; //打卡时间不在范围内
                         aOffStr = "7,";
@@ -3255,9 +3548,10 @@ public class PersonServiceImpl implements IPersonServ {
                     }
                     mkf.setDayNum(dayNum);
                     mkf.setDaytitleSql(daytitleSql);
+                    mkf.setDayNumRemark(kqb.getRemark());
+                    mkf.setDaytitleSqlRemark(daytitleSqlRe);
                     mkf.setUsualExtHours(lianBanTotalH + (mkf.getUsualExtHours() == null ? 0.0 : mkf.getUsualExtHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
                 } else {
-
                     if (kqb.getClockResult() == 1) {
                         mkf.setWorkendHours(lianBanTotalH + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
                         dayNum = "18,18,";
@@ -3362,6 +3656,8 @@ public class PersonServiceImpl implements IPersonServ {
                     }
                     mkf.setDayNum(dayNum);
                     mkf.setDaytitleSql(daytitleSql);
+                    mkf.setDaytitleSqlRemark(daytitleSqlRe);
+                    mkf.setDayNumRemark(kqb.getRemark());
                     mkf.setWorkendHours(lianBanTotalH + 8.0 + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
 
                     //*********************
@@ -3449,8 +3745,19 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.queryYBByCondition(yeBan);
     }
 
+    public void saveDAPCSetUp(DaKaPianCha daKaPianCha) throws Exception {
+        DaKaPianCha old = personMapper.getDAPC();
+        if (old == null)
+            personMapper.saveDAPCSetUp(daKaPianCha);
+        personMapper.updateDAPCSetUp(daKaPianCha);
+    }
+
     public int queryYBByConditionCount(YeBan yeBan) throws Exception {
         return personMapper.queryYBByConditionCount(yeBan);
+    }
+
+    public DaKaPianCha getDaKaPianCha() throws Exception {
+        return personMapper.getDaKaPianCha();
     }
 }
 

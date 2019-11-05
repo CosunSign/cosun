@@ -1,9 +1,6 @@
 package com.cosun.cosunp.tool;
 
-import com.cosun.cosunp.entity.KQBean;
-import com.cosun.cosunp.entity.QianKa;
-import com.cosun.cosunp.entity.WorkSet;
-import com.cosun.cosunp.entity.ZhongKongBean;
+import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.weixin.OutClockIn;
 
 import java.sql.Time;
@@ -50,6 +47,15 @@ public class StringUtil {
         }
     }
 
+
+    public static WorkSet plusPianCha(WorkSet oldSet, DaKaPianCha daKaPianCha) throws Exception {
+        WorkSet newSet = new WorkSet();
+        newSet.setMorningOn(new java.sql.Time(oldSet.getMorningOn().getTime() + (daKaPianCha.getPianChaMin() * 60000)));
+        newSet.setMorningOff(new java.sql.Time(oldSet.getMorningOff().getTime() - (daKaPianCha.getPianChaMin() * 60000)));
+        newSet.setNoonOn(new java.sql.Time(oldSet.getNoonOn().getTime() + (daKaPianCha.getPianChaMin() * 60000)));
+        newSet.setNoonOff(new java.sql.Time(oldSet.getNoonOff().getTime() - (daKaPianCha.getPianChaMin() * 60000)));
+        return newSet;
+    }
 
     public static int checkIsNeed(String timeStr, WorkSet ws, KQBean kq) throws Exception {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");

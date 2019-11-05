@@ -62,7 +62,7 @@ public class PersonController {
         OutClockIn oci = null;
         try {
             String day = null;
-            for (int a = 1; a <= 30; a++) {
+            for (int a = 1; a <= 31; a++) {
                 if (a < 10) {
                     day = "0" + a;
                 } else {
@@ -83,7 +83,7 @@ public class PersonController {
 
     public void getBeforeDayZhongKongData() throws Exception {
         //String beforDay = DateUtil.getBeforeDay();
-        String beforDay = "2019-10-30";
+        String beforDay = "2019-11-02";
         String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
@@ -207,6 +207,7 @@ public class PersonController {
         testDomainMapper.saveAllNewKQBeansToMysql(newKQBeans);
         ociList.clear();
     }
+
 
     @ResponseBody
     @RequestMapping(value = "/queryAttendance", method = RequestMethod.POST)
@@ -339,11 +340,13 @@ public class PersonController {
         ModelAndView view = new ModelAndView("monthkqinfo");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String today = format.format(new Date());
+       // String today = format.format(new Date());
+        String today = "2019-10-08";
         String[] yearMonth = today.split("-");
         Employee employee = new Employee();
         List<Position> positionList = personServ.findAllPositionAll();
         List<String> kqDateList = personServ.getAllKQDateList();
+        List<String> kqMonthList = personServ.getAllKQMonthList();
         List<Dept> deptList = personServ.findAllDeptAll();
         List<Employee> empList = personServ.findAllEmployeeAll();
         List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQData(yearMonth[0] + "-" + yearMonth[1]);
@@ -354,6 +357,7 @@ public class PersonController {
         view.addObject("deptList", deptList);
         view.addObject("userInfo", userInfo);
         view.addObject("kqDateList", kqDateList);
+        view.addObject("kqMonthList", kqMonthList);
         view.addObject("today", today);
         return view;
     }
@@ -658,6 +662,7 @@ public class PersonController {
         return view;
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/tooutsetpage")
     public ModelAndView tooutsetpage() throws Exception {
@@ -665,6 +670,36 @@ public class PersonController {
         List<ClockInSetUp> clockInSetUpList = personServ.findAllOutClockInSetUp();
         view.addObject("flag", 0);
         view.addObject("clockInSetUpList", clockInSetUpList);
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/saveDAPCSetUp", method = RequestMethod.POST)
+    public void saveDAPCSetUp(DaKaPianCha daKaPianCha, HttpServletResponse response, HttpSession session) throws Exception {
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            personServ.saveDAPCSetUp(daKaPianCha);
+            String str1;
+            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            str1 = x.writeValueAsString(1);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1); //返回前端ajax
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/toDaKaPianCha")
+    public ModelAndView toDaKaPianCha() throws Exception {
+        ModelAndView view = new ModelAndView("dakapiancha");
+        DaKaPianCha dkpc = personServ.getDaKaPianCha();
+        view.addObject("flag", 0);
+        view.addObject("dkpc", dkpc);
         return view;
     }
 

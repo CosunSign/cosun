@@ -31,217 +31,1010 @@ public class MonthKQInfo implements Serializable {
     private Double highTempAllow;//高温补贴
     private String remark;
 
+
     private String day01;
     private String day01Remark;
     private Integer day01AM;
+    private Double day01AMRemark;
     private Integer day01PM;
+    private Double day01PMRemark;
     private Double day01ExHours;
 
 
     private String day02;
     private String day02Remark;
     private Integer day02AM;
+    private Double day02AMRemark;
     private Integer day02PM;
+    private Double day02PMRemark;
     private Double day02ExHours;
 
     private String day03;
     private String day03Remark;
     private Integer day03AM;
+    private Double day03AMRemark;
     private Integer day03PM;
+    private Double day03PMRemark;
     private Double day03ExHours;
 
 
     private String day04;
     private String day04Remark;
     private Integer day04AM;
+    private Double day04AMRemark;
     private Integer day04PM;
+    private Double day04PMRemark;
     private Double day04ExHours;
 
 
     private String day05;
     private String day05Remark;
     private Integer day05AM;
+    private Double day05AMRemark;
     private Integer day05PM;
+    private Double day05PMRemark;
     private Double day05ExHours;
 
 
     private String day06;
     private String day06Remark;
     private Integer day06AM;
+    private Double day06AMRemark;
     private Integer day06PM;
+    private Double day06PMRemark;
     private Double day06ExHours;
 
 
     private String day07;
     private String day07Remark;
     private Integer day07AM;
+    private Double day07AMRemark;
     private Integer day07PM;
+    private Double day07PMRemark;
     private Double day07ExHours;
 
 
     private String day08;
     private String day08Remark;
     private Integer day08AM;
+    private Double day08AMRemark;
     private Integer day08PM;
+    private Double day08PMRemark;
     private Double day08ExHours;
 
 
     private String day09;
     private String day09Remark;
     private Integer day09AM;
+    private Double day09AMRemark;
     private Integer day09PM;
+    private Double day09PMRemark;
     private Double day09ExHours;
 
 
     private String day10;
     private String day10Remark;
     private Integer day10AM;
+    private Double day10AMRemark;
     private Integer day10PM;
+    private Double day10PMRemark;
     private Double day10ExHours;
 
 
     private String day11;
     private String day11Remark;
     private Integer day11AM;
+    private Double day11AMRemark;
     private Integer day11PM;
+    private Double day11PMRemark;
     private Double day11ExHours;
+
 
     private String day12;
     private String day12Remark;
     private Integer day12AM;
+    private Double day12AMRemark;
     private Integer day12PM;
+    private Double day12PMRemark;
     private Double day12ExHours;
 
 
     private String day13;
     private String day13Remark;
     private Integer day13AM;
+    private Double day13AMRemark;
     private Integer day13PM;
+    private Double day13PMRemark;
     private Double day13ExHours;
 
 
     private String day14;
     private String day14Remark;
     private Integer day14AM;
+    private Double day14AMRemark;
     private Integer day14PM;
+    private Double day14PMRemark;
     private Double day14ExHours;
 
 
     private String day15;
     private String day15Remark;
     private Integer day15AM;
+    private Double day15AMRemark;
     private Integer day15PM;
+    private Double day15PMRemark;
     private Double day15ExHours;
 
     private String day16;
     private String day16Remark;
     private Integer day16AM;
+    private Double day16AMRemark;
     private Integer day16PM;
+    private Double day16PMRemark;
     private Double day16ExHours;
 
     private String day17;
     private String day17Remark;
     private Integer day17AM;
+    private Double day17AMRemark;
     private Integer day17PM;
+    private Double day17PMRemark;
     private Double day17ExHours;
 
     private String day18;
     private String day18Remark;
     private Integer day18AM;
+    private Double day18AMRemark;
     private Integer day18PM;
+    private Double day18PMRemark;
     private Double day18ExHours;
 
     private String day19;
     private String day19Remark;
     private Integer day19AM;
+    private Double day19AMRemark;
     private Integer day19PM;
+    private Double day19PMRemark;
     private Double day19ExHours;
 
     private String day20;
     private String day20Remark;
     private Integer day20AM;
+    private Double day20AMRemark;
     private Integer day20PM;
+    private Double day20PMRemark;
     private Double day20ExHours;
 
     private String day21;
     private String day21Remark;
     private Integer day21AM;
+    private Double day21AMRemark;
     private Integer day21PM;
+    private Double day21PMRemark;
     private Double day21ExHours;
 
 
     private String day22;
     private String day22Remark;
     private Integer day22AM;
+    private Double day22AMRemark;
     private Integer day22PM;
+    private Double day22PMRemark;
     private Double day22ExHours;
 
     private String day23;
     private String day23Remark;
     private Integer day23AM;
+    private Double day23AMRemark;
     private Integer day23PM;
+    private Double day23PMRemark;
     private Double day23ExHours;
 
     private String day24;
     private String day24Remark;
     private Integer day24AM;
+    private Double day24AMRemark;
     private Integer day24PM;
+    private Double day24PMRemark;
     private Double day24ExHours;
 
     private String day25;
     private String day25Remark;
     private Integer day25AM;
+    private Double day25AMRemark;
     private Integer day25PM;
+    private Double day25PMRemark;
     private Double day25ExHours;
 
 
     private String day26;
     private String day26Remark;
     private Integer day26AM;
+    private Double day26AMRemark;
     private Integer day26PM;
+    private Double day26PMRemark;
     private Double day26ExHours;
 
     private String day27;
     private String day27Remark;
     private Integer day27AM;
+    private Double day27AMRemark;
     private Integer day27PM;
+    private Double day27PMRemark;
     private Double day27ExHours;
 
     private String day28;
     private String day28Remark;
     private Integer day28AM;
+    private Double day28AMRemark;
     private Integer day28PM;
+    private Double day28PMRemark;
     private Double day28ExHours;
 
     private String day29;
     private String day29Remark;
     private Integer day29AM;
+    private Double day29AMRemark;
     private Integer day29PM;
+    private Double day29PMRemark;
     private Double day29ExHours;
 
     private String day30;
     private String day30Remark;
     private Integer day30AM;
+    private Double day30AMRemark;
     private Integer day30PM;
+    private Double day30PMRemark;
     private Double day30ExHours;
 
     private String day31;
     private String day31Remark;
     private Integer day31AM;
+    private Double day31AMRemark;
     private Integer day31PM;
+    private Double day31PMRemark;
     private Double day31ExHours;
 
 
     //回显字段
     private String nameReal;
     private String daytitleSql;
+    private String daytitleSqlRemark;
+
 
     private String dayNum;
     private String dayNumRemark;
 
 
-
     private Integer renShiChecked;
+
+    public Double getDay01AMRemark() {
+        if (day01Remark != null) {
+            String[] remark = day01Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day01AMRemark;
+    }
+
+    public void setDay01AMRemark(Double day01AMRemark) {
+        this.day01AMRemark = day01AMRemark;
+    }
+
+    public Double getDay01PMRemark() {
+        if (day01Remark != null) {
+            String[] remark = day01Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day01PMRemark;
+    }
+
+    public void setDay01PMRemark(Double day01PMRemark) {
+        this.day01PMRemark = day01PMRemark;
+    }
+
+    public Double getDay02AMRemark() {
+        if (day02Remark != null) {
+            String[] remark = day02Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day02AMRemark;
+    }
+
+    public void setDay02AMRemark(Double day02AMRemark) {
+        this.day02AMRemark = day02AMRemark;
+    }
+
+    public Double getDay02PMRemark() {
+        if (day02Remark != null) {
+            String[] remark = day02Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day02PMRemark;
+    }
+
+    public void setDay02PMRemark(Double day02PMRemark) {
+        this.day02PMRemark = day02PMRemark;
+    }
+
+    public Double getDay03AMRemark() {
+        if (day03Remark != null) {
+            String[] remark = day03Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day03AMRemark;
+    }
+
+    public void setDay03AMRemark(Double day03AMRemark) {
+        this.day03AMRemark = day03AMRemark;
+    }
+
+    public Double getDay03PMRemark() {
+        if (day03Remark != null) {
+            String[] remark = day03Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day03PMRemark;
+    }
+
+    public void setDay03PMRemark(Double day03PMRemark) {
+        this.day03PMRemark = day03PMRemark;
+    }
+
+    public Double getDay04AMRemark() {
+        if (day04Remark != null) {
+            String[] remark = day04Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day04AMRemark;
+    }
+
+    public void setDay04AMRemark(Double day04AMRemark) {
+        this.day04AMRemark = day04AMRemark;
+    }
+
+    public Double getDay04PMRemark() {
+        if (day04Remark != null) {
+            String[] remark = day04Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day04PMRemark;
+    }
+
+    public void setDay04PMRemark(Double day04PMRemark) {
+        this.day04PMRemark = day04PMRemark;
+    }
+
+    public Double getDay05AMRemark() {
+        if (day05Remark != null) {
+            String[] remark = day05Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day05AMRemark;
+    }
+
+    public void setDay05AMRemark(Double day05AMRemark) {
+        this.day05AMRemark = day05AMRemark;
+    }
+
+    public Double getDay05PMRemark() {
+        if (day05Remark != null) {
+            String[] remark = day05Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day05PMRemark;
+    }
+
+    public void setDay05PMRemark(Double day05PMRemark) {
+        this.day05PMRemark = day05PMRemark;
+    }
+
+    public Double getDay06AMRemark() {
+        if (day06Remark != null) {
+            String[] remark = day06Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day06AMRemark;
+    }
+
+    public void setDay06AMRemark(Double day06AMRemark) {
+        this.day06AMRemark = day06AMRemark;
+    }
+
+    public Double getDay06PMRemark() {
+        if (day06Remark != null) {
+            String[] remark = day06Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day06PMRemark;
+    }
+
+    public void setDay06PMRemark(Double day06PMRemark) {
+        this.day06PMRemark = day06PMRemark;
+    }
+
+    public Double getDay07AMRemark() {
+        if (day07Remark != null) {
+            String[] remark = day07Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day07AMRemark;
+    }
+
+    public void setDay07AMRemark(Double day07AMRemark) {
+        this.day07AMRemark = day07AMRemark;
+    }
+
+    public Double getDay07PMRemark() {
+        if (day07Remark != null) {
+            String[] remark = day07Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day07PMRemark;
+    }
+
+    public void setDay07PMRemark(Double day07PMRemark) {
+        this.day07PMRemark = day07PMRemark;
+    }
+
+    public Double getDay08AMRemark() {
+        if (day08Remark != null) {
+            String[] remark = day08Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day08AMRemark;
+    }
+
+    public void setDay08AMRemark(Double day08AMRemark) {
+        this.day08AMRemark = day08AMRemark;
+    }
+
+    public Double getDay08PMRemark() {
+        if (day08Remark != null) {
+            String[] remark = day08Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day08PMRemark;
+    }
+
+    public void setDay08PMRemark(Double day08PMRemark) {
+        this.day08PMRemark = day08PMRemark;
+    }
+
+    public Double getDay09AMRemark() {
+        if (day09Remark != null) {
+            String[] remark = day09Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day09AMRemark;
+    }
+
+    public void setDay09AMRemark(Double day09AMRemark) {
+        this.day09AMRemark = day09AMRemark;
+    }
+
+    public Double getDay09PMRemark() {
+        if (day09Remark != null) {
+            String[] remark = day09Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day09PMRemark;
+    }
+
+    public void setDay09PMRemark(Double day09PMRemark) {
+        this.day09PMRemark = day09PMRemark;
+    }
+
+    public Double getDay10AMRemark() {
+        if (day10Remark != null) {
+            String[] remark = day10Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day10AMRemark;
+    }
+
+    public void setDay10AMRemark(Double day10AMRemark) {
+        this.day10AMRemark = day10AMRemark;
+    }
+
+    public Double getDay10PMRemark() {
+        if (day10Remark != null) {
+            String[] remark = day10Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day10PMRemark;
+    }
+
+    public void setDay10PMRemark(Double day10PMRemark) {
+        this.day10PMRemark = day10PMRemark;
+    }
+
+    public Double getDay12AMRemark() {
+        if (day12Remark != null) {
+            String[] remark = day12Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day12AMRemark;
+    }
+
+    public void setDay12AMRemark(Double day12AMRemark) {
+        this.day12AMRemark = day12AMRemark;
+    }
+
+    public Double getDay12PMRemark() {
+        if (day12Remark != null) {
+            String[] remark = day12Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day12PMRemark;
+    }
+
+    public void setDay12PMRemark(Double day12PMRemark) {
+        this.day12PMRemark = day12PMRemark;
+    }
+
+    public Double getDay13AMRemark() {
+        if (day13Remark != null) {
+            String[] remark = day13Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day13AMRemark;
+    }
+
+    public void setDay13AMRemark(Double day13AMRemark) {
+        this.day13AMRemark = day13AMRemark;
+    }
+
+    public Double getDay13PMRemark() {
+        if (day13Remark != null) {
+            String[] remark = day13Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day13PMRemark;
+    }
+
+    public void setDay13PMRemark(Double day13PMRemark) {
+        this.day13PMRemark = day13PMRemark;
+    }
+
+    public Double getDay14AMRemark() {
+        if (day14Remark != null) {
+            String[] remark = day14Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day14AMRemark;
+    }
+
+    public void setDay14AMRemark(Double day14AMRemark) {
+        this.day14AMRemark = day14AMRemark;
+    }
+
+    public Double getDay14PMRemark() {
+        if (day14Remark != null) {
+            String[] remark = day14Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day14PMRemark;
+    }
+
+    public void setDay14PMRemark(Double day14PMRemark) {
+        this.day14PMRemark = day14PMRemark;
+    }
+
+    public Double getDay15AMRemark() {
+        if (day15Remark != null) {
+            String[] remark = day15Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day15AMRemark;
+    }
+
+    public void setDay15AMRemark(Double day15AMRemark) {
+        this.day15AMRemark = day15AMRemark;
+    }
+
+    public Double getDay15PMRemark() {
+        if (day15Remark != null) {
+            String[] remark = day15Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day15PMRemark;
+    }
+
+    public void setDay15PMRemark(Double day15PMRemark) {
+        this.day15PMRemark = day15PMRemark;
+    }
+
+    public Double getDay16AMRemark() {
+        if (day16Remark != null) {
+            String[] remark = day16Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day16AMRemark;
+    }
+
+    public void setDay16AMRemark(Double day16AMRemark) {
+        this.day16AMRemark = day16AMRemark;
+    }
+
+    public Double getDay16PMRemark() {
+        if (day16Remark != null) {
+            String[] remark = day16Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day16PMRemark;
+    }
+
+    public void setDay16PMRemark(Double day16PMRemark) {
+        this.day16PMRemark = day16PMRemark;
+    }
+
+    public Double getDay17AMRemark() {
+        if (day17Remark != null) {
+            String[] remark = day17Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day17AMRemark;
+    }
+
+    public void setDay17AMRemark(Double day17AMRemark) {
+        this.day17AMRemark = day17AMRemark;
+    }
+
+    public Double getDay17PMRemark() {
+        if (day17Remark != null) {
+            String[] remark = day17Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day17PMRemark;
+    }
+
+    public void setDay17PMRemark(Double day17PMRemark) {
+        this.day17PMRemark = day17PMRemark;
+    }
+
+    public Double getDay18AMRemark() {
+        if (day18Remark != null) {
+            String[] remark = day18Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day18AMRemark;
+    }
+
+    public void setDay18AMRemark(Double day18AMRemark) {
+        this.day18AMRemark = day18AMRemark;
+    }
+
+    public Double getDay18PMRemark() {
+        if (day18Remark != null) {
+            String[] remark = day18Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day18PMRemark;
+    }
+
+    public void setDay18PMRemark(Double day18PMRemark) {
+        this.day18PMRemark = day18PMRemark;
+    }
+
+    public Double getDay19AMRemark() {
+        if (day19Remark != null) {
+            String[] remark = day19Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day19AMRemark;
+    }
+
+    public void setDay19AMRemark(Double day19AMRemark) {
+        this.day19AMRemark = day19AMRemark;
+    }
+
+    public Double getDay19PMRemark() {
+        if (day19Remark != null) {
+            String[] remark = day19Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day19PMRemark;
+    }
+
+    public void setDay19PMRemark(Double day19PMRemark) {
+        this.day19PMRemark = day19PMRemark;
+    }
+
+    public Double getDay20AMRemark() {
+        if (day20Remark != null) {
+            String[] remark = day20Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day20AMRemark;
+    }
+
+    public void setDay20AMRemark(Double day20AMRemark) {
+        this.day20AMRemark = day20AMRemark;
+    }
+
+    public Double getDay20PMRemark() {
+        if (day20Remark != null) {
+            String[] remark = day20Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day20PMRemark;
+    }
+
+    public void setDay20PMRemark(Double day20PMRemark) {
+        this.day20PMRemark = day20PMRemark;
+    }
+
+    public Double getDay21AMRemark() {
+        if (day21Remark != null) {
+            String[] remark = day21Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day21AMRemark;
+    }
+
+    public void setDay21AMRemark(Double day21AMRemark) {
+        this.day21AMRemark = day21AMRemark;
+    }
+
+    public Double getDay21PMRemark() {
+        if (day21Remark != null) {
+            String[] remark = day21Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day21PMRemark;
+    }
+
+    public void setDay21PMRemark(Double day21PMRemark) {
+        this.day21PMRemark = day21PMRemark;
+    }
+
+    public Double getDay22AMRemark() {
+        if (day22Remark != null) {
+            String[] remark = day22Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day22AMRemark;
+    }
+
+    public void setDay22AMRemark(Double day22AMRemark) {
+        this.day22AMRemark = day22AMRemark;
+    }
+
+    public Double getDay22PMRemark() {
+        if (day22Remark != null) {
+            String[] remark = day22Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day22PMRemark;
+    }
+
+    public void setDay22PMRemark(Double day22PMRemark) {
+        this.day22PMRemark = day22PMRemark;
+    }
+
+    public Double getDay23AMRemark() {
+        if (day23Remark != null) {
+            String[] remark = day23Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day23AMRemark;
+    }
+
+    public void setDay23AMRemark(Double day23AMRemark) {
+        this.day23AMRemark = day23AMRemark;
+    }
+
+    public Double getDay23PMRemark() {
+        if (day23Remark != null) {
+            String[] remark = day23Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day23PMRemark;
+    }
+
+    public void setDay23PMRemark(Double day23PMRemark) {
+        this.day23PMRemark = day23PMRemark;
+    }
+
+    public Double getDay24AMRemark() {
+        if (day24Remark != null) {
+            String[] remark = day24Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day24AMRemark;
+    }
+
+    public void setDay24AMRemark(Double day24AMRemark) {
+        this.day24AMRemark = day24AMRemark;
+    }
+
+    public Double getDay24PMRemark() {
+        if (day24Remark != null) {
+            String[] remark = day24Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day24PMRemark;
+    }
+
+    public void setDay24PMRemark(Double day24PMRemark) {
+        this.day24PMRemark = day24PMRemark;
+    }
+
+    public Double getDay25AMRemark() {
+        if (day25Remark != null) {
+            String[] remark = day25Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day25AMRemark;
+    }
+
+    public void setDay25AMRemark(Double day25AMRemark) {
+        this.day25AMRemark = day25AMRemark;
+    }
+
+    public Double getDay25PMRemark() {
+        if (day25Remark != null) {
+            String[] remark = day25Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day25PMRemark;
+    }
+
+    public void setDay25PMRemark(Double day25PMRemark) {
+        this.day25PMRemark = day25PMRemark;
+    }
+
+    public Double getDay26AMRemark() {
+        if (day26Remark != null) {
+            String[] remark = day26Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day26AMRemark;
+    }
+
+    public void setDay26AMRemark(Double day26AMRemark) {
+        this.day26AMRemark = day26AMRemark;
+    }
+
+    public Double getDay26PMRemark() {
+        if (day26Remark != null) {
+            String[] remark = day26Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day26PMRemark;
+    }
+
+    public void setDay26PMRemark(Double day26PMRemark) {
+        this.day26PMRemark = day26PMRemark;
+    }
+
+    public Double getDay27AMRemark() {
+        if (day27Remark != null) {
+            String[] remark = day27Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day27AMRemark;
+    }
+
+    public void setDay27AMRemark(Double day27AMRemark) {
+        this.day27AMRemark = day27AMRemark;
+    }
+
+    public Double getDay27PMRemark() {
+        if (day27Remark != null) {
+            String[] remark = day27Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day27PMRemark;
+    }
+
+    public void setDay27PMRemark(Double day27PMRemark) {
+        this.day27PMRemark = day27PMRemark;
+    }
+
+    public Double getDay28AMRemark() {
+        if (day28Remark != null) {
+            String[] remark = day28Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day28AMRemark;
+    }
+
+    public void setDay28AMRemark(Double day28AMRemark) {
+        this.day28AMRemark = day28AMRemark;
+    }
+
+    public Double getDay28PMRemark() {
+        if (day28Remark != null) {
+            String[] remark = day28Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day28PMRemark;
+    }
+
+    public void setDay28PMRemark(Double day28PMRemark) {
+        this.day28PMRemark = day28PMRemark;
+    }
+
+    public Double getDay29AMRemark() {
+        if (day29Remark != null) {
+            String[] remark = day29Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day29AMRemark;
+    }
+
+    public void setDay29AMRemark(Double day29AMRemark) {
+        this.day29AMRemark = day29AMRemark;
+    }
+
+    public Double getDay29PMRemark() {
+        if (day29Remark != null) {
+            String[] remark = day29Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day29PMRemark;
+    }
+
+    public void setDay29PMRemark(Double day29PMRemark) {
+        this.day29PMRemark = day29PMRemark;
+    }
+
+    public Double getDay30AMRemark() {
+        if (day30Remark != null) {
+            String[] remark = day30Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day30AMRemark;
+    }
+
+    public void setDay30AMRemark(Double day30AMRemark) {
+        this.day30AMRemark = day30AMRemark;
+    }
+
+    public Double getDay30PMRemark() {
+        if (day30Remark != null) {
+            String[] remark = day30Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day30PMRemark;
+    }
+
+    public void setDay30PMRemark(Double day30PMRemark) {
+        this.day30PMRemark = day30PMRemark;
+    }
+
+    public Double getDay31AMRemark() {
+        if (day31Remark != null) {
+            String[] remark = day31Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day31AMRemark;
+    }
+
+    public void setDay31AMRemark(Double day31AMRemark) {
+        this.day31AMRemark = day31AMRemark;
+    }
+
+    public Double getDay31PMRemark() {
+        if (day31Remark != null) {
+            String[] remark = day31Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day31PMRemark;
+    }
+
+    public void setDay31PMRemark(Double day31PMRemark) {
+        this.day31PMRemark = day31PMRemark;
+    }
+
+    public String getDaytitleSqlRemark() {
+        return daytitleSqlRemark;
+    }
+
+    public void setDaytitleSqlRemark(String daytitleSqlRemark) {
+        this.daytitleSqlRemark = daytitleSqlRemark;
+    }
 
     public Integer getRenShiChecked() {
         return renShiChecked;
@@ -577,6 +1370,30 @@ public class MonthKQInfo implements Serializable {
 
     public void setDay11(String day11) {
         this.day11 = day11;
+    }
+
+    public Double getDay11AMRemark() {
+        if (day11Remark != null) {
+            String[] remark = day11Remark.split(",");
+            return Double.valueOf(remark[0]);
+        }
+        return day11AMRemark;
+    }
+
+    public void setDay11AMRemark(Double day11AMRemark) {
+        this.day11AMRemark = day11AMRemark;
+    }
+
+    public Double getDay11PMRemark() {
+        if (day11Remark != null) {
+            String[] remark = day11Remark.split(",");
+            return Double.valueOf(remark[1]);
+        }
+        return day11PMRemark;
+    }
+
+    public void setDay11PMRemark(Double day11PMRemark) {
+        this.day11PMRemark = day11PMRemark;
     }
 
     public String getDay11Remark() {
