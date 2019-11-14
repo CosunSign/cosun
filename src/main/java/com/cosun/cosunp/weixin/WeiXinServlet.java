@@ -1,16 +1,11 @@
 package com.cosun.cosunp.weixin;
 
-import com.cosun.cosunp.controller.PersonController;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.Constants;
-import net.sf.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import org.springframework.web.servlet.ModelAndView;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -23,7 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author:homey Wong
@@ -108,7 +105,7 @@ public class WeiXinServlet extends HttpServlet {
                             if (on.getAmOnUrl() != null && on.getAmOnUrl().trim().length() > 0) {
                                 returnMes.append("上午已摄像.");
                             } else {
-                                returnMes.append("上午还未摄像.");
+                                returnMes.append("上午还未摄像 .");
                             }
                             returnMes.append(on.getClockInDatePMOnStr() + ",");
                             returnMes.append(on.getClockInAddrPMOn() + ".");
@@ -151,6 +148,8 @@ public class WeiXinServlet extends HttpServlet {
         }
     }
 
+
+
     @Override
     public void destroy() {
         super.destroy();
@@ -173,7 +172,7 @@ public class WeiXinServlet extends HttpServlet {
         jedis = pool.getResource();
         jedis.set(Constants.accessToken, accessToken.getAccessToken());
         jedis.set(Constants.expiresin, accessToken.getExpiresin() + "");
-        jedis.set(Constants.jsapi_ticket, accessToken.getJsapi_ticket());
+        //jedis.set(Constants.jsapi_ticket, accessToken.getJsapi_ticket());
     }
 
 }

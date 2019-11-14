@@ -24,10 +24,12 @@ public class TokenThread implements Runnable {
             try {
                 accessToken = this.getAccessToken();
                 if (null != accessToken) {
-                    jsapi_ticket = WeiXinUtil.getTicket(accessToken.getAccessToken());
-                    accessToken.setJsapi_ticket(jsapi_ticket);
+                    //jsapi_ticket = WeiXinUtil.getTicket(accessToken.getAccessToken());
+                    //accessToken.setJsapi_ticket(jsapi_ticket);
                     new WeiXinServlet().setRedisValue(accessToken);
-                    Thread.sleep(7000 * 1000); //获取到access_token 休眠7000秒
+                    Thread.sleep(2 * 60 * 60 * 1000); //获取到access_token 休眠7000秒
+                    //Thread.sleep(7000 * 1000); //获取到access_token 休眠7000秒
+
                     //Thread.sleep(30 * 1000); //获取到access_token 休眠7000秒
                 } else {
                     Thread.sleep(1000 * 3); //获取的access_token为空 休眠3秒
@@ -51,7 +53,8 @@ public class TokenThread implements Runnable {
      */
     private AccessToken getAccessToken() {
         NetWorkHelper netHelper = new NetWorkHelper();
-        String Url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", this.appId, this.appSecret);
+        //String Url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", this.appId, this.appSecret);
+        String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", this.appId, this.appSecret);
         String result = netHelper.getHttpsResponse(Url, "");
         //response.getWriter().println(result);
         JSONObject json = JSON.parseObject(result);

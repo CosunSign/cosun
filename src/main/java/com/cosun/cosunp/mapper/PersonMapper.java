@@ -875,7 +875,7 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "findAllPositionByConditionCount")
     int findAllPositionByConditionCount(Position position);
 
-    @Insert("insert into zhongkongbean (EnrollNumber,Date,timeStr,yearMonth) values(#{EnrollNumber},#{dateStr},#{timeStr},#{yearMonth})")
+    @Insert("insert into zhongkongbean (EnrollNumber,Date,timeStr,yearMonth,machineNum) values(#{EnrollNumber},#{dateStr},#{timeStr},#{yearMonth},#{machineNum})")
     void saveBeforeDayZhongKongData(ZhongKongBean zkb);
 
     @Select("SELECT\n" +

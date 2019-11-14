@@ -1,9 +1,14 @@
 package com.cosun.cosunp.weixin;
 
+import com.alibaba.fastjson.JSON;
 import com.aspose.cad.internal.bouncycastle.crypto.engines.AESEngine;
+import com.cosun.cosunp.entity.QYweixinSend;
+import com.cosun.cosunp.entity.WeiXinUsrId;
 import com.cosun.cosunp.tool.Constants;
+import com.cosun.cosunp.tool.JSONUtils;
 import com.thoughtworks.xstream.XStream;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -16,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +62,7 @@ public class WeiXinUtil {
         }
     }
 
-    public static  AccessToken getTheCode(String code, Jedis jedis ) {
+    public static AccessToken getTheCode(String code, Jedis jedis) {
         Map<String, String> authInfo = new HashMap<>();
         AccessToken at = new AccessToken();
         String openId = "";
@@ -131,6 +137,42 @@ public class WeiXinUtil {
         return xstream.toXML(textMessage);
     }
 
+    public static String textMessageToXml2(QYweixinSend textMessage) {
+        XStream xstream = new XStream();
+        xstream.alias("xml", textMessage.getClass());
+        return xstream.toXML(textMessage);
+    }
+
+//    public String CODE_TO_USERINFO = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=ACCESS_TOKEN&code=CODE&agentid=AGENTID";
+//
+//
+//    /**
+//     * 根据code获取成员信息
+//     *
+//     * @param access_token 调用接口凭证
+//     * @param code         通过员工授权获取到的code，每次员工授权带上的code将不一样，code只能使用一次，5分钟未被使用自动过期
+//     * @param agentid      跳转链接时所在的企业应用ID 管理员须拥有agent的使用权限；agentid必须和跳转链接时所在的企业应用ID相同
+//     */
+//    public String getUserID(String access_token, String code, String agentid) {
+//        String UserId = "";
+//        CODE_TO_USERINFO = CODE_TO_USERINFO.replace("ACCESS_TOKEN", access_token).replace("CODE", code).replace("AGENTID", agentid);
+//        JSONObject jsonobject = httpRequest(CODE_TO_USERINFO, "GET", null);
+//        if (null != jsonobject) {
+//            UserId = jsonobject.getString("UserId");
+//            if (!"".equals(UserId)) {
+//                System.out.println("获取信息成功，o(∩_∩)o ————UserID:" + UserId);
+//            } else {
+//                int errorrcode = jsonobject.getInt("errcode");
+//                String errmsg = jsonobject.getString("errmsg");
+//                String error = "错误码：" + errorrcode + "————" + "错误信息：" + errmsg;
+//                System.out.println(error);
+//            }
+//        } else {
+//            System.out.println("获取授权失败了");
+//        }
+//        return UserId;
+//    }
+
     public static boolean isChinese(String str) {
         boolean result = false;
         for (int i = 0; i < str.length(); i++) {
@@ -140,6 +182,38 @@ public class WeiXinUtil {
             }
         }
         return result;
+    }
+
+
+    //获取ticket
+    public static List<String> getAddressBook(String access_token) {
+        String ticket = null;
+        List<String> userList = new ArrayList<>();
+        String url = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token=" + access_token + "&department_id=1&fetch_child=1";//这个url链接和参数不能变
+        try {
+            URL urlGet = new URL(url);
+            HttpURLConnection http = (HttpURLConnection) urlGet.openConnection();
+            http.setRequestMethod("GET"); // 必须是get方式请求
+            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            http.setDoOutput(true);
+            http.setDoInput(true);
+            System.setProperty("sun.net.client.defaultConnectTimeout", "30000");// 连接超时30秒
+            System.setProperty("sun.net.client.defaultReadTimeout", "30000"); // 读取超时30秒
+            http.connect();
+            InputStream is = http.getInputStream();
+            String message = IOUtils.toString(is);
+            JSONObject demoJson = JSONObject.fromObject(message);
+            ticket = demoJson.getString("userlist");
+            List<WeiXinUsrId> wechatUsers = JSONUtils.toList(ticket, WeiXinUsrId.class);
+            for (WeiXinUsrId wx : wechatUsers) {
+                userList.add(wx.getUserid());
+            }
+            //https://blog.csdn.net/m0_37907797/article/details/102618796
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+         }
+        return userList;
     }
 
     //获取ticket

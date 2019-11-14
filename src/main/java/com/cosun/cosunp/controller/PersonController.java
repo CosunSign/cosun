@@ -81,34 +81,36 @@ public class PersonController {
         }
     }
 
+
     public void getBeforeDayZhongKongData() throws Exception {
         //String beforDay = DateUtil.getBeforeDay();
-        String beforDay = "2019-11-02";
+        String beforDay = "2019-11-13";
         String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
         boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
+        // 1办公室 0.202   2 2号厂房钣金部 2.10  3 3号厂房门口 2.11  4.3号厂房精工部 2.12
         List<ZhongKongBean> strList = new ArrayList<ZhongKongBean>();
         if (connFlag) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
-            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay));
+            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 4));
         }
 
         boolean connFlag1 = ZkemSDKUtils.connect("192.168.2.10", 4370);
         if (connFlag1) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
-            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay));
+            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 2));
         }
 
         boolean connFlag2 = ZkemSDKUtils.connect("192.168.2.11", 4370);
         if (connFlag2) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
-            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay));
+            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 3));
         }
 
         boolean connFlag3 = ZkemSDKUtils.connect("192.168.0.202", 4370);
         if (connFlag3) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
-            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay));
+            strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 1));
         }
 
         //拼装之前排序
@@ -161,6 +163,7 @@ public class PersonController {
             if (!isHave) {
                 zkb = new ZhongKongBean();
                 zkb.setEnrollNumber(zkb01.getEnrollNumber());
+                zkb.setMachineNum(zkb01.getMachineNum());
                 zkb.setDateStr(zkb01.getDateStr());
                 zkb.setTimeStr(zkb01.getTimeStr());
                 zkb.setYearMonth(zkb01.getYearMonth());
@@ -173,11 +176,13 @@ public class PersonController {
         //对于没有打卡的人员，录入带名的空打卡数据
         List<Employee> employeeList = testDomainMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
         boolean isComin = false;
+        Integer nu = null;
         ZhongKongBean zkbb = null;
         for (Employee ee : employeeList) {
             isComin = false;
             for (ZhongKongBean zk : toDataBaseList) {
                 if (ee.getEnrollNumber().equals(zk.getEnrollNumber())) {
+                    nu = zk.getMachineNum();
                     isComin = true;
                     break;
                 }
@@ -188,6 +193,7 @@ public class PersonController {
                 zkbb.setYearMonth(afterDay[0] + "-" + afterDay[1]);
                 zkbb.setDateStr(beforDay);
                 zkbb.setTimeStr("");
+                zkbb.setMachineNum(nu);
                 toDataBaseList.add(zkbb);
             }
         }
@@ -340,7 +346,7 @@ public class PersonController {
         ModelAndView view = new ModelAndView("monthkqinfo");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-       // String today = format.format(new Date());
+        // String today = format.format(new Date());
         String today = "2019-10-08";
         String[] yearMonth = today.split("-");
         Employee employee = new Employee();
@@ -1100,11 +1106,12 @@ public class PersonController {
     }
 
 
+
     @ResponseBody
     @RequestMapping("/deleteLianBanDateToMysql")
     public ModelAndView deleteLianBanDateToMysql(LianBan lianBan) throws Exception {
         try {
-            personServ.deleteLianBanDateToMysql(lianBan.getId());
+             personServ.deleteLianBanDateToMysql(lianBan.getId());
             ModelAndView view = new ModelAndView("lianban");
             List<Position> positionList = personServ.findAllPositionAll();
             List<Employee> empList = personServ.findAllEmployeeAll();

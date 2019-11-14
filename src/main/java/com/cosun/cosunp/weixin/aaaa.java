@@ -1,4 +1,4 @@
-package com.cosun.cosunp.interceptor;
+package com.cosun.cosunp.weixin;
 
 import com.cosun.cosunp.weixin.*;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,6 @@ public class aaaa {
 //        {
 //            "name": "外出打卡",
 //                "sub_button": [
-//            {
 //                "type": "view",
 //                    "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd5109277d8902606&redirect_uri=http://homey.nat100.top/weixin/getMobileLocate&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect",
 //                    "name": "地址打卡"

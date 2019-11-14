@@ -50,7 +50,7 @@ public class MapUtil {
      * @return
      */
     public static Map<String, String> getCityByLonLat(double lng, double lat) {
-        String location = lng + "," + lat;
+        String location  = lng + "," + lat;
         Map<String, String> params = new HashMap<>();
         params.put("location", location);
         params.put("coordtype", coordtype);
