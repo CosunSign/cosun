@@ -14,7 +14,7 @@ public class ZhongKongEmployee implements Serializable {
     private static final long serialVersionUID = -6416619295751473097L;
 
     private Integer id;
-    private Integer EnrollNumber;
+    private String EnrollNumber;
     private String empNo;
 
     public Integer getId() {
@@ -25,19 +25,19 @@ public class ZhongKongEmployee implements Serializable {
         this.id = id;
     }
 
-    public Integer getEnrollNumber() {
-        return EnrollNumber;
-    }
-
-    public void setEnrollNumber(Integer enrollNumber) {
-        EnrollNumber = enrollNumber;
-    }
-
     public String getEmpNo() {
         return empNo;
     }
 
     public void setEmpNo(String empNo) {
         this.empNo = empNo;
+    }
+
+    public String getEnrollNumber() {
+        return EnrollNumber;
+    }
+
+    public void setEnrollNumber(String enrollNumber) {
+        EnrollNumber = enrollNumber;
     }
 }

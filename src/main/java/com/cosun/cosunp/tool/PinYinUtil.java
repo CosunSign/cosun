@@ -8,7 +8,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 
 /**
  * @author:homey Wong
- * @date:2019/1/9 0009 上午 9:00
+ * @date:2019/1/9  上午 9:00
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -27,10 +27,8 @@ public class PinYinUtil {
             return null;
         }
         String pinyinStr = "";
-        // 将字符串转为字符数组
         char[] newChar = chinese.toCharArray();
         HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
-        // 设置大写
         defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
         defaultFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
         for (int i = 0; i < newChar.length; i++) {

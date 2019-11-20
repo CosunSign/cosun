@@ -59,7 +59,6 @@ public class ImageUtils {
 
     private static String saveImageToDisk(String accessToken, String serverId, String picName, String picPath) throws Exception {
         InputStream inputStream = getInputStream(accessToken, serverId);
-        // 循环取出流中的数据
         byte[] data = new byte[1024];
         int len = 0;
         FileOutputStream fileOutputStream = null;

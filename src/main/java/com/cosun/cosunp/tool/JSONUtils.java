@@ -132,7 +132,6 @@ public class JSONUtils {
      * @param object
      * @return
      */
-    // 返回非实体类型(Map)的List
     public static List<Map<String, Object>> toList(Object object) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         JSONArray jsonArray = JSONArray.fromObject(object);

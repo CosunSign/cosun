@@ -16,11 +16,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InMsgEntity{
 
-    // 开发者微信号
     protected String FromUserName;
-    // 发送方帐号（一个OpenID）
     protected String ToUserName;
-    // 消息创建时间
     protected Long CreateTime;
     /**
      * 消息类型

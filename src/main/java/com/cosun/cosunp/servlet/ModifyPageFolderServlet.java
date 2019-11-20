@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * @author:homey Wong
- * @date:2019/3/4 0004 下午 2:11
+ * @date:2019/3/4  下午 2:11
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -40,19 +40,15 @@ public class ModifyPageFolderServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //取出监听器MyProgress在session中保存的进度信息
         String progress = (String) req.getSession().getAttribute("progress");
-        //响应
         resp.getWriter().print(progress);
-        //清除session中保存的数据
-//        req.getSession().removeAttribute("progress");
         doPost(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");// 设置获取字体
-        resp.setCharacterEncoding("UTF-8"); // 设置返回字体
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setProgressListener(new MyProgressListener(req));
@@ -68,7 +64,7 @@ public class ModifyPageFolderServlet extends HttpServlet {
             if (userInfo.getUseruploadright() == 1) {
                 fileArray = new ArrayList<MultipartFile>();
                 for (FileItem fileItem : list) {
-                    if (fileItem.isFormField()) {//普通表单
+                    if (fileItem.isFormField()) {
                         String name = fileItem.getFieldName();
                         String value = fileItem.getString("UTF-8");
                         if (name.equals("salor")) {
@@ -114,7 +110,7 @@ public class ModifyPageFolderServlet extends HttpServlet {
                             }
                         }
 
-                    } else {//上传文件
+                    } else {
                         String fileName = fileItem.getName();
                         if (fileName != null && fileName != "") {
                             MultipartFile multipartFile = new MockMultipartFile(fileName, fileName, "", fileItem.getInputStream());

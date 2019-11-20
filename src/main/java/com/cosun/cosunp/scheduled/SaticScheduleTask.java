@@ -18,17 +18,14 @@ import java.time.LocalDateTime;
  */
 
 @Component
-@Configuration      //1.主要用于标记配置类，兼备Component的效果。
-@EnableScheduling   // 2.开启定时任务
+@Configuration
+@EnableScheduling
 public class SaticScheduleTask {
 
     @Value("${spring.servlet.multipart.location}")
     private String finalDirPath;
 
-    //3.添加定时任务
-
     //@Scheduled(cron = "0/5 * * * * ?")
-    //或直接指定时间间隔，例如：5秒
     //@Scheduled(fixedRate=5000)
     @Scheduled(cron = "0 0 23 * * ?")
     private void configureTasks() {

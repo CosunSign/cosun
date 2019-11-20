@@ -40,11 +40,9 @@ public class ExcelUtil {
         returnArray.add(yearMonth + str + "工时统计表" + ".xlsx");
         File file = new File(pathname);
         if (file.exists()) {
-            //如果文件存在就删除
             file.delete();
         }
         File targetFile = new File(mkdir);
-        //：判断目录是否存在   不存在：创建目录
         if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
@@ -52,9 +50,7 @@ public class ExcelUtil {
             file.createNewFile();
             Row row = null;
             Cell cell = null;
-            //将内容写入指定的行号中
             row = sheet1.createRow(0);
-            //根据行指定列坐标j,然后在单元格中写入数据
             cell = row.createCell(0);
             cell.setCellValue("序号");
             cell = row.createCell(1);
@@ -82,7 +78,6 @@ public class ExcelUtil {
             for (int i = 0; i < outDatas.size(); i++) {
                 opw = outDatas.get(i);
                 row = sheet1.createRow(i + 1);
-                //根据行指定列坐标j,然 后在单元格中写入数据
                 cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell = row.createCell(1);
@@ -133,11 +128,9 @@ public class ExcelUtil {
         returnArray.add(yearMonth + str + "工资计算表" + ".xlsx");
         File file = new File(pathname);
         if (file.exists()) {
-            //如果文件存在就删除
             file.delete();
         }
         File targetFile = new File(mkdir);
-        //：判断目录是否存在   不存在：创建目录
         if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
@@ -146,9 +139,7 @@ public class ExcelUtil {
             SalaryDataOutPut outData = null;
             Row row = null;
             Cell cell = null;
-            //将内容写入指定的行号中
             row = sheet1.createRow(0);
-            //根据行指定列坐标j,然后在单元格中写入数据
             cell = row.createCell(0);
             cell.setCellValue("序号");
             cell = row.createCell(1);
@@ -244,7 +235,6 @@ public class ExcelUtil {
             for (int i = 0; i < outDatas.size(); i++) {
                 opw = outDatas.get(i);
                 row = sheet1.createRow(i + 1);
-                //根据行指定列坐标j,然 后在单元格中写入数据
                 cell = row.createCell(0);
                 cell.setCellValue(i + 1);
                 cell = row.createCell(1);
@@ -364,11 +354,9 @@ public class ExcelUtil {
         returnArray.add(str + "考勤结果表" + ".xlsx");
         File file = new File(pathname);
         if (file.exists()) {
-            //如果文件存在就删除
             file.delete();
         }
         File targetFile = new File(mkdir);
-        //：判断目录是否存在   不存在：创建目录
         if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
@@ -377,9 +365,7 @@ public class ExcelUtil {
             OutPutWorkData outData = null;
             Row row = null;
             Cell cell = null;
-            //将内容写入指定的行号中
             row = sheet1.createRow(0);
-            //根据行指定列坐标j,然后在单元格中写入数据
             cell = row.createCell(0);
             cell.setCellValue("几日(hao)");
             cell = row.createCell(1);
@@ -401,7 +387,6 @@ public class ExcelUtil {
             for (int i = 0; i < outDatas.size(); i++) {
                 opw = outDatas.get(i);
                 row = sheet1.createRow(i + 1);
-                //根据行指定列坐标j,然 后在单元格中写入数据
                 cell = row.createCell(0);
                 cell.setCellValue(opw.getWorkInDate());
                 cell = row.createCell(1);

@@ -36,7 +36,6 @@ public class GZipThreadUtil extends Thread {
             }
             File input = (File) pool.remove();
             incrementFilesCompressed();
-            // 不压缩已经压缩过的文件
             if (!input.getName().equals(".gz")) {
                 compress(input);
             }
@@ -67,7 +66,7 @@ public class GZipThreadUtil extends Thread {
             in = new FileInputStream(input);
             in = new BufferedInputStream(in);
             File output = new File(input.getParent(), input.getName() + ".gz");
-            if (!output.exists()) {// 不覆盖已经存在的文件
+            if (!output.exists()) {
                 out = new FileOutputStream(output);
                 out = new GZIPOutputStream(out);
                 out = new BufferedOutputStream(out);

@@ -26,21 +26,12 @@ import java.util.concurrent.ExecutorService;
 public class DownLoadUtil {
 
     private static Logger logger = LoggerFactory.getLogger(DownLoadUtil.class);
-    /**
-     * 下载线程数
-     */
+
     private static final int DOWNLOAD_THREAD_NUM = 15;
-    /**
-     * 下载线程池
-     */
+
     private static ExecutorService downloadExecutorService = ThreadUtil.buildDownloadBatchThreadPool(DOWNLOAD_THREAD_NUM);
 
-    /**
-     * 文件下载
-     *
-     * @param fileUrl 文件url,如:<code>https://img3.doubanio.com//view//photo//s_ratio_poster//public//p2369390663.webp</code>
-     * @param path    存放路径,如: /opt/img/douban/my.webp
-     */
+
     public static void download(String fileUrl, String path) { // 判断存储文件夹是否已经存在或者创建成功
         if (!createFolderIfNotExists(path)) {
             logger.error("We can't create folder:{}", getFolder(path));
@@ -50,9 +41,7 @@ public class DownLoadUtil {
         FileOutputStream out = null;
         try {
             URL url = new URL(fileUrl);
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             FtpURLConnection conn = (FtpURLConnection) url.openConnection();
-//            conn.setRequestMethod("GET"); // 2s
             conn.setConnectTimeout(10000);
             in = conn.getInputStream();
             out = new FileOutputStream(path);
@@ -72,8 +61,7 @@ public class DownLoadUtil {
                 if (null != in) {
                     in.close();
                 }
-            } catch (Exception e) { //
-                // do nothing
+            } catch (Exception e) {
             }
         }
     }
@@ -111,10 +99,8 @@ public class DownLoadUtil {
                 int start = index * DOWNLOAD_THREAD_NUM;
                 int last = getLastNum(size, start + DOWNLOAD_THREAD_NUM);
                 final CountDownLatch latch = new CountDownLatch(last - start);
-                // 获取列表子集
                 List<String> urlList = keys.subList(start, last);
                 for (String url : urlList) {
-                    // 提交任务
                     Runnable task = new DownloadWorker(latch, url, resourceMap.get(url));
                     downloadExecutorService.submit(task);
                 }
@@ -126,31 +112,17 @@ public class DownLoadUtil {
         logger.info("Download resource map is all done");
     }
 
-    /**
-     * 获取最后一个元素
-     *
-     * @param size  列表长度
-     * @param index 下标
-     * @return int
-     */
+
     private static int getLastNum(int size, int index) {
         return index > size ? size : index;
     }
 
-    /**
-     * 获取划分页面数量
-     *
-     * @param size 列表长度
-     * @return int
-     */
+
     private static int getPageNum(int size) {
         int tmp = size / DOWNLOAD_THREAD_NUM;
         return size % DOWNLOAD_THREAD_NUM == 0 ? tmp : tmp + 1;
     }
 
-    /**
-     * 下载线程
-     */
     static class DownloadWorker implements Runnable {
         private CountDownLatch latch;
         private String url;

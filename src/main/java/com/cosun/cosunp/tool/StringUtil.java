@@ -22,7 +22,6 @@ public class StringUtil {
 
 
     public static String increateFinishiNoByOrldFinishiNo(String oldnewestProdNo, String shortEngName) throws Exception {
-        //C190815ZT01
         if (oldnewestProdNo != null) {
             String newestOrder;
             String beforStr = oldnewestProdNo.substring(0, 9);
@@ -38,7 +37,6 @@ public class StringUtil {
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
         } else {
-            //COSUN20190108WW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
             dateStr = dateStr.substring(2, dateStr.length());
@@ -224,6 +222,35 @@ public class StringUtil {
         return returnStr.toString();
     }
 
+    public static String sortTimes2(String zhTimesStr, String qkTimeStr) throws Exception {
+        List<String> allStr = new ArrayList<String>();
+        String[] strs = zhTimesStr.split(" ");
+        String[] strs2 = qkTimeStr.split(" ");
+        for (String s : strs) {
+            allStr.add(s);
+        }
+        for(String f : strs2) {
+            allStr.add(f);
+        }
+        List<Time> times = formTime(allStr);
+        for (int i = 0; i < times.size() - 1; i++) {
+            for (int j = 0; j < times.size() - 1 - i; j++) {
+                if (times.get(j).after(times.get(j + 1))) {
+                    Time temp = times.get(j + 1);
+                    times.set(j + 1, times.get(j));
+                    times.set(j, temp);
+                }
+            }
+        }
+
+        StringBuilder returnStr = new StringBuilder();
+        for (Time Ti : times) {
+            returnStr.append(Ti.toString() + " ");
+        }
+
+        return returnStr.toString();
+    }
+
 
     public static List<Time> formTime(List<String> times) throws Exception {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
@@ -240,7 +267,6 @@ public class StringUtil {
 
     public static String onlyTimeStr(OutClockIn outClockIn) throws Exception {
         StringBuilder sb = new StringBuilder();
-        //2019-10-09 11:56:29
         if (outClockIn != null) {
             if (outClockIn.getClockInDateAMOnStr() != null) {
                 sb.append(outClockIn.getClockInDateAMOnStr().split(" ")[1]).append(" ");
@@ -258,7 +284,6 @@ public class StringUtil {
 
 
     public static String increateOrderByOlderOrderNo(String oldNewestNo, String shortEngName) throws Exception {
-        //COSUN2019XXXXZTXX
         if (oldNewestNo != null) {
             String newestOrder;
             String beforStr = oldNewestNo.substring(0, 15);
@@ -274,7 +299,6 @@ public class StringUtil {
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
         } else {
-            //COSUN20190108WW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
             String orderName = "COSUN" + dateStr + shortEngName + "01";
@@ -283,7 +307,6 @@ public class StringUtil {
     }
 
     public static String increateProdNoByOlderProductNo(String oldNewestNo, String shortEngName) throws Exception {
-        //C190822HW01
         if (oldNewestNo != null) {
             String newestOrder;
             String beforStr = oldNewestNo.substring(0, 9);
@@ -299,7 +322,6 @@ public class StringUtil {
             newestOrder = beforStr + afterNewNum;
             return newestOrder;
         } else {
-            //C190822HW01
             SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
             String dateStr = sDateFormat.format(new Date());
             dateStr = dateStr.substring(2, dateStr.length());
@@ -353,10 +375,7 @@ public class StringUtil {
     }
 
 
-    /**
-     * @author:homey Wong
-     * @Date: 查看字符串某个东西出现的次数
-     */
+
     public static int occurrencesNumber(String string, String str) {
         int i = 0;
         while (string.indexOf(str) != -1) {
@@ -392,7 +411,6 @@ public class StringUtil {
      */
 
     public static String subMyString(String str, String a) {
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         int index = str.lastIndexOf(a);
         if (index >= 1) {
             return str.substring(0, index + 1);
@@ -401,7 +419,6 @@ public class StringUtil {
     }
 
     public static String subMyString1(String str, String a) {
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg
         int index = str.lastIndexOf(a);
         if (index >= 1) {
             return str.substring(0, index);
@@ -411,7 +428,6 @@ public class StringUtil {
 
 
     public static String subAfterString(String str, String a) {
-        //F:\1000005\201901\zhongyuan\COSUN20190108WW03\52401367\小猫 - 副本.jpg 取小猫文件名
         if (str.contains(a)) {
             int index = str.lastIndexOf(a);
             if (index >= 1) {
@@ -440,8 +456,8 @@ public class StringUtil {
 
     //查找字符串出现某字符的个数
     public static int searchStrNum(String str, String strRes) {
-        int n = 0;//计数器
-        int index = 0;//指定字符的长度
+        int n = 0;
+        int index = 0;
         index = str.indexOf(strRes);
         while (index != -1) {
             n++;

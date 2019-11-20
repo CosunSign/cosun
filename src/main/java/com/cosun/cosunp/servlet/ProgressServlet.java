@@ -29,7 +29,6 @@ public class ProgressServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getSession().getId();
         String filename = request.getParameter("filename");
-        //使用sessionid + 文件名生成文件号，与上传的文件保持一致
         id = id + filename;
         Object size = ProgressSingleton.get(id + "Size");
         size = size == null ? 100 : size;

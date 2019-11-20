@@ -21,9 +21,6 @@ public class HighEffiCompressZip {
 
 
     ParallelScatterZipCreator scatterZipCreator = new ParallelScatterZipCreator();
-    // ParallelScatterZipCreator api says:
-    // 注意这个类不保证写入到输出文件的顺序。需要保持特定顺序的（manifests，文件夹）必须使用这个类的客户类进行处理
-    // 通常的做法是 在调用这个类的writeTo方法前把这些东西写入到ZipArchiveOutputStream
     ScatterZipOutputStream dirs = ScatterZipOutputStream
             .fileBased(File.createTempFile("whatever-preffix", ".whatever"));
 

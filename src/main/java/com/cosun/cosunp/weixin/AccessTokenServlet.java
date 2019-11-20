@@ -19,9 +19,9 @@ public class AccessTokenServlet extends HttpServlet {
 
 
     public void init() throws ServletException {
-        TokenThread.appId = WeiXinConfig.appid;  //获取servlet初始参数appid和appsecret
+        TokenThread.appId = WeiXinConfig.appid;
         TokenThread.appSecret = WeiXinConfig.secret;
-        new Thread(new TokenThread()).start(); //启动进程
+        new Thread(new TokenThread()).start();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

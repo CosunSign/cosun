@@ -103,9 +103,6 @@ public class DateUtil {
     }
 
     public static void main(String[] arg) {
-        // boolean isWeekEnd = isWeekend("2019-04-26");
-        // System.out.println(isWeekEnd ? "周末" : "周日");
-        //toDatePriodTranstoDays("2019-08-20", "2019-09-08");
         try {
             System.out.println(getWeek("2019-10-01"));
         } catch (Exception e) {
@@ -254,7 +251,6 @@ public class DateUtil {
             e.printStackTrace();
             throw e;
         }
-        // return weeks[dayForWeek];
         return dayForWeek;
     }
 

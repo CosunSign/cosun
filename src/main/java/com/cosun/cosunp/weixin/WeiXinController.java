@@ -86,11 +86,10 @@ public class WeiXinController {
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         try {
-            String noncestr = UUID.randomUUID().toString().replace("-", "").substring(0, 16);//随机字符串
-            String timestamp = String.valueOf(System.currentTimeMillis() / 1000);//时间戳
+            String noncestr = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+            String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
             System.out.println("accessToken:" + jedis.get(Constants.accessToken) + "\njsapi_ticket:" + jedis.get(Constants.jsapi_ticket) + "\n时间戳：" + timestamp + "\n随机字符串：" + noncestr);
             String str = "jsapi_ticket=" + jedis.get(Constants.jsapi_ticket) + "&noncestr=" + noncestr + "&timestamp=" + timestamp + "&url=" + url;
-            //6、将字符串进行sha1加密
             String signature = CheckUtil.getSha1(str);
             System.out.println("参数：" + str + "\n签名：" + signature);
             List l_data = new ArrayList();
@@ -101,7 +100,6 @@ public class WeiXinController {
             l_data.add(WeiXinConfig.appid);
             l_data.add(openId);
             JSONArray l_jsonarrary = JSONArray.fromObject(l_data);
-            //json转的字符串值
             String l_jsonstring = l_jsonarrary.toString();
             response.getWriter().print(l_jsonstring);
             response.getWriter().flush();
@@ -192,7 +190,6 @@ public class WeiXinController {
                 sb.put(openId + " " + name, sbStr.toString());
             }
             System.out.println(sb.toString());
-            // post 提交的参数
             Map<String, Object> textParams = new HashMap<>();
             textParams.put("content", sb);
             TreeMap<String, Object> dataParams = new TreeMap<>();
@@ -238,7 +235,7 @@ public class WeiXinController {
         OutClockIn outClockIn = new OutClockIn();
         outClockIn.setClockInDateStr(dateStr1);
         outClockIn.setWeixinNo(openId);
-        if (hour < 12 && hour >= 6) {//上午
+        if (hour < 12 && hour >= 6) {
             outClockIn.setAmOnUrl(folderName + serverId + ".jpg");
             int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "amOnUrl");
             if (isPhotoInAlready == 0) {
@@ -248,7 +245,7 @@ public class WeiXinController {
                 mav = new ModelAndView("failed");
                 return mav;
             }
-        } else if (hour >= 12 && hour <= 18) {//下午
+        } else if (hour >= 12 && hour <= 18) {
             outClockIn.setPmOnUrl(folderName + serverId + ".jpg");
             int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "pmOnUrl");
             if (isPhotoInAlready == 0) {
@@ -258,7 +255,7 @@ public class WeiXinController {
                 mav = new ModelAndView("failed");
                 return mav;
             }
-        } else if (hour > 18 && hour <= 24) {//晚上
+        } else if (hour > 18 && hour <= 24) {
             outClockIn.setNmOnUrl(folderName + serverId + ".jpg");
             int isPhotoInAlready = personServ.isClockInAlready(openId, dateStr1, "nmOnUrl");
             if (isPhotoInAlready == 0) {
@@ -269,22 +266,18 @@ public class WeiXinController {
                 return mav;
             }
         }
-        //mav.addObject("flag", "已摄像!");
         return mav;
     }
 
     @ResponseBody
     @RequestMapping(value = "/punchClock")
     public void punchClock(@RequestBody(required = true) Location location, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        //22.77200698852539
-        //114.3155288696289
         String code = request.getParameter("code");
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         int isClock = 0;
         AccessToken accessToken = WeiXinUtil.getTheCode(code, jedis);
         String addr = null;
-        // Map<String, String> map = WeiXinUtil.xmlToMap(request);
         Map<String, String> address = MapUtil.getCityByLonLat(location.getLatitude(), location.getLongitude());
         List<Location> locations = new ArrayList<Location>();
         if (address != null) {
@@ -301,7 +294,6 @@ public class WeiXinController {
             outClockIn.setClockInDateStr(dateStr1);
             outClockIn.setWeixinNo(location.getOpenId());
             if (hour < 12 && hour >= 6) {
-                //视为上午打卡
                 outClockIn.setClockInDateAMOnStr(dateStr);
                 outClockIn.setClockInAddrAMOn(addr);
                 int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDateAMOn");
@@ -311,7 +303,6 @@ public class WeiXinController {
                     isClock = 1;
                 }
             } else if (hour >= 12 && hour <= 18) {
-                //视为下午打卡
                 outClockIn.setClockInDatePMOnStr(dateStr);
                 outClockIn.setClockInAddrPMOn(addr);
                 int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDatePMOn");
@@ -321,7 +312,6 @@ public class WeiXinController {
                     isClock = 1;
                 }
             } else if (hour > 18 && hour <= 24) {
-                //视为晚上打卡
                 outClockIn.setClockInDateNMOnStr(dateStr);
                 outClockIn.setClockInAddNMOn(addr);
                 int isClockInAlready = personServ.isClockInAlready(location.getOpenId(), dateStr1, "clockInDateNMOn");
@@ -340,12 +330,12 @@ public class WeiXinController {
         location.setAddress(addr);
         locations.add(location);
         String str = null;
-        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        ObjectMapper x = new ObjectMapper();
         try {
             str = x.writeValueAsString(locations);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
+            response.getWriter().print(str);
         } catch (IOException e) {
             e.printStackTrace();
             logger.debug(e.getMessage());

@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * @author:homey Wong
- * @Date: 2019/9/20 0020 上午 8:55
+ * @Date: 2019/9/20  上午 8:55
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -15,7 +15,7 @@ public class OutClockIn implements Serializable {
     private static final long serialVersionUID = -9191419776663022642L;
 
     private Integer id;
-    private String weixinNo;
+    private String userid;
     private Date clockInDate;
 
     private Date clockInDateAMOn;
@@ -30,10 +30,21 @@ public class OutClockIn implements Serializable {
     private String clockInAddNMOn;
     private String nmOnUrl;
 
+
     private String clockInDateAMOnStr;
     private String clockInDatePMOnStr;
     private String clockInDateNMOnStr;
     private String clockInDateStr;
+
+
+    private String weixinNo;
+    public String getWeixinNo() {
+        return weixinNo;
+    }
+
+    public void setWeixinNo(String weixinNo) {
+        this.weixinNo = weixinNo;
+    }
 
     public String getAmOnUrl() {
         return amOnUrl;
@@ -83,12 +94,12 @@ public class OutClockIn implements Serializable {
         this.id = id;
     }
 
-    public String getWeixinNo() {
-        return weixinNo;
+    public String getUserid() {
+        return userid;
     }
 
-    public void setWeixinNo(String weixinNo) {
-        this.weixinNo = weixinNo;
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public Date getClockInDateAMOn() {

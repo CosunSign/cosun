@@ -17,7 +17,7 @@ public class ZhongKongBean implements Serializable {
 
     private Integer id;
     private String yearMonth;
-    private Integer EnrollNumber;
+    private String EnrollNumber;
     private String dateStr;
     private String timeStr;
     private Date timeTime;
@@ -35,7 +35,13 @@ public class ZhongKongBean implements Serializable {
     private String Time;
 
 
+    public String getEnrollNumber() {
+        return EnrollNumber;
+    }
 
+    public void setEnrollNumber(String enrollNumber) {
+        EnrollNumber = enrollNumber;
+    }
 
     public Integer getMachineNum() {
         return machineNum;
@@ -109,13 +115,6 @@ public class ZhongKongBean implements Serializable {
         InOutMode = inOutMode;
     }
 
-    public Integer getEnrollNumber() {
-        return EnrollNumber;
-    }
-
-    public void setEnrollNumber(Integer enrollNumber) {
-        EnrollNumber = enrollNumber;
-    }
 
     public Integer getYear() {
         return Year;

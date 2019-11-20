@@ -131,11 +131,11 @@ public class PowerController {
                 userInfoList.get(0).setUserActor(userInfo.getUserActor());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(userInfoList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();

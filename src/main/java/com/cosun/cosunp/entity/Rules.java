@@ -19,9 +19,8 @@ public class Rules implements Serializable {
 
     private static final long serialVersionUID = -3761627936696949450L;
 
-
-    private String deptStr;
     private Integer id;
+    private String deptStr;
     private Integer deptId;
     private String deptName;
     private Integer uploaderId;
@@ -36,8 +35,8 @@ public class Rules implements Serializable {
     private String fileDir;
     private Integer userActor;
 
-    private Integer firstShow;
 
+    private Integer firstShow;
     private List<Integer> deptIds;
     private List<Integer> ids;
     private String ftpDir;

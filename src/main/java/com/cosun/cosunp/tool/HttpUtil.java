@@ -59,7 +59,6 @@ public class HttpUtil {
         HostnameVerifier doNotVerify = (s, sslSession) -> true;
 
         try {
-//          SSLContext sc = SSLContext.getInstance("TLSv1.2");
             SSLContext sc = SSLContext.getInstance("SSL", "SunJSSE");
             sc.init(null, trustAllCerts, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
@@ -115,7 +114,6 @@ public class HttpUtil {
             input.close();
             conn.disconnect();
         }
-//        log.info(result);
         return result;
     }
 
@@ -212,7 +210,6 @@ public class HttpUtil {
      * @return conn
      * @throws IOException 异常
      */
-    //待改进
     protected static HttpURLConnection getConnection(URL url, String method) throws IOException {
         HttpURLConnection conn;
         if (StringUtils.equals("https", url.getProtocol())) {
@@ -245,21 +242,17 @@ public class HttpUtil {
      * @return isFile
      * @throws IOException 异常
      */
-    //待改进
     protected static HttpURLConnection getConnection(URL url, boolean isFile) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (conn == null) {
             throw new IOException("connection can not be null");
         }
-        //设置从httpUrlConnection读入
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setUseCaches(false);
-        //如果是上传文件，则设为POST
         if (isFile) {
-            conn.setRequestMethod(POST_METHOD); //GET和 POST都可以 文件略大改成POST
+            conn.setRequestMethod(POST_METHOD);
         }
-        // 设置请求头信息
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("Charset", String.valueOf(StandardCharsets.UTF_8));
         conn.setConnectTimeout(8000);
@@ -267,54 +260,6 @@ public class HttpUtil {
         return conn;
     }
 
-//
-//    /**
-//     * 拼接参数
-//     *
-//     * @param url     需要拼接参数的url
-//     * @param map     参数
-//     * @param charset 编码格式
-//     * @return 拼接完成后的url
-//     */
-//    public static String setParmas(String url, Map<String, String> map, String charset) throws Exception {
-//        String result = StringUtils.EMPTY;
-//        boolean hasParams = false;
-//        if (StringUtils.isNotEmpty(url) && MapUtils.isNotEmpty(map)) {
-//            StringBuilder builder = new StringBuilder();
-//            for (Map.Entry<String, String> entry : map.entrySet()) {
-//                String key = entry.getKey().trim();
-//                String value = entry.getValue().trim();
-//                if (hasParams) {
-//                    builder.append("&");
-//                } else {
-//                    hasParams = true;
-//                }
-//                if (StringUtils.isNotEmpty(charset)) {
-//                    builder.append(key).append("=").append(URLEncoder.encode(value, charset));
-//                } else {
-//                    builder.append(key).append("=").append(value);
-//                }
-//            }
-//            result = builder.toString();
-//        }
-//
-//        URL u = new URL(url);
-//        if (StringUtils.isEmpty(u.getQuery())) {
-//            if (url.endsWith("?")) {
-//                url += result;
-//            } else {
-//                url = url + "?" + result;
-//            }
-//        } else {
-//            if (url.endsWith("&")) {
-//                url += result;
-//            } else {
-//                url = url + "&" + result;
-//            }
-//        }
-//        log.debug("request url is {}", url);
-//        return url;
-//    }
 
 
     /**

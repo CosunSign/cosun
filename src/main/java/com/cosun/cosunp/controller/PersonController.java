@@ -1,10 +1,14 @@
 package com.cosun.cosunp.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cosun.cosunp.entity.*;
 import com.cosun.cosunp.service.IFinanceServ;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.tool.*;
+import com.cosun.cosunp.weixin.NetWorkHelper;
 import com.cosun.cosunp.weixin.OutClockIn;
+import com.cosun.cosunp.weixin.WeiXinUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +34,7 @@ import java.util.*;
 
 /**
  * @author:homey Wong
- * @date:2019/5/8 0008 下午 2:55
+ * @date:2019/5/8 下午 2:55
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -41,9 +48,12 @@ public class PersonController {
     private static String zkIP01 = "192.168.2.12";
     private static String zkIP02 = "192.168.2.11";
     private static String zkIP03 = "192.168.2.10";
-    private static String zkIP04 = "192.168.0.202";
-
+    private static String zkIP04 = "192.168.1.18";
     private static Integer zkPort = 4370;
+
+
+    private static JedisPool pool;
+    private static Jedis jedis;
 
     @Autowired
     IPersonServ personServ;
@@ -55,6 +65,7 @@ public class PersonController {
 
     @Value("${spring.servlet.multipart.location}")
     private String finalDirPath;
+
 
     public void getKQBean() throws Exception {
         IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
@@ -83,13 +94,13 @@ public class PersonController {
 
 
     public void getBeforeDayZhongKongData() throws Exception {
-        //String beforDay = DateUtil.getBeforeDay();
-        String beforDay = "2019-11-13";
+        String beforDay = "2019-11-19";
+        pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+        jedis = pool.getResource();
         String[] afterDay = beforDay.split("-");
         Map<String, Object> map = new HashMap<String, Object>();
-        boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
-        // 1办公室 0.202   2 2号厂房钣金部 2.10  3 3号厂房门口 2.11  4.3号厂房精工部 2.12
         List<ZhongKongBean> strList = new ArrayList<ZhongKongBean>();
+        boolean connFlag = ZkemSDKUtils.connect("192.168.2.12", 4370);
         if (connFlag) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
             strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 4));
@@ -107,18 +118,17 @@ public class PersonController {
             strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 3));
         }
 
-        boolean connFlag3 = ZkemSDKUtils.connect("192.168.0.202", 4370);
+        boolean connFlag3 = ZkemSDKUtils.connect("192.168.1.18", 4370);
         if (connFlag3) {
             boolean flag = ZkemSDKUtils.readGeneralLogData();
             strList.addAll(ZkemSDKUtils.getGeneralLogData(beforDay, 1));
         }
 
-        //拼装之前排序
         List<ZhongKongBean> newZkbList = new ArrayList<ZhongKongBean>();
         List<ZhongKongBean> secZkbList = new ArrayList<ZhongKongBean>();
-        Integer encroNum1 = null;
-        Integer encroNum2 = null;
-        List<Integer> alreadyHaveNum = new ArrayList<Integer>();
+        String encroNum1 = null;
+        String encroNum2 = null;
+        List<String> alreadyHaveNum = new ArrayList<String>();
         for (int a = 0; a < strList.size(); a++) {
             encroNum1 = strList.get(a).getEnrollNumber();
             if (!alreadyHaveNum.contains(encroNum1)) {
@@ -173,7 +183,6 @@ public class PersonController {
         IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
 
 
-        //对于没有打卡的人员，录入带名的空打卡数据
         List<Employee> employeeList = testDomainMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
         boolean isComin = false;
         Integer nu = null;
@@ -189,7 +198,7 @@ public class PersonController {
             }
             if (!isComin) {
                 zkbb = new ZhongKongBean();
-                zkbb.setEnrollNumber(ee.getEnrollNumber());
+                zkbb.setEnrollNumber(ee.getEnrollNumber().toString());
                 zkbb.setYearMonth(afterDay[0] + "-" + afterDay[1]);
                 zkbb.setDateStr(beforDay);
                 zkbb.setTimeStr("");
@@ -199,7 +208,6 @@ public class PersonController {
         }
 
         System.out.println(toDataBaseList.size());
-        //return;
         testDomainMapper.saveBeforeDayZhongKongData(toDataBaseList);
 
         List<OutClockIn> ociList = new ArrayList<OutClockIn>();
@@ -212,6 +220,77 @@ public class PersonController {
         List<KQBean> newKQBeans = testDomainMapper.getAfterOperatorDataByOriginData(ociList, kqBeans);
         testDomainMapper.saveAllNewKQBeansToMysql(newKQBeans);
         ociList.clear();
+
+    }
+
+
+    public void fillRightDeptIdToEmployee() throws Exception {
+        IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
+        List<Employee> employeeList = testDomainMapper.findAllEmployeeAll();
+        for (Employee ee : employeeList) {
+            ee.setDeptId(testDomainMapper.getDeptIdByDeptName(ee.getDeptName()));
+            testDomainMapper.updateEmployeeDeptIdById(ee.getId(), ee.getDeptId());
+        }
+    }
+
+    public void getBeforeDayQYWCData() throws Exception {
+        pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+        jedis = pool.getResource();
+        String beforDay = "2019-11-16";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dateStart = sdf.parse(beforDay + " 00:00:00");
+        Date dateEnd = sdf.parse(beforDay + " 23:59:59");
+        QYweixinSend text = new QYweixinSend();
+        text.setOpencheckindatatype(2);
+        text.setStarttime(dateStart.getTime() / 1000);
+        text.setEndtime(dateEnd.getTime() / 1000);
+        String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=%s", jedis.get(Constants.accessToken));
+        List<String> userList = WeiXinUtil.getAddressBook(jedis.get(Constants.accessToken));
+        userList = userList.subList(300, 334);
+        text.setUseridlist(userList);
+        NetWorkHelper netHelper = new NetWorkHelper();
+        String result = netHelper.getHttpsResponse2(Url, text, "POST");
+        JSONObject json = JSON.parseObject(result);
+        String checkindata = String.valueOf(json.get("checkindata"));
+        com.alibaba.fastjson.JSONArray checkindataStr = JSON.parseArray(checkindata);
+        List<OutPunch> outPunchList = JSONUtils.toList(checkindataStr, OutPunch.class);
+        List<OutClockIn> outClockInList = new ArrayList<OutClockIn>();
+        List<String> haveUserId = new ArrayList<String>();
+        OutClockIn oc = null;
+        String hourStr = null;
+        Integer hour = null;
+        String userId = null;
+        for (int a = 0; a < outPunchList.size(); a++) {
+            userId = outPunchList.get(a).getUserid();
+            if (haveUserId.contains(userId))
+                continue;
+            oc = new OutClockIn();
+            oc.setUserid(userId);
+            oc.setClockInDateStr(outPunchList.get(a).getCheckin_timeStr().split(" ")[0]);
+            for (OutPunch op : outPunchList) {
+                if (op.getUserid().equals(userId)) {
+                    hourStr = op.getCheckin_timeStr().split(" ")[1];
+                    hour = Integer.valueOf(hourStr.split(":")[0]);
+                    if (hour < 12 && hour >= 0) {
+                        oc.setClockInDateAMOnStr(op.getCheckin_timeStr());
+                        oc.setClockInAddrAMOn(op.getLocation_detail());
+                        oc.setAmOnUrl(op.getMediaids()[0]);
+                    } else if (hour >= 12 && hour <= 18) {
+                        oc.setClockInDatePMOnStr(op.getCheckin_timeStr());
+                        oc.setClockInAddrPMOn(op.getLocation_detail());
+                        oc.setPmOnUrl(op.getMediaids()[0]);
+                    } else if (hour > 18 && hour <= 24) {
+                        oc.setClockInDateNMOnStr(op.getCheckin_timeStr());
+                        oc.setClockInAddNMOn(op.getLocation_detail());
+                        oc.setNmOnUrl(op.getMediaids()[0]);
+                    }
+                }
+            }
+            outClockInList.add(oc);
+            haveUserId.add(userId);
+        }
+        IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
+        testDomainMapper.saveOutClockInList(outClockInList);
     }
 
 
@@ -318,7 +397,6 @@ public class PersonController {
     @RequestMapping(value = "/queryZKOUTDataByCondition", method = RequestMethod.POST)
     public void queryZKOUTDataByCondition(KQBean kqBean, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<KQBean> financeImportDataList = personServ.queryKQBeanDataByCondition(kqBean);
             int recordCount = personServ.queryKQBeanDataByConditionCount(kqBean);
             int maxPage = recordCount % kqBean.getPageSize() == 0 ? recordCount / kqBean.getPageSize() : recordCount / kqBean.getPageSize() + 1;
@@ -327,12 +405,11 @@ public class PersonController {
                 financeImportDataList.get(0).setRecordCount(recordCount);
                 financeImportDataList.get(0).setCurrentPage(kqBean.getCurrentPage());
             }
-            String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-            str1 = x.writeValueAsString(financeImportDataList);
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(financeImportDataList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -346,7 +423,6 @@ public class PersonController {
         ModelAndView view = new ModelAndView("monthkqinfo");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        // String today = format.format(new Date());
         String today = "2019-10-08";
         String[] yearMonth = today.split("-");
         Employee employee = new Employee();
@@ -398,20 +474,17 @@ public class PersonController {
     @RequestMapping("/checkAttenClockByDate")
     public ModelAndView checkAttenClockByDate(String[] clockDateArray, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("compreattenrecorddata");
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-
-        List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
-        OutClockIn oc = null;
-        StringBuilder sb = new StringBuilder();
-        for (String str : clockDateArray) {
-            oc = new OutClockIn();
-            oc.setClockInDateStr(str);
-            clockDates.add(oc);
-            sb.append(str + " ");
-        }
-
-
         try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
+            OutClockIn oc = null;
+            StringBuilder sb = new StringBuilder();
+            for (String str : clockDateArray) {
+                oc = new OutClockIn();
+                oc.setClockInDateStr(str);
+                clockDates.add(oc);
+                sb.append(str + " ");
+            }
             personServ.saveCheckKQBeanListByDates(clockDates);
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
@@ -432,6 +505,7 @@ public class PersonController {
             view.addObject("kqDateList", kqDateList);
             view.addObject("flagb", "启用" + sb.toString() + "考勤成功!");
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             e.printStackTrace();
         }
         return view;
@@ -442,7 +516,6 @@ public class PersonController {
     public ModelAndView reComputeAttenClockByDate(String[] clockDateArray, HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("compreattenrecorddata");
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
-
         List<OutClockIn> clockDates = new ArrayList<OutClockIn>();
         OutClockIn oc = null;
         StringBuilder sb = new StringBuilder();
@@ -453,11 +526,8 @@ public class PersonController {
             sb.append(str + " ");
         }
 
-        //计算前检查
         String isAlreadyCheck = personServ.getAlReadyCheckDatestr(clockDates);
-
         if (isAlreadyCheck == null || isAlreadyCheck.trim().length() == 0) {
-            //重新计算
             personServ.deleteKQBeanOlderDateByDates(clockDates);
             List<KQBean> kqBeans = personServ.getAllKQDataByYearMonthDays(clockDates);
             List<KQBean> newKQBeans = personServ.getAfterOperatorDataByOriginData(clockDates, kqBeans);
@@ -467,7 +537,6 @@ public class PersonController {
             sb = new StringBuilder(isAlreadyCheck);
             view.addObject("flagb", "无法重新计算,因为" + sb.toString() + "的考勤已启用");
         }
-
 
         try {
             Employee employee = new Employee();
@@ -489,6 +558,7 @@ public class PersonController {
             view.addObject("kqDateList", kqDateList);
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return view;
     }
@@ -548,14 +618,12 @@ public class PersonController {
     @RequestMapping(value = "/saveQianKaDateToMysql", method = RequestMethod.POST)
     public void saveQianKaDateToMysql(QianKa qianKa, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isSave = personServ.saveQianKaDateToMysql(qianKa); //1正常保存 2.已存在  3.签卡时间不在规定范围内
-            String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-            str1 = x.writeValueAsString(isSave);
+            int isSave = personServ.saveQianKaDateToMysql(qianKa);
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -567,13 +635,12 @@ public class PersonController {
     @RequestMapping(value = "/saveYeBanDateToMysql", method = RequestMethod.POST)
     public void saveYeBanDateToMysql(YeBan yeBan, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isSave = personServ.saveYeBanDateToMysql(yeBan); //1正常保存 2.正常更新
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            int isSave = personServ.saveYeBanDateToMysql(yeBan);
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -586,13 +653,12 @@ public class PersonController {
     @RequestMapping(value = "/saveLianBanDateToMysql", method = RequestMethod.POST)
     public void saveLianBanDateToMysql(LianBan lianBan, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isSave = personServ.saveLianBanDateToMysql(lianBan); //1正常保存 2.正常更新
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            int isSave = personServ.saveLianBanDateToMysql(lianBan);
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -605,13 +671,12 @@ public class PersonController {
     @RequestMapping(value = "/savePinShiDateToMysql", method = RequestMethod.POST)
     public void savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isSave = personServ.savePinShiDateToMysql(pinShiJiaBanBGS); //1正常保存 2.正常更新
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            int isSave = personServ.savePinShiDateToMysql(pinShiJiaBanBGS);
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -624,13 +689,12 @@ public class PersonController {
     @RequestMapping(value = "/saveJiaBanDateToMysql", method = RequestMethod.POST)
     public void saveJiaBanDateToMysql(JiaBan jiaBan, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isSave = personServ.saveJiaBanDateToMysql(jiaBan); //1正常保存 2.已存在
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            int isSave = personServ.saveJiaBanDateToMysql(jiaBan);
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -642,14 +706,12 @@ public class PersonController {
     @RequestMapping(value = "/saveClockInSetUp", method = RequestMethod.POST)
     public void saveClockInSetUp(ClockInSetUp clockInSetUp, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             boolean isSave = personServ.saveClockInSetUp(clockInSetUp);
-            String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-            str1 = x.writeValueAsString(isSave);
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -683,14 +745,12 @@ public class PersonController {
     @RequestMapping(value = "/saveDAPCSetUp", method = RequestMethod.POST)
     public void saveDAPCSetUp(DaKaPianCha daKaPianCha, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             personServ.saveDAPCSetUp(daKaPianCha);
-            String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
-            str1 = x.writeValueAsString(1);
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(1);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -866,7 +926,7 @@ public class PersonController {
         try {
             ModelAndView view = new ModelAndView("computeworkdate");
             FileSystemView fsv = FileSystemView.getFileSystemView();
-            File com = fsv.getHomeDirectory();    //这便是读取桌面路径的方法了
+            File com = fsv.getHomeDirectory();
             Compute compute = new Compute();
             compute.setFileLocation(com.getPath());
             view.addObject("compute", compute);
@@ -927,6 +987,7 @@ public class PersonController {
             throw e;
         }
     }
+
 
     @ResponseBody
     @RequestMapping("/toplusworkdan")
@@ -1106,12 +1167,11 @@ public class PersonController {
     }
 
 
-
     @ResponseBody
     @RequestMapping("/deleteLianBanDateToMysql")
     public ModelAndView deleteLianBanDateToMysql(LianBan lianBan) throws Exception {
         try {
-             personServ.deleteLianBanDateToMysql(lianBan.getId());
+            personServ.deleteLianBanDateToMysql(lianBan.getId());
             ModelAndView view = new ModelAndView("lianban");
             List<Position> positionList = personServ.findAllPositionAll();
             List<Employee> empList = personServ.findAllEmployeeAll();
@@ -1451,7 +1511,7 @@ public class PersonController {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
-                    cookie.setMaxAge(0);// 立即销毁cookie
+                    cookie.setMaxAge(0);
                     cookie.setPath("/");
                     System.out.println("被删除的cookie名字为:" + cookie.getName());
                     resp.addCookie(cookie);
@@ -1476,7 +1536,7 @@ public class PersonController {
                 BufferedInputStream bufferedInputStream = null;
                 OutputStream outputStream = null;
                 Cookie cookie = new Cookie("downloadstatus", String.valueOf(new Date().getTime()));
-                cookie.setMaxAge(5 * 60);// 设置为30min
+                cookie.setMaxAge(5 * 60);
                 cookie.setPath("/");
                 resp.addCookie(cookie);
                 try {
@@ -1583,9 +1643,9 @@ public class PersonController {
         try {
             ModelAndView view = new ModelAndView("computeworkdate");
             List<Employee> employeeList = personServ.translateTabletoEmployeeBean(file1);
-            String isRepeatData = personServ.checkEmpNoOrEmpNameRepeat(employeeList);//true 代表重复
+            String isRepeatData = personServ.checkEmpNoOrEmpNameRepeat(employeeList);
             if (isRepeatData.trim().length() > 0) {
-                view.addObject("flag1", isRepeatData);//代表有重复
+                view.addObject("flag1", isRepeatData);
                 return view;
             } else {
                 personServ.saveDeptNameAndPositionNameAndEms(employeeList);
@@ -1624,11 +1684,11 @@ public class PersonController {
     public void getDeptNameByEmployId(QianKa qianKa, HttpSession session, HttpServletResponse response) throws Exception {
         try {
             String deptName = personServ.getDeptNameByEmployId(qianKa.getId());
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(deptName);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1642,12 +1702,12 @@ public class PersonController {
         try {
             int isSave = personServ.checkAndSavePosition(position);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1682,12 +1742,12 @@ public class PersonController {
 
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(workDatesAndPositionNames);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1720,12 +1780,12 @@ public class PersonController {
                 }
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(workDatesAndPositionNames);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1748,12 +1808,12 @@ public class PersonController {
             List<WorkDate> workDateList = new ArrayList<WorkDate>();
             workDateList.add(workDate);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(workDateList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1785,11 +1845,11 @@ public class PersonController {
                 workDateList.add(w);
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(workDateList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1803,11 +1863,11 @@ public class PersonController {
         try {
             List<Employee> employees = personServ.getEmployeeById(employeeId);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employees);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1821,6 +1881,16 @@ public class PersonController {
         try {
             ModelAndView view = new ModelAndView("worksetpage");
             workSet.setUpdateDate(new Date());
+            workSet.setMorningOnStr(workSet.getMorningOnStr().split(":")[0] + ":" + workSet.getMorningOnStr().split(":")[1] + ":59");
+            workSet.setMorningOnEndStr(workSet.getMorningOnEndStr().split(":")[0] + ":" + workSet.getMorningOnEndStr().split(":")[1] + ":59");
+            workSet.setMorningOffStr(workSet.getMorningOffStr().split(":")[0] + ":" + workSet.getMorningOffStr().split(":")[1] + ":59");
+            workSet.setMorningOffEndStr(workSet.getMorningOffEndStr().split(":")[0] + ":" + workSet.getMorningOffEndStr().split(":")[1] + ":59");
+            workSet.setNoonOnStr(workSet.getNoonOnStr().split(":")[0] + ":" + workSet.getNoonOnStr().split(":")[1] + ":59");
+            workSet.setNoonOnEndStr(workSet.getNoonOnEndStr().split(":")[0] + ":" + workSet.getNoonOnEndStr().split(":")[1] + ":59");
+            workSet.setNoonOffStr(workSet.getNoonOffStr().split(":")[0] + ":" + workSet.getNoonOffStr().split(":")[1] + ":59");
+            workSet.setNoonOffEndStr(workSet.getNoonOffEndStr().split(":")[0] + ":" + workSet.getNoonOffEndStr().split(":")[1] + ":59");
+            workSet.setExtworkonStr(workSet.getExtworkonStr().split(":")[0] + ":" + workSet.getExtworkonStr().split(":")[1] + ":59");
+            workSet.setExtworkonEndStr(workSet.getExtworkonEndStr().split(":")[0] + ":" + workSet.getExtworkonEndStr().split(":")[1] + ":59");
             personServ.addWorkSetData(workSet);
             List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
             int recordCount = personServ.findAllWorkSetCount(workSet);
@@ -1844,6 +1914,16 @@ public class PersonController {
         ModelAndView view = new ModelAndView("worksetpage");
         try {
             workSet.setUpdateDate(new Date());
+            workSet.setMorningOnStr(workSet.getMorningOnStr().split(":")[0] + ":" + workSet.getMorningOnStr().split(":")[1] + ":59");
+            workSet.setMorningOnEndStr(workSet.getMorningOnEndStr().split(":")[0] + ":" + workSet.getMorningOnEndStr().split(":")[1] + ":59");
+            workSet.setMorningOffStr(workSet.getMorningOffStr().split(":")[0] + ":" + workSet.getMorningOffStr().split(":")[1] + ":59");
+            workSet.setMorningOffEndStr(workSet.getMorningOffEndStr().split(":")[0] + ":" + workSet.getMorningOffEndStr().split(":")[1] + ":59");
+            workSet.setNoonOnStr(workSet.getNoonOnStr().split(":")[0] + ":" + workSet.getNoonOnStr().split(":")[1] + ":59");
+            workSet.setNoonOnEndStr(workSet.getNoonOnEndStr().split(":")[0] + ":" + workSet.getNoonOnEndStr().split(":")[1] + ":59");
+            workSet.setNoonOffStr(workSet.getNoonOffStr().split(":")[0] + ":" + workSet.getNoonOffStr().split(":")[1] + ":59");
+            workSet.setNoonOffEndStr(workSet.getNoonOffEndStr().split(":")[0] + ":" + workSet.getNoonOffEndStr().split(":")[1] + ":59");
+            workSet.setExtworkonStr(workSet.getExtworkonStr().split(":")[0] + ":" + workSet.getExtworkonStr().split(":")[1] + ":59");
+            workSet.setExtworkonEndStr(workSet.getExtworkonEndStr().split(":")[0] + ":" + workSet.getExtworkonEndStr().split(":")[1] + ":59");
             personServ.updateWorkSetDataById(workSet);
             List<WorkSet> workSetList = personServ.findAllWorkSet(workSet);
             int recordCount = personServ.findAllWorkSetCount(workSet);
@@ -1916,11 +1996,11 @@ public class PersonController {
         try {
             int isSave = personServ.checkAndSaveDept(deptname);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1934,11 +2014,11 @@ public class PersonController {
         try {
             int isSave = personServ.checkEmployNoIsExsit(empoyeeNo);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -1952,11 +2032,11 @@ public class PersonController {
         try {
             int isSave = personServ.checkEmployIsExsit(name);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(isSave);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2126,11 +2206,11 @@ public class PersonController {
         try {
             int isExsit = personServ.checkIfExsit(position.getPositionName());
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(isExsit);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2151,7 +2231,7 @@ public class PersonController {
                 personServ.saveUpdateData(id, positionName, positionLevel);
                 view.addObject("flag", 1);
             } else {
-                view.addObject("flag", 5);//新名字已存在，保存失败
+                view.addObject("flag", 5);
             }
             List<Position> positionList = personServ.findAllPosition(position);
             int recordCount = personServ.findAllPositionConditionCount();
@@ -2174,12 +2254,12 @@ public class PersonController {
         try {
             int isExsit = personServ.checkIfExsit2(dept.getDeptname());
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(isExsit);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2199,7 +2279,7 @@ public class PersonController {
                 personServ.saveUpdateData2(id, deptname);
                 view.addObject("flag", 1);
             } else {
-                view.addObject("flag", 5);//新名字已存在，保存失败
+                view.addObject("flag", 5);
             }
             List<Dept> deptList = personServ.findAllDept(dept);
             int recordCount = personServ.findAllDeptConditionCount(dept);
@@ -2408,11 +2488,11 @@ public class PersonController {
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2435,11 +2515,11 @@ public class PersonController {
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2463,11 +2543,11 @@ public class PersonController {
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2491,11 +2571,11 @@ public class PersonController {
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2517,12 +2597,12 @@ public class PersonController {
                 workSetList.get(0).setCurrentPage(workSet.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(workSetList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2536,12 +2616,12 @@ public class PersonController {
         try {
             int isright = personServ.checkBeginLeaveRight(leave);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(isright);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2563,12 +2643,12 @@ public class PersonController {
                 leaveList.get(0).setCurrentPage(qianKa.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2589,11 +2669,11 @@ public class PersonController {
                 leaveList.get(0).setRecordCount(recordCount);
                 leaveList.get(0).setCurrentPage(yeBan.getCurrentPage());
             }
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2613,11 +2693,11 @@ public class PersonController {
                 pinShiJiaBanBGSList.get(0).setRecordCount(recordCount);
                 pinShiJiaBanBGSList.get(0).setCurrentPage(pinShiJiaBanBGS.getCurrentPage());
             }
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(pinShiJiaBanBGSList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2637,11 +2717,11 @@ public class PersonController {
                 leaveList.get(0).setRecordCount(recordCount);
                 leaveList.get(0).setCurrentPage(lianBan.getCurrentPage());
             }
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2662,11 +2742,11 @@ public class PersonController {
                 leaveList.get(0).setRecordCount(recordCount);
                 leaveList.get(0).setCurrentPage(jiaBan.getCurrentPage());
             }
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             String str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2687,12 +2767,12 @@ public class PersonController {
                 leaveList.get(0).setCurrentPage(leave.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(leaveList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -2761,5 +2841,4 @@ public class PersonController {
         }
     }
 
-//    正常出勤工时+法定有薪假时间+平时加班工时+其它有薪假时间+周末加班工时
 }

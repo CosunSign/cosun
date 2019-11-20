@@ -31,12 +31,10 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
 
-        //排除配置
         addInterceptor.excludePathPatterns("/error");
         addInterceptor.excludePathPatterns("/");
         addInterceptor.excludePathPatterns("/weixin/punchClock");
         addInterceptor.excludePathPatterns("/account/**");
-        //拦截配置
         addInterceptor.addPathPatterns("/account/toMainPage");
         addInterceptor.addPathPatterns("/order/createsinglegoods");
         addInterceptor.addPathPatterns("/fileupdown/**");
@@ -50,11 +48,9 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
             HttpSession session = request.getSession();
             int interval = session.getMaxInactiveInterval();
             System.out.println("=============session time================"+interval);
-            //判断是否已有该用户登录的session
             if (session.getAttribute("account") != null) {
                 return true;
             }
-            //跳转到登录页
             String url = "/account/tologin";
             response.sendRedirect(url);
             return false;

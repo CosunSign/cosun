@@ -22,15 +22,10 @@ public class FtpUtils {
 
     private EventListenerList eventListenerList = new EventListenerList();
 
-    //ftp服务器地址
     public static String hostname = "192.168.1.31";
-    //ftp服务器端口号默认为21
     public static Integer port = 21;
-    //ftp登录账号
     public static String username = "root";
-    //ftp登录密码
     public static String password = "123";
-
     public static FTPClient ftpClient = null;
 
     /**
@@ -43,9 +38,9 @@ public class FtpUtils {
         conf.setServerLanguageCode("zh");
         try {
             System.out.println("connecting...ftp服务器:" + hostname + ":" + port);
-            ftpClient.connect(hostname, port); //连接ftp服务器
-            ftpClient.login(username, password); //登录ftp服务器
-            int replyCode = ftpClient.getReplyCode(); //是否成功登录服务器
+            ftpClient.connect(hostname, port);
+            ftpClient.login(username, password);
+            int replyCode = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(replyCode)) {
                 System.out.println("connect failed...ftp服务器:" + hostname + ":" + port);
             }
@@ -64,14 +59,7 @@ public class FtpUtils {
 
     }
 
-    /**
-     * 上传文件
-     *
-     * @param pathname    ftp服务保存地址
-     * @param fileName    上传到ftp的文件名
-     * @param inputStream 输入文件流
-     * @return
-     */
+
     public static boolean uploadFile(String pathname, String fileName, InputStream inputStream) throws Exception{
         boolean flag = false;
         try {
@@ -119,7 +107,6 @@ public class FtpUtils {
 
 
 
-    //改变目录路径
     public static boolean changeWorkingDirectory(String directory) throws Exception{
         boolean flag = true;
         try {
@@ -137,11 +124,9 @@ public class FtpUtils {
         return flag;
     }
 
-    //创建多层目录文件，如果有ftp服务器已存在该文件，则不创建，如果无，则创建
     public static boolean CreateDirecroty(String remote) throws Exception {
         boolean success = true;
         String directory = remote + "/";
-        // 如果远程目录不存在，则递归创建远程服务器目录
         if (!directory.equalsIgnoreCase("/") && !changeWorkingDirectory(new String(directory))) {
             int start = 0;
             int end = 0;
@@ -170,7 +155,6 @@ public class FtpUtils {
                 paths = paths + "/" + subDirectory;
                 start = end + 1;
                 end = directory.indexOf("/", start);
-                // 检查所有目录是否创建完毕
                 if (end <= start) {
                     break;
                 }
@@ -180,7 +164,6 @@ public class FtpUtils {
     }
 
 
-    //判断ftp服务器文件是否存在
     public static boolean existFile(String path) throws IOException {
         boolean flag = false;
         FTPFile[] ftpFileArr = ftpClient.listFiles(path);
@@ -191,7 +174,6 @@ public class FtpUtils {
     }
 
 
-    //创建目录
     public static boolean makeDirectory(String dir) throws Exception{
         boolean flag = true;
         try {
@@ -223,7 +205,6 @@ public class FtpUtils {
         try {
             System.out.println("开始下载文件");
             initFtpClient();
-            //切换FTP目录
             ftpClient.changeWorkingDirectory(pathname);
             FTPFile[] ftpFiles = ftpClient.listFiles();
             for (FTPFile file : ftpFiles) {
@@ -274,7 +255,6 @@ public class FtpUtils {
         try {
             System.out.println("开始删除文件");
             initFtpClient();
-            //切换FTP目录
             ftpClient.changeWorkingDirectory(pathname);
             ftpClient.dele(filename);
             ftpClient.logout();
@@ -315,7 +295,6 @@ public class FtpUtils {
             initFtpClient();
             ftpClient.setFileType(ftpClient.BINARY_FILE_TYPE);
             CreateDirecroty(pathname);
-            // if(pathname)
             ftpClient.makeDirectory(pathname);
             ftpClient.changeWorkingDirectory(pathname);
             ftpClient.storeFile(fileName, inputStream);
@@ -386,15 +365,5 @@ public class FtpUtils {
     }
 
 
-   // public static void main(String[] args) {
-//        FtpUtils u = new FtpUtils();
-//        try {
-//            u.sendFile("ftpserver/admin/201902/王世君/27043156/COSUN20190108WW69/12121/12", "000001 (1).exe", "C:/Users/Administrator/Desktop/测试02/000001 (1).exe");
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        //ftp.downloadFile("ftpFile/data", "123.docx", "F://");
-        //ftp.deleteFile("ftpFile/data", "123.docx");
-    //    System.out.println("ok");
-  //  }
+
 }

@@ -46,7 +46,6 @@ public class WeiXinServlet extends HttpServlet {
 
 
     public WeiXinServlet() {
-        //空构造函数
     }
 
 
@@ -126,21 +125,21 @@ public class WeiXinServlet extends HttpServlet {
                         returnMes.append("暂无考勤信息");
                     }
                     InMsgEntity text = new InMsgEntity();
-                    text.setFromUserName(toUserName); //原来的信息发送者，将变成信息接受者
-                    text.setToUserName(fromUserName); //原理的接受者，变成发送者
-                    text.setMsgType("text"); //表示消息的类型是text类型
+                    text.setFromUserName(toUserName);
+                    text.setToUserName(fromUserName);
+                    text.setMsgType("text");
                     text.setCreateTime(new Date().getTime());
                     text.setContent("您的考勤信息是：" + returnMes);
-                    message = WeiXinUtil.textMessageToXml(text); //装换成 xml 格式发送给微信解析
+                    message = WeiXinUtil.textMessageToXml(text);
                 }
             } else if ("text".equals(msgType)) {
                 InMsgEntity text = new InMsgEntity();
-                text.setFromUserName(toUserName); //原来的信息发送者，将变成信息接受者
-                text.setToUserName(fromUserName); //原理的接受者，变成发送者
-                text.setMsgType("text"); //表示消息的类型是text类型
+                text.setFromUserName(toUserName);
+                text.setToUserName(fromUserName);
+                text.setMsgType("text");
                 text.setCreateTime(new Date().getTime());
                 text.setContent("您发送的信息是：" + content);
-                message = WeiXinUtil.textMessageToXml(text); //装换成 xml 格式发送给微信解析
+                message = WeiXinUtil.textMessageToXml(text);
             }
             out.print(message);
         } catch (Exception e) {
@@ -167,7 +166,6 @@ public class WeiXinServlet extends HttpServlet {
     }
 
     public void setRedisValue(AccessToken accessToken) {
-        // 初始化Redis连接池
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         jedis.set(Constants.accessToken, accessToken.getAccessToken());

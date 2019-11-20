@@ -22,24 +22,11 @@ import java.util.Set;
  * @Modified-date:
  */
 public class MapUtil {
-    /**
-     * 百度地图请求秘钥
-     */
-    private static final String KEY = "MiMff2zfRb5PMTSdB5GFeHX4GLGwisda";
-    /**
-     * 返回值类型
-     */
-    private static final String OUTPUT = "json";
-    /**
-     * 根据地名获取经纬度
-     */
-    private static final String GET_LNG_LAT_URL = "http://api.map.baidu.com/reverse_geocoding/v3/";
-    /**
-     * 根据经纬度获取地名
-     */
-    //http://api.map.baidu.com/reverse_geocoding/v3/?ak=ZzGk5eR49FPNwxhXzbVWXjDsGBBXTA6V&output=json&coordtype=wgs84ll&location=22.77200698852539,114.3155288696289
-    private static final String GET_ADDRESS_URL = "http://api.map.baidu.com/reverse_geocoding/v3/";
 
+    private static final String KEY = "MiMff2zfRb5PMTSdB5GFeHX4GLGwisda";
+    private static final String OUTPUT = "json";
+    private static final String GET_LNG_LAT_URL = "http://api.map.baidu.com/reverse_geocoding/v3/";
+    private static final String GET_ADDRESS_URL = "http://api.map.baidu.com/reverse_geocoding/v3/";
     private static final String coordtype = "wgs84ll";
 
 
@@ -89,7 +76,6 @@ public class MapUtil {
         int index = 0;
         Set<Map.Entry<String, String>> entrys = params.entrySet();
         for (Map.Entry<String, String> param : entrys) {
-            // 判断是否是第一个参数
             if (index == 0) {
                 baseUrl.append("?");
             } else {

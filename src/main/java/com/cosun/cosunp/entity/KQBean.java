@@ -51,7 +51,7 @@ public class KQBean implements Serializable {
     private String extWorkOffRemark;
 
     private Integer rensheCheck;//人事复核状态，代表某条数据启用
-    private Integer enrollNumber;
+    private String enrollNumber;
 
     private String name; //姓名
     private String deptName; //部门名
@@ -289,11 +289,11 @@ public class KQBean implements Serializable {
         this.empNo = empNo;
     }
 
-    public Integer getEnrollNumber() {
+    public String getEnrollNumber() {
         return enrollNumber;
     }
 
-    public void setEnrollNumber(Integer enrollNumber) {
+    public void setEnrollNumber(String enrollNumber) {
         this.enrollNumber = enrollNumber;
     }
 

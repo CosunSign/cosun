@@ -47,8 +47,6 @@ public class HighEffiCompressZipTest {
         @Override
         public InputStream get() {
             try {
-                // InputStreamSupplier api says:
-                // 返回值：输入流。永远不能为Null,但可以是一个空的流
                 return currentFile.isDirectory() ? new NullInputStream(0) : new FileInputStream(currentFile);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -71,19 +69,6 @@ public class HighEffiCompressZipTest {
             throw new IOException("源路径不能为空！");
         }
         String relativePath = "";
-//       // if (dir.isFile()) {
-//           // relativePath = dir.getName();
-//            addEntry("download", null, scatterSample);
-//            return;
-//        }
-
-
-//        // 空文件夹
-//        if (dir.listFiles().length == 0) {
-//            relativePath = dir.getAbsolutePath().replace(scatterSample.getRootPath(), "");
-//            addEntry(relativePath + File.separator, dir, scatterSample);
-//            return;
-//        }
         for (String file : dir) {
             File f = new File(file);
             if (!f.isDirectory()){

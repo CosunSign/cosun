@@ -28,6 +28,7 @@ public class CosunpApplication extends SpringBootServletInitializer {
 
     public final Logger logger = LoggerFactory.getLogger(getClass());
 
+    // https://blog.csdn.net/weixin_44538107/article/details/86541805
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

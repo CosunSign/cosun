@@ -105,6 +105,10 @@ public interface IPersonServ {
 
     List<Employee> findAllEmployeeAll() throws Exception;
 
+    Integer getDeptIdByDeptName(String deptName) throws Exception;
+
+    void updateEmployeeDeptIdById(Integer empId,Integer deptId) throws Exception;
+
     List<PinShiJiaBanBGS> findAllPinShi(PinShiJiaBanBGS ps) throws Exception;
 
     List<Employee> findAllEmployeeAllOnlyBanGong() throws Exception;
@@ -137,7 +141,9 @@ public interface IPersonServ {
 
     List<KQBean> getAllKQDataByYearMonthDay(String date) throws Exception;
 
-    List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates ,List<KQBean> kqBeans) throws Exception;
+    void saveOutClockInList(List<OutClockIn> outClockInList) throws Exception;
+
+    List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates, List<KQBean> kqBeans) throws Exception;
 
     List<KQBean> getAllKQDataByYearMonthDays(List<OutClockIn> clockDates) throws Exception;
 

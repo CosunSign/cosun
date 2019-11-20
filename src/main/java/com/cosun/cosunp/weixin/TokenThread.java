@@ -27,18 +27,18 @@ public class TokenThread implements Runnable {
                     //jsapi_ticket = WeiXinUtil.getTicket(accessToken.getAccessToken());
                     //accessToken.setJsapi_ticket(jsapi_ticket);
                     new WeiXinServlet().setRedisValue(accessToken);
-                    Thread.sleep(2 * 60 * 60 * 1000); //获取到access_token 休眠7000秒
-                    //Thread.sleep(7000 * 1000); //获取到access_token 休眠7000秒
+                    Thread.sleep(2 * 60 * 60 * 1000);
+                    //Thread.sleep(7000 * 1000);
 
-                    //Thread.sleep(30 * 1000); //获取到access_token 休眠7000秒
+                    //Thread.sleep(30 * 1000);
                 } else {
-                    Thread.sleep(1000 * 3); //获取的access_token为空 休眠3秒
+                    Thread.sleep(1000 * 3);
                 }
             } catch (Exception e) {
                 System.out.println("发生异常：" + e.getMessage());
                 e.printStackTrace();
                 try {
-                    Thread.sleep(1000 * 10); //发生异常休眠1秒
+                    Thread.sleep(1000 * 10);
                 } catch (Exception e1) {
 
                 }

@@ -251,22 +251,28 @@ public interface PersonMapper {
     @Select("select * from outclockin where weixinNo = #{weixinNo} and clockInDate = #{clockInDateStr} ")
     OutClockIn getOutClockInByDateAndWeiXinId(OutClockIn outClockIn);
 
-    @Insert("INSERT into outclockin (weixinNo,\n" +
+    @Insert("INSERT into outclockin (userid,\n" +
             "\tclockInDateAMOn,\n" +
             "\tclockInAddrAMOn,\n" +
+            "\tamOnUrl,\n" +
             "\tclockInDatePMOn,\n" +
             "\tclockInAddrPMOn,\n" +
+            "\tpmOnUrl,\n" +
             "\tclockInDateNMOn,\n" +
             "\tclockInAddNMOn,\n" +
+            "\tnmOnUrl,\n" +
             "\tclockInDate)\n" +
             " values(" +
-            "#{weixinNo}," +
+            "#{userid}," +
             "#{clockInDateAMOnStr}," +
             "#{clockInAddrAMOn}," +
+            "#{amOnUrl}," +
             "#{clockInDatePMOnStr}," +
             "#{clockInAddrPMOn}," +
+            "#{pmOnUrl}," +
             "#{clockInDateNMOnStr}," +
             "#{clockInAddNMOn}," +
+            "#{nmOnUrl}," +
             "#{clockInDateStr})\n")
     void addOutClockInDateByBean(OutClockIn outClockIn);
 
@@ -527,7 +533,7 @@ public interface PersonMapper {
     int getZhongKongByEmpNo(String empNo);
 
     @Select("select count(*) from zhongkongemployee where EnrollNumber = #{EnrollNumber}")
-    int getBeanByEnrollNumber(Integer EnrollNumber);
+    int getBeanByEnrollNumber(String EnrollNumber);
 
 
     @Insert("INSERT into gongzhonghao (empNo,gongzhonghaoId)\n" +
@@ -1205,7 +1211,7 @@ public interface PersonMapper {
             "\tdateStr\n" +
             "ORDER BY\n" +
             "\tdateStr DESC\n" +
-            "LIMIT 30")
+            "LIMIT 31")
     List<String> getAllKQDateList();
 
     @Select("SELECT count(*) " +
@@ -1334,8 +1340,9 @@ public interface PersonMapper {
 
 
     @Select("SELECT\n" +
-            "\te. NAME,\n" +
-            "\te. NAME AS namea,\n" +
+            "\te.NAME,\n" +
+            "\tn.positionLevel,\n" +
+            "\te.NAME AS namea,\n" +
             "\te.sex,\n" +
             "\te.deptId,\n" +
             "\te.empno,\n" +
@@ -1404,6 +1411,12 @@ public interface PersonMapper {
     @Delete("delete from qianka where id = #{id}")
     void deleteQianKaDateToMysql(Integer id);
 
+    @Select("select id from position where positionName = #{deptName} limit 1 ")
+    Integer getDeptIdByDeptName(String deptName);
+
+    @Update("update employee set positionId = #{deptId} where id = #{empId} ")
+    void updateEmployeeDeptIdById(Integer empId,Integer deptId);
+
     @Delete("delete from lianban where id = #{id}")
     void deleteLianBanDateToMysql(Integer id);
 
@@ -1436,6 +1449,11 @@ public interface PersonMapper {
             "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = kq.enrollNumber\n" +
             " where  kq.dateStr = #{dateStr} and zke.empNo =  #{empNo} limit 1 ")
     KQBean getKQBeanByDateStrAndEmpNo(String dateStr, String empNo);
+
+
+
+    @Select("select * from kqbean where enrollNumber = #{num} and dateStr = #{date} ")
+    KQBean getKQBeanByEnroNumAndDate(String num,String date);
 
     @Select("select * from lianban where empNo = #{empNo} and date = #{dateStr} ")
     LianBan getLianBanByEmpNoAndDateStr(String empNo, String dateStr);
@@ -3797,13 +3815,12 @@ public interface PersonMapper {
                     "LEFT JOIN zhongkongemployee zke ON kb.enrollNumber = zke.EnrollNumber\n" +
                     "LEFT JOIN employee ee ON ee.empno = zke.empNo " +
                     "LEFT JOIN position n ON n.id = ee.positionId " +
-                    "LEFT JOIN pinshijiabanbgs ps ON ps.empNo = ee.empno " +
-                    "where  ");
+                    "LEFT JOIN pinshijiabanbgs ps ON ps.empNo = ee.empno  ");
             if (dateStrs != null && dateStrs.size() > 0) {
                 if (dateStrs.size() == 1) {
-                    sb.append("  kb.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
+                    sb.append("  where   kb.dateStr in ('" + dateStrs.get(0).getClockInDateStr() + "')");
                 } else if (dateStrs.size() >= 2) {
-                    sb.append("  kb.dateStr in (");
+                    sb.append("   where   kb.dateStr in (");
                     for (int i = 0; i < dateStrs.size() - 1; i++) {
                         sb.append("'" + dateStrs.get(i).getClockInDateStr() + "'" + ",");
                     }

@@ -170,7 +170,6 @@ public class FinanceController {
     public void checkFinanceImportNoandYearMonthIsExsit(EmpHours empHours, HttpServletResponse response, HttpSession session) throws Exception {
         try {
             List<Employee> employees = new ArrayList<Employee>();
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             Employee employee = new Employee();
             int isExsit = financeServ.checkFinanceImportNoandYearMonthIsExsit(empHours);
             if (isExsit == 0) {
@@ -179,11 +178,11 @@ public class FinanceController {
             employee.setType(isExsit);
             employees.add(employee);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employees);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -205,11 +204,11 @@ public class FinanceController {
             employee.setType(isExsit);
             employees.add(employee);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employees);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -220,7 +219,6 @@ public class FinanceController {
     @ResponseBody
     @RequestMapping(value = "/toaddpersonsalarypageappli", method = RequestMethod.GET)
     public ModelAndView toaddpersonsalarypageappli(HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("addfinanceappli");
         Employee employee = new Employee();
         List<Employee> empList = personServ.findAllEmployeeAll();
@@ -232,19 +230,16 @@ public class FinanceController {
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeSalaryByempNo", method = RequestMethod.GET)
     public ModelAndView toupdateEmployeeSalaryByempNo(String empNo, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinance");
         Employee employee = personServ.getEmployeeByEmpno(empNo);
         view.addObject("employee", employee);
         return view;
     }
 
-    //toaddfinanceimportdata
     @ResponseBody
     @RequestMapping(value = "/toaddfinanceimportdata", method = RequestMethod.GET)
     public ModelAndView toaddfinanceimportdata(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("addfinanceimportdata");
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Employee> empList = personServ.findAllEmployeeAll();
         view.addObject("empList", empList);
         view.addObject("financeImportData", new FinanceImportData());
@@ -256,7 +251,6 @@ public class FinanceController {
     @RequestMapping(value = "/toaddpersonHourspage", method = RequestMethod.GET)
     public ModelAndView toaddpersonHourspage(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("addemphours");
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<Employee> empList = personServ.findAllEmployeeAll();
         view.addObject("empList", empList);
         view.addObject("empHours", new EmpHours());
@@ -385,7 +379,6 @@ public class FinanceController {
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeHoursByempNo", method = RequestMethod.GET)
     public ModelAndView toupdateEmployeeHoursByempNo(Integer id, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updateemphours");
         EmpHours empHours = financeServ.getEmpHoursByEmpNo(id);
         view.addObject("empHours", empHours);
@@ -396,7 +389,6 @@ public class FinanceController {
     @ResponseBody
     @RequestMapping(value = "/toupdateFinanceImportDataById", method = RequestMethod.GET)
     public ModelAndView toupdateFinanceImportDataById(Integer id, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinanceimportdata");
         FinanceImportData financeImportData = financeServ.getFinanceImportDataById(id);
         view.addObject("financeImportData", financeImportData);
@@ -406,7 +398,6 @@ public class FinanceController {
     @ResponseBody
     @RequestMapping(value = "/toupdateEmployeeSalaryByempNoAppli", method = RequestMethod.GET)
     public ModelAndView toupdateEmployeeSalaryByempNoAppli(String empNo, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView view = new ModelAndView("updatefinanceappli");
         Employee employee = personServ.getEmployeeByEmpno(empNo);
         view.addObject("employee", employee);
@@ -665,11 +656,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -684,11 +675,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             financeServ.saveFinanceSetUp(financeSetUpData);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(1);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -711,11 +702,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
                 employeeList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(employeeList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -832,11 +823,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
                 salaryDataOutPutList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(salaryDataOutPutList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -860,11 +851,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
                 empHoursList.get(0).setType(userInfo.getType());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(empHoursList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -878,7 +869,6 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
     @RequestMapping(value = "/queryFinanceImportDataByCondition", method = RequestMethod.POST)
     public void queryFinanceImportDataByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<FinanceImportData> financeImportDataList = financeServ.queryFinanceImportDataByCondition(employee);
             int recordCount = financeServ.queryFinanceImportDataByConditionCount(employee);
             int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
@@ -888,11 +878,11 @@ public ModelAndView deleteFinanceImportDataByBatch(Employee employee, HttpSessio
                 financeImportDataList.get(0).setCurrentPage(employee.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(financeImportDataList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();

@@ -1,8 +1,11 @@
 package com.cosun.cosunp.tool;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cosun.cosunp.controller.PersonController;
 import com.cosun.cosunp.entity.KQBean;
+import com.cosun.cosunp.entity.OutPunch;
 import com.cosun.cosunp.entity.QYweixinSend;
 import com.cosun.cosunp.service.IPersonServ;
 import com.cosun.cosunp.weixin.AccessToken;
@@ -15,10 +18,14 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 /**
  * @author:homey Wong
@@ -37,39 +44,47 @@ public class Test {
     private static Jedis jedis;
 
     public static void main(String[] arg) {
+        try {
+            new PersonController().getKQBean();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 //        try {
 //            File file = new File("E:\\WAMP\\wamp\\www\\cosunp\\src\\main\\resources\\templates");
 //            System.out.println(getProjectFileNumber(file,"html"));
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        try {
-            pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
-            jedis = pool.getResource();
-            NetWorkHelper netHelper = new NetWorkHelper();
-            List<String> us = new ArrayList<String>();
-            us.add("WangHongMei");
-            us.add("WangWeiWen");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date start_date = sdf.parse("2019-11-01");
-            Date end_date = sdf.parse("2019-11-11");
-            QYweixinSend text = new QYweixinSend();
-            text.setOpencheckindatatype(3);
-            text.setStarttime(start_date.getTime());
-            text.setEndtime(end_date.getTime());
-            String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=%s", jedis.get(Constants.accessToken));
-            List<String> userList = WeiXinUtil.getAddressBook(jedis.get(Constants.accessToken));
-            userList = userList.subList(250,302);
-            if(userList.contains("WangHongMei")) {
-                System.out.println("HHH");
-            }
-            text.setUseridlist(userList);
-            System.out.println(jedis.get(Constants.accessToken));
-            String result = netHelper.getHttpsResponse2(Url, text, "POST");
-            JSONObject json = JSON.parseObject(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //ASCII、ISO-8859-1、GB2312、GBK、UTF-8、UTF-16
+//        try {
+//            pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+//            jedis = pool.getResource();
+//            NetWorkHelper netHelper = new NetWorkHelper();
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            Date start_date = sdf.parse("2019-11-16 00:00:00");
+//            Date end_date = sdf.parse("2019-11-16 23:59:59");
+//            QYweixinSend text = new QYweixinSend();
+//            text.setOpencheckindatatype(2);
+//            text.setStarttime(start_date.getTime() / 1000);
+//            text.setEndtime(end_date.getTime() / 1000);
+//            String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=%s", jedis.get(Constants.accessToken));
+//            List<String> userList = WeiXinUtil.getAddressBook(jedis.get(Constants.accessToken));
+//            userList = userList.subList(300, 334);
+//            text.setUseridlist(userList);
+//            System.out.println(jedis.get(Constants.accessToken));
+//            String result = netHelper.getHttpsResponse2(Url, text, "POST");
+//            JSONObject json = JSON.parseObject(result);
+//            String checkindata = String.valueOf(json.get("checkindata"));
+//            JSONArray checkindataStr = JSON.parseArray(checkindata);
+//            List<OutPunch> outPunchList = JSONUtils.toList(checkindataStr, OutPunch.class);
+//            for (OutPunch op : outPunchList) {
+//                System.out.println(op.getLocation_detail());
+//                System.out.println(op.getLocation_title());
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 

@@ -56,8 +56,8 @@ public class OrderController {
         Integer index = null;
         Integer lastIndex = null;
         for (String s : urls) {
-            index = s.indexOf("\\" + orderHead.getFolderName() + "\\");//字符串第一次出现的位置
-            lastIndex = s.indexOf("\\", index + 2 + orderHead.getFolderName().length());//取第一次出现的位置开始的第一个文件夹或文件位置
+            index = s.indexOf("\\" + orderHead.getFolderName() + "\\");
+            lastIndex = s.indexOf("\\", index + 2 + orderHead.getFolderName().length());
             if (lastIndex == -1) {
                 lastIndex = s.length();
             }
@@ -85,12 +85,12 @@ public class OrderController {
 
         String str = null;
         if (norepeatFoldorFile != null) {
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             try {
                 str = x.writeValueAsString(names);
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("text/html;charset=UTF-8");
-                response.getWriter().print(str); //返回前端ajax
+                response.getWriter().print(str);
             } catch (Exception e) {
                 logger.debug(e.getMessage());
                 e.printStackTrace();
@@ -120,7 +120,6 @@ public class OrderController {
             orderHead.setNewFinishProudNo(newestFinishProdNo);
             orderHead.setOrderNo(newestOrderNo);
             mav.addObject("view", view);
-            //mav.addObject("salorList",salorList);
             mav.addObject("orderHead", orderHead);
             List<OrderItem> orderItemList = new ArrayList<OrderItem>();
             mav.addObject("orderItemList", orderItemList);
@@ -135,7 +134,6 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/toOrderAppendPage")
     public ModelAndView toOrderAppendPage(String orderNo, HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView mav = new ModelAndView("updateorderappend");
         OrderHead orderHead = orderServ.getOrderHeadByOrderNo(orderNo);
         List<String> extensionLists = fileUploadAndDownServ.findAllExtension();
@@ -203,7 +201,6 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/toOrderPage")
     public ModelAndView toOrderPage(HttpSession session) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView mav = new ModelAndView("order");
         OrderHead orderHead = new OrderHead();
         List<Employee> salorList = fileUploadAndDownServ.findAllSalorByDeptName();
@@ -227,7 +224,6 @@ public class OrderController {
     @RequestMapping(value = "/queryOrderHeadByCondition", method = RequestMethod.POST)
     public void queryOrderHeadByCondition(OrderHead orderHead, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<OrderHead> orderList = orderServ.queryOrderHeadByCondition(orderHead);
             int recordCount = orderServ.queryOrderHeadByConditionCount(orderHead);
             int maxPage = recordCount % orderHead.getPageSize() == 0 ? recordCount / orderHead.getPageSize() : recordCount / orderHead.getPageSize() + 1;
@@ -237,11 +233,11 @@ public class OrderController {
                 orderList.get(0).setCurrentPage(orderHead.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(orderList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -253,15 +249,14 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/showOrderItemByOrderHeadId")
     public void showOrderItemByOrderHeadId(@RequestBody(required = true) OrderHead orderHead, HttpSession session, HttpServletResponse response) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         List<OrderHead> orderItemList = orderServ.getOrderItemByOrderHeadId(orderHead.getId());
         String str = null;
-        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        ObjectMapper x = new ObjectMapper();
         try {
             str = x.writeValueAsString(orderItemList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
+            response.getWriter().print(str);
         } catch (IOException e) {
             e.printStackTrace();
             logger.debug(e.getMessage());
@@ -304,15 +299,14 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/showOrderItemDivByOrderItemId")
     public void showOrderItemDivByOrderItemId(@RequestBody(required = true) OrderItem orderItem, HttpSession session, HttpServletResponse response) throws Exception {
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
         orderItem = orderServ.getOrderItemById(orderItem.getId());
         String str = null;
-        ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+        ObjectMapper x = new ObjectMapper();
         try {
             str = x.writeValueAsString(orderItem);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
+            response.getWriter().print(str);
         } catch (IOException e) {
             e.printStackTrace();
             logger.debug(e.getMessage());
@@ -338,8 +332,6 @@ public class OrderController {
     @RequestMapping(value = "/deleteOrderItemByItemId", method = RequestMethod.POST)
     public void deleteOrderItemByItemId(OrderHead orderHead, HttpServletResponse response, HttpSession session) throws Exception {
         try {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
-            int isdeleteall = orderServ.deleteOrderItemByItemId(orderHead.getId());
             List<OrderHead> orderList = orderServ.queryOrderHeadByCondition(orderHead);
             int recordCount = orderServ.queryOrderHeadByConditionCount(orderHead);
             int maxPage = recordCount % orderHead.getPageSize() == 0 ? recordCount / orderHead.getPageSize() : recordCount / orderHead.getPageSize() + 1;
@@ -349,11 +341,11 @@ public class OrderController {
                 orderList.get(0).setCurrentPage(orderHead.getCurrentPage());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(orderList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -375,7 +367,6 @@ public class OrderController {
             mav.addObject("flag", 2);
             return mav;
         } else {
-            UserInfo userInfo = (UserInfo) session.getAttribute("account");
             ModelAndView mav = new ModelAndView("order");
             List<Employee> salorList = fileUploadAndDownServ.findAllSalorByDeptName();
             List<OrderHead> orderNoList = orderServ.findAllOrderNo();
@@ -459,18 +450,18 @@ public class OrderController {
             jsonObject2 = JSONObject.fromObject(o);
             oh = (OrderHead) JSONObject.toBean(jsonObject2, OrderHead.class);
             if (oh != null) {
-                oi.setProductBigType(oh.getProductBigType()); //产品大类
-                oi.setProductMainShape(oh.getProductMainShape()); //产品主体
-                oi.setNewFinishProudNo(oh.getNewFinishProudNo()); //新成品编号
-                oi.setProductSize(oh.getProductSize()); //产品尺寸
-                oi.setEdgeHightSize(oh.getEdgeHightSize()); //边高尺寸
-                oi.setMainMateriAndArt(oh.getMainMateriAndArt());//主体材质需求及工艺
-                oi.setBackInstallSelect(oh.getBackInstallSelect());//背部安装选项
-                oi.setElectMateriNeeds(oh.getElectMateriNeeds());//电子类辅料需求
-                oi.setInstallTransfBacking(oh.getInstallTransfBacking());//安装运输包装
+                oi.setProductBigType(oh.getProductBigType());
+                oi.setProductMainShape(oh.getProductMainShape());
+                oi.setNewFinishProudNo(oh.getNewFinishProudNo());
+                oi.setProductSize(oh.getProductSize());
+                oi.setEdgeHightSize(oh.getEdgeHightSize());
+                oi.setMainMateriAndArt(oh.getMainMateriAndArt());
+                oi.setBackInstallSelect(oh.getBackInstallSelect());
+                oi.setElectMateriNeeds(oh.getElectMateriNeeds());
+                oi.setInstallTransfBacking(oh.getInstallTransfBacking());
                 oi.setItemDeliverTimeStr(oh.getItemDeliverTimeStr());
-                oi.setOtherRemark(oh.getOtherRemark());//其它说明
-                oi.setNeedNum(oh.getNeedNum());//商品数量
+                oi.setOtherRemark(oh.getOtherRemark());
+                oi.setNeedNum(oh.getNeedNum());
                 oi.setProductName(oh.getProductName());
                 orderItemList.add(oi);
             }
@@ -521,13 +512,10 @@ public class OrderController {
     @ResponseBody
     @RequestMapping(value = "/transferDataToPDFFile", method = RequestMethod.GET)
     public void transferDataToPDFFile(@RequestParam("id") Integer id, HttpServletResponse response) throws Exception {
-        //将数据填充到模板
         String excelurl = orderServ.fillDataToModuleExcelByOrderId(id);
-        //将生成的EXCEL转换为PDF
         String pdfurl = orderServ.transferExcelToPDF(excelurl);
-        //PDF文件地址
         FileInputStream input = null;
-        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+        try {
             File file = new File(pdfurl);
             if (file.exists()) {
                 byte[] data = null;
@@ -565,18 +553,18 @@ public class OrderController {
             jsonObject2 = JSONObject.fromObject(o);
             oh = (OrderHead) JSONObject.toBean(jsonObject2, OrderHead.class);
             if (oh != null) {
-                oi.setProductBigType(oh.getProductBigType()); //产品大类
-                oi.setProductMainShape(oh.getProductMainShape()); //产品主体
-                oi.setNewFinishProudNo(oh.getNewFinishProudNo()); //新成品编号
-                oi.setProductSize(oh.getProductSize()); //产品尺寸
-                oi.setEdgeHightSize(oh.getEdgeHightSize()); //边高尺寸
-                oi.setMainMateriAndArt(oh.getMainMateriAndArt());//主体材质需求及工艺
-                oi.setBackInstallSelect(oh.getBackInstallSelect());//背部安装选项
-                oi.setElectMateriNeeds(oh.getElectMateriNeeds());//电子类辅料需求
-                oi.setInstallTransfBacking(oh.getInstallTransfBacking());//安装运输包装
+                oi.setProductBigType(oh.getProductBigType());
+                oi.setProductMainShape(oh.getProductMainShape());
+                oi.setNewFinishProudNo(oh.getNewFinishProudNo());
+                oi.setProductSize(oh.getProductSize());
+                oi.setEdgeHightSize(oh.getEdgeHightSize());
+                oi.setMainMateriAndArt(oh.getMainMateriAndArt());
+                oi.setBackInstallSelect(oh.getBackInstallSelect());
+                oi.setElectMateriNeeds(oh.getElectMateriNeeds());
+                oi.setInstallTransfBacking(oh.getInstallTransfBacking());
                 oi.setItemDeliverTimeStr(oh.getItemDeliverTimeStr());
-                oi.setOtherRemark(oh.getOtherRemark());//其它说明
-                oi.setNeedNum(oh.getNeedNum());//商品数量
+                oi.setOtherRemark(oh.getOtherRemark());
+                oi.setNeedNum(oh.getNeedNum());
                 oi.setProductName(oh.getProductName());
                 orderItemList.add(oi);
             }

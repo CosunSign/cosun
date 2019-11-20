@@ -46,11 +46,10 @@ public class NetWorkHelper {
             });
 
 
-            con.setDoInput(true); //允许输入流，即允许下载
+            con.setDoInput(true);
 
-            //在android中必须将此项设置为false
-            con.setDoOutput(false); //允许输出流，即允许上传
-            con.setUseCaches(false); //不使用缓冲
+            con.setDoOutput(false);
+            con.setUseCaches(false);
             if (null != requestMethod && !requestMethod.equals("")) {
                 con.setRequestMethod(requestMethod); //使用指定的方式
                 //con.setRequestProperty("opencheckindatatype", text.getOpencheckindatatype().toString());
@@ -58,17 +57,17 @@ public class NetWorkHelper {
                 //con.setRequestProperty("endtime", text.getEndtime().toString());
                 // con.setRequestProperty("useridlist", JSONUtils.toJSONString(text.getUseridlist()));
             } else {
-                con.setRequestMethod("GET"); //使用get请求
+                con.setRequestMethod("GET");
             }
             con.setDoOutput(true);
             con.setDoInput(true);
             con.connect();
-            out = new OutputStreamWriter(con.getOutputStream(), "utf-8");//解决传参时中文乱码
+            out = new OutputStreamWriter(con.getOutputStream(),"GBK");//解决传参时中文乱码
             out.write(JSONUtils.toJSONString(text).substring(1,JSONUtils.toJSONString(text).length()-1));
             System.out.println(JSONUtils.toJSONString(text).substring(1,JSONUtils.toJSONString(text).length()-1));
             out.flush();
             InputStream inStream = con.getInputStream();
-            is = con.getInputStream();   //获取输入流，此时才真正建立链接
+            is = con.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader bufferReader = new BufferedReader(isr);
             String inputLine = "";
@@ -114,17 +113,16 @@ public class NetWorkHelper {
             });
 
 
-            con.setDoInput(true); //允许输入流，即允许下载
+            con.setDoInput(true);
 
-            //在android中必须将此项设置为false
-            con.setDoOutput(false); //允许输出流，即允许上传
-            con.setUseCaches(false); //不使用缓冲
+            con.setDoOutput(false);
+            con.setUseCaches(false);
             if (null != requestMethod && !requestMethod.equals("")) {
-                con.setRequestMethod(requestMethod); //使用指定的方式
+                con.setRequestMethod(requestMethod);
             } else {
-                con.setRequestMethod("GET"); //使用get请求
+                con.setRequestMethod("GET");
             }
-            is = con.getInputStream();   //获取输入流，此时才真正建立链接
+            is = con.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader bufferReader = new BufferedReader(isr);
             String inputLine = "";

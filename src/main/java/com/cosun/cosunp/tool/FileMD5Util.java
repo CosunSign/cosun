@@ -57,12 +57,7 @@ public class FileMD5Util {
         return value;
     }
 
-    /**
-     * 在MappedByteBuffer释放后再对它进行读操作的话就会引发jvm crash，在并发情况下很容易发生
-     * 正在释放时另一个线程正开始读取，于是crash就发生了。所以为了系统稳定性释放前一般需要检 查是否还有线程在读或写
-     *
-     * @param mappedByteBuffer
-     */
+
     public static void freedMappedByteBuffer(final MappedByteBuffer mappedByteBuffer) throws Exception{
         try {
             if (mappedByteBuffer == null) {

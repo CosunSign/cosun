@@ -47,7 +47,7 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
         StringRedisTemplate template = new StringRedisTemplate(factory);
-        setSerializer(template);//设置序列化工具
+        setSerializer(template);
         template.afterPropertiesSet();
         return template;
     }

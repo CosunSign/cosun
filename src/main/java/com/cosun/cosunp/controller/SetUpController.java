@@ -63,11 +63,11 @@ public class SetUpController {
         try {
             rulesServ.saveFirstShowById(rules);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(1);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -83,11 +83,11 @@ public class SetUpController {
             List<Extension> exs = new ReadTextUtil().readTxtUtil("C:\\Users\\Administrator\\Desktop\\aaaa.txt");
             rulesServ.saveExtension(exs);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(1);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();

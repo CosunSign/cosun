@@ -70,21 +70,13 @@ public class WordToHtml {
             String nameOnly = file.getOriginalFilename().substring(0, index);
             String outPutFile = centerPath + nameOnly + ".html";
             HWPFDocument wordDocument;
-            //字节码输出流
             try {
-                //根据输入文件路径与名称读取文件流
                 InputStream in = new FileInputStream(allPath);
-                //把文件流转化为输入wordDom对象
                 wordDocument = new HWPFDocument(in);
-                //通过反射构建dom创建者工厂
                 DocumentBuilderFactory domBuilderFactory = DocumentBuilderFactory.newInstance();
-                //生成dom创建者
                 DocumentBuilder domBuilder = domBuilderFactory.newDocumentBuilder();
-                //生成dom对象
                 Document dom = domBuilder.newDocument();
-                //生成针对Dom对象的转化器
                 WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(dom);
-                //转化器重写内部方法
                 wordToHtmlConverter.setPicturesManager(new PicturesManager() {
                     public String savePicture(byte[] content,
                                               PictureType pictureType, String suggestedName,
@@ -92,9 +84,7 @@ public class WordToHtml {
                         return "ftp://admin:FL33771@192.168.0.152/" + deptId + "/" + suggestedName.substring(1, suggestedName.length() - 1);
                     }
                 });
-                //转化器开始转化接收到的dom对象
                 wordToHtmlConverter.processDocument(wordDocument);
-                //保存文档中的图片
                 List<?> pics = wordDocument.getPicturesTable().getAllPictures();
                 if (pics != null) {
                     for (int i = 0; i < pics.size(); i++) {
@@ -106,23 +96,17 @@ public class WordToHtml {
                         }
                     }
                 }
-                //从加载了输入文件中的转换器中提取DOM节点
                 Document htmlDocument = wordToHtmlConverter.getDocument();
-                //从提取的DOM节点中获得内容
                 DOMSource domSource = new DOMSource(htmlDocument);
                 out = new ByteArrayOutputStream();
-                //输出流的源头
                 StreamResult streamResult = new StreamResult(out);
-                //转化工厂生成序列转化器
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer serializer = tf.newTransformer();
-                //设置序列化内容格式
                 serializer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
                 serializer.setOutputProperty(OutputKeys.INDENT, "yes");
                 serializer.setOutputProperty(OutputKeys.METHOD, "html");
 
                 serializer.transform(domSource, streamResult);
-                //生成文件方法
                 writeFile(new String(out.toByteArray()), outPutFile);
                 out.close();
             } catch (FileNotFoundException e1) {

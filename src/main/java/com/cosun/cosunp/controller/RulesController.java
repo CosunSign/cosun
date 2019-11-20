@@ -62,12 +62,12 @@ public class RulesController {
                 }
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(htmlContent);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -302,11 +302,11 @@ public class RulesController {
         try {
             int isExist = rulesServ.getRulesByDeptId(deptId);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
             str1 = x.writeValueAsString(isExist);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -329,12 +329,12 @@ public class RulesController {
                 rulesList.get(0).setUserActor(userInfo.getUserActor());
             }
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(rulesList);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -411,7 +411,6 @@ public class RulesController {
             int index = file.getOriginalFilename().indexOf(".");
             int fileNameCount = rulesServ.getRulesByNameAndId(file.getOriginalFilename().substring(0, index), rules.getDeptId());
             if (fileNameCount <= 0) {
-                // ModelAndView view = new ModelAndView("mainindex");
                 List<Dept> deptList = personServ.findAllDeptAll();
                 rules.setLoginName(userInfo.getFullName());
                 rules.setUploadDate(new Date());
@@ -466,7 +465,6 @@ public class RulesController {
     @ResponseBody
     @RequestMapping(value = "/getFileOutStreamById")
     public void getFileOutStreamById(Integer rulesId, HttpSession session, HttpServletResponse response) throws Exception {
-//        //跨域请求
         Rules rules = rulesServ.getRulesById(rulesId);
         int index = rules.getFileDir().lastIndexOf(".");
         String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
@@ -492,9 +490,8 @@ public class RulesController {
     @ResponseBody
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public void pdfStreamHandler(@RequestParam("rulesId") Integer rulesId, HttpServletRequest request, HttpServletResponse response) {
-        //PDF文件地址
         FileInputStream input = null;
-        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+        try {
             Rules rules = rulesServ.getRulesById(rulesId);
             int index = rules.getFileDir().lastIndexOf(".");
             String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
@@ -521,10 +518,9 @@ public class RulesController {
 
     @ResponseBody
     @RequestMapping(value = "/previewFirst", method = RequestMethod.GET)
-    public void previewFirst( HttpServletResponse response) {
-        //PDF文件地址
+    public void previewFirst(HttpServletResponse response) {
         FileInputStream input = null;
-        try {//E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.doc
+        try {
             Rules rules = rulesServ.getRulesByFirst();
             int index = rules.getFileDir().lastIndexOf(".");
             String pdfPath = rules.getFileDir().substring(0, index).concat(".pdf");
