@@ -281,8 +281,8 @@ public class PersonServiceImpl implements IPersonServ {
 
     public int checkAndSavePosition(Position position) throws Exception {
         int isExist = personMapper.findSaveOrNot(position);
-        if (isExist > 0) {//代表数据库存在职位，不允许重复增加 0
-            return isExist; //0代表重复
+        if (isExist > 0) {
+            return isExist;
         } else {
             personMapper.savePosition(position);
         }
@@ -291,8 +291,8 @@ public class PersonServiceImpl implements IPersonServ {
 
     public int checkAndSaveDept(String deptName) throws Exception {
         int isExist = personMapper.findSaveOrNot2(deptName);
-        if (isExist > 0) {//代表数据库存在职位，不允许重复增加 0
-            return isExist; //0代表重复
+        if (isExist > 0) {
+            return isExist;
         } else {
             personMapper.saveDept(deptName);
         }
@@ -442,7 +442,7 @@ public class PersonServiceImpl implements IPersonServ {
 
     public List<Employee> translateTabletoEmployeeBeanZK(List<MultipartFile> files) throws Exception {
         WorkbookSettings ws;
-        jxl.Workbook Workbook = null;//.xlsx
+        jxl.Workbook Workbook = null;
         String fileName;
         String fileType;
         List<jxl.Sheet> xlsfSheetList = new ArrayList<jxl.Sheet>();
@@ -452,9 +452,8 @@ public class PersonServiceImpl implements IPersonServ {
             fileName = file.getOriginalFilename();
             ws.setCellValidationDisabled(true);
             fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-            //根据后缀创建读取不同类型的excel
             if (fileType.equals("xls")) {
-                Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);//它是专门读取.xlsx的
+                Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
             } else {
                 throw new Exception("文档格式后缀不正确!!！只接受xls格式.");
             }
@@ -474,7 +473,7 @@ public class PersonServiceImpl implements IPersonServ {
                 cell = sheet.getRow(0);
                 int coloumNum = cell.length;
                 for (int ab = 0; ab < coloumNum; ab++) {
-                    cella = cell[ab];// 获得第i行的第3个单元格
+                    cella = cell[ab];
                     if (nameTitle.equals(cella.getContents().trim())) {
                         nameTitleIndex = ab;
                     }
@@ -591,9 +590,9 @@ public class PersonServiceImpl implements IPersonServ {
             userInfo.setFullName(employee.getName());
             userInfo.setUserName(employee.getUsername());
             userInfo.setUserPwd(employee.getPassowrd());
-            userInfo.setState(0);// 0代表未审核
-            userInfo.setUseruploadright(1);//默认有上传
-            userInfo.setUserActor(employee.getPositionAttrId());//默认普通员工
+            userInfo.setState(0);
+            userInfo.setUseruploadright(1);
+            userInfo.setUserActor(employee.getPositionAttrId());
             userInfoMapper.saveUserInfoByBean(userInfo);
         }
         employee.setIsQuit(0);
@@ -698,11 +697,11 @@ public class PersonServiceImpl implements IPersonServ {
 
     public void saveOrUpdateWorkData(WorkDate workDate) throws Exception {
         WorkDate num = personMapper.getWorkDateByMonth(workDate);
-        if (num == null) {//save
+        if (num == null) {
             if (workDate.getEmpNos() != null && workDate.getEmpNos().size() > 0)
                 workDate.setEmpNostr(workDate.getEmpNos().toString());
             personMapper.saveWorkData(workDate);
-        } else {//update
+        } else {
             if (workDate.getEmpNos() != null && workDate.getEmpNos().size() > 0)
                 workDate.setEmpNostr(workDate.getEmpNos().toString());
             personMapper.updateWorkData(workDate);
@@ -782,7 +781,6 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public int saveLianBanDateToMysql(LianBan lianBan) throws Exception {
-        //1正常保存 2.正常更新
         Employee ee = personMapper.getEmployeeOneById(lianBan.getEmpId());
         lianBan.setEmpNo(ee.getEmpNo());
         LianBan lb = personMapper.getLianBanByEmpNoAndDateStr(ee.getEmpNo(), lianBan.getDateStr());
@@ -840,10 +838,8 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public int saveJiaBanDateToMysql(JiaBan jiaBan) throws Exception {
-        //查看加班申请单有无重复
         int oldJiaBanCount = personMapper.getJiaBanDanByEmpIdAndFromDateAndEndDate(jiaBan.getEmpId(), jiaBan.getExtDateFromStr(), jiaBan.getExtDateEndStr());
         Employee employee = personMapper.getEmployeeOneById(jiaBan.getEmpId());
-        //没有重复保存
         if (oldJiaBanCount == 0) {
             jiaBan.setEmpNo(employee.getEmpNo());
             personMapper.saveJiaBanDateToMysql(jiaBan);
@@ -861,9 +857,7 @@ public class PersonServiceImpl implements IPersonServ {
     public int saveYeBanDateToMysql(YeBan yeBan) throws Exception {
         Employee ee = personMapper.getEmployeeOneById(yeBan.getEmpId());
         yeBan.setEmpNo(ee.getEmpNo());
-        //查看有没
         int num = personMapper.getYeBanByEmpNoAndDateStr(ee.getEmpNo(), yeBan.getDateStr());
-        //有 更新
         if (num == 0) {
             personMapper.saveYeBanDateToMysql(yeBan);
             return 1;
@@ -871,7 +865,6 @@ public class PersonServiceImpl implements IPersonServ {
             personMapper.updateYeBanDateToMysql(yeBan);
             return 2;
         }
-        //没有 保存
     }
 
     public void deleteYeBanDateToMysql(Integer id) throws Exception {
@@ -909,16 +902,13 @@ public class PersonServiceImpl implements IPersonServ {
 
 
     public List<ClockInOrgin> translateTabletoBean(MultipartFile file) throws Exception {
-        // File file = new File("C:\\Users\\Administrator\\Desktop\\4月车间考勤记录.xls");
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();
         ws.setCellValidationDisabled(true);
-        //if (fileName.contains("-1.")) {
         jxl.Workbook Workbook = null;//.xlsx
         String fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        //根据后缀创建读取不同类型的excel
         if (fileType.equals("xls")) {
-            Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);//它是专门读取.xlsx的
+            Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
         } else {
             throw new Exception("文档格式后缀不正确!!！只接受xls格式.");
         }
@@ -955,11 +945,10 @@ public class PersonServiceImpl implements IPersonServ {
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();
         ws.setCellValidationDisabled(true);
-        jxl.Workbook Workbook = null;//.xlsx
+        jxl.Workbook Workbook = null;
         String fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-        //根据后缀创建读取不同类型的excel
         if (fileType.equals("xls")) {
-            Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);//它是专门读取.xlsx的
+            Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
         } else {
             throw new Exception("文档格式后缀不正确!!！只接受xls格式.");
         }
@@ -980,7 +969,7 @@ public class PersonServiceImpl implements IPersonServ {
             cell = xlsfSheet.getRow(1);
             int coloumNum = cell.length;
             for (int ab = 0; ab < coloumNum; ab++) {
-                cella = cell[ab];// 获得第i行的第3个单元格
+                cella = cell[ab];
                 if (nameTitle.equals(cella.getContents().trim())) {
                     nameTitleIndex = ab;
                 }
@@ -1112,7 +1101,7 @@ public class PersonServiceImpl implements IPersonServ {
             cell2 = xlsfSheet2.getRow(1);
             int coloumNum2 = cell2.length;
             for (int ab = 0; ab < coloumNum2; ab++) {
-                cella2 = cell2[ab];// 获得第i行的第3个单元格
+                cella2 = cell2[ab];
                 if (nameTitle.equals(cella2.getContents().trim())) {
                     nameTitleIndex = ab;
                 }
@@ -1273,10 +1262,6 @@ public class PersonServiceImpl implements IPersonServ {
 
 
     public void saveDeptNameAndPositionNameAndEms(List<Employee> employeeList) throws Exception {
-        //personMapper.clearDeptData();
-        //personMapper.clearPositionData();
-        //personMapper.clearEmployeeData();
-        //导入前将全部人员设为离职
         personMapper.updateAllEmployeeNotExist();
         Employee em = null;
         List<String> depts = personMapper.findAllDeptA();
@@ -1560,13 +1545,6 @@ public class PersonServiceImpl implements IPersonServ {
                     emm.setHealthCerti(0);
                 }
 
-                //总监
-                //总经理
-                //副总经理
-                //经理
-                //主管
-                //组长
-                //职员
                 if ("总监".equals(emm.getPositionAttrIdStr())) {
                     emm.setPositionAttrId(1);
                 } else if ("总经理".equals(emm.getPositionAttrIdStr())) {
@@ -1589,9 +1567,9 @@ public class PersonServiceImpl implements IPersonServ {
                     userInfo.setFullName(emm.getName());
                     userInfo.setUserName(emm.getEmpNo());
                     userInfo.setUserPwd("cosun888");
-                    userInfo.setState(0);// 0代表未审核
-                    userInfo.setUseruploadright(1);//默认有上传
-                    userInfo.setUserActor(emm.getPositionAttrId());//默认普通员工
+                    userInfo.setState(0);
+                    userInfo.setUseruploadright(1);
+                    userInfo.setUserActor(emm.getPositionAttrId());
                     userInfoMapper.saveUserInfoByBean(userInfo);
                 }
 
@@ -1678,7 +1656,7 @@ public class PersonServiceImpl implements IPersonServ {
             em = employeeList.get(i);
             workDateList = personMapper.getWorkDateByMonthAnPositionLevelList(yearMonth, em.getPositionLevel());
             for (WorkDate workDate : workDateList) {
-                int type = workDate.getType();//0正常工时  1 周末加班  2 法定假日
+                int type = workDate.getType();
                 if (workDate != null) {
                     for (int j = 0; j < workDate.getWorkDatess().length; j++) {
                         date = workDate.getWorkDatess()[j];
@@ -1711,7 +1689,6 @@ public class PersonServiceImpl implements IPersonServ {
                                             List<Time> timeList = this.getTimeList(clockInOrginList.get(k).getTimeStr());
                                             for (int a = 0; a < timeList.size(); a++) {
                                                 time = timeList.get(a);
-                                                //上午上班
                                                 if (workSet.getMorningOn() != null) {
                                                     if (workSet.getMorningOnFrom() != null && workSet.getMorningOnEnd() != null) {
                                                         if (time.after(workSet.getMorningOnFrom()) && !time.after(workSet.getMorningOnEnd()) || (time.equals(workSet.getMorningOn()))) {
@@ -1748,7 +1725,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                     outPutWorkData.add(aaa);
                                                     return outPutWorkData;
                                                 }
-                                                //上午下班
                                                 if (workSet.getMorningOff() != null) {
                                                     if (workSet.getMorningOffFrom() != null && workSet.getMorningOffEnd() != null) {
                                                         if (time.after(workSet.getMorningOffFrom()) && !time.after(workSet.getMorningOffEnd()) || (time.equals(workSet.getMorningOff()))) {
@@ -1775,19 +1751,10 @@ public class PersonServiceImpl implements IPersonServ {
                                                         }
                                                     } else {
                                                         aoff = true;
-//                                                errorMessage = em.getName() + "没有设置早上下班打卡时间段";
-//                                                aaa.setErrorMessage(errorMessage);
-//                                                outPutWorkData.add(aaa);
-//                                                return outPutWorkData;
                                                     }
                                                 } else {
                                                     aoff = true;
-//                                            errorMessage = em.getName() + "没有设置早上下班时间";
-//                                            aaa.setErrorMessage(errorMessage);
-//                                            outPutWorkData.add(aaa);
-//                                            return outPutWorkData;
                                                 }
-                                                //下午上班
                                                 if (workSet.getNoonOn() != null) {
                                                     if (workSet.getNoonOnFrom() != null && workSet.getNoonOnEnd() != null) {
                                                         if (time.after(workSet.getNoonOnFrom()) && !time.after(workSet.getNoonOnEnd()) || (time.equals(workSet.getNoonOn()))) {
@@ -1814,19 +1781,10 @@ public class PersonServiceImpl implements IPersonServ {
                                                         }
                                                     } else {
                                                         pon = true;
-//                                                errorMessage = em.getName() + "没有设置上午上班打卡时间段";
-//                                                aaa.setErrorMessage(errorMessage);
-//                                                outPutWorkData.add(aaa);
-//                                                return outPutWorkData;
                                                     }
                                                 } else {
                                                     pon = true;
-//                                            errorMessage = em.getName() + "没有设置上午上班打卡时间";
-//                                            aaa.setErrorMessage(errorMessage);
-//                                            outPutWorkData.add(aaa);
-//                                            return outPutWorkData;
                                                 }
-                                                //下午下班
                                                 if (workSet.getNoonOff() != null) {
                                                     if (workSet.getNoonOffFrom() != null) {
                                                         if (time.after(workSet.getNoonOffFrom()) || (time.equals(workSet.getNoonOff()))) {
@@ -1853,26 +1811,16 @@ public class PersonServiceImpl implements IPersonServ {
                                                         }
                                                     } else {
                                                         poff = true;
-//                                                errorMessage = em.getName() + "没有设置下午下班打卡时间段";
-//                                                aaa.setErrorMessage(errorMessage);
-//                                                outPutWorkData.add(aaa);
-//                                                return outPutWorkData;
                                                     }
                                                 } else {
                                                     poff = true;
-//                                            errorMessage = em.getName() + "没有设置下午下班打卡时间";
-//                                            aaa.setErrorMessage(errorMessage);
-//                                            outPutWorkData.add(aaa);
-//                                            return outPutWorkData;
                                                 }
-                                                //晚上加班
                                                 Double extHours = 0.0;
                                                 String abcd = null;
                                                 String[] allNum = null;
                                                 String intNum = "";
                                                 String deciNum = "";
                                                 if (workSet.getExtworkon() != null) {
-                                                    // if (time.after(workSet.getExtworkonFrom()) && time.before(workSet.getExtworkonEnd())) {
                                                     Time lastT = timeList.get(timeList.size() - 1);
                                                     if (lastT.after(workSet.getExtworkon())) {
                                                         if (lastT.after(workSet.getExtworkoff())) {
@@ -1898,7 +1846,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                         if (extHours >= 0) {
                                                             otw.setExtHours(extHours);
                                                         }
-                                                        // }
                                                     }
                                                 }
                                             }
@@ -2364,9 +2311,6 @@ public class PersonServiceImpl implements IPersonServ {
                                         otw.setExtWorkHours(zhengBanHours);
                                         otw.setTimeStr(co.getTimeStr());
                                         kqBeanList.add(otw);
-                                        //7:41:33 12:4:22 13:27:47 15:31:38 21:56:2
-                                        // 8:0:46 21:55:46
-
                                     } else {
                                         if (workDate.getType() == 2) {
                                             otw.setRemark("法定假日");
@@ -2557,7 +2501,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                             co2 = personMapper.getKQBeanByEnroNumAndDate(co.getEnrollNumber(), dateTomor);
                                                             if (co2 != null && co2.getTimeStr() != null && co2.getTimeStr().length() > 0) {
                                                                 String afterTime = dateTomor + " " + co2.getTimeStr().split(" ")[0];
-                                                                String beforeTime = co.getDateStr() + " " + afterWS.getExtworkonStr();
+                                                                String beforeTime = co.getDateStr() + " " + workSet.getExtworkon();
                                                                 Date afterT = dft.parse(afterTime);
                                                                 Date beforTime = dft.parse(beforeTime);
 
@@ -2621,7 +2565,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                             }
                                                         }
                                                     } else {
-                                                        //7:37:57 9:2:52
                                                         boolean isAOnH = false;
                                                         a:
                                                         for (Time tii : timeList) {
@@ -2710,7 +2653,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                             }
                                                         }
                                                     } else {
-//13:53:9 19:12:12   王金云
                                                         boolean isAOnH = false;
                                                         a:
                                                         for (Time tii : timeList) {
@@ -2799,8 +2741,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                             }
                                                         }
                                                     } else {
-                                                        //13:53:9 19:12:12   王金云
-                                                        //14:2:49 17:44:41   陈婷
                                                         boolean isAOnH = false;
                                                         a:
                                                         for (Time tii : timeList) {
@@ -2886,8 +2826,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                             }
                                                         }
                                                     } else {
-                                                        //13:53:9 19:12:12   王金云
-                                                        //14:2:49 17:44:41   陈婷
                                                         boolean isAOnH = false;
                                                         a:
                                                         for (Time tii : timeList) {
@@ -2937,8 +2875,20 @@ public class PersonServiceImpl implements IPersonServ {
                                                 }
                                                 int rightclocknum = (aon == true ? 1 : 0) + (aoff == true ? 1 : 0) + (pon == true ? 1 : 0) + (poff == true ? 1 : 0);
                                                 if (rightclocknum < 2) {
-                                                    otw.setRemark("放假");
-                                                    otw.setClockResult(5);
+                                                    if (DateUtil.getWeek(kqBeans.get(k).getDateStr()) == 6 || DateUtil.getWeek(kqBeans.get(k).getDateStr()) == 7) {
+                                                        QianKa qqk = personMapper.getQianKaByDateAndEmpnoA(otw.getEmpNo(), otw.getDateStr());
+                                                        if (qqk != null) {
+                                                            otw.setRemark("打卡时间不在规定时间内");
+                                                            otw.setClockResult(7);
+                                                        } else {
+                                                            otw.setRemark("放假");
+                                                            otw.setClockResult(5);
+                                                        }
+                                                    } else {
+                                                        otw.setRemark("旷工");
+                                                        otw.setClockResult(8);
+                                                    }
+
                                                 }
                                             } else {
                                                 Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", "2019-" + monstr + "-" + date + " " + "17:30:00");
@@ -3359,7 +3309,7 @@ public class PersonServiceImpl implements IPersonServ {
                     mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
                     dayNum = "3,3,";
                 } else if (kqb.getClockResult() == 7) {
-                    aOnStr = "77,"; //打卡时间不在范围内
+                    aOnStr = "77,";
                     aOffStr = "77,";
                     boolean isComin = false;
                     qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
@@ -3403,7 +3353,7 @@ public class PersonServiceImpl implements IPersonServ {
                     }
 
 
-                    pOnStr = "77,"; //打卡时间不在范围内
+                    pOnStr = "77,";
                     pOffStr = "77,";
                     if (kqb.getpOnTime() == null) {
                         if (times != null)
@@ -3424,7 +3374,7 @@ public class PersonServiceImpl implements IPersonServ {
                                     if (pOnStr == "77,") {
                                         pOffStr = "77,";
                                     } else {
-                                        pOffStr = "67.";
+                                        pOffStr = "67,";
                                     }
                                 }
                             }
@@ -3503,7 +3453,7 @@ public class PersonServiceImpl implements IPersonServ {
                         if (qk != null) {
                             String[] ab = kqb.getRemark().split(",");
                             Double hoa = Double.valueOf(ab[0]);
-                            aOnStr = "19,"; //打卡时间不在范围内
+                            aOnStr = "19,";
                             aOffStr = "19,";
                             boolean isComin = false;
                             if (qk != null && qk.getTimeStr() != null) {
@@ -3548,7 +3498,7 @@ public class PersonServiceImpl implements IPersonServ {
                             }
 
 
-                            pOnStr = "19,"; //打卡时间不在范围内
+                            pOnStr = "19,";
                             pOffStr = "19,";
                             Double hob = Double.valueOf(ab[0]);
                             if (kqb.getpOnTime() == null) {
@@ -3610,7 +3560,8 @@ public class PersonServiceImpl implements IPersonServ {
                             mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
                         }
                     } else if (kqb.getClockResult() == 7) {
-                        aOnStr = "7,"; //打卡时间不在范围内
+
+                        aOnStr = "7,";
                         aOffStr = "7,";
                         boolean isComin = false;
                         qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
@@ -3651,7 +3602,7 @@ public class PersonServiceImpl implements IPersonServ {
                         }
 
 
-                        pOnStr = "7,"; //打卡时间不在范围内
+                        pOnStr = "7,";
                         pOffStr = "7,";
                         if (kqb.getpOnTime() == null) {
                             if (times != null)
@@ -3666,7 +3617,7 @@ public class PersonServiceImpl implements IPersonServ {
 
                         pOffStr = pOnStr;
                         if (kqb.getpOffTime() == null) {
-                            if (times != null)
+                            if (times != null) {
                                 for (Time time : times) {
                                     if (time.after(ws.getNoonOffFrom()) && !time.after(ws.getNoonOffEnd()) || (time.equals(ws.getNoonOff()))) {
                                         if (pOnStr == "7,") {
@@ -3676,11 +3627,85 @@ public class PersonServiceImpl implements IPersonServ {
                                         }
                                     }
                                 }
+                            } else {
+                                pOffStr = "7,";
+                            }
 
                         }
                         dayNum = aOffStr + pOffStr;
                     } else if (kqb.getClockResult() == 8) {
-                        dayNum = "8,8,";
+                        aOnStr = "8,";
+                        aOffStr = "8,";
+                        boolean isComin = false;
+                        qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
+                        ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                        if (qk != null && qk.getTimeStr() != null) {
+                            timeStr = qk.getTimeStr().split(" ");
+                            for (String str : timeStr) {
+                                timeList.add(str.trim());
+                            }
+                            times = StringUtil.formTime(timeList);
+                        }
+                        if (kqb.getaOnTime() == null) {
+                            aOnStr = "8,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOnFrom()) && !time.after(ws.getMorningOnEnd()) || (time.equals(ws.getMorningOn()))) {
+                                        aOnStr = "17,";
+                                    }
+                                }
+                        } else {
+                            aOnStr = "1,";
+                        }
+                        aOffStr = aOnStr;
+                        if (kqb.getaOffTime() == null) {
+                            aOffStr = "8,";
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getMorningOffFrom()) && !time.after(ws.getMorningOffEnd()) || (time.equals(ws.getMorningOff()))) {
+                                        if (aOnStr.equals("8,")) {
+                                            aOffStr = "8,";
+                                        } else {
+                                            aOffStr = "17,";
+                                        }
+
+                                    }
+                                }
+
+                        }
+
+
+                        pOnStr = "8,";
+                        pOffStr = "8,";
+                        if (kqb.getpOnTime() == null) {
+                            if (times != null)
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOnFrom()) && !time.after(ws.getNoonOnEnd()) || (time.equals(ws.getNoonOn()))) {
+                                        pOnStr = "17,";
+                                    }
+                                }
+                        } else {
+                            pOnStr = "1,";
+                        }
+
+                        pOffStr = pOnStr;
+                        if (kqb.getpOffTime() == null) {
+                            if (times != null) {
+                                for (Time time : times) {
+                                    if (time.after(ws.getNoonOffFrom()) && !time.after(ws.getNoonOffEnd()) || (time.equals(ws.getNoonOff()))) {
+                                        if (pOnStr == "8,") {
+                                            pOffStr = "8,";
+                                        } else {
+                                            pOffStr = "17,";
+                                        }
+                                    }
+                                }
+                            } else {
+                                pOffStr = "8,";
+                            }
+
+                        }
+                        dayNum = aOffStr + pOffStr;
                     }
                     if (kqb.getClockResult() == 13) {
                         dayNum = dayNum.concat((kqb.getExtWorkHours() - 8.0) + "");
@@ -3719,7 +3744,7 @@ public class PersonServiceImpl implements IPersonServ {
                         mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
                         dayNum = "3,3,";
                     } else if (kqb.getClockResult() == 7) {
-                        aOnStr = "77,"; //打卡时间不在范围内
+                        aOnStr = "77,";
                         aOffStr = "77,";
                         boolean isComin = false;
                         qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
@@ -3763,7 +3788,7 @@ public class PersonServiceImpl implements IPersonServ {
                         }
 
 
-                        pOnStr = "77,"; //打卡时间不在范围内
+                        pOnStr = "77,";
                         pOffStr = "77,";
                         if (kqb.getpOnTime() == null) {
                             if (times != null)
@@ -3784,7 +3809,7 @@ public class PersonServiceImpl implements IPersonServ {
                                         if (pOnStr == "77,") {
                                             pOffStr = "77,";
                                         } else {
-                                            pOffStr = "67.";
+                                            pOffStr = "67,";
                                         }
                                     }
                                 }
@@ -3846,7 +3871,6 @@ public class PersonServiceImpl implements IPersonServ {
             return isNeed;
         }
         QianKa qianKaOld = personMapper.getQianKaByDateAndEmpno(qianKa);
-        //看签卡的时间是否在有效范围内
         int isIn = StringUtil.checkIsIn(qianKa.getTimeStr(), ws);
         if (isIn == 3) {
             return isIn;
@@ -3856,7 +3880,6 @@ public class PersonServiceImpl implements IPersonServ {
         if (qianKaOld != null) {
             len = StringUtil.checkIsRepeatQianKa(qianKaOld, qianKa, ws);
         }
-        //1正常保存 2.已存在  3.签卡时间不在规定范围内
         if (len == 0) {
             QianKa qk = personMapper.getQianKaByDateAndEmpno(qianKa);
             if (qk == null) {

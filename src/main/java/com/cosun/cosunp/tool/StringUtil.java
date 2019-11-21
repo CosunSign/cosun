@@ -198,11 +198,11 @@ public class StringUtil {
 
     public static String sortTimes(String qiankaStr, String timeStr) throws Exception {
         List<String> allStr = new ArrayList<String>();
-        String[] strs = qiankaStr.split(" ");
+        String[] strs = timeStr.split(" ");
         for (String s : strs) {
             allStr.add(s);
         }
-        allStr.add(timeStr);
+        allStr.add(qiankaStr);
         List<Time> times = formTime(allStr);
         for (int i = 0; i < times.size() - 1; i++) {
             for (int j = 0; j < times.size() - 1 - i; j++) {

@@ -1204,13 +1204,13 @@ public interface PersonMapper {
     List<KQBean> findAllKQBData(Employee employee);
 
     @Select("SELECT\n" +
-            "\tdateStr\n" +
+            "\tdate\n" +
             "FROM\n" +
-            "\tkqbean\n" +
+            "\tzhongkongbean\n" +
             "GROUP BY\n" +
-            "\tdateStr\n" +
+            "\tdate\n" +
             "ORDER BY\n" +
-            "\tdateStr DESC\n" +
+            "\tdate asc\n" +
             "LIMIT 31")
     List<String> getAllKQDateList();
 

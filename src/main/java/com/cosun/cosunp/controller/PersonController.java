@@ -94,7 +94,7 @@ public class PersonController {
 
 
     public void getBeforeDayZhongKongData() throws Exception {
-        String beforDay = "2019-11-19";
+        String beforDay = "2019-11-20";
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         String[] afterDay = beforDay.split("-");
