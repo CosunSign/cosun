@@ -1,6 +1,7 @@
 package com.cosun.cosunp.tool;
 
 import com.cosun.cosunp.entity.DateSplit;
+import com.cosun.cosunp.entity.WorkSet;
 import org.apache.el.parser.ParseException;
 
 import java.sql.Time;
@@ -131,25 +132,67 @@ public class DateUtil {
         return null;
     }
 
-    public static String getJiaBanHoursByDateSplitAndTimeStr(DateSplit ds, String timeStr) {
+    public static String getJiaBanHoursByDateSplitAndTimeStr(DateSplit ds, String timeStr, WorkSet ws, Integer workType) {
         Double jiaBanH = 0.0;
         Time fromTime;
         Time endTime;
         List<Time> timeList = getTimeList(timeStr);
         String sb = null;
         if (timeList.get(0).before(ds.getDateFrom()) || timeList.get(0).equals(ds.getDateFrom())) {
-            sb = ("20,20,");
+            sb = ("25,25,");
         } else {
-            sb = ("21,21,");
-        }
-        if (timeList.get(timeList.size() - 1).after(ds.getDateEnd()) || timeList.get(timeList.size() - 1).equals(ds.getDateEnd())) {
-            jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd());
-
-        } else {
-            jiaBanH = calcuHours(ds.getDateFrom(), timeList.get(timeList.size() - 1));
+            sb = ("26,26,");
         }
 
-        return sb + jiaBanH;
+        if ((timeList.get(timeList.size() - 1).after(ds.getDateEnd()) || timeList.get(timeList.size() - 1).equals(ds.getDateEnd())) &&
+                (timeList.get(0).before(ds.getDateFrom()) || timeList.get(0).equals(ds.getDateFrom()))) {
+            if (workType.intValue() == 1) {
+                if (timeList.get(0).before(ws.getMorningOff()) && timeList.get(timeList.size() - 1).before(ws.getNoonOn())) {
+                    jiaBanH = (calcuHours(ds.getDateFrom(), ds.getDateEnd())) + 0.5;
+                } else {
+                    jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd());
+                }
+            } else {
+                jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd())-0.5;
+            }
+            return sb + jiaBanH;
+        } else if (timeList.get(timeList.size() - 1).after(ds.getDateEnd()) || timeList.get(timeList.size() - 1).equals(ds.getDateEnd())) {
+            if (workType.intValue() == 1) {
+                if (timeList.get(0).before(ws.getMorningOff()) && timeList.get(timeList.size() - 1).before(ws.getNoonOn())) {
+                    jiaBanH = (calcuHours(timeList.get(0), ds.getDateEnd())) + 0.5;
+                } else {
+                    jiaBanH = calcuHours(timeList.get(0), ds.getDateEnd());
+                }
+            } else {
+                jiaBanH = calcuHours(timeList.get(0), ds.getDateEnd());
+            }
+
+            return sb + jiaBanH;
+        } else if (timeList.get(0).before(ds.getDateFrom()) || timeList.get(0).equals(ds.getDateFrom())) {
+            if (workType.intValue() == 1) {
+                if (timeList.get(0).before(ws.getMorningOff()) && timeList.get(timeList.size() - 1).before(ws.getNoonOn())) {
+                    jiaBanH = (calcuHours(ds.getDateFrom(), timeList.get(timeList.size() - 1))) + 0.5;
+                } else {
+                    jiaBanH = (calcuHours(ds.getDateFrom(), timeList.get(timeList.size() - 1)));
+                }
+            } else {
+                jiaBanH = calcuHours(ds.getDateFrom(), timeList.get(timeList.size() - 1));
+            }
+
+            return sb + jiaBanH;
+        } else {
+            if (workType.intValue() == 1) {
+                if (timeList.get(0).before(ws.getMorningOff()) && timeList.get(timeList.size() - 1).before(ws.getNoonOn())) {
+                    jiaBanH = (calcuHours(timeList.get(0), timeList.get(timeList.size() - 1))) + 0.5;
+                } else {
+                    jiaBanH = calcuHours(timeList.get(0), timeList.get(timeList.size() - 1));
+                }
+            } else {
+                jiaBanH = calcuHours(timeList.get(0), timeList.get(timeList.size() - 1));
+            }
+            return sb + jiaBanH;
+        }
+
     }
 
     public static Double calcuHours(Time fromTi, Time endTi) {

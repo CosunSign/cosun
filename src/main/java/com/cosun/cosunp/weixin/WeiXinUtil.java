@@ -142,10 +142,10 @@ public class WeiXinUtil {
     }
 
 
-    public static List<String> getAddressBook(String access_token) {
+    public static List<WeiXinUsrId> getAddressBook(String access_token) {
         String ticket = null;
-        List<String> userList = new ArrayList<>();
         String url = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token=" + access_token + "&department_id=1&fetch_child=1";//这个url链接和参数不能变
+        List<WeiXinUsrId> wechatUsers = null;
         try {
             URL urlGet = new URL(url);
             HttpURLConnection http = (HttpURLConnection) urlGet.openConnection();
@@ -160,15 +160,12 @@ public class WeiXinUtil {
             String message = IOUtils.toString(is);
             JSONObject demoJson = JSONObject.fromObject(message);
             ticket = demoJson.getString("userlist");
-            List<WeiXinUsrId> wechatUsers = JSONUtils.toList(ticket, WeiXinUsrId.class);
-            for (WeiXinUsrId wx : wechatUsers) {
-                userList.add(wx.getUserid());
-            }
+            wechatUsers = JSONUtils.toList(ticket, WeiXinUsrId.class);
             is.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return userList;
+        return wechatUsers;
     }
 
 

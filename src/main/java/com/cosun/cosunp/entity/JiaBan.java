@@ -23,6 +23,8 @@ public class JiaBan implements Serializable {
     private Integer type;
     private String remark;
 
+    private String positionLevel;
+
 
     // 分页属性
     private int currentPage = 1;// 用于接收页面传过来的当前页数
@@ -47,6 +49,14 @@ public class JiaBan implements Serializable {
     private List<Integer> types;
     private List<Integer> names;
 
+
+    public String getPositionLevel() {
+        return positionLevel;
+    }
+
+    public void setPositionLevel(String positionLevel) {
+        this.positionLevel = positionLevel;
+    }
 
     public Integer getId() {
         return id;

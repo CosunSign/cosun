@@ -29,6 +29,17 @@ public class KQBean implements Serializable {
     private String havePinShi;
 
     private String positionLevel;
+    private Integer workType;
+
+    public Integer getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(Integer workType) {
+        this.workType = workType;
+    }
+
+    private Integer empId;
 
     private String nameReal;
 
@@ -78,6 +89,14 @@ public class KQBean implements Serializable {
     private List<Integer> workTypes;
     private List<String> clockDates;
 
+
+    public Integer getEmpId() {
+        return empId;
+    }
+
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
+    }
 
     public String getHavePinShi() {
         return havePinShi;
@@ -486,10 +505,18 @@ public class KQBean implements Serializable {
                 return "因公外出(省外)";
             } else if (clockResult == 13) {
                 return "夜班";
-            } else if(clockResult == 16) {
+            } else if (clockResult == 16) {
                 return "正班未满勤但有请假条";
-            }else if(clockResult == 17) {
+            } else if (clockResult == 17) {
                 return "正班未满勤无请假条";
+            } else if (clockResult == 18) {
+                return "婚假";
+            } else if (clockResult == 19) {
+                return "丧假";
+            } else if (clockResult == 20) {
+                return "产假";
+            } else if (clockResult == 21) {
+                return "陪产假";
             }
         }
         return clockResultStr;

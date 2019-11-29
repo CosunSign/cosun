@@ -34,6 +34,24 @@ public class ZhongKongBean implements Serializable {
     private Integer Hour;
     private String Time;
 
+    private String positionLevel;
+    private Integer workType;
+
+    public Integer getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(Integer workType) {
+        this.workType = workType;
+    }
+
+    public String getPositionLevel() {
+        return positionLevel;
+    }
+
+    public void setPositionLevel(String positionLevel) {
+        this.positionLevel = positionLevel;
+    }
 
     public String getEnrollNumber() {
         return EnrollNumber;

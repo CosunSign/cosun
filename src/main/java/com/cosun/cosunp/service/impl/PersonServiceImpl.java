@@ -9,6 +9,8 @@ import com.cosun.cosunp.tool.FileUtil;
 import com.cosun.cosunp.tool.StringUtil;
 import com.cosun.cosunp.weixin.OutClockIn;
 import jxl.Cell;
+import jxl.CellType;
+import jxl.DateCell;
 import jxl.WorkbookSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +24,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -223,8 +226,141 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findLeaveDataUionOutClockData(monday, tuesday, wednesday, thurday, today);
     }
 
+    public List<Out> findAllOut(Out out) throws Exception {
+        return personMapper.findAllOut(out);
+    }
+
+    public int saveOutDateToMysql(Out out) throws Exception {
+        Employee ee = personMapper.getEmployeeOneById(out.getEmpId());
+        out.setEmpNo(ee.getEmpNo());
+        Out lb = personMapper.getOutByEmpNoAndDateStr(ee.getEmpNo(), out.getDateStr());
+        if (lb == null) {
+            personMapper.saveOutBeanToSql(out);
+            return 1;
+        } else {
+            personMapper.updateOutBean(out);
+            return 2;
+        }
+    }
+
+    public List<Out> queryOutByCondition(Out out) throws Exception {
+        return personMapper.queryOutByCondition(out);
+    }
+
+    public int queryOutByConditionCount(Out out) throws Exception {
+        return personMapper.queryOutByConditionCount(out);
+    }
+
+    public void deleteOutDateToMysql(Integer id) throws Exception {
+        personMapper.deleteOutDateToMysql(id);
+    }
+
     public OutClockIn getOutClockInById(Integer id) throws Exception {
         return personMapper.getOutClockInById(id);
+    }
+
+    public void saveOutList(List<Out> outList) throws Exception {
+        String empNo = null;
+        for (Out ou : outList) {
+            empNo = personMapper.getEmpNoByNameA(ou.getName());
+            ou.setEmpNo(empNo);
+            personMapper.saveOutBeanToSql(ou);
+        }
+    }
+
+    public String checkOutRepeat(List<Out> outList) throws Exception {
+        StringBuilder sb = new StringBuilder("");
+        Out oldOut = null;
+        for (Out ou : outList) {
+            oldOut = personMapper.getOutDanByNameAndDateStr(ou);
+            if (oldOut != null) {
+                sb.append(ou.getDateStr() + ":" + ou.getName() + ";");
+            }
+        }
+
+        if (sb.toString().trim().length() > 0) {
+            return sb.toString();
+        }
+
+        return null;
+    }
+
+    public List<Out> translateTabletoOutBean(MultipartFile file) throws Exception {
+        DateFormat dftdatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat dftdate = new SimpleDateFormat("yyyy-MM-dd");
+        WorkbookSettings ws = new WorkbookSettings();
+        String fileName = file.getOriginalFilename();
+        ws.setCellValidationDisabled(true);
+        jxl.Workbook Workbook = null;//.xlsx
+        String fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+        if (fileType.equals("xls")) {
+            Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
+        } else {
+            throw new Exception("文档格式后缀不正确!!！只接受xls格式.");
+        }
+        jxl.Sheet xlsfSheet = null;
+        if (Workbook != null) {
+            jxl.Sheet[] sheets = Workbook.getSheets();
+            xlsfSheet = sheets[0];
+        }
+        List<Out> outList = new ArrayList<Out>();
+        Out cio = null;
+        int rowNums = xlsfSheet.getRows();
+        jxl.Cell[] cell = null;
+        String timestr;
+        Date transferDate = null;
+        DateCell dc = null;
+        Date date = null;
+        Calendar c = null;
+        for (int i = 2; i < rowNums; i++) {
+            cell = xlsfSheet.getRow(i);
+            if (cell != null && cell.length > 0) {
+                cio = new Out();
+                try {
+                    if (cell[0].getType() == CellType.DATE) {
+                        dc = (DateCell) cell[0];
+                        date = dc.getDate();
+                        c = Calendar.getInstance();
+                        c.setTime(date);
+                        c.add(Calendar.HOUR, -8);
+                        transferDate = c.getTime();
+                        cio.setDate(transferDate);
+                        cio.setDateStr(dftdate.format(transferDate));
+                    }
+
+                    cio.setName(cell[1].getContents().trim());
+                    cio.setOutaddr(cell[2].getContents().trim());
+                    cio.setOutfor(cell[3].getContents().trim());
+
+                    if (cell[4].getType() == CellType.DATE) {
+                        dc = (DateCell) cell[4];
+                        date = dc.getDate();
+                        c = Calendar.getInstance();
+                        c.setTime(date);
+                        c.add(Calendar.HOUR, -8);
+                        transferDate = c.getTime();
+                        cio.setOuttime(transferDate);
+                        cio.setOuttimeStr(dftdatetime.format(transferDate));
+                    }
+
+                    if (cell[5].getType() == CellType.DATE) {
+                        dc = (DateCell) cell[5];
+                        date = dc.getDate();
+                        c = Calendar.getInstance();
+                        c.setTime(date);
+                        c.add(Calendar.HOUR, -8);
+                        transferDate = c.getTime();
+                        cio.setRealcomtime(transferDate);
+                        cio.setRealcomtimeStr(dftdatetime.format(transferDate));
+                    }
+                    cio.setRemark(cell[6].getContents().trim());
+                    outList.add(cio);
+                } catch (Exception e) {
+                    throw new Exception("表格第" + (i + 1) + "行日期有错误!");
+                }
+            }
+        }
+        return outList;
     }
 
     public List<OutClockIn> findAllOutClockInByOpenId(String openId) throws Exception {
@@ -1604,7 +1740,9 @@ public class PersonServiceImpl implements IPersonServ {
     @Transactional
     public void saveOutClockInList(List<OutClockIn> outClockInList) throws Exception {
         for (OutClockIn oc : outClockInList) {
-            personMapper.addOutClockInDateByBean(oc);
+            OutClockIn orginal = personMapper.getOutClockInByDateAndWeiXinId(oc);
+            if (orginal == null)
+                personMapper.addOutClockInDateByBean(oc);
         }
     }
 
@@ -1863,7 +2001,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsAonOk("因公外出");
                                                         otw.setRemark("因公外出");
-                                                    } else if (leave.getType() == 1) {
+                                                    } else if (leave.getType() == 2) {
                                                         otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsAonOk("带薪年假");
@@ -1887,7 +2025,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsAoffOk("因公外出");
                                                         otw.setRemark("因公外出");
-                                                    } else if (leave.getType() == 1) {
+                                                    } else if (leave.getType() == 2) {
                                                         otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsAoffOk("带薪年假");
@@ -1912,7 +2050,7 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsPOnOk("因公外出");
                                                         otw.setRemark("因公外出");
-                                                    } else if (leave.getType() == 1) {
+                                                    } else if (leave.getType() == 2) {
                                                         otw.setLeaveDateStart(leave.getBeginLeaveStr());
                                                         otw.setLeaveDateEnd(leave.getEndLeaveStr());
                                                         otw.setIsPOnOk("带薪年假");
@@ -2167,7 +2305,7 @@ public class PersonServiceImpl implements IPersonServ {
         String yearMonth = kqBeans.get(0).getYearMonth();
         Employee em = null;
         KQBean co = null;
-        KQBean co2 = null;
+        ZhongKongBean co2 = null;
         int emLen = employeeList.size();
         Integer date = null;
         int clLen = kqBeans.size();
@@ -2189,6 +2327,7 @@ public class PersonServiceImpl implements IPersonServ {
         Double aHours = 0.0;
         Double pHours = 0.0;
         Integer clockRes = 17;
+        Double linchenJiaBan = 0.0;
 
         DaKaPianCha dkpc = personMapper.getDaKaPianCha();
 
@@ -2209,6 +2348,7 @@ public class PersonServiceImpl implements IPersonServ {
                             aHours = 0.0;
                             pHours = 0.0;
                             clockRes = 17;
+                            linchenJiaBan = 0.0;
                             co = kqBeans.get(k);
                             String[] coDay = co.getDateStr().split("-");
                             if (em.getName().equals(co.getName()) && date.equals(Integer.valueOf(coDay[2]))) {
@@ -2497,47 +2637,109 @@ public class PersonServiceImpl implements IPersonServ {
 
                                                         if (extHours <= 0) {
                                                             DateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+                                                            Date d2400 = dft.parse(co.getDateStr() + " " + "24:00:00");
+                                                            Date d0000 = dft.parse(co.getDateStr() + " " + "00:00:00");
+                                                            Date dd = format.parse("05:00:00");
                                                             String dateTomor = DateUtil.getAfterDay(co.getDateStr());
-                                                            co2 = personMapper.getKQBeanByEnroNumAndDate(co.getEnrollNumber(), dateTomor);
-                                                            if (co2 != null && co2.getTimeStr() != null && co2.getTimeStr().length() > 0) {
-                                                                String afterTime = dateTomor + " " + co2.getTimeStr().split(" ")[0];
-                                                                String beforeTime = co.getDateStr() + " " + workSet.getExtworkon();
-                                                                Date afterT = dft.parse(afterTime);
-                                                                Date beforTime = dft.parse(beforeTime);
-
-                                                                String afterTimem = co2.getTimeStr().split(" ")[0];
-                                                                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-                                                                Date d = format.parse(afterTimem);
-                                                                Time tii = new java.sql.Time(d.getTime());
-                                                                Date dd = format.parse("03:00:00");
-                                                                Time sam = new java.sql.Time(dd.getTime());
-                                                                if (tii.before(sam)) {
-                                                                    Long abc = afterT.getTime() - beforTime.getTime();
-                                                                    extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
-                                                                    abcd = String.format("%.1f", extHours);
-                                                                    if (abcd != null && !extHours.equals("0.0")) {
-                                                                        String ccc = String.valueOf(abcd);
-                                                                        allNum = String.valueOf(abcd).split("\\.");
-                                                                        intNum = allNum[0];
-                                                                        deciNum = allNum[1];
-                                                                        if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
-                                                                            deciNum = "0";
-                                                                        } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
-                                                                            deciNum = "5";
+                                                            Time sam = new java.sql.Time(dd.getTime());
+                                                            if (otw.getWeek().intValue() == 5 || otw.getWeek() == 6 || otw.getWeek().intValue() == 7) {
+                                                                co2 = personMapper.getZhongKongBeanByNumAndDate(co.getEnrollNumber(), dateTomor);
+                                                                if (co2 != null && co2.getTimeStr() != null && co2.getTimeStr().length() > 0) {
+                                                                    String afterTime = dateTomor + " " + co2.getTimeStr().split(" ")[0];
+                                                                    String beforeTime = co.getDateStr() + " " + workSet.getExtworkon();
+                                                                    Date afterT = dft.parse(afterTime);
+                                                                    Date beforTime = dft.parse(beforeTime);
+                                                                    String afterTimem = co2.getTimeStr().split(" ")[0];
+                                                                    Date d = format.parse(afterTimem);
+                                                                    Time tii = new java.sql.Time(d.getTime());
+                                                                    if (tii.before(sam)) {
+                                                                        Long abc = d2400.getTime() - beforTime.getTime();
+                                                                        extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                                        abcd = String.format("%.1f", extHours);
+                                                                        if (abcd != null && !extHours.equals("0.0")) {
+                                                                            String ccc = String.valueOf(abcd);
+                                                                            allNum = String.valueOf(abcd).split("\\.");
+                                                                            intNum = allNum[0];
+                                                                            deciNum = allNum[1];
+                                                                            if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                                                deciNum = "0";
+                                                                            } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                                                deciNum = "5";
+                                                                            }
+                                                                            extHours = Double.valueOf(intNum + "." + deciNum);
                                                                         }
-                                                                        extHours = Double.valueOf(intNum + "." + deciNum);
-                                                                    }
-                                                                    otw.setExtWorkOnTime(workSet.getExtworkon().toString());
-                                                                    otw.setExtWorkOffTime(lastT.toString());
-                                                                    if (extHours >= 0) {
-                                                                        otw.setExtWorkHours(extHours);
+                                                                        otw.setExtWorkOnTime(workSet.getExtworkon().toString());
+                                                                        otw.setExtWorkOffTime(lastT.toString());
+                                                                        if (extHours >= 0) {
+                                                                            otw.setExtWorkHours(extHours);
+                                                                        }
                                                                     }
                                                                 }
 
+                                                                if (extHours <= 0) {
+                                                                    String firstTimeStr = co.getTimeStr().split(" ")[0];
+                                                                    Date d = format.parse(firstTimeStr);
+                                                                    Time tii = new java.sql.Time(d.getTime());
+                                                                    if (tii.before(sam)) {
+                                                                        Long abc = d.getTime() - d0000.getTime();
+                                                                        extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                                        abcd = String.format("%.1f", extHours);
+                                                                        if (abcd != null && !extHours.equals("0.0")) {
+                                                                            String ccc = String.valueOf(abcd);
+                                                                            allNum = String.valueOf(abcd).split("\\.");
+                                                                            intNum = allNum[0];
+                                                                            deciNum = allNum[1];
+                                                                            if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                                                deciNum = "0";
+                                                                            } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                                                deciNum = "5";
+                                                                            }
+                                                                            extHours = Double.valueOf(intNum + "." + deciNum);
+                                                                        }
+                                                                        otw.setExtWorkOnTime(workSet.getExtworkon().toString());
+                                                                        otw.setExtWorkOffTime(lastT.toString());
+                                                                        if (extHours >= 0) {
+                                                                            otw.setExtWorkHours(extHours);
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                co2 = personMapper.getZhongKongBeanByNumAndDate(co.getEnrollNumber(), dateTomor);
+                                                                if (co2 != null && co2.getTimeStr() != null && co2.getTimeStr().length() > 0) {
+                                                                    String afterTime = dateTomor + " " + co2.getTimeStr().split(" ")[0];
+                                                                    String beforeTime = co.getDateStr() + " " + workSet.getExtworkon();
+                                                                    Date afterT = dft.parse(afterTime);
+                                                                    Date beforTime = dft.parse(beforeTime);
+                                                                    String afterTimem = co2.getTimeStr().split(" ")[0];
+                                                                    Date d = format.parse(afterTimem);
+                                                                    Time tii = new java.sql.Time(d.getTime());
+                                                                    if (tii.before(sam)) {
+                                                                        Long abc = afterT.getTime() - beforTime.getTime();
+                                                                        extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                                        abcd = String.format("%.1f", extHours);
+                                                                        if (abcd != null && !extHours.equals("0.0")) {
+                                                                            String ccc = String.valueOf(abcd);
+                                                                            allNum = String.valueOf(abcd).split("\\.");
+                                                                            intNum = allNum[0];
+                                                                            deciNum = allNum[1];
+                                                                            if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                                                deciNum = "0";
+                                                                            } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                                                deciNum = "5";
+                                                                            }
+                                                                            extHours = Double.valueOf(intNum + "." + deciNum);
+                                                                        }
+                                                                        otw.setExtWorkOnTime(workSet.getExtworkon().toString());
+                                                                        otw.setExtWorkOffTime(lastT.toString());
+                                                                        if (extHours >= 0) {
+                                                                            otw.setExtWorkHours(extHours);
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
 
                                                         }
-
                                                     }
                                                 }
 
@@ -2558,10 +2760,22 @@ public class PersonServiceImpl implements IPersonServ {
                                                                 otw.setaOnRemark("因公外出");
                                                                 otw.setRemark("因公外出");
                                                                 otw.setClockResult(2);
-                                                            } else if (leave.getType() == 1) {
+                                                            } else if (leave.getType() == 2) {
                                                                 otw.setaOnRemark("带薪年假");
                                                                 otw.setRemark("带薪年假");
                                                                 otw.setClockResult(3);
+                                                            } else if (leave.getType() == 3) {
+                                                                otw.setRemark("丧假");
+                                                                otw.setClockResult(19);
+                                                            } else if (leave.getType() == 4) {
+                                                                otw.setRemark("婚假");
+                                                                otw.setClockResult(18);
+                                                            } else if (leave.getType() == 5) {
+                                                                otw.setRemark("产假");
+                                                                otw.setClockResult(20);
+                                                            } else if (leave.getType() == 6) {
+                                                                otw.setRemark("陪产假");
+                                                                otw.setClockResult(21);
                                                             }
                                                         }
                                                     } else {
@@ -2646,10 +2860,22 @@ public class PersonServiceImpl implements IPersonServ {
                                                                 otw.setaOffRemark("因公外出");
                                                                 otw.setRemark("因公外出");
                                                                 otw.setClockResult(2);
-                                                            } else if (leave.getType() == 1) {
+                                                            } else if (leave.getType() == 2) {
                                                                 otw.setaOffRemark("带薪年假");
                                                                 otw.setRemark("带薪年假");
                                                                 otw.setClockResult(3);
+                                                            } else if (leave.getType() == 3) {
+                                                                otw.setRemark("丧假");
+                                                                otw.setClockResult(19);
+                                                            } else if (leave.getType() == 4) {
+                                                                otw.setRemark("婚假");
+                                                                otw.setClockResult(18);
+                                                            } else if (leave.getType() == 5) {
+                                                                otw.setRemark("产假");
+                                                                otw.setClockResult(20);
+                                                            } else if (leave.getType() == 6) {
+                                                                otw.setRemark("陪产假");
+                                                                otw.setClockResult(21);
                                                             }
                                                         }
                                                     } else {
@@ -2734,10 +2960,22 @@ public class PersonServiceImpl implements IPersonServ {
                                                                 otw.setpOnRemark("因公外出");
                                                                 otw.setRemark("因公外出");
                                                                 otw.setClockResult(2);
-                                                            } else if (leave.getType() == 1) {
+                                                            } else if (leave.getType() == 2) {
                                                                 otw.setpOnRemark("带薪年假");
                                                                 otw.setRemark("带薪年假");
                                                                 otw.setClockResult(3);
+                                                            } else if (leave.getType() == 3) {
+                                                                otw.setRemark("丧假");
+                                                                otw.setClockResult(19);
+                                                            } else if (leave.getType() == 4) {
+                                                                otw.setRemark("婚假");
+                                                                otw.setClockResult(18);
+                                                            } else if (leave.getType() == 5) {
+                                                                otw.setRemark("产假");
+                                                                otw.setClockResult(20);
+                                                            } else if (leave.getType() == 6) {
+                                                                otw.setRemark("陪产假");
+                                                                otw.setClockResult(21);
                                                             }
                                                         }
                                                     } else {
@@ -2772,7 +3010,6 @@ public class PersonServiceImpl implements IPersonServ {
                                                                                 break a;
                                                                             }
                                                                         }
-
                                                                         if (!isAOnH) {
                                                                             for (Time tiii : timeList) {
                                                                                 if (tiii.after(afterWS.getNoonOn())) {
@@ -2823,6 +3060,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                                 otw.setpOffRemark("带薪年假");
                                                                 otw.setRemark("带薪年假");
                                                                 otw.setClockResult(3);
+                                                            } else if (leave.getType() == 3) {
+                                                                otw.setRemark("丧假");
+                                                                otw.setClockResult(19);
+                                                            } else if (leave.getType() == 4) {
+                                                                otw.setRemark("婚假");
+                                                                otw.setClockResult(18);
+                                                            } else if (leave.getType() == 5) {
+                                                                otw.setRemark("产假");
+                                                                otw.setClockResult(20);
+                                                            } else if (leave.getType() == 6) {
+                                                                otw.setRemark("陪产假");
+                                                                otw.setClockResult(21);
                                                             }
                                                         }
                                                     } else {
@@ -2885,13 +3134,52 @@ public class PersonServiceImpl implements IPersonServ {
                                                             otw.setClockResult(5);
                                                         }
                                                     } else {
-                                                        otw.setRemark("旷工");
-                                                        otw.setClockResult(8);
+                                                        Leave a = personMapper.getLeaveByEmIdAndMonthAB(otw.getEmpNo(), otw.getDateStr());
+                                                        if (a != null) {
+                                                            //otw.setClockResult(16);
+                                                        } else {
+                                                            //otw.setClockResult(17);
+                                                        }
                                                     }
-
                                                 }
+
+                                                Double extHours = 0.0;
+                                                DateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+                                                Date d2400 = dft.parse(co.getDateStr() + " " + "24:00:00");
+                                                Date d0000 = dft.parse(co.getDateStr() + " " + "00:00:00");
+                                                Date dd = format.parse("05:00:00");
+                                                String dateTomor = DateUtil.getAfterDay(co.getDateStr());
+                                                Time sam = new java.sql.Time(dd.getTime());
+                                                String firstTimeStr = co.getTimeStr().split(" ")[0];
+                                                Date d = format.parse(firstTimeStr);
+                                                Date df = dft.parse(co.getDateStr() + " " + firstTimeStr);
+                                                Time tii = new java.sql.Time(d.getTime());
+                                                if (tii.before(sam)) {
+                                                    Long abc = df.getTime() - d0000.getTime();
+                                                    extHours = ((abc.doubleValue()) / (1000 * 60 * 60));
+                                                    abcd = String.format("%.1f", extHours);
+                                                    if (abcd != null && !extHours.equals("0.0")) {
+                                                        String ccc = String.valueOf(abcd);
+                                                        allNum = String.valueOf(abcd).split("\\.");
+                                                        intNum = allNum[0];
+                                                        deciNum = allNum[1];
+                                                        if (Integer.valueOf(deciNum) >= 0 && Integer.valueOf(deciNum) < 5) {
+                                                            deciNum = "0";
+                                                        } else if (Integer.valueOf(deciNum) <= 9 && Integer.valueOf(deciNum) >= 5) {
+                                                            deciNum = "5";
+                                                        }
+                                                        extHours = Double.valueOf(intNum + "." + deciNum);
+                                                    }
+                                                    otw.setExtWorkOnTime(workSet.getExtworkon().toString());
+                                                    otw.setExtWorkOffTime(firstTimeStr.toString());
+                                                    if (extHours >= 0) {
+                                                        otw.setExtWorkHours((otw.getExtWorkHours() == null ? 0.0 : otw.getExtWorkHours()) + extHours);
+                                                    }
+                                                }
+
                                             } else {
-                                                Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + "08:00:00", "2019-" + monstr + "-" + date + " " + "17:30:00");
+                                                Leave leave = personMapper.getLeaveByEmIdAndMonth(em.getId(), yearMonth + "-" + date + " " + workSet.getMorningOn(), yearMonth + "-" + date + " " + workSet.getNoonOff());
                                                 if (leave != null) {
                                                     if (leave.getType() == 0) {
                                                         otw.setRemark("正常请假");
@@ -2907,6 +3195,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                     } else if (leave.getType() == 2) {
                                                         otw.setRemark("带薪年假");
                                                         otw.setClockResult(3);
+                                                    } else if (leave.getType() == 3) {
+                                                        otw.setRemark("丧假");
+                                                        otw.setClockResult(19);
+                                                    } else if (leave.getType() == 4) {
+                                                        otw.setRemark("婚假");
+                                                        otw.setClockResult(18);
+                                                    } else if (leave.getType() == 5) {
+                                                        otw.setRemark("产假");
+                                                        otw.setClockResult(20);
+                                                    } else if (leave.getType() == 6) {
+                                                        otw.setRemark("陪产假");
+                                                        otw.setClockResult(21);
                                                     }
                                                 } else {
                                                     if (type == 0) {
@@ -2939,6 +3239,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setaOnRemark("带薪年假");
                                                         otw.setRemark("带薪年假");
                                                         otw.setClockResult(3);
+                                                    } else if (leave.getType() == 3) {
+                                                        otw.setRemark("丧假");
+                                                        otw.setClockResult(19);
+                                                    } else if (leave.getType() == 4) {
+                                                        otw.setRemark("婚假");
+                                                        otw.setClockResult(18);
+                                                    } else if (leave.getType() == 5) {
+                                                        otw.setRemark("产假");
+                                                        otw.setClockResult(20);
+                                                    } else if (leave.getType() == 6) {
+                                                        otw.setRemark("陪产假");
+                                                        otw.setClockResult(21);
                                                     }
                                                 } else {
                                                     if (type == 0) {
@@ -2975,6 +3287,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                             otw.setaOffRemark("带薪年假");
                                                             otw.setRemark("带薪年假");
                                                             otw.setClockResult(3);
+                                                        } else if (leave.getType() == 3) {
+                                                            otw.setRemark("丧假");
+                                                            otw.setClockResult(19);
+                                                        } else if (leave.getType() == 4) {
+                                                            otw.setRemark("婚假");
+                                                            otw.setClockResult(18);
+                                                        } else if (leave.getType() == 5) {
+                                                            otw.setRemark("产假");
+                                                            otw.setClockResult(20);
+                                                        } else if (leave.getType() == 6) {
+                                                            otw.setRemark("陪产假");
+                                                            otw.setClockResult(21);
                                                         }
                                                     } else {
                                                         if (type == 0) {
@@ -3012,6 +3336,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                             otw.setpOnRemark("带薪年假");
                                                             otw.setRemark("带薪年假");
                                                             otw.setClockResult(3);
+                                                        } else if (leave.getType() == 3) {
+                                                            otw.setRemark("丧假");
+                                                            otw.setClockResult(19);
+                                                        } else if (leave.getType() == 4) {
+                                                            otw.setRemark("婚假");
+                                                            otw.setClockResult(18);
+                                                        } else if (leave.getType() == 5) {
+                                                            otw.setRemark("产假");
+                                                            otw.setClockResult(20);
+                                                        } else if (leave.getType() == 6) {
+                                                            otw.setRemark("陪产假");
+                                                            otw.setClockResult(21);
                                                         }
                                                     } else {
                                                         if (type == 0) {
@@ -3048,6 +3384,18 @@ public class PersonServiceImpl implements IPersonServ {
                                                         otw.setpOffRemark("带薪年假");
                                                         otw.setRemark("带薪年假");
                                                         otw.setClockResult(3);
+                                                    } else if (leave.getType() == 3) {
+                                                        otw.setRemark("丧假");
+                                                        otw.setClockResult(19);
+                                                    } else if (leave.getType() == 4) {
+                                                        otw.setRemark("婚假");
+                                                        otw.setClockResult(18);
+                                                    } else if (leave.getType() == 5) {
+                                                        otw.setRemark("产假");
+                                                        otw.setClockResult(20);
+                                                    } else if (leave.getType() == 6) {
+                                                        otw.setRemark("陪产假");
+                                                        otw.setClockResult(21);
                                                     }
                                                 } else {
                                                     if (type == 0) {
@@ -3110,6 +3458,12 @@ public class PersonServiceImpl implements IPersonServ {
     public void saveCheckKQBeanListByDates(List<OutClockIn> outClockIns) throws Exception {
         personMapper.saveCheckKQBeanListByDates(outClockIns);
         saveMonthKQInfoByCheckKQBean(outClockIns);
+    }
+
+
+    @Transactional
+    public List<String> getAllUserName() throws Exception {
+        return personMapper.getAllUserName();
     }
 
     public String getAlReadyCheckDatestr(List<OutClockIn> clockDates) throws Exception {
@@ -3181,6 +3535,7 @@ public class PersonServiceImpl implements IPersonServ {
         Double jiaHours = 0.0;
         DateSplit nowDate = null;
         QianKa qkk = null;
+        WorkSet wsw = null;
         for (OutClockIn ock : outClockInList) {
             jiaBanList = personMapper.getJiaBanDanByDateStr(ock.getClockInDateStr());
             for (JiaBan jb : jiaBanList) {
@@ -3207,7 +3562,8 @@ public class PersonServiceImpl implements IPersonServ {
                         }
                     }
                     if (zkb.getTimeStr() != null && zkb.getTimeStr().trim().length() > 0) {
-                        jiabanHours = DateUtil.getJiaBanHoursByDateSplitAndTimeStr(nowDate, zkb.getTimeStr());
+                        wsw = personMapper.getWorkSetByMonthAndPositionLevelA(zkb.getYearMonth(), zkb.getPositionLevel());
+                        jiabanHours = DateUtil.getJiaBanHoursByDateSplitAndTimeStr(nowDate, zkb.getTimeStr(), wsw, zkb.getWorkType());
                         jiaHours = Double.valueOf(jiabanHours.split(",")[2]);
                         dayNum = jiabanHours;
                         mkf.setWorkendHours(mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours() + jiaHours);
@@ -3287,27 +3643,67 @@ public class PersonServiceImpl implements IPersonServ {
                 if (kqb.getClockResult() == 1) {
                     mkf.setWorkendHours(lianBanTotalH + (mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
                     dayNum = "18,18,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 4) {
                     mkf.setChinaPaidLeave(lianBanTotalH + (mkf.getChinaPaidLeave() == null ? 0.0 : mkf.getChinaPaidLeave()) + 8.0);
                     dayNum = "4,4,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 6) {
                     mkf.setLeaveOfAbsense(lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense()) + 8.0);
-                    dayNum = "6,6,";
+                    dayNum = "18,18,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("0.0");
+                    }
                 } else if (kqb.getClockResult() == 13) {
                     mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()));
                     dayNum = "13,13,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 11) {
                     mkf.setSickLeave((mkf.getSickLeave() == null ? 0.0 : mkf.getSickLeave()) + 8.0);
                     dayNum = "11,11,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("0.0");
+                    }
                 } else if (kqb.getClockResult() == 2) {
                     mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
                     dayNum = "2,2,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 12) {
                     mkf.setWorkendHours((mkf.getWorkendHours() == null ? 0.0 : mkf.getWorkendHours()) + 8.0);
                     dayNum = "12,12,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 3) {
                     mkf.setOtherPaidLeave((mkf.getOtherPaidLeave() == null ? 0.0 : mkf.getOtherPaidLeave()) + 8.0);
                     dayNum = "3,3,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("8.0");
+                    }
                 } else if (kqb.getClockResult() == 7) {
                     aOnStr = "77,";
                     aOffStr = "77,";
@@ -3380,19 +3776,64 @@ public class PersonServiceImpl implements IPersonServ {
                             }
 
                     }
+                    if (qk != null) {
+                        kqb.setTimeStr(StringUtil.sortTimes2(kqb.getTimeStr(), qk.getTimeStr()));
+                    }
+                    nowDate.setDateFrom(ws.getMorningOn());
+                    nowDate.setDateEnd(ws.getNoonOff());
+                    jiabanHours = DateUtil.getJiaBanHoursByDateSplitAndTimeStr(nowDate, kqb.getTimeStr(), ws, kqb.getWorkType());
+                    jiaHours = Double.valueOf(jiabanHours.split(",")[2]);
                     dayNum = aOffStr + pOffStr;
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat((lianBanTotalH + jiaHours + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                    } else {
+                        dayNum = dayNum.concat(jiaHours.toString());
+                    }
                 } else if (kqb.getClockResult() == 8) {
                     dayNum = "8,8,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat(lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    } else {
+                        dayNum = dayNum.concat("0.0");
+                    }
+                } else if (kqb.getClockResult() == 21) {
+                    dayNum = "18,18,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                    } else {
+                        dayNum = dayNum.concat("0.0");
+                    }
+                } else if (kqb.getClockResult() == 5) {
+                    dayNum = "18,18,";
+                    if (!kqb.getHavePinShi().equals("1")) {
+                        dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                    } else {
+                        dayNum = dayNum.concat("0.0");
+                    }
+                } else if (kqb.getClockResult() == 17) {
+                    dayNum = "18,18,";
+                    String[] plusValue = kqb.getRemark().split(",");
+                    Double ona = 0.0;
+                    Double onb = 0.0;
+                    if (Double.valueOf(plusValue[0]) == 0.0) {
+                        ona = 4.0;
+                    } else {
+                        ona = Double.valueOf(plusValue[0]);
+                    }
+
+                    if (Double.valueOf(plusValue[1]) == 0.0) {
+                        onb = 4.0;
+                    } else {
+                        onb = Double.valueOf(plusValue[1]);
+                    }
+
+                    dayNum = dayNum.concat((lianBanTotalH + ona + onb + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+
                 }
                 if (kqb.getClockResult() == 13) {
                     dayNum = dayNum.concat(kqb.getExtWorkHours().toString());
-                } else {
-                    if (!kqb.getHavePinShi().equals("1")) {
-                        dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
-                    } else {
-                        dayNum = dayNum.concat("8.0");
-                    }
                 }
+
                 mkf.setDayNum(dayNum);
                 mkf.setDaytitleSql(daytitleSql);
                 mkf.setDaytitleSqlRemark(daytitleSqlRe);
@@ -3447,6 +3888,18 @@ public class PersonServiceImpl implements IPersonServ {
                         mkf.setDayNumRemark(kqb.getRemark());
                         mkf.setZhengbanHours((lianBanTotalH + (mkf.getZhengbanHours() == null ? 0.0 : mkf.getZhengbanHours())) + ho);
                         mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
+                    } else if (kqb.getClockResult() == 18) {
+                        dayNum = "20,20,";
+                        //婚假
+                    } else if (kqb.getClockResult() == 19) {
+                        dayNum = "21,21,";
+                        //丧假
+                    } else if (kqb.getClockResult() == 20) {
+                        dayNum = "22,22,";
+                        //产假
+                    } else if (kqb.getClockResult() == 21) {
+                        dayNum = "23,23,";
+                        //陪产假
                     } else if (kqb.getClockResult() == 17) {
                         qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
                         ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
@@ -3560,7 +4013,6 @@ public class PersonServiceImpl implements IPersonServ {
                             mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
                         }
                     } else if (kqb.getClockResult() == 7) {
-
                         aOnStr = "7,";
                         aOffStr = "7,";
                         boolean isComin = false;
@@ -3629,6 +4081,45 @@ public class PersonServiceImpl implements IPersonServ {
                                 }
                             } else {
                                 pOffStr = "7,";
+                            }
+
+                        }
+
+                        if (qk == null) {
+                            if (kqb.getaOnTime() == null && kqb.getaOffTime() == null) {
+                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(kqb.getDateStr() + " " + ws.getMorningOn(), kqb.getDateStr() + " " + ws.getMorningOff(), kqb.getEmpId());
+                                if (le != null) {
+                                    if (le.getType() == 0) {
+                                        aOffStr = "6,";
+                                    } else if (le.getType() == 1) {
+                                        aOffStr = "2,";
+                                    } else if (le.getType() == 3) {
+                                        aOffStr = "21,";
+                                    } else if (le.getType() == 4) {
+                                        aOffStr = "20,";
+                                    } else if (le.getType() == 5) {
+                                        aOffStr = "22,";
+                                    } else if (le.getType() == 6) {
+                                        aOffStr = "23,";
+                                    }
+                                }
+                            } else if (kqb.getpOnTime() == null && kqb.getpOffTime() == null) {
+                                Leave le = personMapper.getLeaveByEmpIdAndDateStr(kqb.getDateStr() + " " + ws.getNoonOn(), kqb.getDateStr() + " " + ws.getNoonOff(), kqb.getEmpId());
+                                if (le != null) {
+                                    if (le.getType() == 0) {
+                                        pOffStr = "6,";
+                                    } else if (le.getType() == 1) {
+                                        pOffStr = "2,";
+                                    } else if (le.getType() == 3) {
+                                        pOffStr = "21,";
+                                    } else if (le.getType() == 4) {
+                                        pOffStr = "20,";
+                                    } else if (le.getType() == 5) {
+                                        pOffStr = "22,";
+                                    } else if (le.getType() == 6) {
+                                        pOffStr = "23,";
+                                    }
+                                }
                             }
 
                         }
@@ -3815,10 +4306,18 @@ public class PersonServiceImpl implements IPersonServ {
                                 }
 
                         }
+
+//                        if(qk==null) {
+//
+//                        }
+
+
                         dayNum = aOffStr + pOffStr;
                     } else if (kqb.getClockResult() == 8) {
                         dayNum = "8,8,";
                     }
+
+
                     if (!kqb.getHavePinShi().equals("1")) {
                         dayNum = dayNum.concat(lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
                     } else {
@@ -3873,7 +4372,7 @@ public class PersonServiceImpl implements IPersonServ {
         QianKa qianKaOld = personMapper.getQianKaByDateAndEmpno(qianKa);
         int isIn = StringUtil.checkIsIn(qianKa.getTimeStr(), ws);
         if (isIn == 3) {
-            return isIn;
+            // return isIn;
         }
 
         int len = 0;
@@ -3933,6 +4432,14 @@ public class PersonServiceImpl implements IPersonServ {
 
     public DaKaPianCha getDaKaPianCha() throws Exception {
         return personMapper.getDaKaPianCha();
+    }
+
+    public WeiXinUsrId getUserIdByUSerId(String userId) throws Exception {
+        return personMapper.getUserIdByUSerId(userId);
+    }
+
+    public void saveWeiXinUserIdByBean(WeiXinUsrId wx) throws Exception {
+        personMapper.saveWeiXinUserIdByBean(wx);
     }
 }
 

@@ -27,12 +27,13 @@ public class ZhongKongDATAToSQLTask {
 
     //@Scheduled(fixedRate = 100000)
     //@Scheduled(cron = "0 0 05 * * ?")
-    @Scheduled(cron = "0 52 08 ? * *")
+    @Scheduled(cron = "0 18 06 ? * *")
     private void configureTasks() {
         try {
+            //new PersonController().getBeforeDayZhongKongData();
+            new PersonController().getBeforeDayQYWCData();
+            //new PersonController().getAllWeiXinUser();
             //new PersonController().getKQBean();
-            new PersonController().getBeforeDayZhongKongData();
-            //new PersonController().getBeforeDayQYWCData();
             //new PersonController().fillRightDeptIdToEmployee();
         } catch (Exception e) {
             e.printStackTrace();

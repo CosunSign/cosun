@@ -2,12 +2,11 @@ package com.cosun.cosunp.weixin;
 
 import com.cosun.cosunp.entity.QYweixinSend;
 import com.cosun.cosunp.tool.JSONUtils;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 
 import javax.net.ssl.*;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -62,9 +61,9 @@ public class NetWorkHelper {
             con.setDoOutput(true);
             con.setDoInput(true);
             con.connect();
-            out = new OutputStreamWriter(con.getOutputStream(),"GBK");//解决传参时中文乱码
-            out.write(JSONUtils.toJSONString(text).substring(1,JSONUtils.toJSONString(text).length()-1));
-            System.out.println(JSONUtils.toJSONString(text).substring(1,JSONUtils.toJSONString(text).length()-1));
+            out = new OutputStreamWriter(con.getOutputStream(), "GBK");//解决传参时中文乱码
+            out.write(JSONUtils.toJSONString(text).substring(1, JSONUtils.toJSONString(text).length() - 1));
+            System.out.println(JSONUtils.toJSONString(text).substring(1, JSONUtils.toJSONString(text).length() - 1));
             out.flush();
             InputStream inStream = con.getInputStream();
             is = con.getInputStream();
@@ -146,6 +145,55 @@ public class NetWorkHelper {
         return resultData;
     }
 
+
+    public String getHttpsResponse3(String hsUrl, String requestMethod) {
+        URL url;
+        InputStream bufferReader = null;
+        String resultData = "";
+        try {
+            url = new URL(hsUrl);
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            TrustManager[] tm = {xtm};
+
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, tm, null);
+
+            con.setSSLSocketFactory(ctx.getSocketFactory());
+            con.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String arg0, SSLSession arg1) {
+                    return true;
+                }
+            });
+
+            con.setDoInput(true);
+
+            con.setDoOutput(false);
+            con.setUseCaches(false);
+            if (null != requestMethod && !requestMethod.equals("")) {
+                con.setRequestMethod(requestMethod);
+            } else {
+                con.setRequestMethod("GET");
+            }
+            bufferReader = con.getInputStream();
+            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream("E:\\ftpserver\\weixin\\a.jpg"));
+
+
+
+            Certificate[] certs = con.getServerCertificates();
+
+            int certNum = 1;
+
+            for (Certificate cert : certs) {
+                X509Certificate xcert = (X509Certificate) cert;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultData;
+    }
+
     X509TrustManager xtm = new X509TrustManager() {
         @Override
         public X509Certificate[] getAcceptedIssuers() {
@@ -167,5 +215,6 @@ public class NetWorkHelper {
 
         }
     };
+
 
 }

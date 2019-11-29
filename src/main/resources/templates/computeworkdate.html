@@ -24,6 +24,7 @@
         var flag1 = $("#flag1").val();
         var flag2 = $("#flag2").val();
         var flag3 = $("#flag3").val();
+        var flag5 = $("#flag5").val();
         var errorMessage = $("#errorMessage").val();
         if (flag == 1) {
             $("#errormessagee").show();
@@ -71,12 +72,28 @@
             errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;保存成功!";
             errormessagediv.style.color = "green";
         }
+        if (flag3.length >= 1) {
+            $("#errormessagee3").show();
+            var errormessagediv = document.getElementById("errormessagee3");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;保存成功!";
+            errormessagediv.style.color = "green";
+        }
+        if (flag5.length >2) {
+            $("#errormessage5").show();
+            var errormessagediv = document.getElementById("errormessage5");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;重复数据:"+flag5;
+            errormessagediv.style.color = "red";
+        }else if(flag5 == 10){
+            $("#errormessage5").show();
+            var errormessagediv = document.getElementById("errormessage5");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;保存成功";
+            errormessagediv.style.color = "green";
+        }
 
-
-        if (errorMessage.length > 1) {
+        if (errorMessage.length > 2) {
             $("#errormessagee").show();
             var errormessagediv = document.getElementById("errormessagee");
-            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;计算失败!原因为:" + errorMessage;
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;重复数据:" + errorMessage;
             errormessagediv.style.color = "red";
         }
     });
@@ -143,6 +160,24 @@
         }
     }
 
+    function inDataToMysq5() {
+        var originFile = $("#originFile5").val();
+        if (originFile.trim().length > 0) {
+            $("#errormessage5").show();
+            var errormessagediv1 = document.getElementById("errormessage5");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;导入中,请稍等!";
+            errormessagediv1.style.color = "green";
+            var form = document.getElementById('inData5');
+            form.submit();
+            window.parent.document.getElementById('coverbehidepage').style.display = "block";
+
+        } else if (originFile.trim().length <= 0) {
+            $("#errormessage5").show();
+            var errormessagediv1 = document.getElementById("errormessage5");
+            errormessagediv1.innerHTML = "&nbsp;&nbsp;&nbsp;您还没有上传表格，无法进行下一步操作!";
+            errormessagediv1.style.color = "red";
+        }
+    }
 
     function inDataToMysq3() {
         var originFile = $("#originFile3").val();
@@ -364,6 +399,42 @@
                             </font>
                         </td>
 
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </form>
+
+
+    <form id="inData5" th:action="@{/person/dataInMysqlOut}" th:method="post" enctype="multipart/form-data">
+        <input type="hidden" id="flag5" th:value="${flag5}">
+        <div>
+            <div class="panel-heading" style="background-color:lightsteelblue">
+                <h3 class="panel-title">外出数据导入<font color="#00008b" size="2px">(仅支持xls格式)</font></h3>
+            </div>
+            <div class="panel-body form-inline">
+                <table class="table table-bordered table-hover table-striped">
+                    <tr>
+                        <td><label>文件选择:</label></td>
+                        <td>
+                            <input type="file" th:name="file5" id="originFile5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>动作：</label></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" onclick="inDataToMysq5()">导入执行</button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label>结果提示：</label></td>
+                        <td>
+                            <div style="display: none;" id="errormessage5">
+
+                            </div>
+                        </td>
                     </tr>
 
                 </table>

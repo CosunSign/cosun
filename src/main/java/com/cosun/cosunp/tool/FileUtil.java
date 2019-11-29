@@ -4,17 +4,22 @@ import com.cosun.cosunp.entity.DownloadView;
 import com.cosun.cosunp.entity.FilemanUrl;
 import com.cosun.cosunp.entity.UserInfo;
 import com.cosun.cosunp.service.IFileUploadAndDownServ;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static com.cosun.cosunp.tool.StringUtil.formateString;
 import static com.cosun.cosunp.tool.StringUtil.subAfterString;
+import static com.cosun.cosunp.weixin.TokenThread.accessToken;
 
 /**
  * @author:homey Wong
@@ -536,6 +541,4 @@ public class FileUtil {
         }
         return flag;
     }
-
-
 }

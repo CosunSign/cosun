@@ -11,6 +11,10 @@ import com.cosun.cosunp.weixin.OutClockIn;
 import com.cosun.cosunp.weixin.WeiXinUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.JSONArray;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +98,7 @@ public class PersonController {
 
 
     public void getBeforeDayZhongKongData() throws Exception {
-        String beforDay = "2019-11-20";
+        String beforDay = "2019-11-28";
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         String[] afterDay = beforDay.split("-");
@@ -233,10 +237,51 @@ public class PersonController {
         }
     }
 
+    public void getAllWeiXinUser() throws Exception {
+        pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+        jedis = pool.getResource();
+        IPersonServ ps = SpringUtil.getBean(IPersonServ.class);
+        List<WeiXinUsrId> userList = WeiXinUtil.getAddressBook(jedis.get(Constants.accessToken));
+        WeiXinUsrId oldWX = null;
+        List<String> haves = new ArrayList<String>();
+        haves.clear();
+        List<WeiXinUsrId> newUserList = new ArrayList<WeiXinUsrId>();
+        for (WeiXinUsrId ww : userList) {
+            if (!haves.contains(ww.getUserid())) {
+                newUserList.add(ww);
+                haves.add(ww.getUserid());
+            }
+        }
+        for (WeiXinUsrId wx : newUserList) {
+            oldWX = ps.getUserIdByUSerId(wx.getUserid());
+            if (oldWX == null) {
+                ps.saveWeiXinUserIdByBean(wx);
+            }
+        }
+
+
+    }
+
     public void getBeforeDayQYWCData() throws Exception {
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
-        String beforDay = "2019-11-16";
+        IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
+        String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=%s", jedis.get(Constants.accessToken));
+        List<String> userList = testDomainMapper.getAllUserName();
+        List<OutClockIn> outClockInList = new ArrayList<OutClockIn>();
+        List<String> haveUserId = new ArrayList<String>();
+        List<String> afterUserList1 = userList.subList(0, 99);
+        List<String> afterUserList2 = userList.subList(100, 199);
+        List<String> afterUserList3 = userList.subList(200, 299);
+        List<String> afterUserList4 = userList.subList(300, userList.size());
+
+        List<List<String>> all = new ArrayList<List<String>>();
+        all.add(afterUserList1);
+        all.add(afterUserList2);
+        all.add(afterUserList3);
+        all.add(afterUserList4);
+        String day = null;
+        String beforDay = "2019-11-28";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateStart = sdf.parse(beforDay + " 00:00:00");
         Date dateEnd = sdf.parse(beforDay + " 23:59:59");
@@ -244,59 +289,57 @@ public class PersonController {
         text.setOpencheckindatatype(2);
         text.setStarttime(dateStart.getTime() / 1000);
         text.setEndtime(dateEnd.getTime() / 1000);
-        String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/checkin/getcheckindata?access_token=%s", jedis.get(Constants.accessToken));
-        List<String> userList = WeiXinUtil.getAddressBook(jedis.get(Constants.accessToken));
-        userList = userList.subList(300, 334);
-        text.setUseridlist(userList);
         NetWorkHelper netHelper = new NetWorkHelper();
-        String result = netHelper.getHttpsResponse2(Url, text, "POST");
-        JSONObject json = JSON.parseObject(result);
-        String checkindata = String.valueOf(json.get("checkindata"));
-        com.alibaba.fastjson.JSONArray checkindataStr = JSON.parseArray(checkindata);
-        List<OutPunch> outPunchList = JSONUtils.toList(checkindataStr, OutPunch.class);
-        List<OutClockIn> outClockInList = new ArrayList<OutClockIn>();
-        List<String> haveUserId = new ArrayList<String>();
-        OutClockIn oc = null;
-        String hourStr = null;
-        Integer hour = null;
-        String userId = null;
-        for (int a = 0; a < outPunchList.size(); a++) {
-            userId = outPunchList.get(a).getUserid();
-            if (haveUserId.contains(userId))
-                continue;
-            oc = new OutClockIn();
-            oc.setUserid(userId);
-            oc.setClockInDateStr(outPunchList.get(a).getCheckin_timeStr().split(" ")[0]);
-            for (OutPunch op : outPunchList) {
-                if (op.getUserid().equals(userId)) {
-                    hourStr = op.getCheckin_timeStr().split(" ")[1];
-                    hour = Integer.valueOf(hourStr.split(":")[0]);
-                    if (hour < 12 && hour >= 0) {
-                        oc.setClockInDateAMOnStr(op.getCheckin_timeStr());
-                        oc.setClockInAddrAMOn(op.getLocation_detail());
-                        oc.setAmOnUrl(op.getMediaids()[0]);
-                    } else if (hour >= 12 && hour <= 18) {
-                        oc.setClockInDatePMOnStr(op.getCheckin_timeStr());
-                        oc.setClockInAddrPMOn(op.getLocation_detail());
-                        oc.setPmOnUrl(op.getMediaids()[0]);
-                    } else if (hour > 18 && hour <= 24) {
-                        oc.setClockInDateNMOnStr(op.getCheckin_timeStr());
-                        oc.setClockInAddNMOn(op.getLocation_detail());
-                        oc.setNmOnUrl(op.getMediaids()[0]);
+        for (int aa = 0; aa < all.size(); aa++) {
+            text.setUseridlist(all.get(aa));
+            String result = netHelper.getHttpsResponse2(Url, text, "POST");
+            JSONObject json = JSON.parseObject(result);
+            String checkindata = String.valueOf(json.get("checkindata"));
+            com.alibaba.fastjson.JSONArray checkindataStr = JSON.parseArray(checkindata);
+            List<OutPunch> outPunchList = JSONUtils.toList(checkindataStr, OutPunch.class);
+            OutClockIn oc = null;
+            String hourStr = null;
+            Integer hour = null;
+            String userId = null;
+            for (int a = 0; a < outPunchList.size(); a++) {
+                userId = outPunchList.get(a).getUserid();
+                if (haveUserId.contains(userId))
+                    continue;
+                oc = new OutClockIn();
+                oc.setUserid(userId);
+                oc.setClockInDateStr(outPunchList.get(a).getCheckin_timeStr().split(" ")[0]);
+                for (OutPunch op : outPunchList) {
+                    if (op.getUserid().equals(userId)) {
+                        hourStr = op.getCheckin_timeStr().split(" ")[1];
+                        hour = Integer.valueOf(hourStr.split(":")[0]);
+                        if (hour < 12 && hour >= 0) {
+                            oc.setClockInDateAMOnStr(op.getCheckin_timeStr());
+                            oc.setClockInAddrAMOn(op.getLocation_detail());
+                            oc.setAmOnUrl(op.getMediaids()[0]);
+                        } else if (hour >= 12 && hour <= 18) {
+                            oc.setClockInDatePMOnStr(op.getCheckin_timeStr());
+                            oc.setClockInAddrPMOn(op.getLocation_detail());
+                            oc.setPmOnUrl(op.getMediaids()[0]);
+                        } else if (hour > 18 && hour <= 24) {
+                            oc.setClockInDateNMOnStr(op.getCheckin_timeStr());
+                            oc.setClockInAddNMOn(op.getLocation_detail());
+                            oc.setNmOnUrl(op.getMediaids()[0]);
+                        }
                     }
                 }
+                outClockInList.add(oc);
+                haveUserId.add(userId);
             }
-            outClockInList.add(oc);
-            haveUserId.add(userId);
         }
-        IPersonServ testDomainMapper = SpringUtil.getBean(IPersonServ.class);
         testDomainMapper.saveOutClockInList(outClockInList);
+
     }
 
 
     @ResponseBody
     @RequestMapping(value = "/queryAttendance", method = RequestMethod.POST)
-    public String queryAttendance(@RequestBody String params, HttpServletRequest request, HttpServletResponse response) {
+    public String queryAttendance(@RequestBody String params, HttpServletRequest request, HttpServletResponse
+            response) {
 //        String returnString = null;
 //        Map<String, Object> map = new HashMap<String, Object>();
 //        List<Map<String, Object>> attendanceList = new ArrayList<Map<String, Object>>();
@@ -395,7 +438,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryZKOUTDataByCondition", method = RequestMethod.POST)
-    public void queryZKOUTDataByCondition(KQBean kqBean, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryZKOUTDataByCondition(KQBean kqBean, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             List<KQBean> financeImportDataList = personServ.queryKQBeanDataByCondition(kqBean);
             int recordCount = personServ.queryKQBeanDataByConditionCount(kqBean);
@@ -616,7 +660,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveQianKaDateToMysql", method = RequestMethod.POST)
-    public void saveQianKaDateToMysql(QianKa qianKa, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveQianKaDateToMysql(QianKa qianKa, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             int isSave = personServ.saveQianKaDateToMysql(qianKa);
             ObjectMapper x = new ObjectMapper();
@@ -633,7 +678,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveYeBanDateToMysql", method = RequestMethod.POST)
-    public void saveYeBanDateToMysql(YeBan yeBan, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveYeBanDateToMysql(YeBan yeBan, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             int isSave = personServ.saveYeBanDateToMysql(yeBan);
             ObjectMapper x = new ObjectMapper();
@@ -651,7 +697,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveLianBanDateToMysql", method = RequestMethod.POST)
-    public void saveLianBanDateToMysql(LianBan lianBan, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveLianBanDateToMysql(LianBan lianBan, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             int isSave = personServ.saveLianBanDateToMysql(lianBan);
             ObjectMapper x = new ObjectMapper();
@@ -668,8 +715,28 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/saveOutDateToMysql", method = RequestMethod.POST)
+    public void saveOutDateToMysql(Out out, HttpServletResponse response, HttpSession session) throws
+            Exception {
+        try {
+            int isSave = personServ.saveOutDateToMysql(out);
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(isSave);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/savePinShiDateToMysql", method = RequestMethod.POST)
-    public void savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS, HttpServletResponse response, HttpSession session) throws Exception {
+    public void savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS, HttpServletResponse response, HttpSession
+            session) throws Exception {
         try {
             int isSave = personServ.savePinShiDateToMysql(pinShiJiaBanBGS);
             ObjectMapper x = new ObjectMapper();
@@ -687,7 +754,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveJiaBanDateToMysql", method = RequestMethod.POST)
-    public void saveJiaBanDateToMysql(JiaBan jiaBan, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveJiaBanDateToMysql(JiaBan jiaBan, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             int isSave = personServ.saveJiaBanDateToMysql(jiaBan);
             ObjectMapper x = new ObjectMapper();
@@ -704,7 +772,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveClockInSetUp", method = RequestMethod.POST)
-    public void saveClockInSetUp(ClockInSetUp clockInSetUp, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveClockInSetUp(ClockInSetUp clockInSetUp, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             boolean isSave = personServ.saveClockInSetUp(clockInSetUp);
             ObjectMapper x = new ObjectMapper();
@@ -743,7 +812,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveDAPCSetUp", method = RequestMethod.POST)
-    public void saveDAPCSetUp(DaKaPianCha daKaPianCha, HttpServletResponse response, HttpSession session) throws Exception {
+    public void saveDAPCSetUp(DaKaPianCha daKaPianCha, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             personServ.saveDAPCSetUp(daKaPianCha);
             ObjectMapper x = new ObjectMapper();
@@ -771,7 +841,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveOrUpdateZhongKongNumByEmpNo")
-    public ModelAndView saveOrUpdateZhongKongNumByEmpNo(ZhongKongEmployee zhongKongEmployee, HttpSession session) throws Exception {
+    public ModelAndView saveOrUpdateZhongKongNumByEmpNo(ZhongKongEmployee zhongKongEmployee, HttpSession session) throws
+            Exception {
         ModelAndView view = new ModelAndView("zhongkong");
         try {
             int isSaveOrUpdate = personServ.saveOrUpdateZhongKongIdByEmpNo(zhongKongEmployee);
@@ -802,7 +873,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveOrUpdateGongZhongHaoIdByEmpNo")
-    public ModelAndView saveOrUpdateGongZhongHaoIdByEmpNo(GongZhongHao gongZhongHao, HttpSession session) throws Exception {
+    public ModelAndView saveOrUpdateGongZhongHaoIdByEmpNo(GongZhongHao gongZhongHao, HttpSession session) throws
+            Exception {
         ModelAndView view = new ModelAndView("gongzhonghao");
         try {
             int isSaveOrUpdate = personServ.saveOrUpdateGongZhongHaoIdByEmpNo(gongZhongHao);
@@ -1291,6 +1363,64 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping("/deleteOutDateToMysql")
+    public ModelAndView deleteOutDateToMysql(Out out) throws Exception {
+        try {
+            personServ.deleteOutDateToMysql(out.getId());
+            ModelAndView view = new ModelAndView("out");
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Out> outList = personServ.findAllOut(out);
+            int recordCount = personServ.findAllLeaveCount();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            int maxPage = recordCount % out.getPageSize() == 0 ? recordCount / out.getPageSize() : recordCount / out.getPageSize() + 1;
+            out.setMaxPage(maxPage);
+            out.setRecordCount(recordCount);
+            view.addObject("outList", outList);
+            view.addObject("empList", empList);
+            view.addObject("leave", out);
+            view.addObject("positionList", positionList);
+            view.addObject("empList1", empList1);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/tooutdan")
+    public ModelAndView tooutdan() throws Exception {
+        try {
+            ModelAndView view = new ModelAndView("out");
+            Out out = new Out();
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Out> outList = personServ.findAllOut(out);
+            int recordCount = personServ.findAllLeaveCount();
+            JSONArray empList1 = JSONArray.fromObject(empList.toArray());
+            int maxPage = recordCount % out.getPageSize() == 0 ? recordCount / out.getPageSize() : recordCount / out.getPageSize() + 1;
+            out.setMaxPage(maxPage);
+            out.setRecordCount(recordCount);
+            view.addObject("outList", outList);
+            view.addObject("empList", empList);
+            view.addObject("leave", out);
+            view.addObject("positionList", positionList);
+            view.addObject("empList1", empList1);
+            view.addObject("deptList", deptList);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping("/toleavepage")
     public ModelAndView toleavepage() throws Exception {
         try {
@@ -1503,7 +1633,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/computeWorkEmpHours", method = RequestMethod.POST)
-    public ModelAndView computeWorkEmpHours(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
+    public ModelAndView computeWorkEmpHours(@RequestParam("file") MultipartFile file, HttpServletResponse
+            resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
         if (null == cookies) {
             System.out.println("没有cookie==============");
@@ -1572,7 +1703,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/computeWorkTable", method = RequestMethod.POST)
-    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse resp, HttpServletRequest request) throws Exception {
+    public ModelAndView computeWorkTable(@RequestParam("file") MultipartFile file, HttpServletResponse
+            resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
         if (null == cookies) {
             System.out.println("没有cookie==============");
@@ -1639,7 +1771,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/dataInMysql", method = RequestMethod.POST)
-    public ModelAndView dataInMysql(@RequestParam("file1") MultipartFile file1, HttpServletResponse response) throws Exception {
+    public ModelAndView dataInMysql(@RequestParam("file1") MultipartFile file1, HttpServletResponse response) throws
+            Exception {
         try {
             ModelAndView view = new ModelAndView("computeworkdate");
             List<Employee> employeeList = personServ.translateTabletoEmployeeBean(file1);
@@ -1663,8 +1796,35 @@ public class PersonController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/dataInMysqlOut", method = RequestMethod.POST)
+    public ModelAndView dataInMysqlOut(@RequestParam("file5") MultipartFile file1, HttpServletResponse response) throws
+            Exception {
+        try {
+            ModelAndView view = new ModelAndView("computeworkdate");
+            List<Out> outList = personServ.translateTabletoOutBean(file1);
+            String isRepeatData = personServ.checkOutRepeat(outList);
+            if (isRepeatData!=null && isRepeatData.trim().length() > 0) {
+                view.addObject("flag5", isRepeatData);
+                return view;
+            } else {
+                personServ.saveOutList(outList);
+            }
+
+            view.addObject("compute", new Compute());
+            view.addObject("flag5", 10);
+            return view;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/dataInMysqlZK", method = RequestMethod.POST)
-    public ModelAndView dataInMysqlZK(@RequestParam("file3") List<MultipartFile> file1, HttpServletResponse response) throws Exception {
+    public ModelAndView dataInMysqlZK(@RequestParam("file3") List<MultipartFile> file1, HttpServletResponse
+            response) throws Exception {
         try {
             ModelAndView view = new ModelAndView("computeworkdate");
             List<Employee> employeeList = personServ.translateTabletoEmployeeBeanZK(file1);
@@ -1681,7 +1841,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/getDeptNameByEmployId", method = RequestMethod.POST)
-    public void getDeptNameByEmployId(QianKa qianKa, HttpSession session, HttpServletResponse response) throws Exception {
+    public void getDeptNameByEmployId(QianKa qianKa, HttpSession session, HttpServletResponse response) throws
+            Exception {
         try {
             String deptName = personServ.getDeptNameByEmployId(qianKa.getId());
             ObjectMapper x = new ObjectMapper();
@@ -2311,7 +2472,16 @@ public class PersonController {
         } else if (type == 3) {
             pathName = ee.getNmOnUrl();
         }
-        FileInputStream fis = new FileInputStream(finalDirPath + pathName);
+
+
+        pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
+        jedis = pool.getResource();
+        String Url = String.format("https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s", jedis.get(Constants.accessToken), pathName);
+
+        HttpClient client = HttpClients.createDefault();
+        HttpGet get = new HttpGet(Url);
+        HttpResponse response1 = client.execute(get);
+        InputStream fis = response1.getEntity().getContent();
         OutputStream os = response.getOutputStream();
         try {
             int count = 0;
@@ -2328,6 +2498,7 @@ public class PersonController {
                 fis.close();
         }
     }
+
 
     @ResponseBody
     @RequestMapping(value = "/showImage")
@@ -2475,7 +2646,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryGongZhongHaoByCondition", method = RequestMethod.POST)
-    public void queryGongZhongHaoByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryGongZhongHaoByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryGongZhongHaoByCondition(employee);
@@ -2502,7 +2674,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryZhongKongByCondition", method = RequestMethod.POST)
-    public void queryZhongKongByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryZhongKongByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryZhongKongByCondition(employee);
@@ -2530,7 +2703,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryOutClockInByCondition", method = RequestMethod.POST)
-    public void queryOutClockInByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryOutClockInByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryOutClockInByCondition(employee);
@@ -2558,7 +2732,8 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryEmployeeByCondition", method = RequestMethod.POST)
-    public void queryEmployeeByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws Exception {
+    public void queryEmployeeByCondition(Employee employee, HttpServletResponse response, HttpSession session) throws
+            Exception {
         try {
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             List<Employee> employeeList = personServ.queryEmployeeByCondition(employee);
@@ -2753,6 +2928,32 @@ public class PersonController {
             throw e;
         }
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryOutByCondition", method = RequestMethod.POST)
+    public void queryOutByCondition(Out out, HttpServletResponse response) throws Exception {
+        try {
+            List<Out> outList = personServ.queryOutByCondition(out);
+            int recordCount = personServ.queryOutByConditionCount(out);
+            int maxPage = recordCount % out.getPageSize() == 0 ? recordCount / out.getPageSize() : recordCount / out.getPageSize() + 1;
+            if (outList.size() > 0) {
+                outList.get(0).setMaxPage(maxPage);
+                outList.get(0).setRecordCount(recordCount);
+                outList.get(0).setCurrentPage(out.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(outList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/queryLeaveByCondition", method = RequestMethod.POST)

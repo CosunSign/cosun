@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>签卡单</title>
+    <title>员工外出登记表</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -51,24 +51,24 @@
 
     function goPageone() {
         $("#n_currentPage").val(1);
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function goPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function goAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function goMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function isNull(arg1) {
@@ -98,32 +98,32 @@
         } else {
             $("#n_currentPage").val(tp);
             // document.forms["form0"].submit();
-            queryQKByCondition();
+            queryLeaveByCondition();
         }
     }
 
     function goPriAftPage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 + 1 * 1);
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function goPriMaxPage() {
         $("#n_currentPage").val($("#maxPage").val());
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     function goPriPrePage() {
         var currentpage = $("#_tp").val();
         $("#n_currentPage").val(currentpage * 1 - 1 * 1);
-        queryQKByCondition();
+        queryLeaveByCondition();
     }
 
     var currentPage; //当前页
     var totalPage; //总多少页
     var totaldata; //总共多少记录
     var pageSize;//当前每页多少条
-    function queryQKByCondition() {
+    function queryOutByCondition() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         var formData = new FormData();
@@ -131,14 +131,13 @@
         formData.append('empNo', $("#empNo").val());
         formData.append('deptIds', $("#deptId").val());
         formData.append('positionIds', $("#positionId").val());
-        formData.append('beginQianKaStr', $("#startLeaveId").val());
-        formData.append('endQianKaStr', $("#endLeaveId").val());
-        formData.append('types', $("#leaveType").val());
+        formData.append('beginOutStr', $("#startLeaveId").val());
+        formData.append('endOutStr', $("#endLeaveId").val());
         formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/queryQKByCondition",
+            url: "/person/queryOutByCondition",
             async: true,
             cache: false,
             contentType: false,
@@ -177,74 +176,72 @@
                     $.each(data, function (num) {
                         tr = $("<tr id='" + data[num].id + "'></tr>");
                         tr.append("<td>" + ((num + 1) + ((n_currentPage.val() - 1) * pageSize)) + "</td>");
+                        tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].dateStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].timeStr) + "</td>");
-                        tr.append("<td>" + isNull(data[num].typeStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].outaddr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].outfor) + "</td>");
+                        tr.append("<td>" + isNull(data[num].outtimeStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].realcomtimeStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].remark) + "</td>");
                         td = "<td>";
-                        td += " <a href=\"javascript:void(0);\"\n" +
-                            "  onclick=\"saveQianKaDateToMysql(this);\">保存</a>\n" +
-                            "  <a href=\"javascript:void(0);\"\n" +
-                            "   onclick=\"deleteQianKaDateToMysql(" + data[num].id +");\">删除</a></td>";
-                    tr.append(td);
-                    tr.appendTo(tbody);
+                        td += "  <a href=\"javascript:void(0);\"\n" +
+                            " onclick=\"deleteLeave(" + data[num].id + ");\">删除</a>\n" +
+                            " &nbsp;&nbsp;&nbsp;\n" +
+                            "   <input type=\"checkbox\" name=\"deleteBatch\" value=\"" + data[num].id + "\">" +
+                            "  </td>";
+                        tr.append(td);
+                        tr.appendTo(tbody);
+                    });
+                    $("#currentpagespan").html(currentPage);
+                    $("#maxpagespan").html(totalPage);
+                    $("#recordcountspan").html(totaldata);
+                    if (currentPage > 1) {
+                        var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPriPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPriPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image01.html(imange01str);
+                    } else {
+                        image01.html("");
+                    }
+                    if (currentPage <= 1) {
+                        var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
+                        image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image02.html(image02str);
+                    } else {
+                        image02.html("");
+                    }
+                    if (currentPage < totalPage) {
+                        var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goPriAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
+                        imange03str += '<img src="/images/page/my-2.jpg" onClick="goPriMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
+                        image03.html(imange03str);
+                    } else {
+                        image03.html("");
+                    }
+                    if (currentPage >= totalPage) {
+                        var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
+                        image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
+                        image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
+                        image04.html(image04str);
+                    } else {
+                        image04.html("");
+                    }
+                } else {
+                    $("#nodatadiv").show();
+                    $("#showdiv").hide();
                 }
-            );
-        $("#currentpagespan").html(currentPage);
-        $("#maxpagespan").html(totalPage);
-        $("#recordcountspan").html(totaldata);
-        if (currentPage > 1) {
-            var imange01str = '<img src="/images/page/sy-2.jpg"  onClick="goPriPageone()"  align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-            imange01str += '<img src="/images/page/syy-2.jpg" onClick="goPriPrePage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-            image01.html(imange01str);
-        } else {
-            image01.html("");
-        }
-        if (currentPage <= 1) {
-            var image02str = '<img src="/images/page/l-sy-2.jpg" align="middle" border="0px"';
-            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-            image02str += ' <img src="/images/page/l-syy-2.jpg" align="middle" border="0px"';
-            image02str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-            image02.html(image02str);
-        } else {
-            image02.html("");
-        }
-        if (currentPage < totalPage) {
-            var imange03str = '<img src="/images/page/xyy-2.jpg" onClick="goPriAftPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/> </a>';
-            imange03str += '<img src="/images/page/my-2.jpg" onClick="goPriMaxPage()" align="middle" border="0" style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp; </a>';
-            image03.html(imange03str);
-        } else {
-            image03.html("");
-        }
-        if (currentPage >= totalPage) {
-            var image04str = '<img src="/images/page/l-xyy-1.jpg" align="middle" border="0px"';
-            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>';
-            image04str += ' <img src="/images/page/l-my-1.jpg" align="middle" border="0px"';
-            image04str += ' style="width: 20px; height: 20px; vertical-align: middle"/>&nbsp;&nbsp;';
-            image04.html(image04str);
-        } else {
-            image04.html("");
-        }
-    }
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+            },
+            error: function (msg) {
+                window.parent.document.getElementById('coverbehidepage').style.display = "none";
+                var errormessagediv = document.getElementById("errormessage");
+                errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
+                errormessagediv.style.color = "red";
+            }
 
-    else
-    {
-        $("#nodatadiv").show();
-        $("#showdiv").hide();
-    }
-    window.parent.document.getElementById('coverbehidepage').style.display = "none";
-    },
-    error: function (msg) {
-        window.parent.document.getElementById('coverbehidepage').style.display = "none";
-        var errormessagediv = document.getElementById("errormessage");
-        errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统发生错误!";
-        errormessagediv.style.color = "red";
-    }
-
-    })
-    ;
+        });
     }
 
 
@@ -255,6 +252,26 @@
     function updateLeave(leaveId) {
         window.location.href = "/person/toUpdateLeaveById?id=" + leaveId;
     }
+
+    function deleteLeaveByBatch() {
+        var deleteBatch = document.getElementsByName("deleteBatch");
+        var check_val = [];
+        var k;
+        for (k in deleteBatch) {
+            if (deleteBatch[k].checked)
+                check_val.push(deleteBatch[k].value);
+        }
+        if (check_val.length <= 0) {
+            $("#errormessage").show();
+            var errormessagediv = document.getElementById("errormessage");
+            errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;请先勾选再批量删除!";
+            errormessagediv.style.color = "red";
+        } else {
+            $("#errormessage").hide();
+            window.location.href = "/person/deleteLeaveByBatch?ids=" + check_val;
+        }
+    }
+
 
     function showdeptNameByName(obj) {
         var formData = new FormData();
@@ -268,7 +285,7 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                $(obj).parent().parent().find("td").eq(2).text(msg.substring(1, msg.length - 1));
+                $(obj).parent().parent().find("td").eq(3).text(msg.substring(1, msg.length - 1));
             },
             error: function (msg) {
                 var errormessagediv = document.getElementById("errormessage");
@@ -279,9 +296,8 @@
         });
     }
 
-    var len;
 
-    function addQianKaRow() {
+    function addOutRow() {
         var empList = $("#empList1").val();
         var data = eval("(" + empList + ")");
         len = $("#tabletblody > tr").length;
@@ -290,7 +306,12 @@
         var tr = $("<tr id='tr" + len + "'></tr>");
         tr.append("<td id='tr" + len + "'>" + len + "</td>");
         var td;
-        td = "<td><select id=\"name\" onchange='showdeptNameByName(this)'  class=\"selectpicker show-tick form-control\"\n" +
+
+        tr.append("<td> <input type=\"text\" id=\"date\"\n" +
+            "               style=\"width:130px;height: 34px;text-align: center\" class=\"Wdate\" onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd'})\"/></td>");
+
+
+        td += "<td><select id=\"name\" onchange='showdeptNameByName(this)'  class=\"selectpicker show-tick form-control\"\n" +
             "   data-live-search=\"true\" data-actions-box=\"true\"\n" +
             "   data-selected-text-format=\"count > 1\">\n";
         for (var a = 0; a < data.length; a++) {
@@ -300,42 +321,42 @@
 
         tr.append(td);
         tr.append("<td></td>");
-        tr.append("<td> <input type=\"text\" id=\"date\"\n" +
-            "               style=\"width:130px;height: 34px;text-align: center\" class=\"Wdate\" onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd'})\"/></td>");
-        tr.append("<td> <input type=\"text\" id=\"date\"\n" +
-            "               style=\"width:130px;height: 34px;text-align: center\" class=\"Wdate\" onClick=\"WdatePicker({dateFmt:'HH:mm:ss'})\"/></td>");
-        tr.append("<td><select ><option value='1'>忘记打卡</option>" +
-            "<option value='2'>因公外出</option>" +
-            "<option value='3'>其它原因</option>" +
-            "</select></td>");
+        tr.append("<td><input type='text' placeholder='外出地点'></td>");
+        tr.append("<td><input type='text' placeholder='外出事由'></td>")
+        tr.append("<td> <input type=\"text\" id=\"date01\"\n" +
+            "               style=\"width:130px;height: 34px;text-align: center\" class=\"Wdate\" onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\\'date02\\')}'})\"/></td>");
+        tr.append("<td> <input type=\"text\" id=\"date02\"\n" +
+            "               style=\"width:130px;height: 34px;text-align: center\" class=\"Wdate\" onClick=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\\'date01\\')}'})\"/></td>");
         tr.append("<td><input type='text' placeholder='备注选填'></td>")
         tr.append("<td>   \n" +
             "    <a id=\"savebutton\"\n" +
-            "    href=\"javascript:void(0);\" onclick=\"saveQianKaDateToMysql(this)\">保存</a>" +
+            "    href=\"javascript:void(0);\" onclick=\"saveOutDateToMysql(this)\">保存</a>" +
             " <a href=\"javascript:void(0);\"\n" +
             "    onclick=\"deleteTRA(this," + len + ");\">删除</a></td>");
         tr.appendTo(tbody);
         $('.selectpicker').selectpicker('refresh');
     }
 
-
     function deleteTRA(obj, len) {
         obj.parentElement.parentElement.remove();
         len--;
     }
 
-    function saveQianKaDateToMysql(obj) {
+
+    function saveOutDateToMysql(obj) {
         $("#errormessage").hide();
         var formData = new FormData();
-        formData.append("empId", $(obj).parent().parent().find("td").eq(1).find("select").eq(0).val());
-        formData.append("dateStr", $(obj).parent().parent().find("td").eq(3).find("input").eq(0).val());
-        formData.append("timeStr", $(obj).parent().parent().find("td").eq(4).find("input").eq(0).val());
-        formData.append("type", $(obj).parent().parent().find("td").eq(5).find("select").eq(0).val());
-        formData.append("remark", $(obj).parent().parent().find("td").eq(6).find("input").eq(0).val());
+        formData.append("empId", $(obj).parent().parent().find("td").eq(2).find("select").eq(0).val());
+        formData.append("dateStr", $(obj).parent().parent().find("td").eq(1).find("input").eq(0).val());
+        formData.append("outtimeStr", $(obj).parent().parent().find("td").eq(6).find("input").eq(0).val());
+        formData.append("realcomtimeStr", $(obj).parent().parent().find("td").eq(7).find("input").eq(0).val());
+        formData.append("outaddr", $(obj).parent().parent().find("td").eq(4).find("input").eq(0).val());
+        formData.append("outfor", $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val());
+        formData.append("remark", $(obj).parent().parent().find("td").eq(8).find("input").eq(0).val());
         $.ajax({
             data: formData,
             type: "POST",
-            url: "/person/saveQianKaDateToMysql",
+            url: "/person/saveOutDateToMysql",
             async: true,
             cache: false,
             contentType: false,
@@ -349,18 +370,8 @@
                 } else if (msg == 2) {
                     $("#errormessage").show();
                     var errormessagediv = document.getElementById("errormessage");
-                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;系统中已存在!";
-                    errormessagediv.style.color = "red";
-                } else if (msg == 3) {
-                    $("#errormessage").show();
-                    var errormessagediv = document.getElementById("errormessage");
-                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;签卡时间不在规定范围内!";
-                    errormessagediv.style.color = "red";
-                } else if (msg == 4) {
-                    $("#errormessage").show();
-                    var errormessagediv = document.getElementById("errormessage");
-                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;此人在您签卡的时间内打卡正常，无须签卡!";
-                    errormessagediv.style.color = "red";
+                    errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;更新成功!";
+                    errormessagediv.style.color = "green";
                 }
             },
             error: function (msg) {
@@ -373,8 +384,9 @@
         });
     }
 
-    function deleteQianKaDateToMysql(id) {
-        window.location.href = "/person/deleteQianKaDateToMysql?id=" + id;
+    function deleteOutDateToMysql(id) {
+        window.location.href = "/person/deleteOutDateToMysql?id=" + id;
+
     }
 </script>
 <body>
@@ -382,16 +394,16 @@
 <div id='app'>
     <form>
         <input type="hidden" id="flag" th:value="${flag}">
-        <input type="hidden" id="maxPage" th:value="${qianKa.maxPage}">
-        <input type="hidden" id="n_currentPage" th:value="${qianKa.currentPage}"/>
+        <input type="hidden" id="maxPage" th:value="${leave.maxPage}">
+        <input type="hidden" id="n_currentPage" th:value="${leave.currentPage}"/>
         <input type="hidden" id="empList1" th:value="${empList1}"/>
 
         <ul id="myTab" class="nav nav-tabs">
             <li>
                 <a th:href="@{/person/toleavepage}">请假单</a>
             </li>
-            <li class="active">
-                <a href="#compreAttendRecord" data-toggle="tab">签卡单</a>
+            <li>
+                <a th:href="@{/person/toqiankadan}">签卡单</a>
             </li>
             <li>
                 <a th:href="@{/person/tolianbandan}">连班单</a>
@@ -402,8 +414,8 @@
             <li>
                 <a th:href="@{/person/tonightworkdan}">夜班申请</a>
             </li>
-            <li>
-                <a th:href="@{/person/tooutdan}">员工外出单</a>
+            <li class="active">
+                <a href="#compreAttendRecord" data-toggle="tab">员工外出单</a>
             </li>
         </ul>
         <br>
@@ -425,14 +437,12 @@
                                             th:text="${c.name}"></option>
                                 </select>
                             </td>
-
                             <td style="text-align: right">
                                 <label>工号：</label>
                             </td>
                             <td>
                                 <label><input type="text" id="empNo" class="form-control" style="width:150px"></label>
                             </td>
-
                             <td style="text-align: right">
                                 <label>部门：</label>
                             </td>
@@ -458,21 +468,10 @@
                                             th:text="${c.positionName}"></option>
                                 </select>
                             </td>
-                            <td><label>签卡类型：</label></td>
-                            <td>
-                                <select id="leaveType" multiple class="selectpicker show-tick form-control"
-                                        data-live-search="true" data-actions-box="true"
-                                        data-selected-text-format="count > 1">　
-                                    <option value="1">忘记打卡</option>
-                                    <option value="2">因公外出</option>
-                                    <option value="3">其它原因</option>
-                                </select>
-
-                            </td>
                         </tr>
                         <tr>
                             <td>
-                                <label>签卡时间起：</label>
+                                <label>外出时间起：</label>
                             </td>
                             <td>
                                 <input type="text" id="startLeaveId"
@@ -482,7 +481,7 @@
 
                             </td>
                             <td>
-                                <label>签卡时间止：</label>
+                                <label>外出时间止：</label>
                             </td>
                             <td>
                                 <input type="text" id="endLeaveId"
@@ -492,11 +491,12 @@
                             </td>
                             <td style="text-align: right" colspan="3">
                                 <a class="btn btn-primary"
-                                   href="javascript:void(0);" onclick="queryQKByCondition()">查找</a>
+                                   href="javascript:void(0);" onclick="queryOutByCondition()">查找</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 &nbsp;&nbsp;&nbsp;
                                 <a class="btn btn-primary"
                                    href="javascript:void(0);"
-                                   onclick="addQianKaRow()">新增</a>
+                                   onclick="addOutRow()">新增</a>
                             </td>
                             <td>
                                 <div style="display: none" id="errormessage">
@@ -512,40 +512,42 @@
         <thead style="background-color:lightsteelblue">
         <tr>
             <th style="text-align: center">序号</th>
+            <th style="text-align: center">日期</th>
             <th style="text-align: center">姓名</th>
             <th style="text-align: center">部门</th>
-            <th style="text-align: center">签卡日期</th>
-            <th style="text-align: center">签卡时间</th>
-            <th style="text-align: center">签卡类型</th>
+            <th style="text-align: center">外出地点</th>
+            <th style="text-align: center">外出事由</th>
+            <th style="text-align: center">外出时间</th>
+            <th style="text-align: center">实际回司时间</th>
             <th style="text-align: center">备注</th>
             <th style="text-align: center">操作</th>
         </tr>
         </thead>
         <tbody id="tabletblody">
-        <!--v-for中的数据不再是直接从data中获取，而是通过search方法对data中的数据进行过滤再显示-->
-        <div th:unless="${#lists.isEmpty(qianKaList)}">
-            <div th:each="leavea ,iterStat: ${qianKaList}" align="center">
+        <div th:unless="${#lists.isEmpty(outList)}">
+            <div th:each="leavea ,iterStat: ${outList}" align="center">
                 <tr>
                     <td align="center"
-                        th:text="${(iterStat.index+1)}+${qianKa.currentPage-1}*${qianKa.pageSize}"></td>
+                        th:text="${(iterStat.index+1)}+${leave.currentPage-1}*${leave.pageSize}"></td>
+                    <td align="center" th:text="${leavea.dateStr}"></td>
                     <td align="center" th:text="${leavea.name}"></td>
                     <td align="center" th:text="${leavea.deptName}"></td>
-                    <td align="center" th:text="${leavea.dateStr}"></td>
-                    <td align="center" th:text="${leavea.timeStr}"></td>
-                    <td align="center" th:text="${leavea.typeStr}"></td>
+                    <td align="center" th:text="${leavea.outaddr}"></td>
+                    <td align="center" th:text="${leavea.outfor}"></td>
+                    <td align="center" th:text="${leavea.outtimeStr}"></td>
+                    <td align="center" th:text="${leavea.realcomtimeStr}"></td>
                     <td align="center" th:text="${leavea.remark}"></td>
                     <td align="center">
                         <a href="javascript:void(0);"
-                           th:onclick="saveQianKaDateToMysql(this);">保存</a>
-                        <a href="javascript:void(0);"
-                           th:onclick="deleteQianKaDateToMysql([[${leavea.id}]]);">删除</a>
+                           th:onclick="deleteOutDateToMysql([[${leavea.id}]]);">删除</a>
                     </td>
                 </tr>
             </div>
         </div>
-        <div th:if="${#lists.isEmpty(qianKaList)}">
+
+        <div th:if="${#lists.isEmpty(outList)}">
             <tr>
-                <td align="center" colspan="8">查无数据</td>
+                <td align="center" colspan="10">查无数据</td>
             </tr>
         </div>
         </tbody>
@@ -553,16 +555,16 @@
         <tfoot id="s_tfoot">
         <tr id="showdiv">
 
-            <td colspan="8" align="center">
+            <td colspan="10" align="center">
                 <span>第</span>
-                <span th:text="${qianKa.currentPage}" id="currentpagespan"> </span>
+                <span th:text="${leave.currentPage}" id="currentpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${qianKa.maxPage}" id="maxpagespan"> </span>
+                <span th:text="${leave.maxPage}" id="maxpagespan"> </span>
                 <span>页|共</span>
-                <span th:text="${qianKa.recordCount}" id="recordcountspan"> </span>
+                <span th:text="${leave.recordCount}" id="recordcountspan"> </span>
                 <span>条记录 </span>
                 <span id="image01">
-                            <span th:if="${qianKa.currentPage gt 1}">
+                            <span th:if="${leave.currentPage gt 1}">
                                     <img src="/images/page/sy-2.jpg" align="middle" border="0"
                                          style="width: 20px; height: 20px; vertical-align: middle"
                                          onClick="goPageone()"/>
@@ -572,7 +574,7 @@
                                 </span>
                                 </span>
                 <span id="image02">
-                            <span th:if="${qianKa.currentPage le 1}">
+                            <span th:if="${leave.currentPage le 1}">
                                 <img src='/images/page/l-sy-2.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='images/images/page/l-syy-2.jpg' align='middle' border='0px'
@@ -580,7 +582,7 @@
                             </span>
                             </span>
                 <span id="image03">
-                            <span th:if="${qianKa.currentPage lt qianKa.maxPage}">
+                            <span th:if="${leave.currentPage lt leave.maxPage}">
                                     <img src="/images/page/xyy-2.jpg" align="middle" border="0" onClick="goAftPage()"
                                          style="width: 20px; height: 20px; vertical-align: middle"/>
                                     <img src="/images/page/my-2.jpg" align="middle" border="0" onClick="goMaxPage()"
@@ -588,7 +590,7 @@
                             </span>
                                 </span>
                 <span id="image04">
-                            <span th:if="${qianKa.currentPage ge qianKa.maxPage}">
+                            <span th:if="${leave.currentPage ge leave.maxPage}">
                                 <img src='/images/page/l-xyy-1.jpg' align='middle' border='0px'
                                      style="width: 20px; height: 20px; vertical-align: middle"/>
                                 <img src='/images/page/l-my-1.jpg' align='middle' border='0px'
@@ -599,7 +601,7 @@
                 |&nbsp;到第
                 <input onkeypress="if(event.keyCode==13) {gopage.click();return false;}"
                        style="width: 50px"
-                       id="_tp" th:name="currentPage" type="text" th:value="${qianKa.currentPage}"/>
+                       id="_tp" th:name="currentPage" type="text" th:value="${leave.currentPage}"/>
                 页&nbsp;
                 <img src="/images/page/cx-2.jpg" id="gopage" onClick="goPage2()"
                      style="width:20px;height:20px;vertical-align:middle">
@@ -609,7 +611,7 @@
 
 
         <tr style="display:none;" id="nodatadiv">
-            <td colspan="8" align="center">
+            <td colspan="10" align="center">
                 查无数据
             </td>
         </tr>

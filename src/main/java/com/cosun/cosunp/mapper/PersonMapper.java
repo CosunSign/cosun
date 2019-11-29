@@ -106,6 +106,9 @@ public interface PersonMapper {
     @Select("select count(*) from dept where deptName like  CONCAT('%',#{deptName},'%') ")
     int findSaveOrNot2(String deptName);
 
+    @Select("select userid from qyweixinbd")
+    List<String> getAllUserName();
+
     @Insert("insert into dakapiancha (pianChaMin) values (#{pianChaMin})")
     void saveDAPCSetUp(DaKaPianCha daKaPianCha);
 
@@ -204,6 +207,15 @@ public interface PersonMapper {
     @Select("select * from outclockin where id = #{id}")
     OutClockIn getOutClockInById(Integer id);
 
+    @Select("select empNo from employee where name = #{name} limit 1 ")
+    String getEmpNoByNameA(String name);
+
+    @Select("select ot.* from outdan ot left join employee ee on ot.empNo = ee.empNo  where ee.name = #{name} and ot.date = #{dateStr}")
+    Out getOutDanByNameAndDateStr(Out out);
+
+    @Delete("delete from outdan where id = #{id}")
+    void deleteOutDateToMysql(Integer id);
+
     @Select("select gongzhonghaoId from gongzhonghao")
     List<String> findAllOpenId();
 
@@ -248,7 +260,7 @@ public interface PersonMapper {
             "\tee.empno  ASC")
     List<Employee> findLeaveDataUionOutClockData(String monday, String tuesday, String wednesday, String thurday, String today);
 
-    @Select("select * from outclockin where weixinNo = #{weixinNo} and clockInDate = #{clockInDateStr} ")
+    @Select("select * from outclockin where userid = #{userid} and clockInDate = #{clockInDateStr} ")
     OutClockIn getOutClockInByDateAndWeiXinId(OutClockIn outClockIn);
 
     @Insert("INSERT into outclockin (userid,\n" +
@@ -475,6 +487,12 @@ public interface PersonMapper {
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLeaveByCondition")
     List<Leave> queryLeaveByCondition(Leave leave);
 
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryOutByCondition")
+    List<Out> queryOutByCondition(Out out);
+
+    @SelectProvider(type = PseronDaoProvider.class, method = "queryOutByConditionCount")
+    int queryOutByConditionCount(Out out);
+
     @SelectProvider(type = PseronDaoProvider.class, method = "queryQKByConditionCount")
     int queryQKByConditionCount(QianKa qianKa);
 
@@ -490,6 +508,12 @@ public interface PersonMapper {
 
     @Select("select * from dakapiancha")
     DaKaPianCha getDaKaPianCha();
+
+    @Select("select * from qyweixinbd where userid = #{userId} limit 1 ")
+    WeiXinUsrId getUserIdByUSerId(String userId);
+
+    @Insert("INSERT into qyweixinbd (userid,name) values (#{userid},#{name})")
+    void saveWeiXinUserIdByBean(WeiXinUsrId wx);
 
 
     @SelectProvider(type = PseronDaoProvider.class, method = "queryLBByConditionCount")
@@ -708,8 +732,8 @@ public interface PersonMapper {
             "END AS nmOnUrlInt\n" +
             "FROM\n" +
             "\toutclockin o\n" +
-            "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
-            "LEFT JOIN employee e ON e.empno = g.empNo\n" +
+            "LEFT JOIN qyweixinbd g ON g.userid = o.userid\n" +
+            "LEFT JOIN employee e ON e.name = g.name\n" +
             "LEFT JOIN dept d ON e.deptId = d.id\n" +
             "LEFT JOIN position n ON e.positionId = n.id\n" +
             "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
@@ -724,8 +748,8 @@ public interface PersonMapper {
     @Select("SELECT count(*)  " +
             "FROM\n" +
             "\toutclockin o\n" +
-            "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
-            "LEFT JOIN employee e ON e.empno = g.empNo\n" +
+            "LEFT JOIN qyweixinbd g ON g.userid = o.userid\n" +
+            "LEFT JOIN employee e ON e.name = g.name\n" +
             "LEFT JOIN dept d ON e.deptId = d.id\n" +
             "LEFT JOIN position n ON e.positionId = n.id\n" +
             "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
@@ -788,7 +812,7 @@ public interface PersonMapper {
             "\t\tFROM\n" +
             "\t\t\temployee e LEFT JOIN dept d on e.deptId = d.id \n" +
             "LEFT JOIN position n on e.positionId = n.id\n" +
-            "\t\tORDER BY\n" +
+            "\t\t    ORDER BY\n" +
             "\t\t\tNAME ASC ")
     List<Employee> findAllEmployeeAll();
 
@@ -1040,20 +1064,39 @@ public interface PersonMapper {
             "\tee.empno,\n" +
             "\tzk.Date AS dateStr,\n" +
             "\tzk.yearMonth,\n" +
+            "\tnn.positionLevel,\n" +
+            "\tee.workType,\n" +
             "\tzk.timeStr\n" +
             "FROM\n" +
             "\tzhongkongbean zk\n" +
             "LEFT JOIN zhongkongemployee zke ON zke.EnrollNumber = zk.EnrollNumber\n" +
             "LEFT JOIN employee ee ON zke.empNo = ee.empno\n" +
+            "LEFT JOIN position nn ON nn.id = ee.positionid\n" +
             "WHERE\n" +
             "\tee.empno = #{empNo} and Date = #{dateStr} ")
     ZhongKongBean getZKBeanByEmpNoAndDateStr(String empNo, String dateStr);
+
+    @Select("select * from zhongkongbean where enrollNumber = #{num} and date = #{date}")
+    ZhongKongBean getZhongKongBeanByNumAndDate(String num, String date);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
             "  from leavedata where employeeid = #{employeeId} and beginleave <= #{dataStr} and endleave >= #{dataStr} limit 1 ")
     Leave getLeaveByEmIdAndMonthA(Integer employeeId, String dataStr);
 
+    @Select("select a.employeeid as employeeId," +
+            "date_format(a.beginleave, '%Y-%m-%d %h:%i:%s" +
+            "') as beginLeaveStr," +
+            "date_format(a.endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr," +
+            "a.leavelong as leaveLong," +
+            "a.leaveDescrip," +
+            "a.remark," +
+            "a.type " +
+            "  from leavedata a" +
+            "  join employee e on e.id = a.employeeid " +
+            " where " +
+            "e.empNo = #{empNo} and a.beginleave <= #{dataStr} and a.endleave >= #{dataStr} limit 1 ")
+    Leave getLeaveByEmIdAndMonthAB(String empNo, String dataStr);
 
     @Select("select  employeeid as employeeId,date_format(beginleave, '%Y-%m-%d %h:%i:%s" +
             "') as beginLeaveStr,date_format(endleave, '%Y-%m-%d %h:%i:%s') endLeaveStr,leavelong as leaveLong,leaveDescrip,remark,type " +
@@ -1230,7 +1273,7 @@ public interface PersonMapper {
             "FROM\n" +
             "\tmonthkqinfo mk\n" +
             "LEFT JOIN employee ee ON mk.empNo = ee.empno\n" +
-            "LEFT JOIN dept t  ON t.id = ee.deptId where yearMonth = #{yearMonth} ")
+            "LEFT JOIN dept t  ON t.id = ee.deptId where yearMonth = #{yearMonth} order by ee.empNo    ")
     List<MonthKQInfo> findAllMonthKQData(String yearMonth);
 
     @Select("select yearMonth from monthkqinfo group by yearMonth")
@@ -1387,6 +1430,9 @@ public interface PersonMapper {
             "where e.id = #{id}")
     Employee getEmployeeOneById(Integer id);
 
+    @Select("select * from outdan where empNo = #{empNo} and date = #{dateStr}")
+    Out getOutByEmpNoAndDateStr(String empNo, String dateStr);
+
 
     @Insert(" insert into pinshijiabanbgs (empNo,remark) values (#{empNo},#{remark}) ")
     void savePinShiDateToMysql(PinShiJiaBanBGS ps);
@@ -1415,7 +1461,7 @@ public interface PersonMapper {
     Integer getDeptIdByDeptName(String deptName);
 
     @Update("update employee set positionId = #{deptId} where id = #{empId} ")
-    void updateEmployeeDeptIdById(Integer empId,Integer deptId);
+    void updateEmployeeDeptIdById(Integer empId, Integer deptId);
 
     @Delete("delete from lianban where id = #{id}")
     void deleteLianBanDateToMysql(Integer id);
@@ -1451,9 +1497,8 @@ public interface PersonMapper {
     KQBean getKQBeanByDateStrAndEmpNo(String dateStr, String empNo);
 
 
-
     @Select("select * from kqbean where enrollNumber = #{num} and dateStr = #{date} ")
-    KQBean getKQBeanByEnroNumAndDate(String num,String date);
+    KQBean getKQBeanByEnroNumAndDate(String num, String date);
 
     @Select("select * from lianban where empNo = #{empNo} and date = #{dateStr} ")
     LianBan getLianBanByEmpNoAndDateStr(String empNo, String dateStr);
@@ -1472,6 +1517,26 @@ public interface PersonMapper {
             "\t#{type},\n" +
             "\t#{remark})")
     void saveLianBanBeanToSql(LianBan lianBan);
+
+
+    @Insert(" insert into outdan (" +
+            "empNo,\n" +
+            "\tdate,\n" +
+            "\toutaddr,\n" +
+            "\toutfor,\n" +
+            "\touttime,\n" +
+            "\trealcomtime,\n" +
+            "\tremark) values (" +
+            "  #{empNo},\n" +
+            "\t#{dateStr},\n" +
+            "\t#{outaddr},\n" +
+            "\t#{outfor},\n" +
+            "\t#{outtimeStr},\n" +
+            "\t#{realcomtimeStr}," +
+            " #{remark})")
+    void saveOutBeanToSql(Out out);
+
+
 
 
     @Insert(" insert into yeban (" +
@@ -1507,6 +1572,15 @@ public interface PersonMapper {
             "remark = #{remark} " +
             "where empNo = #{empNo} and date = #{dateStr} ")
     void updateLianBanBean(LianBan lianBan);
+
+    @Update(" update out set" +
+            " outaddr = #{outaddr}," +
+            "outfor = #{outfor}, " +
+            "outtime = #{outtime}, " +
+            "realcomtime = #{realcomtime}, " +
+            "remark = #{remark} " +
+            "where empNo = #{empNo} and date = #{dateStr} ")
+    void updateOutBean(Out out);
 
 
     @Select("SELECT\n" +
@@ -1595,6 +1669,23 @@ public interface PersonMapper {
             "\te.name DESC limit #{currentPageTotalNum},#{pageSize} ")
     List<Leave> findAllLeave(Leave leave);
 
+    @Select("SELECT\n" +
+            "\tod.id,\n" +
+            "\tod.empNo,\n" +
+            "\tee.`name`,\n" +
+            "\tt.deptname,\n" +
+            "\tod.date AS dateStr,\n" +
+            "\tod.outaddr,\n" +
+            "\tod.outfor,\n" +
+            "\tod.outtime AS outtimeStr,\n" +
+            "\tod.realcomtime AS realcomtimeStr,\n" +
+            "\tod.remark\n" +
+            "FROM\n" +
+            "\toutdan od\n" +
+            "LEFT JOIN employee ee ON od.empNo = ee.empNo\n" +
+            "LEFT JOIN dept t ON t.id = ee.deptId ORDER BY od.date desc,od.empNo" +
+            " limit #{currentPageTotalNum},#{pageSize}  ")
+    List<Out> findAllOut(Out out);
 
     @Select(" SELECT\n" +
             "\tqk.id,\n" +
@@ -2552,8 +2643,8 @@ public interface PersonMapper {
             StringBuilder sb = new StringBuilder("SELECT count(*) " +
                     "FROM\n" +
                     "\toutclockin o\n" +
-                    "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
-                    " JOIN employee e ON e.empno = g.empNo\n" +
+                    "LEFT JOIN qyweixinbd g ON g.userid = o.userid\n" +
+                    " JOIN employee e ON e.name = g.name\n" +
                     "LEFT JOIN dept d ON e.deptId = d.id\n" +
                     "LEFT JOIN position n ON e.positionId = n.id\n" +
                     "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
@@ -2623,8 +2714,8 @@ public interface PersonMapper {
                     "END AS nmOnUrlInt\n" +
                     "FROM\n" +
                     "\toutclockin o\n" +
-                    "LEFT JOIN gongzhonghao g ON g.gongzhonghaoId = o.weixinNo\n" +
-                    " JOIN employee e ON e.empno = g.empNo\n" +
+                    "LEFT JOIN qyweixinbd g ON g.userid = o.userid\n" +
+                    " JOIN employee e ON e.name = g.name\n" +
                     "LEFT JOIN dept d ON e.deptId = d.id\n" +
                     "LEFT JOIN position n ON e.positionId = n.id\n" +
                     "LEFT JOIN leavedata ld ON ld.employeeid = e.id\n" +
@@ -3332,6 +3423,87 @@ public interface PersonMapper {
 
         }
 
+
+        public String queryOutByConditionCount(Out leave) {
+            StringBuilder sb = new StringBuilder("SELECT count(*) FROM\n" +
+                    "\t outdan a join  " +
+                    "employee e on a.empNo = e.empNo \n" +
+                    "JOIN dept t ON e.deptId = t.id\n" +
+                    "JOIN position n ON e.positionId = n.id where 1=1");
+
+            if (leave.getNames() != null && leave.getNames().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(leave.getNames().toString(), "[]") + ") ");
+            }
+
+
+            if (leave.getEmpNo() != null && leave.getEmpNo() != "" && leave.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (leave.getDeptIds() != null && leave.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(leave.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (leave.getPositionIds() != null && leave.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(leave.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (leave.getBeginOutStr() != null && leave.getBeginOutStr().length() > 0 && leave.getEndOutStr() != null && leave.getEndOutStr().length() > 0) {
+                sb.append(" and a.outtime  >= #{beginOutStr} and a.realcomtime  <= #{endOutStr}");
+            } else if (leave.getBeginOutStr() != null && leave.getBeginOutStr().length() > 0) {
+                sb.append(" and a.outtime >= #{beginOutStr}");
+            } else if (leave.getEndOutStr() != null && leave.getEndOutStr().length() > 0) {
+                sb.append(" and a.realcomtime <= #{endOutStr}");
+            }
+            return sb.toString();
+        }
+
+        public String queryOutByCondition(Out leave) {
+            StringBuilder sb = new StringBuilder("SELECT\n" +
+                    "\ta.id,\n" +
+                    "\ta.empNo,\n" +
+                    "\te.`name`,\n" +
+                    "\tt.deptname,\n" +
+                    "\tdate_format(a.date, '%Y-%m-%d') AS dateStr,\n" +
+                    "\ta.outaddr,\n" +
+                    "\ta.outfor,\n" +
+                    "\tdate_format(a.outtime, '%Y-%m-%d %h:%i:%s')  AS outtimeStr,\n" +
+                    "\tdate_format(a.realcomtime, '%Y-%m-%d %h:%i:%s')   AS realcomtimeStr,\n" +
+                    "\ta.remark " +
+                    "FROM\n" +
+                    "\t outdan a join  " +
+                    "employee e on a.empNo = e.empNo \n" +
+                    "JOIN dept t ON e.deptId = t.id\n" +
+                    "JOIN position n ON e.positionId = n.id where 1=1");
+
+            if (leave.getNames() != null && leave.getNames().size() > 0) {
+                sb.append(" and e.id in (" + StringUtils.strip(leave.getNames().toString(), "[]") + ") ");
+            }
+
+
+            if (leave.getEmpNo() != null && leave.getEmpNo() != "" && leave.getEmpNo().trim().length() > 0) {
+                sb.append(" and e.empno  like  CONCAT('%',#{empNo},'%') ");
+            }
+
+            if (leave.getDeptIds() != null && leave.getDeptIds().size() > 0) {
+                sb.append(" and e.deptId in (" + StringUtils.strip(leave.getDeptIds().toString(), "[]") + ") ");
+            }
+
+            if (leave.getPositionIds() != null && leave.getPositionIds().size() > 0) {
+                sb.append(" and e.positionId in (" + StringUtils.strip(leave.getPositionIds().toString(), "[]") + ") ");
+            }
+
+            if (leave.getBeginOutStr() != null && leave.getBeginOutStr().length() > 0 && leave.getEndOutStr() != null && leave.getEndOutStr().length() > 0) {
+                sb.append(" and a.outtime  >= #{beginOutStr} and a.realcomtime  <= #{endOutStr}");
+            } else if (leave.getBeginOutStr() != null && leave.getBeginOutStr().length() > 0) {
+                sb.append(" and a.outtime >= #{beginOutStr}");
+            } else if (leave.getEndOutStr() != null && leave.getEndOutStr().length() > 0) {
+                sb.append(" and a.realcomtime <= #{endOutStr}");
+            }
+            sb.append(" order by e.name desc limit #{currentPageTotalNum},#{pageSize}");
+            return sb.toString();
+        }
+
         public String queryLeaveByCondition(Leave leave) {
             StringBuilder sb = new StringBuilder("SELECT\n" +
                     "\ta.id AS id,\n" +
@@ -3805,10 +3977,13 @@ public interface PersonMapper {
                     "\tkb.pOnTime,\n" +
                     "\tkb.pOffTime,\n" +
                     "\tkb.extWorkOnTime,\n" +
+                    "\tkb.enrollNumber,\n" +
                     "\tkb.extWorkOffTime,\n" +
                     "\tkb.rensheCheck,\n" +
                     "\tee.empno,\n" +
+                    "\tee.workType as workType,\n" +
                     "\tee.`name` AS nameReal,\n" +
+                    "\tee.id AS empId,\n" +
                     "\tn.positionLevel AS positionLevel " +
                     "FROM\n" +
                     "\tkqbean kb\n" +

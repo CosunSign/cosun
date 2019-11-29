@@ -11,6 +11,8 @@ public interface IPersonServ {
 
     int checkAndSavePosition(Position position) throws Exception;
 
+    List<String> getAllUserName() throws Exception;
+
     List<ClockInOrgin> translateTabletoBean(MultipartFile file) throws Exception;
 
     List<OutPutWorkData> computeTableListData(List<ClockInOrgin> clockInOrginList) throws Exception;
@@ -24,6 +26,12 @@ public interface IPersonServ {
     void saveZKNumEmpNoBangDing(List<Employee> employeeList) throws Exception;
 
     List<Employee> translateTabletoEmployeeBeanZK(List<MultipartFile> files) throws Exception;
+
+    List<Out> translateTabletoOutBean(MultipartFile mf) throws Exception;
+
+    String checkOutRepeat(List<Out> outList) throws Exception;
+
+    void saveOutList(List<Out> outList) throws Exception;
 
     String getDeptNameByEmployId(Integer id) throws Exception;
 
@@ -46,6 +54,8 @@ public interface IPersonServ {
     int checkEmployNoIsExsit(String empoyeeNo) throws Exception;
 
     List<Position> findAllPositionAll() throws Exception;
+
+    void deleteOutDateToMysql(Integer id) throws Exception;
 
     void deleteJiaBanDateToMysql(Integer id) throws Exception;
 
@@ -83,6 +93,8 @@ public interface IPersonServ {
 
     List<Dept> findAllDeptAll() throws Exception;
 
+    List<Out> findAllOut(Out out) throws Exception;
+
     List<QianKa> findAllQianKa(QianKa qianKa) throws Exception;
 
     int findAllQianKaCount() throws Exception;
@@ -107,7 +119,7 @@ public interface IPersonServ {
 
     Integer getDeptIdByDeptName(String deptName) throws Exception;
 
-    void updateEmployeeDeptIdById(Integer empId,Integer deptId) throws Exception;
+    void updateEmployeeDeptIdById(Integer empId, Integer deptId) throws Exception;
 
     List<PinShiJiaBanBGS> findAllPinShi(PinShiJiaBanBGS ps) throws Exception;
 
@@ -146,6 +158,10 @@ public interface IPersonServ {
     List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates, List<KQBean> kqBeans) throws Exception;
 
     List<KQBean> getAllKQDataByYearMonthDays(List<OutClockIn> clockDates) throws Exception;
+
+    WeiXinUsrId getUserIdByUSerId(String userId) throws Exception;
+
+    void saveWeiXinUserIdByBean(WeiXinUsrId wx) throws Exception;
 
     String getAlReadyCheckDatestr(List<OutClockIn> clockDates) throws Exception;
 
@@ -186,6 +202,8 @@ public interface IPersonServ {
     int saveQianKaDateToMysql(QianKa qianKa) throws Exception;
 
     int saveLianBanDateToMysql(LianBan lianBan) throws Exception;
+
+    int saveOutDateToMysql(Out out) throws Exception;
 
     int savePinShiDateToMysql(PinShiJiaBanBGS pinShiJiaBanBGS) throws Exception;
 
@@ -272,6 +290,10 @@ public interface IPersonServ {
     List<LianBan> queryLBByCondition(LianBan lianBan) throws Exception;
 
     List<JiaBan> queryJBByCondition(JiaBan jiaBan) throws Exception;
+
+    List<Out> queryOutByCondition(Out out) throws Exception;
+
+    int queryOutByConditionCount(Out out) throws Exception;
 
     int queryJBByConditionCount(JiaBan jiaBan) throws Exception;
 

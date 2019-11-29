@@ -59,7 +59,7 @@
         dateSpan = sDate2 - sDate1;
         dateSpan = Math.abs(dateSpan);
         iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
-        return iDays+1;
+        return iDays + 1;
     }
 
     function computeLeaveLong() {
@@ -92,11 +92,11 @@
                         leaveLong = interDay * 8;
                         if (!isNaN(leaveLong))
                             $("#leaveLong").val(leaveLong);
-                    }else if(sampleBegin< beginLeaveStr.getTime() && sampleEnd > endLeaveStr.getTime()) {
+                    } else if (sampleBegin < beginLeaveStr.getTime() && sampleEnd > endLeaveStr.getTime()) {
                         $("#leaveLong").val(interDay * 8);
-                    }else if(sampleBegin< beginLeaveStr.getTime())  {
+                    } else if (sampleBegin < beginLeaveStr.getTime()) {
                         $("#leaveLong").val(interDay * 8);
-                    }else if(sampleEnd > endLeaveStr.getTime()) {
+                    } else if (sampleEnd > endLeaveStr.getTime()) {
                         $("#leaveLong").val(interDay * 8);
                     }
 
@@ -154,7 +154,7 @@
         if (employeeId != 0 && beginLeaveStr.trim().length > 0 && endLeaveStr.trim().length > 0 != null) {
             window.location.href = "/person/addLeaveToMysql?employeeId=" + employeeId
                 + "&beginLeaveStr=" + beginLeaveStr + "&endLeaveStr=" + endLeaveStr + "&leaveLong=" + leaveLong + "&leaveDescrip=" + leaveDescrip
-                + "&remark=" + remark+"&type="+typeValue;
+                + "&remark=" + remark + "&type=" + typeValue;
         } else {
             $("#errormessage").show();
             var errormessagediv = document.getElementById("errormessage");
@@ -207,7 +207,8 @@
                     <input type="hidden" id="employeeId" th:field="*{employeeId}">
                     <input type="hidden" id="typeValue" th:field="*{type}">
 
-                    <table class="table table-hover table-striped text-center" style="text-align: right;width: auto;border-spacing:0px 3px;">
+                    <table class="table table-hover table-striped text-center"
+                           style="text-align: right;width: auto;border-spacing:0px 3px;">
                         <tr>
                             <td><label>姓名：</label></td>
                             <td>
@@ -258,25 +259,37 @@
 
                         </tr>
                         <!--<tr>-->
-                            <!--<td><label>入职时间：</label></td>-->
-                            <!--<td>-->
-                                <!--<input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"-->
-                                       <!--readOnly="true" class="Wdate" th:value="*{incomdateStr}"-->
-                                       <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>-->
-                            <!--</td>-->
+                        <!--<td><label>入职时间：</label></td>-->
+                        <!--<td>-->
+                        <!--<input type="text" style="width:170px;height: 34px;text-align: center" id="incompDate"-->
+                        <!--readOnly="true" class="Wdate" th:value="*{incomdateStr}"-->
+                        <!--onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" disabled/>-->
+                        <!--</td>-->
                         <!--</tr>-->
                         <tr>
                             <td><label>请假类型：</label></td>
                             <td align="center">
 
-                                <label><input type="radio"  checked th:value="0" name="type"
-                                              >正常请假</label>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label><input type="radio"  th:value="1" name="type"
-                                              >因公外出</label>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label><input type="radio"  th:value="2" name="type"
+                                <label><input type="radio" checked th:value="0" name="type"
+                                >正常请假</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="1" name="type"
+                                >因公外出</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="2" name="type"
                                 >带薪年假</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="3" name="type"
+                                >丧假</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="4" name="type"
+                                >婚假</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="5" name="type"
+                                >产假</label>
+                                &nbsp;&nbsp;
+                                <label><input type="radio" th:value="6" name="type"
+                                >陪产假</label>
                             </td>
                         </tr>
                         <tr>
@@ -310,7 +323,7 @@
                                        id="leaveLong">
                             </td>
                             <td>
-                                <font  color="red">&nbsp;&nbsp;&nbsp;*如系统计算不准确请手工输入</font>
+                                <font color="red">&nbsp;&nbsp;&nbsp;*如系统计算不准确请手工输入</font>
                             </td>
                         </tr>
                         <tr>
@@ -325,7 +338,8 @@
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align: center;">
-                                <input type="button" value="返回" class="btn btn-primary" onclick="javascript:history.back(-1);">
+                                <input type="button" value="返回" class="btn btn-primary"
+                                       onclick="javascript:history.back(-1);">
                                 <input type="button" value="添加" class="btn btn-primary" onclick="addLeaveToMysql()">
 
                             </td>
