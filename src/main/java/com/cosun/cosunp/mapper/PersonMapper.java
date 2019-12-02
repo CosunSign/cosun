@@ -152,6 +152,82 @@ public interface PersonMapper {
     @Select(" select * from qianka where date = #{dateStr} and empNo = #{empNo}  ")
     QianKa getQianKaByDateAndEmpnoA(String empNo, String dateStr);
 
+    @Select("SELECT * FROM outdan where empNo = #{empNo} and  outtime <= #{dateStrStart} and realcomtime >= #{dateStrEnd} ")
+    Out getOutDanByEmpNoandDate(String empNo, String dateStrStart,String dateStrEnd);
+
+
+    @Select("SELECT * FROM outdan where empNo = #{empNo} and  DATE_FORMAT(outtime,'%Y-%m-%d') <= #{dateStr} and " +
+            " DATE_FORMAT(realcomtime,'%Y-%m-%d') >= #{dateStr} ")
+    Out getOutDanByEmpNoandDateOnly(String empNo, String dateStr);
+
+
+    @Select("SELECT\n" +
+            "\toc.id,\n" +
+            "\toc.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+            "\toc.clockInAddrAMOn,\n" +
+            "\toc.amOnUrl,\n" +
+            "\toc.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl,\n" +
+            "\toc.clockInDateNmon AS clockInDateNmonStr,\n" +
+            "\toc.clockInAddNMOn,\n" +
+            "\toc.nmOnUrl,\n" +
+            "\toc.clockInDate AS clockInDateStr\n" +
+            " FROM " +
+            "\toutclockin oc\n" +
+            "LEFT JOIN qyweixinbd gg ON gg.userid = oc.userid\n" +
+            "LEFT JOIN employee ee ON gg.name = ee.name\n" +
+            "WHERE\n" +
+            "\toc.clockInDate = #{dateStr} \n" +
+            "AND ee.empNo = #{empNo} ")
+    OutClockIn getOutClockInByEmpNoAndDateA(String empNo, String dateStr);
+
+
+    @Select("SELECT\n" +
+            "\toc.id,\n" +
+            "\toc.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+            "\toc.clockInAddrAMOn,\n" +
+            "\toc.amOnUrl,\n" +
+            "\toc.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl,\n" +
+            "\toc.clockInDateNmon AS clockInDateNmonStr,\n" +
+            "\toc.clockInAddNMOn,\n" +
+            "\toc.nmOnUrl,\n" +
+            "\toc.clockInDate AS clockInDateStr\n" +
+            " FROM " +
+            "\toutclockin oc\n" +
+            "LEFT JOIN qyweixinbd gg ON gg.userid = oc.userid\n" +
+            "LEFT JOIN employee ee ON gg.name = ee.name\n" +
+            "WHERE\n" +
+            "\toc.clockInDate = #{dateStr} \n" +
+            "AND ee.empNo = #{empNo} and oc.amOnUrl is not null ")
+    OutClockIn getOutClockInByEmpNoAndDateAM(String empNo, String dateStr);
+
+    @Select("SELECT\n" +
+            "\toc.id,\n" +
+            "\toc.clockInDateAMOn AS clockInDateAMOnStr,\n" +
+            "\toc.clockInAddrAMOn,\n" +
+            "\toc.amOnUrl,\n" +
+            "\toc.clockInDatePMOn AS clockInDatePMOnStr,\n" +
+            "\toc.clockInAddrPMOn,\n" +
+            "\toc.pmOnUrl,\n" +
+            "\toc.clockInDateNmon AS clockInDateNmonStr,\n" +
+            "\toc.clockInAddNMOn,\n" +
+            "\toc.nmOnUrl,\n" +
+            "\toc.clockInDate AS clockInDateStr\n" +
+            " FROM " +
+            "\toutclockin oc\n" +
+            "LEFT JOIN qyweixinbd gg ON gg.userid = oc.userid\n" +
+            "LEFT JOIN employee ee ON gg.name = ee.name\n" +
+            "WHERE\n" +
+            "\toc.clockInDate = #{dateStr} \n" +
+            "AND ee.empNo = #{empNo} and (oc.pmOnUrl is not null or oc.nmOnUrl is not null) ")
+    OutClockIn getOutClockInByEmpNoAndDatePM(String empNo, String dateStr);
+
+    @Select("select * from clockinsetup where outDays > #{days} order by outDays asc limit 1 ")
+    ClockInSetUp getClockSetUpByDays(Double days);
+
     @Insert("update qianka  set timeStr = #{timeStr},type = #{type},remark = #{remark} where id = #{id}")
     void updateQianKa(QianKa qianKa);
 
@@ -1526,6 +1602,7 @@ public interface PersonMapper {
             "\toutfor,\n" +
             "\touttime,\n" +
             "\trealcomtime,\n" +
+            "\tinterDays,\n" +
             "\tremark) values (" +
             "  #{empNo},\n" +
             "\t#{dateStr},\n" +
@@ -1533,10 +1610,9 @@ public interface PersonMapper {
             "\t#{outfor},\n" +
             "\t#{outtimeStr},\n" +
             "\t#{realcomtimeStr}," +
+            "\t#{interDays}," +
             " #{remark})")
     void saveOutBeanToSql(Out out);
-
-
 
 
     @Insert(" insert into yeban (" +
@@ -1573,12 +1649,13 @@ public interface PersonMapper {
             "where empNo = #{empNo} and date = #{dateStr} ")
     void updateLianBanBean(LianBan lianBan);
 
-    @Update(" update out set" +
+    @Update(" update outdan set" +
             " outaddr = #{outaddr}," +
             "outfor = #{outfor}, " +
             "outtime = #{outtime}, " +
             "realcomtime = #{realcomtime}, " +
-            "remark = #{remark} " +
+            "remark = #{remark}, " +
+            "interDays = #{interDays} " +
             "where empNo = #{empNo} and date = #{dateStr} ")
     void updateOutBean(Out out);
 

@@ -27,10 +27,10 @@ public class ZhongKongDATAToSQLTask {
 
     //@Scheduled(fixedRate = 100000)
     //@Scheduled(cron = "0 0 05 * * ?")
-    @Scheduled(cron = "0 18 06 ? * *")
+    @Scheduled(cron = "0 50 06 ? * *")
     private void configureTasks() {
         try {
-            //new PersonController().getBeforeDayZhongKongData();
+            new PersonController().getBeforeDayZhongKongData();
             new PersonController().getBeforeDayQYWCData();
             //new PersonController().getAllWeiXinUser();
             //new PersonController().getKQBean();

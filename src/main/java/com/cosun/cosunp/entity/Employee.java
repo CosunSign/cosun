@@ -17,9 +17,9 @@ public class Employee implements Serializable {
     private static final long serialVersionUID = 3941220683407513983L;
 
 
-    private Integer EnrollNumber;
+    private String EnrollNumber;
 
-    private Integer enrollNumber1;
+    private String enrollNumber1;
 
     private String yearMonth;
     private String dateStr;
@@ -145,20 +145,22 @@ public class Employee implements Serializable {
     private Integer nmOnUrlInt;
 
 
-    public Integer getEnrollNumber() {
+    public String getEnrollNumber() {
         return EnrollNumber;
     }
 
-    public void setEnrollNumber(Integer enrollNumber) {
+    public void setEnrollNumber(String enrollNumber) {
         EnrollNumber = enrollNumber;
     }
-    public Integer getEnrollNumber1() {
+
+    public String getEnrollNumber1() {
         return enrollNumber1;
     }
 
-    public void setEnrollNumber1(Integer enrollNumber1) {
+    public void setEnrollNumber1(String enrollNumber1) {
         this.enrollNumber1 = enrollNumber1;
     }
+
     public List<Integer> getIsZhongKongBangDing() {
         return isZhongKongBangDing;
     }

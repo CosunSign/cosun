@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * @author:homey Wong
- * @date:2019/5/9 0009 下午 5:03
+ * @date:2019/5/9 下午 5:03
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -102,7 +102,7 @@ public class PersonServiceImpl implements IPersonServ {
 
     public void saveZKNumEmpNoBangDing(List<Employee> employeeList) throws Exception {
         List<Employee> singDataList = new ArrayList<Employee>();
-        List<Integer> numList = new ArrayList<Integer>();
+        List<String> numList = new ArrayList<String>();
         for (Employee ee : employeeList) {
             if (!numList.contains(ee.getEnrollNumber())) {
                 singDataList.add(ee);
@@ -231,13 +231,16 @@ public class PersonServiceImpl implements IPersonServ {
     }
 
     public int saveOutDateToMysql(Out out) throws Exception {
+        DateFormat dftdatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Employee ee = personMapper.getEmployeeOneById(out.getEmpId());
         out.setEmpNo(ee.getEmpNo());
         Out lb = personMapper.getOutByEmpNoAndDateStr(ee.getEmpNo(), out.getDateStr());
         if (lb == null) {
+            out.setInterDays(DateUtil.getDistanceOfTwoDate(dftdatetime.parse(out.getOuttimeStr()), dftdatetime.parse(out.getRealcomtimeStr())));
             personMapper.saveOutBeanToSql(out);
             return 1;
         } else {
+            out.setInterDays(DateUtil.getDistanceOfTwoDate(dftdatetime.parse(out.getOuttimeStr()), dftdatetime.parse(out.getRealcomtimeStr())));
             personMapper.updateOutBean(out);
             return 2;
         }
@@ -354,6 +357,7 @@ public class PersonServiceImpl implements IPersonServ {
                         cio.setRealcomtimeStr(dftdatetime.format(transferDate));
                     }
                     cio.setRemark(cell[6].getContents().trim());
+                    cio.setInterDays(DateUtil.getDistanceOfTwoDate(cio.getOuttime(), cio.getRealcomtime()));
                     outList.add(cio);
                 } catch (Exception e) {
                     throw new Exception("表格第" + (i + 1) + "行日期有错误!");
@@ -629,7 +633,7 @@ public class PersonServiceImpl implements IPersonServ {
                         em = new Employee();
                         em.setName(cell[nameTitleIndex].getContents().trim());
                         em.setDeptName(cell[deptIdTitleIndex].getContents().trim());
-                        em.setEnrollNumber(Integer.valueOf(cell[EnrollNumberTitleIndex].getContents().trim()));
+                        em.setEnrollNumber(cell[EnrollNumberTitleIndex].getContents().trim());
                         employeeList.add(em);
                     }
                 }
@@ -1041,7 +1045,7 @@ public class PersonServiceImpl implements IPersonServ {
         WorkbookSettings ws = new WorkbookSettings();
         String fileName = file.getOriginalFilename();
         ws.setCellValidationDisabled(true);
-        jxl.Workbook Workbook = null;//.xlsx
+        jxl.Workbook Workbook = null;
         String fileType = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if (fileType.equals("xls")) {
             Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
@@ -3501,7 +3505,6 @@ public class PersonServiceImpl implements IPersonServ {
         List<MonthKQInfo> monthKQInfoList = new ArrayList<MonthKQInfo>();
         String[] yearMos = outClockInList.get(0).getClockInDateStr().split("-");
         WorkDate date = personMapper.getWorkDateByMonth3(yearMos[0] + "-" + yearMos[1], "B", 1);
-
         List<YeBan> yeBanList = personMapper.getAllYeBanByDateStrs(outClockInList);
         String[] days = date.getWorkDatess();
         List<String> noWeekendButWeekEnd = new ArrayList<String>();
@@ -3790,12 +3793,53 @@ public class PersonServiceImpl implements IPersonServ {
                         dayNum = dayNum.concat(jiaHours.toString());
                     }
                 } else if (kqb.getClockResult() == 8) {
-                    dayNum = "8,8,";
-                    if (!kqb.getHavePinShi().equals("1")) {
-                        dayNum = dayNum.concat(lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+                    ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                    Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr());
+                    OutClockIn oci = null;
+                    ClockInSetUp csu = null;
+                    Integer cishu = null;
+                    if (out != null) {
+                        csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                        oci = personMapper.getOutClockInByEmpNoAndDateA(kqb.getEmpNo(), kqb.getDateStr());
+                        if (oci != null) {
+                            cishu = StringUtil.calTimesByOutClockIn(oci);
+                            if (cishu >= csu.getDayClockInTimes()) {
+                                dayNum = "1080,1080,";
+                                if (!kqb.getHavePinShi().equals("1")) {
+                                    dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                } else {
+                                    dayNum = dayNum.concat("8.0");
+                                }
+                            } else {
+                                dayNum = "1070,1070,";
+                                if (!kqb.getHavePinShi().equals("1")) {
+                                    dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                } else {
+                                    dayNum = dayNum.concat("8.0");
+                                }
+                            }
+                        } else {
+                            dayNum = "1060,1060,";
+                            if (!kqb.getHavePinShi().equals("1")) {
+                                dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                            } else {
+                                dayNum = dayNum.concat("8.0");
+                            }
+                        }
                     } else {
-                        dayNum = dayNum.concat("0.0");
+                        dayNum = "8,8,";
+                        if (!kqb.getHavePinShi().equals("1")) {
+                            dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                        } else {
+                            dayNum = dayNum.concat("0.0");
+                        }
                     }
+//                    dayNum = "8,8,";
+//                    if (!kqb.getHavePinShi().equals("1")) {
+//                        dayNum = dayNum.concat(lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours()) + "");
+//                    } else {
+//                        dayNum = dayNum.concat("0.0");
+//                    }
                 } else if (kqb.getClockResult() == 21) {
                     dayNum = "18,18,";
                     if (!kqb.getHavePinShi().equals("1")) {
@@ -3804,12 +3848,48 @@ public class PersonServiceImpl implements IPersonServ {
                         dayNum = dayNum.concat("0.0");
                     }
                 } else if (kqb.getClockResult() == 5) {
-                    dayNum = "18,18,";
-                    if (!kqb.getHavePinShi().equals("1")) {
-                        dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                    ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                    Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr());
+                    OutClockIn oci = null;
+                    ClockInSetUp csu = null;
+                    Integer cishu = null;
+                    if (out != null) {
+                        csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                        oci = personMapper.getOutClockInByEmpNoAndDateA(kqb.getEmpNo(), kqb.getDateStr());
+                        if (oci != null) {
+                            cishu = StringUtil.calTimesByOutClockIn(oci);
+                            if (cishu >= csu.getDayClockInTimes()) {
+                                dayNum = "1080,1080,";
+                                if (!kqb.getHavePinShi().equals("1")) {
+                                    dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                } else {
+                                    dayNum = dayNum.concat("8.0");
+                                }
+                            } else {
+                                dayNum = "1070,1070,";
+                                if (!kqb.getHavePinShi().equals("1")) {
+                                    dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                } else {
+                                    dayNum = dayNum.concat("8.0");
+                                }
+                            }
+                        } else {
+                            dayNum = "1060,1060,";
+                            if (!kqb.getHavePinShi().equals("1")) {
+                                dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                            } else {
+                                dayNum = dayNum.concat("8.0");
+                            }
+                        }
                     } else {
-                        dayNum = dayNum.concat("0.0");
+                        dayNum = "18,18,";
+                        if (!kqb.getHavePinShi().equals("1")) {
+                            dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                        } else {
+                            dayNum = dayNum.concat("0.0");
+                        }
                     }
+
                 } else if (kqb.getClockResult() == 17) {
                     dayNum = "18,18,";
                     String[] plusValue = kqb.getRemark().split(",");
@@ -4121,8 +4201,107 @@ public class PersonServiceImpl implements IPersonServ {
                                     }
                                 }
                             }
-
                         }
+
+                        if (aOnStr.equals("7,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getMorningOn());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                    //cishu = StringUtil.calTimesByOutClockIn(oci);
+                                   // if (cishu >= csu.getDayClockInTimes()) {
+                                        aOnStr = "108,";
+                                  //  } else {
+                                    //    aOnStr = "107,";
+                                   // }
+                                } else {
+                                    aOnStr = "106,";
+                                }
+                            } else {
+                                aOnStr = "7,";
+                            }
+                        }
+
+                        if (aOffStr.equals("7,")) {
+                            aOffStr = aOnStr;
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getMorningOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                  //  if (cishu >= csu.getDayClockInTimes()) {
+                                        aOffStr = "108,";
+                                  //  } else {
+                                   //     aOffStr = "107,";
+                                   // }
+                                } else {
+                                    aOffStr = "106,";
+                                }
+                            } else {
+                                aOffStr = "7,";
+                            }
+                        }
+
+
+                        if (pOnStr.equals("7,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getNoonOn());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                   // if (cishu >= csu.getDayClockInTimes()) {
+                                        pOnStr = "108,";
+                                   // } else {
+                                    //    pOnStr = "107,";
+                                   // }
+                                } else {
+                                    pOnStr = "106,";
+                                }
+                            } else {
+                                pOnStr = "7,";
+                            }
+                        }
+
+                        if (pOffStr.equals("7,")) {
+                            pOffStr = pOnStr;
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getNoonOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                  //  cishu = StringUtil.calTimesByOutClockIn(oci);
+                                   // if (cishu >= csu.getDayClockInTimes()) {
+                                        pOffStr = "108,";
+                                   // } else {
+                                   //     pOffStr = "107,";
+                                   // }
+                                } else {
+                                    pOffStr = "106,";
+                                }
+                            } else {
+                                pOffStr = "7,";
+                            }
+                        }
+
                         dayNum = aOffStr + pOffStr;
                     } else if (kqb.getClockResult() == 8) {
                         aOnStr = "8,";
@@ -4165,7 +4344,6 @@ public class PersonServiceImpl implements IPersonServ {
 
                         }
 
-
                         pOnStr = "8,";
                         pOffStr = "8,";
                         if (kqb.getpOnTime() == null) {
@@ -4196,6 +4374,57 @@ public class PersonServiceImpl implements IPersonServ {
                             }
 
                         }
+
+
+                        if (aOffStr.equals("8,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDate(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getMorningOn(), kqb.getDateStr() + " " + ws.getMorningOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateA(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                    cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    if (cishu >= csu.getDayClockInTimes()) {
+                                        aOffStr = "108,";
+                                    } else {
+                                        aOffStr = "107,";
+                                    }
+                                } else {
+                                    aOffStr = "106,";
+                                }
+                            } else {
+                                aOffStr = "8,";
+                            }
+                        }
+
+
+                        if (pOffStr.equals("8,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDate(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getNoonOn(), kqb.getDateStr() + " " + ws.getNoonOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateA(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                    cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    if (cishu >= csu.getDayClockInTimes()) {
+                                        pOffStr = "108,";
+                                    } else {
+                                        pOffStr = "107,";
+                                    }
+                                } else {
+                                    pOffStr = "106,";
+                                }
+                            } else {
+                                pOffStr = "8,";
+                            }
+                        }
+
                         dayNum = aOffStr + pOffStr;
                     }
                     if (kqb.getClockResult() == 13) {
@@ -4304,17 +4533,150 @@ public class PersonServiceImpl implements IPersonServ {
                                         }
                                     }
                                 }
-
                         }
 
-//                        if(qk==null) {
-//
-//                        }
+                        if (aOnStr.equals("77,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getMorningOn());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                 //   cishu = StringUtil.calTimesByOutClockIn(oci);
+                                 //   if (cishu >= csu.getDayClockInTimes()) {
+                                        aOnStr = "1080,";
+                                 //   } else {
+                                      //  aOnStr = "1070,";
+                                  //  }
+                                } else {
+                                    aOnStr = "1060,";
+                                }
+                            } else {
+                                aOnStr = "77,";
+                            }
+                        }
 
+                        if (aOffStr.equals("77,")) {
+                            aOffStr = aOnStr;
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getMorningOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                  //  if (cishu >= csu.getDayClockInTimes()) {
+                                        aOffStr = "1080,";
+                                   // } else {
+                                   //     aOffStr = "1070,";
+                                  //  }
+                                } else {
+                                    aOffStr = "1060,";
+                                }
+                            } else {
+                                aOffStr = "77,";
+                            }
+                        }
+
+
+                        if (pOnStr.equals("77,")) {
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getNoonOn());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                   // if (cishu >= csu.getDayClockInTimes()) {
+                                        pOnStr = "1080,";
+                                   // } else {
+                                  //      pOnStr = "1070,";
+                                  //  }
+                                } else {
+                                    pOnStr = "1060,";
+                                }
+                            } else {
+                                pOnStr = "77,";
+                            }
+                        }
+
+                        if (pOffStr.equals("77,")) {
+                            pOffStr = pOnStr;
+                            ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                            Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr() + " " + ws.getNoonOff());
+                            OutClockIn oci = null;
+                            ClockInSetUp csu = null;
+                            Integer cishu = null;
+                            if (out != null) {
+                                csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                                oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
+                                if (oci != null) {
+                                  //  cishu = StringUtil.calTimesByOutClockIn(oci);
+                                  //  if (cishu >= csu.getDayClockInTimes()) {
+                                        pOffStr = "1080,";
+                                  //  } else {
+                                  //      pOffStr = "1070,";
+                                  //  }
+                                } else {
+                                    pOffStr = "1060,";
+                                }
+                            } else {
+                                pOffStr = "77,";
+                            }
+                        }
 
                         dayNum = aOffStr + pOffStr;
                     } else if (kqb.getClockResult() == 8) {
-                        dayNum = "8,8,";
+                        ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());
+                        Out out = personMapper.getOutDanByEmpNoandDateOnly(kqb.getEmpNo(), kqb.getDateStr());
+                        OutClockIn oci = null;
+                        ClockInSetUp csu = null;
+                        Integer cishu = null;
+                        if (out != null) {
+                            csu = personMapper.getClockSetUpByDays(out.getInterDays());
+                            oci = personMapper.getOutClockInByEmpNoAndDateA(kqb.getEmpNo(), kqb.getDateStr());
+                            if (oci != null) {
+                                cishu = StringUtil.calTimesByOutClockIn(oci);
+                                if (cishu >= csu.getDayClockInTimes()) {
+                                    dayNum = "1080,1080,";
+                                    if (!kqb.getHavePinShi().equals("1")) {
+                                        dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                    } else {
+                                        dayNum = dayNum.concat("8.0");
+                                    }
+                                } else {
+                                    dayNum = "1070,1070,";
+                                    if (!kqb.getHavePinShi().equals("1")) {
+                                        dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                    } else {
+                                        dayNum = dayNum.concat("8.0");
+                                    }
+                                }
+                            } else {
+                                dayNum = "1060,1060,";
+                                if (!kqb.getHavePinShi().equals("1")) {
+                                    dayNum = dayNum.concat((lianBanTotalH + 8.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                                } else {
+                                    dayNum = dayNum.concat("8.0");
+                                }
+                            }
+                        } else {
+                            dayNum = "8,8,";
+                            if (!kqb.getHavePinShi().equals("1")) {
+                                dayNum = dayNum.concat((lianBanTotalH + 0.0 + (kqb.getExtWorkHours() == null ? 0.0 : kqb.getExtWorkHours())) + "");
+                            } else {
+                                dayNum = dayNum.concat("0.0");
+                            }
+                        }
                     }
 
 

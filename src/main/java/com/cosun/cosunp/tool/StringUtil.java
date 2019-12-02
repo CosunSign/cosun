@@ -55,6 +55,20 @@ public class StringUtil {
         return newSet;
     }
 
+    public static int calTimesByOutClockIn(OutClockIn oci) throws Exception {
+        int times = 0;
+        if (oci.getClockInDateAMOnStr() != null && oci.getAmOnUrl() != null) {
+            times++;
+        }
+        if (oci.getClockInDatePMOnStr() != null && oci.getPmOnUrl() != null) {
+            times++;
+        }
+        if (oci.getClockInDateNMOnStr() != null && oci.getNmOnUrl() != null) {
+            times++;
+        }
+        return times;
+    }
+
     public static int checkIsNeed(String timeStr, WorkSet ws, KQBean kq) throws Exception {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         Date d = format.parse(timeStr);
@@ -229,7 +243,7 @@ public class StringUtil {
         for (String s : strs) {
             allStr.add(s);
         }
-        for(String f : strs2) {
+        for (String f : strs2) {
             allStr.add(f);
         }
         List<Time> times = formTime(allStr);
@@ -373,7 +387,6 @@ public class StringUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         return sdf.format(date);
     }
-
 
 
     public static int occurrencesNumber(String string, String str) {

@@ -132,6 +132,12 @@ public class DateUtil {
         return null;
     }
 
+    public static double getDistanceOfTwoDate(Date before, Date after) {
+        long beforeTime = before.getTime();
+        long afterTime = after.getTime();
+        return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
+    }
+
     public static String getJiaBanHoursByDateSplitAndTimeStr(DateSplit ds, String timeStr, WorkSet ws, Integer workType) {
         Double jiaBanH = 0.0;
         Time fromTime;
@@ -153,7 +159,7 @@ public class DateUtil {
                     jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd());
                 }
             } else {
-                jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd())-0.5;
+                jiaBanH = calcuHours(ds.getDateFrom(), ds.getDateEnd()) - 0.5;
             }
             return sb + jiaBanH;
         } else if (timeList.get(timeList.size() - 1).after(ds.getDateEnd()) || timeList.get(timeList.size() - 1).equals(ds.getDateEnd())) {

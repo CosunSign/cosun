@@ -23,6 +23,7 @@ public class Out implements Serializable {
     private Date outtime;
     private Date realcomtime;
     private String remark;
+    private Double interDays;
 
     private String name;
     private String deptName;
@@ -45,6 +46,14 @@ public class Out implements Serializable {
     private int pageSize = 10;
     private int currentPageTotalNum;
 
+
+    public Double getInterDays() {
+        return interDays;
+    }
+
+    public void setInterDays(Double interDays) {
+        this.interDays = interDays;
+    }
 
     public Integer getEmpId() {
         return empId;
