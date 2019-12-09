@@ -47,7 +47,6 @@ public class UserSecurityInterceptor extends WebMvcConfigurerAdapter {
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
             HttpSession session = request.getSession();
             int interval = session.getMaxInactiveInterval();
-            System.out.println("=============session time================"+interval);
             if (session.getAttribute("account") != null) {
                 return true;
             }

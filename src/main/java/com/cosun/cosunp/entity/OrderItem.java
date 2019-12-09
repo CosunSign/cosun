@@ -16,21 +16,21 @@ public class OrderItem implements Serializable {
     private static final long serialVersionUID = 8538595894167763085L;
 
     private Integer id;
-    private Integer orderHeadId;//关联Id
-    private String productBigType; //产品大类
-    private String productMainShape; //产品主体
-    private String newFinishProudNo; //新成品编号
-    private Double productSize; //产品尺寸
-    private Double edgeHightSize; //边高尺寸
-    private String mainMateriAndArt;//主体材质需求及工艺
-    private String backInstallSelect;//背部安装选项
-    private String electMateriNeeds;//电子类辅料需求
-    private String installTransfBacking;//安装运输包装
-    private String otherRemark;//其它说明
-    private Date itemDeliverTime;//单项交货时间
-    private String productName;//品名
-    private Integer needNum;//需求数量
-    private Date itemCreateTime;//建单时间
+    private Integer orderHeadId;
+    private String productBigType;
+    private String productMainShape;
+    private String newFinishProudNo;
+    private Double productSize;
+    private Double edgeHightSize;
+    private String mainMateriAndArt;
+    private String backInstallSelect;
+    private String electMateriNeeds;
+    private String installTransfBacking;
+    private String otherRemark;
+    private Date itemDeliverTime;
+    private String productName;
+    private Integer needNum;
+    private Date itemCreateTime;
     private Date itemUpdateTime;
     private Integer updateItemTimes;
     private String productTotalName;

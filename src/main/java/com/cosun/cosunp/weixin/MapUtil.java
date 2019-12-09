@@ -30,12 +30,7 @@ public class MapUtil {
     private static final String coordtype = "wgs84ll";
 
 
-    /**
-     * 根据经纬度获得省市区信息
-     *
-     * @param lat 经度
-     * @return
-     */
+
     public static Map<String, String> getCityByLonLat(double lng, double lat) {
         String location  = lng + "," + lat;
         Map<String, String> params = new HashMap<>();
@@ -59,16 +54,7 @@ public class MapUtil {
         return null;
     }
 
-    /**
-     * 拼接url字符串
-     *
-     * @param params
-     * @param output
-     * @param key
-     * @param url
-     * @return
-     * @throws IOException
-     */
+
     private static String joinUrl(Map<String, String> params, String output, String key, String url) throws IOException {
         StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(url);

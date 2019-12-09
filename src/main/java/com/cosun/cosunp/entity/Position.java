@@ -18,10 +18,9 @@ public class Position implements Serializable {
     private List<Integer> ids;
     private String positionName;
     private String positionLevel;
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

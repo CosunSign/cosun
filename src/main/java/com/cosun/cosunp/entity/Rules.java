@@ -41,15 +41,12 @@ public class Rules implements Serializable {
     private List<Integer> ids;
     private String ftpDir;
 
-//    private String fileDirA;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
-   //E:/ftpserver/1/2018公司宿舍管理制度/2018公司宿舍管理制度.docx
 
 
     public String getFtpDir() {
@@ -60,17 +57,6 @@ public class Rules implements Serializable {
         this.ftpDir = ftpDir;
     }
 
-//    public String getFileDirA() {
-//        int a = fileDir.indexOf("/");
-//        String astr = fileDir.substring(a+1,fileDir.length());
-//        int aa = astr.indexOf("/");
-//        String aastr = astr.substring(aa+1,astr.length());
-//        return "ftp://admin:FL33771@192.168.0.152/"+aastr;
-//    }
-//
-//    public void setFileDirA(String fileDirA) {
-//        this.fileDirA = fileDirA;
-//    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

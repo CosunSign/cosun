@@ -15,13 +15,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
  */
 public class PinYinUtil {
 
-    /**
-     * 获取中文字符串相应的拼音首字母大写
-     *
-     * @param chinese
-     * @return
-     * @author homey
-     */
+
     public static String toFirstCharUpCase(String chinese) throws Exception{
         if (null == chinese) {
             return null;
@@ -47,13 +41,7 @@ public class PinYinUtil {
     }
 
 
-    /**
-     * 汉字转为拼音
-     *
-     * @param chinese
-     * @return
-     * @homey
-     */
+
     public static String toPinyin(String chinese) throws Exception{
         String pinyinStr = "";
         char[] newChar = chinese.toCharArray();

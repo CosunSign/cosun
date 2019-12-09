@@ -9,7 +9,7 @@ import java.util.List;
  * @Description:
  * @date:2018/12/21 0021 上午 10:36
  * @Modified By:
- * @Modified-date:2018/12/21 0021 上午 10:36
+ * @Modified-date:2018/12/21  上午 10:36
  */
 public class DownloadView implements Serializable {
 
@@ -19,27 +19,27 @@ public class DownloadView implements Serializable {
     private Integer uId;
     private String userName;
     private String password;
-    private String creator;//上传者
+    private String creator;
     private String lastUpdator;
-    private String fileName; //文件名称
-    private String salor;//业务员
-    private String orderNo;//订单编号
+    private String fileName;
+    private String salor;
+    private String orderNo;
     private String[] check_val;
-    private String projectName;//项目名称
+    private String projectName;
     private String lastUpdateTime;
     private String fullName;
-    private String createTime;//上传时间
+    private String createTime;
     private Integer totalUpdateNum;
-    private String opRight; //操作权限
+    private String opRight;
     private String urlAddr;
-    private String uploadPrivilege; //上传权限  1
-    private String updatePrivilege; //更新权限  2
-    private String downloadPrivilege;//下载权限
-    private String deletePrivilege; //删除权限  3
+    private String uploadPrivilege;
+    private String updatePrivilege;
+    private String downloadPrivilege;
+    private String deletePrivilege;
     private String flag;
-    private String remark;//备注
-    private String filedescribtion;//文件说明
-    private String engineer;//上传者  工程 师
+    private String remark;
+    private String filedescribtion;
+    private String engineer;
     private String existFileMessage;
     private String noExsitFileMessage;
     private Integer isExistNum;
@@ -48,22 +48,21 @@ public class DownloadView implements Serializable {
     private Integer fileUrlId;
     private String folderOrFileName;
     private Date upTime;
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 15;
     private int currentPageTotalNum;
     private int preCurrentPage;
     private int aftCurrentPage;
-    private Date startNewestSaveDate; //最新上传开始时间
-    private Date endNewestSaveDate;//最新上传结束时间
+    private Date startNewestSaveDate;
+    private Date endNewestSaveDate;
     private String startNewestSaveDateStr;
     private String endNewestSaveDateStr;
-    private Integer singleFileUpdateNum;//单个文件更新次数
+    private Integer singleFileUpdateNum;
     private String orderNoMessage;
     private String privilegeusers;
-    private String oprighter;//权限人
+    private String oprighter;
     private String folderName;
     private List<String> orderNoS;
     private String saveFolderName;

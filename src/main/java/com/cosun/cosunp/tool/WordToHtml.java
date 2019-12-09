@@ -35,10 +35,7 @@ public class WordToHtml {
 
     private static Logger logger = LogManager.getLogger(WordToHtml.class);
 
-    /**
-     * word07版本(.docx)转html
-     * poi:word07在线预览
-     */
+
     public static void word2007ToHtml(String centerPath, String allPath, MultipartFile file, Integer deptId) throws Exception {
         int index = file.getOriginalFilename().lastIndexOf(".");
         String nameOnly = file.getOriginalFilename().substring(0, index);
@@ -47,9 +44,7 @@ public class WordToHtml {
         try {
             XWPFDocument document = new XWPFDocument(new FileInputStream(allPath));
             XHTMLOptions options = XHTMLOptions.create();
-            // 存放图片的文件夹
             options.setExtractor(new FileImageExtractor(new File(imagePathStr)));
-            // html中图片的路径
             options.URIResolver(new BasicURIResolver("ftp://admin:FL33771@192.168.0.152/" + deptId + "/image"));
             outputStreamWriter = new OutputStreamWriter(new FileOutputStream(centerPath + nameOnly + ".html"), "utf-8");
             XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance();

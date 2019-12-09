@@ -36,7 +36,6 @@ public class Test {
             DateFormat dftdatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             DateFormat dftdate = new SimpleDateFormat("yyyy-MM-dd");
             String dates = "2019-11-29";
-            System.out.println(dftdate.parse(dates));
         } catch (Exception e) {
             e.printStackTrace();
         }

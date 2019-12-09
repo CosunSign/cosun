@@ -16,27 +16,26 @@ public class FinanceImportData implements Serializable {
     private static final long serialVersionUID = -8356527306598925137L;
     private Integer id;
     private String yearMonth;
-    private String empNo;//工号
-    private String name;//姓名
-    private String bigDeptName;//大部门
-    private String deptName;//部门
-    private Double legalHolidWorkHours;//法定节假日加班工时
-    private Double sellActual;//业务实际
-    private Double sellThreshold;//业务阈值
-    private Double sellLevelSalary;//业务等级工资
-    private Double houseSubsidy;//房补
-    private Double hotTempOrOtherAllow;//高温等其它补贴
-    private Double workYearsSalary;//工龄工资
-    private Double sellCommi;//业务提成
-    private Double speciAddDeductCost;//专项附加扣除
-    private Double personIncomTax;//个税
-    private Double basicWorkHours;//基本工时
+    private String empNo;
+    private String name;
+    private String bigDeptName;
+    private String deptName;
+    private Double legalHolidWorkHours;
+    private Double sellActual;
+    private Double sellThreshold;
+    private Double sellLevelSalary;
+    private Double houseSubsidy;
+    private Double hotTempOrOtherAllow;
+    private Double workYearsSalary;
+    private Double sellCommi;
+    private Double speciAddDeductCost;
+    private Double personIncomTax;
+    private Double basicWorkHours;
     private String remark;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

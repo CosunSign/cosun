@@ -68,15 +68,7 @@ public class HttpUtil {
         }
     }
 
-    /**
-     * 默认的http请求执行方法
-     *
-     * @param url    url 路径
-     * @param method 请求的方法 POST/GET
-     * @param map    请求参数集合
-     * @param data   输入的数据 允许为空
-     * @return result
-     */
+
     private static String HttpDefaultExecute(String url, String method, Map<String, String> map, String data) {
         String result = "";
         try {
@@ -88,13 +80,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * @param path   请求路径
-     * @param method 方法
-     * @param data   输入的数据 允许为空
-     * @return
-     * @throws Exception
-     */
+
     private static String defaultConnection(String path, String method, String data) throws Exception {
         if (StringUtils.isBlank(path)) {
             throw new IOException("url can not be null");
@@ -117,14 +103,7 @@ public class HttpUtil {
         return result;
     }
 
-    /**
-     * 拼接参数
-     *
-     * @param url     需要拼接参数的url
-     * @param map     参数
-     * @param charset 编码格式
-     * @return 拼接完成后的url
-     */
+
     public static String setParmas(String url, Map<String, String> map, String charset) throws Exception {
         String result = StringUtils.EMPTY;
         boolean hasParams = false;
@@ -173,15 +152,7 @@ public class HttpUtil {
         return HttpDefaultExecute(url, POST_METHOD, map, data);
     }
 
-    /**
-     * 默认的https执行方法,返回
-     *
-     * @param url    url 路径
-     * @param method 请求的方法 POST/GET
-     * @param map    请求参数集合
-     * @param data   输入的数据 允许为空
-     * @return result
-     */
+
     public static String HttpsDefaultExecute(String url, String method, Map<String, String> map, String data) {
         try {
             url = setParmas(url, map, null);
@@ -202,14 +173,8 @@ public class HttpUtil {
     }
 
 
-    /**
-     * 根据url的协议选择对应的请求方式
-     *
-     * @param url    请求路径
-     * @param method 方法
-     * @return conn
-     * @throws IOException 异常
-     */
+
+
     protected static HttpURLConnection getConnection(URL url, String method) throws IOException {
         HttpURLConnection conn;
         if (StringUtils.equals("https", url.getProtocol())) {
@@ -220,9 +185,9 @@ public class HttpUtil {
         if (conn == null) {
             throw new IOException("connection can not be null");
         }
-        conn.setRequestProperty("Pragma", "no-cache");// 设置不适用缓存
+        conn.setRequestProperty("Pragma", "no-cache");
         conn.setRequestProperty("Cache-Control", "no-cache");
-        conn.setRequestProperty("Connection", "Close");// 不支持Keep-Alive
+        conn.setRequestProperty("Connection", "Close");
         conn.setUseCaches(false);
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -235,13 +200,7 @@ public class HttpUtil {
     }
 
 
-    /**
-     * 根据url
-     *
-     * @param url 请求路径
-     * @return isFile
-     * @throws IOException 异常
-     */
+
     protected static HttpURLConnection getConnection(URL url, boolean isFile) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (conn == null) {
@@ -262,22 +221,12 @@ public class HttpUtil {
 
 
 
-    /**
-     * 文件路径
-     *
-     * @param mediaUrl url 例如 http://su.bdimg.com/static/superplus/img/logo_white_ee663702.png
-     * @return logo_white_ee663702.png
-     */
+
     protected static String getFileName(String mediaUrl) {
         return StringUtils.substringAfterLast(mediaUrl, "/");
     }
 
-    /**
-     * 获取客户端ip
-     *
-     * @param request
-     * @return
-     */
+
     public static String getRemortIP(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
@@ -298,13 +247,7 @@ public class HttpUtil {
         return ip;
     }
 
-    /**
-     * 将网络URL转换成文件流
-     *
-     * @param url    网络URL
-     * @param output 输出流
-     * @return
-     */
+
     public static void toOutput(String url, OutputStream output) throws IOException {
         URL path = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) path.openConnection();

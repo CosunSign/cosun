@@ -28,23 +28,18 @@ public class FtpUtils {
     public static String password = "123";
     public static FTPClient ftpClient = null;
 
-    /**
-     * 初始化ftp服务器
-     */
-    public static void initFtpClient() throws Exception{
+
+    public static void initFtpClient() throws Exception {
         ftpClient = new FTPClient();
         ftpClient.setControlEncoding("GBK");
         FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
         conf.setServerLanguageCode("zh");
         try {
-            System.out.println("connecting...ftp服务器:" + hostname + ":" + port);
             ftpClient.connect(hostname, port);
             ftpClient.login(username, password);
             int replyCode = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(replyCode)) {
-                System.out.println("connect failed...ftp服务器:" + hostname + ":" + port);
             }
-            System.out.println("connect successfu...ftp服务器:" + hostname + ":" + port);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -60,7 +55,7 @@ public class FtpUtils {
     }
 
 
-    public static boolean uploadFile(String pathname, String fileName, InputStream inputStream) throws Exception{
+    public static boolean uploadFile(String pathname, String fileName, InputStream inputStream) throws Exception {
         boolean flag = false;
         try {
         } catch (Exception e) {
@@ -106,8 +101,7 @@ public class FtpUtils {
     }
 
 
-
-    public static boolean changeWorkingDirectory(String directory) throws Exception{
+    public static boolean changeWorkingDirectory(String directory) throws Exception {
         boolean flag = true;
         try {
             flag = ftpClient.changeWorkingDirectory(directory);
@@ -174,7 +168,7 @@ public class FtpUtils {
     }
 
 
-    public static boolean makeDirectory(String dir) throws Exception{
+    public static boolean makeDirectory(String dir) throws Exception {
         boolean flag = true;
         try {
             flag = ftpClient.makeDirectory(dir);
@@ -199,7 +193,7 @@ public class FtpUtils {
      * @param localpath 下载后的文件路径 *
      * @return
      */
-    public static boolean downloadFile(String pathname, String filename, String localpath) throws Exception{
+    public static boolean downloadFile(String pathname, String filename, String localpath) throws Exception {
         boolean flag = false;
         OutputStream os = null;
         try {
@@ -250,7 +244,7 @@ public class FtpUtils {
      * @param filename 要删除的文件名称 *
      * @return
      */
-    public static boolean deleteFile(String pathname, String filename) throws Exception{
+    public static boolean deleteFile(String pathname, String filename) throws Exception {
         boolean flag = false;
         try {
             System.out.println("开始删除文件");
@@ -286,7 +280,7 @@ public class FtpUtils {
      * @param originfilename 待上传文件的名称（绝对地址） *
      * @return
      */
-    public static boolean uploadFile(String pathname, String fileName, String originfilename) throws Exception{
+    public static boolean uploadFile(String pathname, String fileName, String originfilename) throws Exception {
         boolean flag = false;
         InputStream inputStream = null;
         try {
@@ -341,13 +335,13 @@ public class FtpUtils {
         ftpClient.makeDirectory(pathname);
         ftpClient.changeWorkingDirectory(pathname);
         FileInputStream fileInputStream = new FileInputStream(_file);
-        String outputpath = pathname+"/"+fileName;
+        String outputpath = pathname + "/" + fileName;
         OutputStream outputstream = ftpClient.storeFileStream(originfilename);
         while ((n = fileInputStream.read(buffer)) != -1) {
             outputstream.write(buffer);
             trans += n;
             TransforEventListener[] listeners = eventListenerList.getListeners(TransforEventListener.class);
-            for (int i = listeners.length -1; i >= 0  ; i--) {
+            for (int i = listeners.length - 1; i >= 0; i--) {
                 listeners[i].update(trans, size);
             }
         }
@@ -363,7 +357,6 @@ public class FtpUtils {
     public void removeListener(TransforEventListener l) {
         eventListenerList.remove(TransforEventListener.class, l);
     }
-
 
 
 }

@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class FolderUpdateList {
 
-    private String isSameFileUploadFolderName;//代表没有重复
-    List<String[]> urlAfterUpdateForNoRepeat;//如有重复文件夹名，这是系统更改后的文件夹名
+    private String isSameFileUploadFolderName;
+    List<String[]> urlAfterUpdateForNoRepeat;
     List<String> allPath;
 
     public List<String> getAllPath() {

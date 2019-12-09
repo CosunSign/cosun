@@ -14,13 +14,13 @@ public class FinanceSetUpData implements Serializable {
     private static final long serialVersionUID = -4539469468195439633L;
 
     private  Integer id;
-    private Double basicWorkHours;//基本工时
-    private Double norAttendHoursSample;//月正常出勤工时
-    private Double norAttendSalarySample;//月正常工时工资
-    private Double norExtraMutiple;//平常加班工时倍数
-    private Double weekEndWorkMutiple;//周末加班工时倍数
-    private Double legalWorkMutiple;//法定节假时加班工时部数
-    private Double meritScoreSample;//绩效满分标准
+    private Double basicWorkHours;
+    private Double norAttendHoursSample;
+    private Double norAttendSalarySample;
+    private Double norExtraMutiple;
+    private Double weekEndWorkMutiple;
+    private Double legalWorkMutiple;
+    private Double meritScoreSample;
 
 
 

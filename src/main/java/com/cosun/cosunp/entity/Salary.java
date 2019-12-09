@@ -16,17 +16,13 @@ public class Salary implements Serializable {
 
     private String name;
     private String empNo;
-    private String inComDate;//入职日期
+    private String inComDate;
     private Double compreSalary;
     private Double posSalary;
     private Double jobSalary;
     private Double meritSalary;
     private Integer state;
     private String remark;
-
-    //export JAVA_HOME=/usr/java/jdk1.8.0_191
-//    export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-//    export PATH=$JAVA_HOME/bin:$PATH
 
 
     public String getInComDate() {

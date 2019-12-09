@@ -19,12 +19,7 @@ import java.util.Random;
  */
 public class MathUtil {
 
-    /**
-     * 获取随机的数值。
-     *
-     * @param length 长度
-     * @return
-     */
+
     public static String getRandom620(Integer length) {
         String result = "";
         Random rand = new Random();
@@ -46,13 +41,7 @@ public class MathUtil {
         return result;
     }
 
-    /**
-     * MD5 加密
-     *
-     * @param str
-     * @return
-     * @throws Exception
-     */
+
     public static String getMD5(String str) throws Exception {
         MessageDigest messageDigest = null;
         try {
@@ -77,12 +66,12 @@ public class MathUtil {
     public static List<SubEmphours> computeSubEmpHours(List<OutPutWorkData> outPutWorkDataList, List<Employee> employeeList) {
         List<SubEmphours> subEmphoursList = new ArrayList<SubEmphours>();
         SubEmphours seh;
-        double zhengbanWorkHours;//正常出勤工时
-        double usualExtWorkHours;//平时加班工时
-        double weekendWorkHours;//周末加班工时
-        double legalPaidLeaveHours;//法定有薪假
-        double legalDayWorkHours;//法定节假日加班工时
-        double otherpaidLeaveHours;//其它有薪假工时
+        double zhengbanWorkHours;
+        double usualExtWorkHours;
+        double weekendWorkHours;
+        double legalPaidLeaveHours;
+        double legalDayWorkHours;
+        double otherpaidLeaveHours;
         String empNo;
         String yearMonth = "";
         for (Employee ee : employeeList) {
@@ -100,16 +89,13 @@ public class MathUtil {
             for (OutPutWorkData opw : outPutWorkDataList) {
                 if (empNo.equals(opw.getEmpNo())) {
                     yearMonth = opw.getYearMonth();
-                    //平时加班车间人员
                     if (opw.getWorkType() == 0 && opw.getWorkArea() == 0 && opw.getExtHours() != null && !DateUtil.isWeekend(opw.getYearMonthDay())) {
                         usualExtWorkHours += opw.getExtHours();
                     }
-                    //平时加班办公室人员
                     if (opw.getWorkType() == 0 && opw.getExtHours() != null && opw.getWorkArea() == 1) {
                         usualExtWorkHours += opw.getExtHours();
                     }
 
-                    //因公外出所有人员
                     if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("因公外出") && opw.getIsAoffOk().equals("因公外出")) {
                         zhengbanWorkHours += 4;
                     }
@@ -126,7 +112,6 @@ public class MathUtil {
                     }
 
 
-                    //周六加班所有人员
                     if (opw.getWorkType() == 0 && opw.getIsAonOk().equals("周六加班")) {
                         weekendWorkHours += 4;
                     }

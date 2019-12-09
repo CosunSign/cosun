@@ -21,10 +21,9 @@ public class Leave implements Serializable {
     private Double leaveLong;
     private String leaveDescrip;
     private String remark;
-    private Integer type; //0.代表正常请假  //1.因公外出  //2.代表带薪年假  3.丧假 4.婚假 5.产假 6.陪产假
+    private Integer type;
 
 
-    //回显信息
     private String typeStr;
     private String positionName;
     private String deptName;
@@ -44,10 +43,9 @@ public class Leave implements Serializable {
     private List<Integer> names;
     private List<Integer> sexs;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

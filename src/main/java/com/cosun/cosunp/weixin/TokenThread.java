@@ -19,7 +19,6 @@ public class TokenThread implements Runnable {
     public static String jsapi_ticket = "";
 
     public void run() {
-        System.out.println("123456789");
         while (true) {
             try {
                 accessToken = this.getAccessToken();
@@ -47,7 +46,6 @@ public class TokenThread implements Runnable {
     }
 
     /**
-     * 获取access_token
      *
      * @return
      */

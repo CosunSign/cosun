@@ -1,7 +1,6 @@
 package com.cosun.cosunp.entity;
 
 /**
- * 统一返回结果
  * Created by homey on 2019/08/05
  */
 public class ResultVo<T> {

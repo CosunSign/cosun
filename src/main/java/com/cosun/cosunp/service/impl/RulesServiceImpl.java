@@ -58,7 +58,6 @@ public class RulesServiceImpl implements IrulesServ {
     public boolean saveRuleByRuleBean(MultipartFile file, Rules rules) throws Exception {
         int index = file.getOriginalFilename().indexOf(".");
         String filenamecenter = file.getOriginalFilename().substring(0, index);
-        //step1 存文件在文件服务器  取得地址
         String descDir = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/" + file.getOriginalFilename();
         String descFolder = this.finalDirPath + rules.getDeptId() + "/" + filenamecenter + "/";
         if (file.getOriginalFilename().endsWith(".docx") || file.getOriginalFilename().endsWith(".DOCX") ||

@@ -34,7 +34,7 @@ public class FileUtil {
     @Autowired
     private IFileUploadAndDownServ fileUploadAndDownServ;
 
-    public static ArrayList<File> getFiles(String path) throws Exception { //目标集合fileList
+    public static ArrayList<File> getFiles(String path) throws Exception {
         ArrayList<File> fileList = new ArrayList<File>();
         File file = new File(path);
         if (file.isDirectory()) {
@@ -51,15 +51,7 @@ public class FileUtil {
     }
 
 
-    /**
-     * 功能描述:文件覆盖操作
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/11 0011 上午 10:32
-     * @param:
-     * @return:
-     * @describtion
-     */
+
 
     public static void modifyUpdateFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception {
         File targetFile = new File(oldPath);
@@ -84,16 +76,6 @@ public class FileUtil {
 
     }
 
-
-    /**
-     * 功能描述:文件夹覆盖操作
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/16 0011 上午 10:32
-     * @param:
-     * @return:
-     * @describtion
-     */
 
     public static void modifyUpdateFileFolderByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception {
         File targetFile = new File(oldPath);
@@ -143,15 +125,7 @@ public class FileUtil {
     }
 
 
-    /**
-     * 功能描述:根据已存在的路径存文件
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/10 0010 下午 8:39
-     * @param:
-     * @return:
-     * @describtion
-     */
+
 
     public static void uploadFileByUrl(MultipartFile file, UserInfo userInfo, DownloadView view, String oldPath) throws Exception {
         String fileName = file.getOriginalFilename();
@@ -400,14 +374,7 @@ public class FileUtil {
     }
 
 
-    /**
-     * 判断要下载的文件大小
-     *
-     * @param :multipartFile:上传的文件
-     * @param size:                限制大小
-     * @param unit:限制单位（B,K,M,G)
-     * @return boolean:是否大于
-     */
+
     public static boolean checkDownloadFileSize(File file, int size, String unit) throws Exception {
         long len = file.length();
         double fileSize = 0;
@@ -442,11 +409,7 @@ public class FileUtil {
         }
     }
 
-    /**
-     * 删除文件夹
-     *
-     * @param folderPath 文件夹完整绝对路径 ,"Z:/xuyun/save"
-     */
+
     public static void delFolder(String folderPath) throws Exception {
         try {
             delAllFile(folderPath);
@@ -458,11 +421,6 @@ public class FileUtil {
         }
     }
 
-    /**
-     * 删除指定文件夹下所有文件
-     *
-     * @param path 文件夹完整绝对路径 ,"Z:/xuyun/save"
-     */
     public static boolean delAllFile(String path) throws Exception {
         boolean flag = false;
         File file = new File(path);

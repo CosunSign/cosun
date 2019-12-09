@@ -29,32 +29,32 @@ public class Employee implements Serializable {
     private String timeStr;
 
     private Integer id;
-    private String name;//姓名
-    private Integer sex;//性别
+    private String name;
+    private Integer sex;
     private String sexStr;
-    private Integer deptId;//部门编号
-    private String empNo;//工号
-    private Integer positionId;//职位ID
-    private Date incompdate;//入厂时间
-    private Date conExpDate;//合同到期时间
-    private Date birthDay;//出生日期
-    private String ID_NO;//身份证号码
-    private Integer nativePla;//籍guan
-    private String homeAddr;//家庭住址
-    private Date valiPeriodOfID;//身份证有效期
-    private Integer nation;//民族
-    private Integer marriaged;//婚否
-    private String contactPhone;//联系电话
-    private Integer educationLe;//学历
-    private Integer screAgreement;//保密协议
-    private Integer healthCerti;//健康证
-    private Integer sateListAndLeaCerti;//社保清单或离职证明
-    private Integer otherCerti;//其它证件
-    private Integer positionAttrId;//职位
+    private Integer deptId;
+    private String empNo;
+    private Integer positionId;
+    private Date incompdate;
+    private Date conExpDate;
+    private Date birthDay;
+    private String ID_NO;
+    private Integer nativePla;
+    private String homeAddr;
+    private Date valiPeriodOfID;
+    private Integer nation;
+    private Integer marriaged;
+    private String contactPhone;
+    private Integer educationLe;
+    private Integer screAgreement;
+    private Integer healthCerti;
+    private Integer sateListAndLeaCerti;
+    private Integer otherCerti;
+    private Integer positionAttrId;
     private Integer type;
-    private Integer workType;//0生产车间  1 办公区
+    private Integer workType;
     private Integer state;
-    private Integer isQuit;//0在职  1离职
+    private Integer isQuit;
     private String isQuitStr;
 
 
@@ -119,10 +119,9 @@ public class Employee implements Serializable {
 
     private String namea;
     private String passowrd22;
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
     private String sortMethod;
@@ -132,7 +131,6 @@ public class Employee implements Serializable {
 
     private String stateStr;
 
-    //回显外出打卡属性
     private String outLeaveSheet;
     private String clockInDateStr;
     private String clockInDateAMOnStr;

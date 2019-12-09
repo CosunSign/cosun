@@ -31,7 +31,6 @@ public class HighEffiCompressZipTest {
         urls.add("C:\\Users\\Administrator\\Desktop\\test\\000001 (3) - 副本.exe");
          new HighEffiCompressZipTest().createZipFile(urls, result);
         long end = System.currentTimeMillis();
-        System.out.println("用时：" + (end - begin) + " ms");
         System.out.println(new Date());
     }
 
@@ -66,7 +65,7 @@ public class HighEffiCompressZipTest {
 
     private void compressCurrentDirectory(List<String> dir, HighEffiCompressZip scatterSample) throws IOException {
         if (dir == null) {
-            throw new IOException("源路径不能为空！");
+            throw new IOException("");
         }
         String relativePath = "";
         for (String file : dir) {

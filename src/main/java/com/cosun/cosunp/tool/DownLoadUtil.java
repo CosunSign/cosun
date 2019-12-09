@@ -32,9 +32,8 @@ public class DownLoadUtil {
     private static ExecutorService downloadExecutorService = ThreadUtil.buildDownloadBatchThreadPool(DOWNLOAD_THREAD_NUM);
 
 
-    public static void download(String fileUrl, String path) { // 判断存储文件夹是否已经存在或者创建成功
+    public static void download(String fileUrl, String path) {
         if (!createFolderIfNotExists(path)) {
-            logger.error("We can't create folder:{}", getFolder(path));
             return;
         }
         InputStream in = null;
@@ -52,7 +51,6 @@ public class DownLoadUtil {
             }
             out.flush();
         } catch (Exception e) {
-            logger.error("Fail to download: {} by {}", fileUrl, e.getMessage());
         } finally {
             try {
                 if (null != out) {
@@ -109,7 +107,6 @@ public class DownLoadUtil {
         } catch (Exception e) {
             logger.error("{}", e);
         }
-        logger.info("Download resource map is all done");
     }
 
 

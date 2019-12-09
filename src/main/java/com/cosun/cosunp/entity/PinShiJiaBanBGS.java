@@ -19,10 +19,9 @@ public class PinShiJiaBanBGS implements Serializable {
     private String empNo;
     private String remark;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

@@ -50,7 +50,7 @@ public class MKExcelUtil {
         try {
             file.createNewFile();
             fis = new FileInputStream(finalDirPath + fileName);
-            wb = new HSSFWorkbook();//这里使用的Excel2003，要注意Excel版本
+            wb = new HSSFWorkbook();
 
 
             Font font = wb.createFont();
@@ -84,10 +84,9 @@ public class MKExcelUtil {
             font7.setBold(false);
             font7.setFontHeightInPoints((short) 10);
             font7.setColor(HSSFColor.VIOLET.index);
-            //合并的单元格样式
             CellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
@@ -97,12 +96,11 @@ public class MKExcelUtil {
             cellStyle.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle.setFont(font);
-            cellStyle.setWrapText(true);//先设置为自动换行
+            cellStyle.setWrapText(true);
 
-            //合并的单元格样式
             CellStyle cellStyleA = wb.createCellStyle();
-            cellStyleA.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleA.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleA.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleA.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleA.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleA.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleA.setBorderLeft(CellStyle.BORDER_THIN);
@@ -112,11 +110,11 @@ public class MKExcelUtil {
             cellStyleA.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleA.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleA.setFont(font3);
-            cellStyleA.setWrapText(true);//先设置为自动换行
+            cellStyleA.setWrapText(true);
 
             CellStyle cellStyle2 = wb.createCellStyle();
-            cellStyle2.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle2.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle2.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle2.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle2.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle2.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle2.setBorderLeft(CellStyle.BORDER_THIN);
@@ -126,12 +124,12 @@ public class MKExcelUtil {
             cellStyle2.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle2.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle2.setFont(font2);
-            cellStyle2.setWrapText(true);//先设置为自动换行
+            cellStyle2.setWrapText(true);
 
 
             CellStyle cellStyle3 = wb.createCellStyle();
-            cellStyle3.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle3.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle3.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle3.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle3.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle3.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3.setBorderLeft(CellStyle.BORDER_THIN);
@@ -141,12 +139,11 @@ public class MKExcelUtil {
             cellStyle3.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle3.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3.setFont(font4);
-            cellStyle3.setWrapText(true);//先设置为自动换行
+            cellStyle3.setWrapText(true);
 
-            //合并的单元格样式
             CellStyle cellStyleAP = wb.createCellStyle();
-            cellStyleAP.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleAP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleAP.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleAP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleAP.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleAP.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleAP.setBorderLeft(CellStyle.BORDER_THIN);
@@ -155,14 +152,14 @@ public class MKExcelUtil {
             cellStyleAP.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleAP.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleAP.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyleAP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyleAP.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyleAP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyleAP.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyleAP.setFont(font3);
-            cellStyleAP.setWrapText(true);//先设置为自动换行
+            cellStyleAP.setWrapText(true);
 
             CellStyle cellStyle4 = wb.createCellStyle();
-            cellStyle4.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle4.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle4.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle4.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle4.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle4.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4.setBorderLeft(CellStyle.BORDER_THIN);
@@ -172,11 +169,11 @@ public class MKExcelUtil {
             cellStyle4.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle4.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4.setFont(font5);
-            cellStyle4.setWrapText(true);//先设置为自动换行
+            cellStyle4.setWrapText(true);
 
             CellStyle cellStyle5 = wb.createCellStyle();
-            cellStyle5.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle5.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle5.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle5.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle5.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle5.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle5.setBorderLeft(CellStyle.BORDER_THIN);
@@ -186,12 +183,12 @@ public class MKExcelUtil {
             cellStyle5.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle5.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle5.setFont(font6);
-            cellStyle5.setWrapText(true);//先设置为自动换行
+            cellStyle5.setWrapText(true);
 
 
             CellStyle cellStyle6 = wb.createCellStyle();
-            cellStyle6.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle6.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle6.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle6.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle6.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle6.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6.setBorderLeft(CellStyle.BORDER_THIN);
@@ -201,12 +198,12 @@ public class MKExcelUtil {
             cellStyle6.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle6.setTopBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6.setFont(font7);
-            cellStyle6.setWrapText(true);//先设置为自动换行
+            cellStyle6.setWrapText(true);
 
 
             CellStyle cellStyle6P = wb.createCellStyle();
-            cellStyle6P.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle6P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle6P.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle6P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle6P.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle6P.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6P.setBorderLeft(CellStyle.BORDER_THIN);
@@ -215,14 +212,14 @@ public class MKExcelUtil {
             cellStyle6P.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6P.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle6P.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle6P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle6P.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle6P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle6P.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle6P.setFont(font7);
-            cellStyle6P.setWrapText(true);//先设置为自动换行
+            cellStyle6P.setWrapText(true);
 
             CellStyle cellStyleBO = wb.createCellStyle();
-            cellStyleBO.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleBO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleBO.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleBO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleBO.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleBO.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBO.setBorderLeft(CellStyle.BORDER_THIN);
@@ -231,14 +228,14 @@ public class MKExcelUtil {
             cellStyleBO.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBO.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleBO.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyleBO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyleBO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);//前景填充色
+            cellStyleBO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyleBO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);
             cellStyleBO.setFont(font3);
-            cellStyleBO.setWrapText(true);//先设置为自动换行
+            cellStyleBO.setWrapText(true);
 
             CellStyle cellStyleBOP = wb.createCellStyle();
-            cellStyleBOP.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleBOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleBOP.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleBOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleBOP.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleBOP.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBOP.setBorderLeft(CellStyle.BORDER_THIN);
@@ -247,15 +244,15 @@ public class MKExcelUtil {
             cellStyleBOP.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBOP.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleBOP.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyleBOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyleBOP.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyleBOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyleBOP.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyleBOP.setFont(font3);
-            cellStyleBOP.setWrapText(true);//先设置为自动换行
+            cellStyleBOP.setWrapText(true);
 
 
             CellStyle cellStyleBR = wb.createCellStyle();
-            cellStyleBR.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleBR.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleBR.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleBR.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleBR.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleBR.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBR.setBorderLeft(CellStyle.BORDER_THIN);
@@ -264,15 +261,15 @@ public class MKExcelUtil {
             cellStyleBR.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBR.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleBR.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyleBR.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyleBR.setFillForegroundColor(HSSFColor.RED.index);//前景填充色
+            cellStyleBR.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyleBR.setFillForegroundColor(HSSFColor.RED.index);
             cellStyleBR.setFont(font3);
-            cellStyleBR.setWrapText(true);//先设置为自动换行
+            cellStyleBR.setWrapText(true);
 
 
             CellStyle cellStyleBG = wb.createCellStyle();
-            cellStyleBG.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyleBG.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyleBG.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyleBG.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyleBG.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyleBG.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBG.setBorderLeft(CellStyle.BORDER_THIN);
@@ -281,14 +278,14 @@ public class MKExcelUtil {
             cellStyleBG.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyleBG.setBorderTop(CellStyle.BORDER_THIN);
             cellStyleBG.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyleBG.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyleBG.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);//前景填充色
+            cellStyleBG.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyleBG.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
             cellStyleBG.setFont(font3);
-            cellStyleBG.setWrapText(true);//先设置为自动换行
+            cellStyleBG.setWrapText(true);
 
             CellStyle cellStyle4BO = wb.createCellStyle();
-            cellStyle4BO.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle4BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle4BO.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle4BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle4BO.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle4BO.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4BO.setBorderLeft(CellStyle.BORDER_THIN);
@@ -297,14 +294,14 @@ public class MKExcelUtil {
             cellStyle4BO.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4BO.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle4BO.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle4BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle4BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);//前景填充色
+            cellStyle4BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle4BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);
             cellStyle4BO.setFont(font5);
-            cellStyle4BO.setWrapText(true);//先设置为自动换行
+            cellStyle4BO.setWrapText(true);
 
             CellStyle cellStyle4BOP = wb.createCellStyle();
-            cellStyle4BOP.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle4BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle4BOP.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle4BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle4BOP.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle4BOP.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4BOP.setBorderLeft(CellStyle.BORDER_THIN);
@@ -313,15 +310,15 @@ public class MKExcelUtil {
             cellStyle4BOP.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4BOP.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle4BOP.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle4BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle4BOP.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle4BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle4BOP.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle4BOP.setFont(font5);
-            cellStyle4BOP.setWrapText(true);//先设置为自动换行
+            cellStyle4BOP.setWrapText(true);
 
 
             CellStyle cellStyle6BO = wb.createCellStyle();
-            cellStyle6BO.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle6BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle6BO.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle6BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle6BO.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle6BO.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6BO.setBorderLeft(CellStyle.BORDER_THIN);
@@ -330,14 +327,14 @@ public class MKExcelUtil {
             cellStyle6BO.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6BO.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle6BO.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle6BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle6BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);//前景填充色
+            cellStyle6BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle6BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);
             cellStyle6BO.setFont(font7);
-            cellStyle6BO.setWrapText(true);//先设置为自动换行
+            cellStyle6BO.setWrapText(true);
 
             CellStyle cellStyle6BOP = wb.createCellStyle();
-            cellStyle6BOP.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle6BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle6BOP.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle6BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle6BOP.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle6BOP.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6BOP.setBorderLeft(CellStyle.BORDER_THIN);
@@ -346,14 +343,14 @@ public class MKExcelUtil {
             cellStyle6BOP.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle6BOP.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle6BOP.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle6BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle6BOP.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle6BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle6BOP.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle6BOP.setFont(font7);
-            cellStyle6BOP.setWrapText(true);//先设置为自动换行
+            cellStyle6BOP.setWrapText(true);
 
             CellStyle cellStyle3BO = wb.createCellStyle();
-            cellStyle3BO.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle3BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle3BO.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle3BO.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle3BO.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle3BO.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3BO.setBorderLeft(CellStyle.BORDER_THIN);
@@ -362,14 +359,14 @@ public class MKExcelUtil {
             cellStyle3BO.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3BO.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle3BO.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle3BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle3BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);//前景填充色
+            cellStyle3BO.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle3BO.setFillForegroundColor(HSSFColor.LIGHT_ORANGE.index);
             cellStyle3BO.setFont(font4);
-            cellStyle3BO.setWrapText(true);//先设置为自动换行
+            cellStyle3BO.setWrapText(true);
 
             CellStyle cellStyle3BOP = wb.createCellStyle();
-            cellStyle3BOP.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle3BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle3BOP.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle3BOP.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle3BOP.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle3BOP.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3BOP.setBorderLeft(CellStyle.BORDER_THIN);
@@ -378,14 +375,14 @@ public class MKExcelUtil {
             cellStyle3BOP.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3BOP.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle3BOP.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle3BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle3BOP.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle3BOP.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle3BOP.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle3BOP.setFont(font4);
-            cellStyle3BOP.setWrapText(true);//先设置为自动换行
+            cellStyle3BOP.setWrapText(true);
 
             CellStyle cellStyle4P = wb.createCellStyle();
-            cellStyle4P.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle4P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle4P.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle4P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle4P.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle4P.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4P.setBorderLeft(CellStyle.BORDER_THIN);
@@ -394,15 +391,15 @@ public class MKExcelUtil {
             cellStyle4P.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle4P.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle4P.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle4P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle4P.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle4P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle4P.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle4P.setFont(font5);
-            cellStyle4P.setWrapText(true);//先设置为自动换行
+            cellStyle4P.setWrapText(true);
 
 
             CellStyle cellStyle3P = wb.createCellStyle();
-            cellStyle3P.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-            cellStyle3P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+            cellStyle3P.setAlignment(CellStyle.ALIGN_CENTER);
+            cellStyle3P.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
             cellStyle3P.setBorderBottom(CellStyle.BORDER_THIN);
             cellStyle3P.setBottomBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3P.setBorderLeft(CellStyle.BORDER_THIN);
@@ -411,40 +408,40 @@ public class MKExcelUtil {
             cellStyle3P.setRightBorderColor(IndexedColors.BLACK.getIndex());
             cellStyle3P.setBorderTop(CellStyle.BORDER_THIN);
             cellStyle3P.setTopBorderColor(IndexedColors.BLACK.getIndex());
-            cellStyle3P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);//设置前景填充样式
-            cellStyle3P.setFillForegroundColor(HSSFColor.GOLD.index);//前景填充色
+            cellStyle3P.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle3P.setFillForegroundColor(HSSFColor.GOLD.index);
             cellStyle3P.setFont(font4);
-            cellStyle3P.setWrapText(true);//先设置为自动换行
+            cellStyle3P.setWrapText(true);
 
             HSSFSheet hssfSheet = wb.createSheet("sheet1");
             HSSFRow row = hssfSheet.createRow(0);
             HSSFRow row2 = null;
             HSSFRow row3 = null;
-            Cell cell = row.createCell(0);//合并的单元格取第一个cell的位置对象
+            Cell cell = row.createCell(0);
             cell.setCellValue(yearMonth + "月份考勤表");
             cell.setCellStyle(cellStyle2);
 
             row = hssfSheet.createRow(1);
             row.setHeight((short) 400);
-            cell = row.createCell(0);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(0);
             cell.setCellValue("序号");
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(1);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(1);
             cell.setCellValue("姓名");
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(2);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(2);
             cell.setCellValue("部门");
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3);
             cell.setCellValue("星期");
             cell.setCellStyle(cellStyle);
 
             row2 = hssfSheet.createRow(2);
             row2.setHeight((short) 400);
-            cell = row2.createCell(3);//合并的单元格取第一个cell的位置对象
+            cell = row2.createCell(3);
             cell.setCellValue("日期");
             cell.setCellStyle(cellStyle);
 
@@ -485,7 +482,7 @@ public class MKExcelUtil {
                         cell.setCellStyle(cellStyle);
                     }
                 }
-                cell = row2.createCell(3 + i);//合并的单元格取第一个cell的位置对象
+                cell = row2.createCell(3 + i);
                 cell.setCellValue(i);
                 if (isWeekEnd) {
                     if (isFaDing) {
@@ -502,102 +499,102 @@ public class MKExcelUtil {
                 }
             }
 
-            cell = row.createCell(3 + days + 1);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 1);
             cell.setCellValue("正班出勤工时");
             hssfSheet.setColumnWidth(3 + days + 1, 10 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 2);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 2);
             hssfSheet.setColumnWidth(3 + days + 2, 8 * 256);
             cell.setCellValue("平时加班(H)");
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 3);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 3);
             hssfSheet.setColumnWidth(3 + days + 3, 8 * 256);
             cell.setCellValue("周末加班(H)");
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 4);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 4);
             cell.setCellValue("国家有薪假(H)");
             hssfSheet.setColumnWidth(3 + days + 4, 6 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 5);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 5);
             cell.setCellValue("其它有薪假(H)");
             hssfSheet.setColumnWidth(3 + days + 5, 6 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 6);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 6);
             cell.setCellValue("事假(H)");
             hssfSheet.setColumnWidth(3 + days + 6, 6 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 7);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 7);
             cell.setCellValue("病假(H)");
             hssfSheet.setColumnWidth(3 + days + 7, 6 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 8);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 8);
             cell.setCellValue("其它补贴(出差/夜班)");
             hssfSheet.setColumnWidth(3 + days + 8, 6 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 9);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 9);
             cell.setCellValue("全勤奖");
             hssfSheet.setColumnWidth(3 + days + 9, 10 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 10);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 10);
             cell.setCellValue("伙食费");
             hssfSheet.setColumnWidth(3 + days + 10, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 11);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 11);
             cell.setCellValue("房租/水电费");
             hssfSheet.setColumnWidth(3 + days + 11, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 12);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 12);
             cell.setCellValue("扣代付养老险");
             hssfSheet.setColumnWidth(3 + days + 12, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 13);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 13);
             cell.setCellValue("扣代付医疗险");
             hssfSheet.setColumnWidth(3 + days + 13, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 14);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 14);
             cell.setCellValue("扣代付失业险");
             hssfSheet.setColumnWidth(3 + days + 14, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 15);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 15);
             cell.setCellValue("扣代付公积金");
             hssfSheet.setColumnWidth(3 + days + 15, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 16);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 16);
             cell.setCellValue("代扣家属旅游费");
             hssfSheet.setColumnWidth(3 + days + 16, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 17);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 17);
             cell.setCellValue("工作失误");
             hssfSheet.setColumnWidth(3 + days + 17, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 18);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 18);
             cell.setCellValue("绩效分");
             hssfSheet.setColumnWidth(3 + days + 18, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 19);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 19);
             cell.setCellValue("备注");
             hssfSheet.setColumnWidth(3 + days + 19, 8 * 256);
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(3 + days + 20);//合并的单元格取第一个cell的位置对象
+            cell = row.createCell(3 + days + 20);
             cell.setCellValue("请确定无误后签字");
             hssfSheet.setColumnWidth(3 + days + 20, 8 * 256);
             cell.setCellStyle(cellStyle);

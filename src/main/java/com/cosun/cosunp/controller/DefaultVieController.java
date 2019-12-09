@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * @author:homey Wong
  * @date:2018/12/28 0028 下午 4:12
- * @Description: 黑认路径为index.html
+ * @Description:
  * @Modified By:
  * @Modified-date:
  */

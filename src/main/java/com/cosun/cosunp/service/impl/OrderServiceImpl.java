@@ -71,7 +71,6 @@ public class OrderServiceImpl implements IOrderServ {
 
     public void deleteAllOrderByHeadId(Integer headId) throws Exception {
         OrderHead orderHead = orderMapper.getOrderHeadByHeadId2(headId);
-        //E:\ftpserver\order\homey Wong\COSUN20190905HW06
         FileUtil.delFolder(finalDirPath+"order/"+orderHead.getEngName()+"/"+orderHead.getOrderNo()+"/");
         orderMapper.deleAllOrderItemByHeadId(headId);
         orderMapper.deleteAllOrderHeadById(headId);
@@ -116,7 +115,6 @@ public class OrderServiceImpl implements IOrderServ {
 
         String urlName;
         String fileName;
-        //存储订单所带的附件
         if (files.length > 0) {
             OrderItemAppend oia;
             for (MultipartFile file : files) {
@@ -171,7 +169,6 @@ public class OrderServiceImpl implements IOrderServ {
 
         String urlName;
         String fileName;
-        //存储订单所带的附件
         if (files.length > 0) {
             OrderItemAppend oia;
             for (MultipartFile file : files) {
@@ -216,15 +213,15 @@ public class OrderServiceImpl implements IOrderServ {
                 }
                 fis = new FileInputStream(finalDirPath + "module/单品订单打印模板.xls");
                 POIFSFileSystem ps = new POIFSFileSystem(fis);
-                wb = new HSSFWorkbook(ps);//这里使用的Excel2003，要注意Excel版本
+                wb = new HSSFWorkbook(ps);
                 HSSFSheet hssfSheet = wb.getSheetAt(0);
 
                 HSSFRow row = hssfSheet.getRow(0);
-                Cell cell = row.getCell(0);//合并的单元格取第一个cell的位置对象
+                Cell cell = row.getCell(0);
                 cell.setCellValue(orderHeadList.get(0).getProductTotalName()+"制作需求表");
 
                 row = hssfSheet.getRow(1);
-                cell = row.getCell(0);//合并的单元格取第一个cell的位置对象
+                cell = row.getCell(0);
                 cell.setCellValue(orderHeadList.get(0).getOrderTimeStr());
 
                 row = hssfSheet.getRow(2);
@@ -306,7 +303,7 @@ public class OrderServiceImpl implements IOrderServ {
                 }
                 fis = new FileInputStream(finalDirPath + "module/多项订单打印摸板.xls");
                 POIFSFileSystem ps = new POIFSFileSystem(fis);
-                wb = new HSSFWorkbook(ps);//这里使用的Excel2003，要注意Excel版本
+                wb = new HSSFWorkbook(ps);
 
                 CellStyle style = wb.createCellStyle();
                 style.setBorderBottom(CellStyle.BORDER_THIN);
@@ -317,12 +314,11 @@ public class OrderServiceImpl implements IOrderServ {
                 style.setRightBorderColor(IndexedColors.BLACK.getIndex());
                 style.setBorderTop(CellStyle.BORDER_THIN);
                 style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-                style.setWrapText(true);//先设置为自动换行
+                style.setWrapText(true);
 
-                //合并的单元格样式
                 CellStyle cellStyle = wb.createCellStyle();
-                cellStyle.setAlignment(CellStyle.ALIGN_CENTER);//左右居中
-                cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//上下居中
+                cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+                cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
                 cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
                 cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
                 cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
@@ -331,7 +327,7 @@ public class OrderServiceImpl implements IOrderServ {
                 cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
                 cellStyle.setBorderTop(CellStyle.BORDER_THIN);
                 cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-                cellStyle.setWrapText(true);//先设置为自动换行
+                cellStyle.setWrapText(true);
 
                 HSSFSheet hssfSheet = wb.getSheetAt(0);
 
@@ -518,7 +514,6 @@ public class OrderServiceImpl implements IOrderServ {
                 wb.write(fos);
 
             } catch (Exception e) {
-                logger.info("复制excel表格异常1：" + e.getMessage());
                 e.printStackTrace();
             } finally {
                 try {
@@ -529,7 +524,6 @@ public class OrderServiceImpl implements IOrderServ {
                         fos.close();
                     }
                 } catch (IOException e) {
-                    logger.info("复制excel表格异常2：" + e.getMessage());
                 }
             }
 
@@ -548,7 +542,6 @@ public class OrderServiceImpl implements IOrderServ {
         OrderHead orderHead = orderMapper.getOldHeadByOrderNo2(orderNo);
         String urlName;
         String fileName;
-        //存储订单所带的附件
         if (files.length > 0) {
             OrderItemAppend oia;
             for (MultipartFile file : files) {
@@ -608,7 +601,7 @@ public class OrderServiceImpl implements IOrderServ {
     }
 
     public String saveProjectData(OrderHead orderHead, List<OrderItem> ois, UserInfo userInfo, MultipartFile[] files) throws Exception {
-        orderHead.setSingleOrProject(1);//项目类
+        orderHead.setSingleOrProject(1);
         orderHead.setSalorNo(userInfo.getEmpNo());
         orderHead.setEngName(userInfo.getEngName());
         String orderNo;

@@ -9,7 +9,6 @@ import java.util.zip.GZIPOutputStream;
 /**
  * @author:homey Wong
  * @date:2019/2/15 0015 下午 2:26
- * @Description:压缩文件多线程工具
  * @Modified By:
  * @Modified-date:
  */
@@ -53,7 +52,6 @@ public class GZipThreadUtil extends Thread {
     private boolean isEndOfThread() {
         if (filesCompressed.get() == IOUtil
                 .getNumberOfFilesToBeCompressed()) {
-            System.out.println("Thread ending");
             return true;
         }
         return false;

@@ -29,7 +29,7 @@ public class ZTest implements Runnable {
 
     public static void main(String args[]) {
         try {
-            ComThread.InitMTA();//ComThread.InitMTA();
+            ComThread.InitMTA();
             String progId = "zkemkeeper.ZKEM.1";
             Dispatch zkem = new ActiveXComponent(progId);
             SensorEvents events = new SensorEvents();
@@ -38,7 +38,6 @@ public class ZTest implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String s = br.readLine();
             boolean b = Dispatch.call(zkem, "Connect_Net", new Variant(s), new Variant(4370)).getBoolean();
-            System.out.println("机器链接：" + b);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,7 +61,6 @@ public class ZTest implements Runnable {
             SensorEvents events = new SensorEvents();
             new DispatchEvents(zkem, events, progId);
             boolean b = Dispatch.call(zkem, "Connect_Net", new Variant("192.168.2.11"), new Variant(4370)).getBoolean();
-            System.out.println("链接：" + b);
             Variant dispatch = Dispatch.call(zkem, "RegEvent", new Variant(1l), new Variant(1));
             STA sta = new STA();
             sta.doMessagePump();

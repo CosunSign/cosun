@@ -16,16 +16,16 @@ public class FilemanDownRecord implements Serializable {
     private static final long serialVersionUID = 8947970944236184109L;
 
     private Integer id;
-    private String fileName;//文件名
-    private String ipAddr;//IP地址
-    private String ipName;//IP名
-    private Date downDate;//下载日期
-    private String downDateStr;//下载日期
-    private Integer downUid;//下载登录者
-    private String downFullName;//下载登录全名
-    private Integer fileurlid;//关联URL ID
-    private String orderNum;//订单编号
-    private String projectName;//项目编码
+    private String fileName;
+    private String ipAddr;
+    private String ipName;
+    private Date downDate;
+    private String downDateStr;
+    private Integer downUid;
+    private String downFullName;
+    private Integer fileurlid;
+    private String orderNum;
+    private String projectName;
 
     public Integer getId() {
         return id;

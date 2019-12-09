@@ -41,7 +41,6 @@ public class SensorEvents {
     }
 
     public void OnAttTransactionEx(Variant[] arge) {
-            //System.out.println("验证通过事件：OnAttTransactionEx===》" +"考勤编号:"+arge[0]+"---打卡时间:"+"考勤时间:"+arge[4]+"-"+arge[5]+"-"+arge[6]+" "+arge[7]+":"+arge[8]+":"+(Integer.parseInt(""+arge[8]) < 10?"0"+arge[8]:arge[8]));
     }
 
     public void OnEnrollFingerEx(Variant[] arge) {

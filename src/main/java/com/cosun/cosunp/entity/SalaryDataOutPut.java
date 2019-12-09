@@ -11,62 +11,61 @@ import java.io.Serializable;
  */
 public class SalaryDataOutPut implements Serializable {
     private static final long serialVersionUID = -6881009009574748691L;
-    private Integer id;//序号
-    private String yearMonth;//年月
-    private String bigDeptName;//大部门
-    private String incomDate;//入厂日期
-    private String deptName;//部门
-    private String positionName;//职务
-    private String positionAttrName;//职位
-    private String empNo;//工号
-    private String name;//姓名
-    private String inCompDate;//入职时间
-    private Double basickWorkHours;//基本工时
-    private Double norAttenHours;//正常出勤工时
-    private Double norAttendSalary;//正常出勤工资;
-    private Double chinaPailLeavHours;//法定有薪假工时
-    private Double chinaPaidLeavSalary;//法定有薪假工资
-    private Double otherPaidLeavHours;//其它有薪假工时
-    private Double otherPaidLeavSalary;//其它有薪假工资
-    private Double basicSalarySubTotal;//基本工资小计
-    private Double usualExtraHours;//平时加班工时
-    private Double usralExtraSalary;//平时加班费;
-    private Double weekendWorkHours;//周末加班工时
-    private Double weekendWorkSalary;//周末加班费
-    private Double chinaHoliWorkHours;//法定假日加班工时
-    private Double chinaHoliWorkSalary;//法定假日加班费
-    private Double compressSalary;//综合技能
-    private Double jobSalary;//岗位工资
-    private Double positionSalary;//职务工资
-    private Double meritSalary;//绩效奖金
-    private Double meritScore;//绩效分数
-    private Double subbonusTotal;//奖金/技能小计
-    private Double salorLevelSalary;//业务等级工资
-    private Double salrActuGetSalary;//业务等级实得
-    private Double houseOrTELSubsidy;//房补/话补
-    private Double hotTempOrOtherAllow;//高温补贴及其它
-    private Double fullWorkReword;//全勤奖 importdata
-    private Double workYearsSalary;//工龄工资 importdata
-    private Double sellCommi;//业务提成 importdata
-    private Double compreSalary;    //综合工资
-    private Double buckFoodCost;//扣代付餐费
-    private Double buckWaterEleCost;//扣代付水电
-    private Double buckOldAgeInsurCost;//扣代付养老险
-    private Double buckMedicInsurCost;//扣代付医疗险
-    private Double buckUnEmployCost; //扣代付失业险
-    private Double buckAccumCost;//扣代付公积金
-    private Double otherBuckCost;//其他扣款
-    private Double sixDeducCost;//专项附加扣除
-    private Double personIncomTaxCost;//个税
-    private Double netPaySalary;//实发工资
+    private Integer id;
+    private String yearMonth;
+    private String bigDeptName;
+    private String incomDate;
+    private String deptName;
+    private String positionName;
+    private String positionAttrName;
+    private String empNo;
+    private String name;
+    private String inCompDate;
+    private Double basickWorkHours;
+    private Double norAttenHours;
+    private Double norAttendSalary;
+    private Double chinaPailLeavHours;
+    private Double chinaPaidLeavSalary;
+    private Double otherPaidLeavHours;
+    private Double otherPaidLeavSalary;
+    private Double basicSalarySubTotal;
+    private Double usualExtraHours;
+    private Double usralExtraSalary;
+    private Double weekendWorkHours;
+    private Double weekendWorkSalary;
+    private Double chinaHoliWorkHours;
+    private Double chinaHoliWorkSalary;
+    private Double compressSalary;
+    private Double jobSalary;
+    private Double positionSalary;
+    private Double meritSalary;
+    private Double meritScore;
+    private Double subbonusTotal;
+    private Double salorLevelSalary;
+    private Double salrActuGetSalary;
+    private Double houseOrTELSubsidy;
+    private Double hotTempOrOtherAllow;
+    private Double fullWorkReword;
+    private Double workYearsSalary;
+    private Double sellCommi;
+    private Double compreSalary;
+    private Double buckFoodCost;
+    private Double buckWaterEleCost;
+    private Double buckOldAgeInsurCost;
+    private Double buckMedicInsurCost;
+    private Double buckUnEmployCost;
+    private Double buckAccumCost;
+    private Double otherBuckCost;
+    private Double sixDeducCost;
+    private Double personIncomTaxCost;
+    private Double netPaySalary;
 
     private String errorMessage;
     private Integer type;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

@@ -135,7 +135,6 @@ public class ModifyPageServlet extends HttpServlet {
 
             resp.sendRedirect("tomodifypage?currentPage=1&flag=" + view.getFlag());
         } catch (Exception e) {
-            System.out.println("文件上传发生错误！");
             e.printStackTrace();
         }
 

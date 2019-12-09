@@ -478,7 +478,6 @@ public class RulesController {
                 response.getOutputStream().write(data);
                 input.close();
             } catch (Exception e) {
-                logger.error("pdf文件处理异常：" + e.getMessage());
             }
         } else {
             return;
@@ -504,7 +503,6 @@ public class RulesController {
                 response.getOutputStream().write(data);
             }
         } catch (Exception e) {
-            System.out.println("pdf文件处理异常：" + e);
         } finally {
             try {
                 if (input != null) {
@@ -533,7 +531,6 @@ public class RulesController {
                 response.getOutputStream().write(data);
             }
         } catch (Exception e) {
-            System.out.println("pdf文件处理异常：" + e);
         } finally {
             try {
                 if (input != null) {

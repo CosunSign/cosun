@@ -1980,7 +1980,6 @@ public class FileUploadAndDownController {
     public void saveFolderMessage(DownloadView view, HttpSession session) throws Exception {
         try {
             Runtime.getRuntime().exec("chmod 755 -R /opt/ftpserver");
-            logger.debug("没发生错误");
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             view.setFilePathName(view.getFilePathName().replace("*", ","));
             view.setFilePathNames(view.getFilePathNames().replace("*", ","));
@@ -2050,17 +2049,14 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
         if (isMultipart) {
-            logger.info("上传文件start。");
             try {
                 view = fileUploadAndDownServ.uploadFileByMappedByteBuffer1(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("文件上传失败。{}", param.toString());
                 throw e;
             }
-            logger.info("上传文件end。");
         }
-        return ResponseEntity.ok().body("上传成功。");
+        return ResponseEntity.ok().body("成功。");
     }
 
     @RequestMapping(value = "/modifyfolder1", method = RequestMethod.POST)
@@ -2070,17 +2066,14 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
         if (isMultipart) {
-            logger.info("更新文件start。");
             try {
                 fileUploadAndDownServ.modifyFolderByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("文件更新失败。{}", param.toString());
                 throw e;
             }
-            logger.info("更新文件end。");
         }
-        return ResponseEntity.ok().body("更新成功。");
+        return ResponseEntity.ok().body("成功。");
     }
 
 
@@ -2091,17 +2084,14 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
         if (isMultipart) {
-            logger.info("更新文件start。");
             try {
                 fileUploadAndDownServ.modifyFileByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("文件更新失败。{}", param.toString());
                 throw e;
             }
-            logger.info("更新文件end。");
         }
-        return ResponseEntity.ok().body("更新成功。");
+        return ResponseEntity.ok().body("成功。");
     }
 
 
@@ -2112,15 +2102,12 @@ public class FileUploadAndDownController {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         DownloadView view = new DownloadView();
         if (isMultipart) {
-            logger.info("上传文件start。");
             try {
                 view = fileUploadAndDownServ.uploadFileByMappedByteBuffer(param, userInfo);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("文件上传失败。{}", param.toString());
                 throw e;
             }
-            logger.info("上传文件end。");
         }
         return ResponseEntity.ok().body("上传成功。");
     }
@@ -2216,7 +2203,6 @@ public class FileUploadAndDownController {
             }
         } catch (
                 Exception e) {
-            System.out.println("pdf文件处理异常：" + e);
             e.printStackTrace();
         } finally {
             try {

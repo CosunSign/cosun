@@ -9,7 +9,7 @@ public class FilemanRight implements Serializable {
     private static final long serialVersionUID = 4824598905346901899L;
     private Integer id;
     private Integer fileInfoId;
-    private Integer fileUrlId;//关联URL表
+    private Integer fileUrlId;
     private Integer uId;
     private String userName;
     private String fileName;
@@ -17,7 +17,7 @@ public class FilemanRight implements Serializable {
     private String updateUser;
     private String createTime;
     private Date updateTime;
-    private String opRight;//op_right是对文件的操作权限的描述
+    private String opRight;
 
     public Integer getFileUrlId() {
         return fileUrlId;

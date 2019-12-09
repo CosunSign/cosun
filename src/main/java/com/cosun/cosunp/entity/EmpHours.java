@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * @author:homey Wong
- * @date:2019/6/24 0024 上午 11:24
+ * @date:2019/6/24  上午 11:24
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -14,37 +14,36 @@ public class EmpHours implements Serializable {
 
     private static final long serialVersionUID = -867843563737764233L;
     private Integer id;
-    private String name; //姓名
-    private String empNo; //工号
-    private String deptName;//部门
-    private Double zhengbanHours;//正班出勤工时
-    private Double usualExtHours;//平时加班
-    private Double workendHours;//周末加班
-    private Double chinaPaidLeave;//国家有薪假
-    private Double otherPaidLeave;//其它有薪假
-    private Double leaveOfAbsense;//事假
-    private Double sickLeave;//病假
-    private Double otherAllo;//其它补贴
-    private Double fullWorkReword;//全勤奖
-    private Double foodExpense;//伙食费
-    private Double roomOrWaterEleExpense;//房租及水电费
-    private Double oldAgeINsuran;//养老险
-    private Double medicalInsuran;//医疗险
-    private Double unEmployeeInsur;//失业险
-    private Double accumulaFund;//公积金
-    private Double errorInWork;//工作失误
-    private Double sixDeductions;//6个代扣项
-    private Double meritScore;//绩效分
+    private String name;
+    private String empNo;
+    private String deptName;
+    private Double zhengbanHours;
+    private Double usualExtHours;
+    private Double workendHours;
+    private Double chinaPaidLeave;
+    private Double otherPaidLeave;
+    private Double leaveOfAbsense;
+    private Double sickLeave;
+    private Double otherAllo;
+    private Double fullWorkReword;
+    private Double foodExpense;
+    private Double roomOrWaterEleExpense;
+    private Double oldAgeINsuran;
+    private Double medicalInsuran;
+    private Double unEmployeeInsur;
+    private Double accumulaFund;
+    private Double errorInWork;
+    private Double sixDeductions;
+    private Double meritScore;
     private String yearMonth;
     private String yearMonthStr;
     private String remark;
 
     private Integer type;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

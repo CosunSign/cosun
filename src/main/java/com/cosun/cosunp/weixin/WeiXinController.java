@@ -91,7 +91,6 @@ public class WeiXinController {
             System.out.println("accessToken:" + jedis.get(Constants.accessToken) + "\njsapi_ticket:" + jedis.get(Constants.jsapi_ticket) + "\n时间戳：" + timestamp + "\n随机字符串：" + noncestr);
             String str = "jsapi_ticket=" + jedis.get(Constants.jsapi_ticket) + "&noncestr=" + noncestr + "&timestamp=" + timestamp + "&url=" + url;
             String signature = CheckUtil.getSha1(str);
-            System.out.println("参数：" + str + "\n签名：" + signature);
             List l_data = new ArrayList();
             l_data.add(timestamp);
             l_data.add(noncestr);
@@ -241,7 +240,6 @@ public class WeiXinController {
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                //mav.addObject("flag", "您上午已经摄过像,不能重复摄像!");
                 mav = new ModelAndView("failed");
                 return mav;
             }
@@ -251,7 +249,6 @@ public class WeiXinController {
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                //mav.addObject("flag", "您下午已经摄过像,不能重复摄像!");
                 mav = new ModelAndView("failed");
                 return mav;
             }
@@ -261,7 +258,6 @@ public class WeiXinController {
             if (isPhotoInAlready == 0) {
                 personServ.saveOrUpdateOutClockInDataUrl(outClockIn);
             } else {
-                //mav.addObject("flag", "您晚上已经摄过像,不能重复摄像!");
                 mav = new ModelAndView("failed");
                 return mav;
             }

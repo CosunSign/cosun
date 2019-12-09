@@ -101,7 +101,7 @@ public class ZkemSDKUtils {
     }
 
     public static List<ZhongKongBean> getGeneralLogData(String beforDay, Integer num) {
-        Variant dwMachineNumber = new Variant(1, true);//机器号
+        Variant dwMachineNumber = new Variant(1, true);
         Variant dwEnrollNumber = new Variant("", true);
         Variant dwVerifyMode = new Variant(0, true);
         Variant dwInOutMode = new Variant(0, true);

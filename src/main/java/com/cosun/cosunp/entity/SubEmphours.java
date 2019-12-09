@@ -12,18 +12,18 @@ import java.io.Serializable;
 public class SubEmphours implements Serializable {
 
     private static final long serialVersionUID = 6097579885742254768L;
-    private Integer id; //序号
-    private String month; //月份
-    private String name; //姓名
-    private String empNo; //工号
-    private String deptName; //部门
-    private String positionName;//职位
-    private double zhengbanWorkHours;//正常出勤工时
-    private double usualExtWorkHoursl;//平时加班工时
-    private double weekendWorkHours;//周末加班工时
-    private double legalPaidLeaveHours;//法定有薪假
-    private double legalDayWorkHours;//法定节假日加班工时
-    private double otherpaidLeaveHours;//其它有薪假工时
+    private Integer id;
+    private String month;
+    private String name;
+    private String empNo;
+    private String deptName;
+    private String positionName;
+    private double zhengbanWorkHours;
+    private double usualExtWorkHoursl;
+    private double weekendWorkHours;
+    private double legalPaidLeaveHours;
+    private double legalDayWorkHours;
+    private double otherpaidLeaveHours;
 
     public Integer getId() {
         return id;

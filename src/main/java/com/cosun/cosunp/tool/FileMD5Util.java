@@ -16,8 +16,6 @@ import java.security.MessageDigest;
 import java.security.PrivilegedAction;
 
 /**
- * 文件md5值
- * Created by 超文 on 2016/10/10.
  * version 1.0
  */
 public class FileMD5Util {
@@ -46,7 +44,6 @@ public class FileMD5Util {
                     in.getChannel().close();
                     in.close();
                 } catch (IOException e) {
-                    logger.error("get file md5 error!!!", e);
                     throw e;
                 }
             }
@@ -75,10 +72,8 @@ public class FileMD5Util {
                                 new Object[0]);
                         cleaner.clean();
                     } catch (Exception e) {
-                        logger.error("clean MappedByteBuffer error!!!", e);
                         e.printStackTrace();
                     }
-                    logger.info("clean MappedByteBuffer completed!!!");
                     return null;
                 }
             });

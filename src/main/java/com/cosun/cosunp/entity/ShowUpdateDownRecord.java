@@ -16,22 +16,22 @@ public class ShowUpdateDownRecord implements Serializable {
     private static final long serialVersionUID = -7918546692539525609L;
 
     private Integer id;
-    private String fileName;//文件名
-    private String ipAddr;//IP地址
-    private String ipName;//IP名
-    private Date downDate;//下载日期
-    private String downDateStr;//下载日期
-    private Integer downUid;//下载登录者
-    private String downFullName;//下载登录全名
-    private Integer fileurlid;//关联URL ID
-    private String orderNum;//订单编号
-    private String projectName;//项目编码
-    private Integer updateUid;//更新UID
-    private String updateFullName;//更新全名
-    private String updateReason;//更新理油
-    private Date updateDate;//更新时间
-    private String updateDateStr;//更新时间
-    private Integer typeK;//0代表更新   1代表下载
+    private String fileName;
+    private String ipAddr;
+    private String ipName;
+    private Date downDate;
+    private String downDateStr;
+    private Integer downUid;
+    private String downFullName;
+    private Integer fileurlid;
+    private String orderNum;
+    private String projectName;
+    private Integer updateUid;
+    private String updateFullName;
+    private String updateReason;
+    private Date updateDate;
+    private String updateDateStr;
+    private Integer typeK;
 
     public Integer getId() {
         return id;

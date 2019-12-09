@@ -18,13 +18,13 @@ public class KQBean implements Serializable {
     private Integer id;
     private Integer deptId;
     private String empNo;
-    private String yearMonth; //年月
-    private String dateStr; //打卡日期
-    private Integer week; //礼拜几
-    private String timeStr; //原始打卡时间串
-    private Integer clockResult;//系统自动判定结果
-    private Double extWorkHours;//加班工时
-    private String remark;//说明
+    private String yearMonth;
+    private String dateStr;
+    private Integer week;
+    private String timeStr;
+    private Integer clockResult;
+    private Double extWorkHours;
+    private String remark;
     private Integer clockResultByRenShi;
     private String havePinShi;
 

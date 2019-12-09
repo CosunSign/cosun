@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author:homey Wong
- * @date:2019/5/9 0009 上午 9:44
+ * @date:2019/5/9  上午 9:44
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -16,14 +16,13 @@ public class Dept implements Serializable {
 
     private Integer id;
     private List<Integer> ids;
-    private String deptname;//部门名称
-    private String deptNo;//部门编号
-    private String remark;//备注
+    private String deptname;
+    private String deptNo;
+    private String remark;
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

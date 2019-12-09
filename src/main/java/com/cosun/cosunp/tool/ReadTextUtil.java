@@ -16,11 +16,7 @@ import java.util.List;
 public class ReadTextUtil {
 
 
-    /**
-     * 读取TXT文本内容
-     *
-     * @param
-     */
+
     public List<Extension> readTxtUtil(String configpath) throws Exception {
         List<Extension> list = new ArrayList<Extension>();
         InputStream is = null;
@@ -58,7 +54,6 @@ public class ReadTextUtil {
             }
             br.close();
         } catch (Exception e) {
-            System.out.println("文件读取错误!");
             throw e;
         }
         return list;

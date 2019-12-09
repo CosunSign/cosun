@@ -60,10 +60,7 @@ public class WeiXinServlet extends HttpServlet {
         try {
             outPW = response.getWriter();
             if (CheckUtil.checkSignature(signature, timestamp, nonce, tooken)) {
-                System.out.println("签名成功!");
                 outPW.write(echostr);
-            } else {
-                System.out.println("签名失败");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,8 +79,6 @@ public class WeiXinServlet extends HttpServlet {
         System.out.println(jedis.get(Constants.accessToken));
         System.out.println(jedis.get(Constants.jsapi_ticket));
         try {
-            // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd5109277d8902606&redirect_uri=http://homey.nat100.top/weixin/getMobileLocate&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
-
             PrintWriter out = response.getWriter();
             Map<String, String> map = WeiXinUtil.xmlToMap(request);
             String fromUserName = map.get("FromUserName");

@@ -344,15 +344,7 @@ public class StringUtil {
         }
     }
 
-    /**
-     * 功能描述:业务员名单暂放JAVA里，日后再建员工数据库
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/16 0016 下午 2:09
-     * @param:
-     * @return:
-     * @describtion
-     */
+
     public static List<String> getAllSalors() {
         List<String> salors = new ArrayList<String>();
         salors.add("邹时雨");
@@ -399,10 +391,7 @@ public class StringUtil {
         return i;
     }
 
-    /**
-     * @author:homey Wong
-     * @Date: 截取字符串以，号开始截取
-     */
+
     public static String afterString(String string, String str) {
         int i = 0;
         if (string.indexOf(str) != -1) {
@@ -413,15 +402,7 @@ public class StringUtil {
         return string;
     }
 
-    /**
-     * 功能描述:获取字符串，以某府号开始切割
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/10 0010 下午 2:38
-     * @param:
-     * @return:
-     * @describtion
-     */
+
 
     public static String subMyString(String str, String a) {
         int index = str.lastIndexOf(a);
@@ -452,12 +433,7 @@ public class StringUtil {
 
     }
 
-    /**
-     * 利用正则表达式判断字符串是否是数字
-     *
-     * @param str
-     * @return
-     */
+
     public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
@@ -467,7 +443,6 @@ public class StringUtil {
         return true;
     }
 
-    //查找字符串出现某字符的个数
     public static int searchStrNum(String str, String strRes) {
         int n = 0;
         int index = 0;

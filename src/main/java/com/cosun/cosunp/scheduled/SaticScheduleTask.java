@@ -30,8 +30,6 @@ public class SaticScheduleTask {
     @Scheduled(cron = "0 0 23 * * ?")
     private void configureTasks() {
         try {
-            System.err.println("执行静态定时任务时间: " + LocalDateTime.now());
-            System.err.println(finalDirPath);
             FileUtil.delFolder(finalDirPath + "linshi");
         } catch (Exception e) {
             e.printStackTrace();

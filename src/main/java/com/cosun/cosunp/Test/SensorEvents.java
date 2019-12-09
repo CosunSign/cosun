@@ -1,9 +1,7 @@
 package com.cosun.cosunp.Test;
 
 import com.jacob.com.Variant;
-/**
- * Created by lijm on 2016/3/23.
- */
+
 public class SensorEvents {
 
 

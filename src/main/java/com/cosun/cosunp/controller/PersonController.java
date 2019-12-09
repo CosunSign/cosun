@@ -341,89 +341,6 @@ public class PersonController {
     @RequestMapping(value = "/queryAttendance", method = RequestMethod.POST)
     public String queryAttendance(@RequestBody String params, HttpServletRequest request, HttpServletResponse
             response) {
-//        String returnString = null;
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        List<Map<String, Object>> attendanceList = new ArrayList<Map<String, Object>>();
-//        int realCount = 0;
-//        try {
-//            //是否连接考勤机
-//            boolean connFlag = ZkemSDKUtils.connect(zkIP01, zkPort);
-//            if (connFlag) {
-//                boolean flag = ZkemSDKUtils.readGeneralLogData();
-//                List<Map<String, Object>> userList = ZkemSDKUtils.getUserInfo();//获取所有用户
-//                List<ZhongKongBean> strList = ZkemSDKUtils.getGeneralLogData();//获取所有数据
-//                Map<String, Object> mapAll = new HashMap<String, Object>();
-//                for (int i = 0; i < userList.size(); i++) {
-//                    Map<String, Object> userMap = userList.get(i);
-//                    // 用户真实数据
-//                    mapAll = new HashMap<String, Object>();
-//                    mapAll.put("EnrollNumber", MapUtils.getString(userMap, "EnrollNumber"));
-//                    mapAll.put("Name", MapUtils.getString(userMap, "Name"));
-//                    mapAll.put("Privilege", MapUtils.getString(userMap, "Privilege"));
-//                    String EnrollNumber1 = MapUtils.getString(userMap, "EnrollNumber");
-//                    List<ZhongKongBean> infoList = new ArrayList<ZhongKongBean>();
-//                    for (int j = 0; j < strList.size(); j++) {
-//                        ZhongKongBean strMap = strList.get(j);
-//                        String EnrollNumber2 = strMap.getEnrollNumber().toString();
-//                        if (EnrollNumber1.equals(EnrollNumber2)) {
-//                            infoList.add(strMap);//这个人所有的打卡数据
-//                        }
-//                    }
-//
-//                    if (infoList.size() == 0) {
-//                        mapAll.put("startTime", "");
-//                        mapAll.put("endTime", "");
-//                    }
-//                    if (infoList.size() == 1) {
-//                        ZhongKongBean strMap = infoList.get(0);
-//                        String startTime = strMap.getTime();
-//                        mapAll.put("startTime", startTime);
-//                        mapAll.put("endTime", "");
-//                        realCount++;
-//                    }
-//                    if (infoList.size() > 1) {
-//                        ZhongKongBean strMap0 = infoList.get(0);
-//                        ZhongKongBean strMap1 = infoList.get(infoList.size() - 1);
-//                        String startTime = strMap0.getTime();
-//                        String endTime = strMap1.getTime();
-//                        mapAll.put("startTime", startTime);
-//                        mapAll.put("endTime", endTime);
-//                        realCount++;
-//                    }
-//                    //mapAll.put("timeList",infoList);
-//                    attendanceList.add(mapAll);
-//                }
-//                //第一个人打卡的开始时间，最后一个人结束时间
-//                if (strList.size() > 1) {
-//                    ZhongKongBean strMap0 = strList.get(0);
-//                    ZhongKongBean strMap1 = strList.get(strList.size() - 1);
-//                    String startTime = strMap0.getTime();
-//                    String endTime = strMap1.getTime();
-//                    map.put("startTime", startTime);
-//                    map.put("endTime", endTime);
-//                }
-//                map.put("status", true);
-//                map.put("data", attendanceList);
-//                map.put("count", attendanceList.size());
-//                map.put("realCount", realCount);
-//            }
-//        } catch (NullPointerException e) {
-//            logger.error("appController.queryAttendance", e);
-//            map.put("status", false);
-//            map.put("msg", "ERROR_PARAM_NULL");
-//        } catch (ClassCastException e) {
-//            logger.error("appController.queryAttendance", e);
-//            map.put("status", false);
-//            map.put("msg", "ERROR_PARAM_CLASS_CAST");
-//        } catch (Exception e) {
-//            logger.error("appController.queryAttendance.Exception", e);
-//            map.put("status", false);
-//            map.put("msg", "ERROR_EXCEPTION");
-//        }
-//        returnString = JSONObject.fromObject(map).toString();
-//        System.out.println(returnString);
-//        //returnString = JSAESUtils.aesEncrypt(returnString);
-//        return returnString;
         return null;
     }
 
@@ -1839,14 +1756,12 @@ public class PersonController {
             resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
         if (null == cookies) {
-            System.out.println("没有cookie==============");
         } else {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
                     cookie.setMaxAge(0);
                     cookie.setPath("/");
-                    System.out.println("被删除的cookie名字为:" + cookie.getName());
                     resp.addCookie(cookie);
                     break;
                 }
@@ -1909,14 +1824,12 @@ public class PersonController {
             resp, HttpServletRequest request) throws Exception {
         Cookie[] cookies = request.getCookies();
         if (null == cookies) {
-            System.out.println("没有cookie==============");
         } else {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("downloadstatus")) {
                     cookie.setValue(null);
-                    cookie.setMaxAge(0);// 立即销毁cookie
+                    cookie.setMaxAge(0);
                     cookie.setPath("/");
-                    System.out.println("被删除的cookie名字为:" + cookie.getName());
                     resp.addCookie(cookie);
                     break;
                 }

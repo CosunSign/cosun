@@ -525,7 +525,6 @@ public class OrderController {
                 response.getOutputStream().write(data);
             }
         } catch (Exception e) {
-            System.out.println("pdf文件处理异常：" + e);
         } finally {
             try {
                 if (input != null) {
@@ -598,7 +597,7 @@ public class OrderController {
     public ModelAndView addOrderToMysql(@RequestParam("file") MultipartFile[] file, HttpSession session, OrderHead orderHead) throws Exception {
         UserInfo userInfo = (UserInfo) session.getAttribute("account");
         ModelAndView mav = new ModelAndView("order");
-        orderHead.setSingleOrProject(0);//单品
+        orderHead.setSingleOrProject(0);
         orderHead.setSalorNo(userInfo.getEmpNo());
         orderHead.setEngName(userInfo.getEngName());
         orderServ.addOrderHeadAndItemByBean(orderHead, file);

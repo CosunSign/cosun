@@ -11,12 +11,7 @@ import java.util.Arrays;
  * @Modified-date:
  */
 public class CheckUtil {
-    // https://blog.csdn.net/sinat_36553913/article/category/7642233
-    //91440300769173592C
-    // stringRedisTemplate.opsForValue().set(Constants.accessToken, accessToken.getAccessToken());
-    // stringRedisTemplate.opsForValue().set(Constants.expiresin,accessToken.getExpiresin()+"");
-    // http://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
-    // https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxd5109277d8902606&secret=4744abd9870fade269794229b89d7f55
+
     public static boolean checkSignature(String singnature, String timestamp, String nonce, String tooken) {
         String[] arr = {tooken, timestamp, nonce};
         Arrays.sort(arr);

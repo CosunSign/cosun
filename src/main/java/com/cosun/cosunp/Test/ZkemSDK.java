@@ -15,41 +15,24 @@ import com.jacob.com.Variant;
 public class ZkemSDK {
 	private static ActiveXComponent zkem = new ActiveXComponent("zkemkeeper.ZKEM.1");
 
-	/**
-	 * 连接到考勤机
-	 * 
-	 * @param address
-	 * @param port
-	 * @return
-	 */
+
 	public boolean connect(String address, int port) {
 		boolean result = zkem.invoke("Connect_NET", address, port).getBoolean();
 		return result;
 	}
 
-	/**
-	 * 断开考勤机连接
-	 */
+
 	public void disConnect() {
 		zkem.invoke("Disconnect");
 	}
 
-	/**
-	 * 读取考勤数据到缓存中。配合getGeneralLogData使用。
-	 * 
-	 * @return
-	 */
+
 	public boolean readGeneralLogData() {
 		boolean result = zkem.invoke("ReadGeneralLogData", 1).getBoolean();
 		return result;
 	}
 
-	/**
-	 * 读取该时间之后的最新考勤数据。 配合getGeneralLogData使用。
-	 * 
-	 * @param lastest
-	 * @return
-	 */
+
 	public boolean readLastestLogData(Date lastest) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(lastest);
@@ -75,13 +58,6 @@ public class ZkemSDK {
 		return result;
 	}
 
-	/**
-	 * 获取缓存中的考勤数据。配合readGeneralLogData / readLastestLogData使用。
-	 * 
-	 * @return 返回的map中，包含以下键值： "EnrollNumber" 人员编号 "Time" 考勤时间串，格式: yyyy-MM-dd
-	 *         HH:mm:ss "VerifyMode" "InOutMode" "Year" 考勤时间：年 "Month" 考勤时间：月 "Day"
-	 *         考勤时间：日 "Hour" 考勤时间：时 "Minute" 考勤时间：分 "Second" 考勤时间：秒
-	 */
 	public List<Map<String, Object>> getGeneralLogData() {
 		Variant v0 = new Variant(1);
 		Variant dwEnrollNumber = new Variant("", true);
@@ -103,7 +79,6 @@ public class ZkemSDK {
 			if (newresult) {
 				String enrollNumber = dwEnrollNumber.getStringRef();
 
-				// 如果没有编号，则跳过。
 				if (enrollNumber == null || enrollNumber.trim().length() == 0)
 					continue;
 				Map<String, Object> m = new HashMap<String, Object>();
@@ -124,16 +99,9 @@ public class ZkemSDK {
 		return strList;
 	}
 
-	/**
-	 * 获取用户信息
-	 * 
-	 * @return 返回的Map中，包含以下键值: "EnrollNumber" 人员编号 "Name" 人员姓名 "Password" 人员密码
-	 *         "Privilege" "Enabled" 是否启用
-	 * @throws Exception 
-	 */
+
 	public List<Map<String, Object>> getUserInfo() throws Exception {
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		// 将用户数据读入缓存中。
 		boolean result = zkem.invoke("ReadAllUserID", 1).getBoolean();
 
 		Variant v0 = new Variant(1);
@@ -144,17 +112,13 @@ public class ZkemSDK {
 		Variant bEnabled = new Variant(false, true);
 
 		while (result) {
-			// 从缓存中读取一条条的用户数据
 			result = zkem.invoke("SSR_GetAllUserInfo", v0, sdwEnrollNumber, sName, sPassword, iPrivilege, bEnabled)
 					.getBoolean();
 
-			// 如果没有编号，跳过。
 			String enrollNumber = sdwEnrollNumber.getStringRef();
 			if (enrollNumber == null || enrollNumber.trim().length() == 0)
 				continue;
 
-			// 由于名字后面会产生乱码，所以这里采用了截取字符串的办法把后面的乱码去掉了，以后有待考察更好的办法。
-			// 只支持2位、3位、4位长度的中文名字。
 			String name = "";
 			if (sName.getStringRef().getBytes().length == 9 || sName.getStringRef().getBytes().length == 8) {
 				name = sName.getStringRef().substring(0, 3);
@@ -167,7 +131,6 @@ public class ZkemSDK {
 				name = sName.getStringRef();
 			}
 
-			// 如果没有名字，跳过。
 			if (name.trim().length() == 0)
 				continue;
 
@@ -183,16 +146,7 @@ public class ZkemSDK {
 		return resultList;
 	}
 
-	/**
-	 * 设置用户信息
-	 * 
-	 * @param number
-	 * @param name
-	 * @param password
-	 * @param isPrivilege
-	 * @param enabled
-	 * @return
-	 */
+
 	public boolean setUserInfo(String number, String name, String password, int isPrivilege, boolean enabled) {
 		Variant v0 = new Variant(1);
 		Variant sdwEnrollNumber = new Variant(number, true);
@@ -206,12 +160,7 @@ public class ZkemSDK {
 		return result;
 	}
 
-	/**
-	 * 获取用户信息
-	 * 
-	 * @param number
-	 * @return
-	 */
+
 	public Map<String, Object> getUserInfoByNumber(String number) {
 		Variant v0 = new Variant(1);
 		Variant sdwEnrollNumber = new Variant(number, true);

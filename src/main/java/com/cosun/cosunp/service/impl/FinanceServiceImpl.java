@@ -37,8 +37,7 @@ public class FinanceServiceImpl implements IFinanceServ {
 
     private static Logger logger = LogManager.getLogger(FinanceServiceImpl.class);
 
-    //人员工资表
-    String empNoTitle = "工号";//姓名
+    String empNoTitle = "工号";
     Integer empNoTitleIndex;
     String incomDateTitle = "入职日期";
     Integer incomDateTitleIndex;
@@ -54,53 +53,51 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer salaryNameTitleIndex;
 
 
-    //人事提供工时表
-    private String nameTitle = "姓名"; //
+    private String nameTitle = "姓名";
     Integer nameTitleIndex;
-    private String empNoTitle2 = "工号"; //工号
+    private String empNoTitle2 = "工号";
     Integer empNoTitle2Index;
-    private String deptNameTitle = "部门";//部门
+    private String deptNameTitle = "部门";
     Integer deptNameTitleIndex;
-    private String zhengbanHoursTitle = "正班出勤工时";//正班出勤工时
+    private String zhengbanHoursTitle = "正班出勤工时";
     Integer zhengbanHoursTitleIndex;
-    private String usualExtHoursTitle = "平时加班";//平时加班
+    private String usualExtHoursTitle = "平时加班";
     Integer usualExtHoursTitleIndex;
-    private String workendHoursTitle = "周末加班";//周末加班
+    private String workendHoursTitle = "周末加班";
     Integer workendHoursTitleIndex;
-    private String chinaPaidLeaveTitle = "国家有薪假";//国家有薪假
+    private String chinaPaidLeaveTitle = "国家有薪假";
     Integer chinaPaidLeaveTitleIndex;
-    private String otherPaidLeaveTitle = "其它有薪假";//其它有薪假
+    private String otherPaidLeaveTitle = "其它有薪假";
     Integer otherPaidLeaveTitleIndex;
-    private String leaveOfAbsenseTitle = "事假";//事假
+    private String leaveOfAbsenseTitle = "事假";
     Integer leaveOfAbsenseTitleIndex;
-    private String sickLeaveTitle = "病假";//病假
+    private String sickLeaveTitle = "病假";
     Integer sickLeaveTitleIndex;
-    private String otherAlloTitle = "其它补贴（出差/夜班）";//其它补贴
+    private String otherAlloTitle = "其它补贴（出差/夜班）";
     Integer otherAlloTitleIndex;
-    private String fullWorkRewordTitle = "全勤奖";//全勤奖
+    private String fullWorkRewordTitle = "全勤奖";
     Integer fullWorkRewordTitleIndex;
-    private String foodExpenseTitle = "伙食费";//伙食费
+    private String foodExpenseTitle = "伙食费";
     Integer foodExpenseTitleIndex;
-    private String roomOrWaterEleExpenseTitle = "房租/水电费";//房租及水电费
+    private String roomOrWaterEleExpenseTitle = "房租/水电费";
     Integer roomOrWaterEleExpenseTitleIndex;
-    private String oldAgeINsuranTitle = "扣代付养老险";//养老险
+    private String oldAgeINsuranTitle = "扣代付养老险";
     Integer oldAgeINsuranTitleIndex;
-    private String medicalInsuranTitle = "扣代付医疗险";//医疗险
+    private String medicalInsuranTitle = "扣代付医疗险";
     Integer medicalInsuranTitleIndex;
-    private String unEmployeeInsurTitle = "扣代付失业险";//失业险
+    private String unEmployeeInsurTitle = "扣代付失业险";
     Integer unEmployeeInsurTitleIndex;
-    private String accumulaFundTitle = "扣代付公积金";//公积金
+    private String accumulaFundTitle = "扣代付公积金";
     Integer accumulaFundTitleIndex;
-    private String errorInWorkTitle = "工作失误";//工作失误
+    private String errorInWorkTitle = "工作失误";
     Integer errorInWorkTitleIndex;
-    private String meritScoreTitle = "绩效分";//绩效分
+    private String meritScoreTitle = "绩效分";
     Integer meritScoreTitleIndex;
 
 
-    //财务提供数据表
-    private String empNoTitle3 = "工号";//工号
+    private String empNoTitle3 = "工号";
     Integer empNoTitle3Index;
-    private String nameTitle3 = "姓名";//姓名
+    private String nameTitle3 = "姓名";
     Integer nameTitle3Index;
     private String bigDeptNameTitle = "大部门";//大部门
     Integer bigDeptNameTitleIndex;
@@ -130,11 +127,11 @@ public class FinanceServiceImpl implements IFinanceServ {
     Integer basicWorkHoursTitleIndex;
 
 
-    private String empHoursBigTitle; //工时表的最后一个字段
+    private String empHoursBigTitle;
     private Integer empHoursBigTitleIndex = 0;
-    private String salaryBigTitle; //工资表的最后一个字段
+    private String salaryBigTitle;
     private Integer salaryBigTitleIndex = 0;
-    private String financeImportDataBigTitle;//财务提供数据最扣一个字段
+    private String financeImportDataBigTitle;
     private Integer financeImportDataBigTitleIndex = 0;
 
     String errorExcel = "";
@@ -146,7 +143,7 @@ public class FinanceServiceImpl implements IFinanceServ {
         try {
             WorkbookSettings ws = new WorkbookSettings();
             jxl.Sheet xlsfSheet = null;
-            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);//它是专门读取.xls的
+            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file.getInputStream(), ws);
             if (Workbook != null) {
                 jxl.Sheet[] sheets = Workbook.getSheets();
                 xlsfSheet = sheets[0];
@@ -310,7 +307,7 @@ public class FinanceServiceImpl implements IFinanceServ {
         try {
             WorkbookSettings ws = new WorkbookSettings();
             jxl.Sheet xlsfSheet = null;
-            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file1.getInputStream(), ws);//它是专门读取.xls的
+            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file1.getInputStream(), ws);
             if (Workbook != null) {
                 jxl.Sheet[] sheets = Workbook.getSheets();
                 xlsfSheet = sheets[0];
@@ -668,7 +665,7 @@ public class FinanceServiceImpl implements IFinanceServ {
         try {
             WorkbookSettings ws = new WorkbookSettings();
             jxl.Sheet xlsfSheet = null;
-            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file1.getInputStream(), ws);//它是专门读取.xls的
+            jxl.Workbook Workbook = jxl.Workbook.getWorkbook(file1.getInputStream(), ws);
             if (Workbook != null) {
                 jxl.Sheet[] sheets = Workbook.getSheets();
                 xlsfSheet = sheets[0];
@@ -977,8 +974,6 @@ public class FinanceServiceImpl implements IFinanceServ {
                     sdo.setPositionSalary(sa.getPosSalary() == null ? 0 : sa.getPosSalary());
                     sdo.setMeritSalary(sa.getMeritSalary() == null ? 0 : sa.getMeritSalary());
                     sdo.setMeritScore(eh.getMeritScore() == null ? 0 : eh.getMeritScore());
-                    //（综合技能+岗位工资+职务工资）/基本工时*（正常出勤工时+法定有薪假时间）
-                    //绩效工资*绩效分数/100* （正常出勤工时+法定有薪假时间）/基本工时
                     sdo.setSubbonusTotal((sdo.getCompressSalary() + sdo.getJobSalary() + sdo.getPositionSalary()) /
                             sdo.getBasickWorkHours() * (sdo.getNorAttenHours() + sdo.getChinaPailLeavHours())
                             + sdo.getMeritSalary() * eh.getMeritScore() / financeSetUpData.getMeritScoreSample() *

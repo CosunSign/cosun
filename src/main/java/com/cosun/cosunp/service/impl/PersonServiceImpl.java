@@ -4035,16 +4035,12 @@ public class PersonServiceImpl implements IPersonServ {
                         mkf.setLeaveOfAbsense((lianBanTotalH + (mkf.getLeaveOfAbsense() == null ? 0.0 : mkf.getLeaveOfAbsense())) + (8.0 - ho));
                     } else if (kqb.getClockResult() == 18) {
                         dayNum = "20,20,";
-                        //婚假
                     } else if (kqb.getClockResult() == 19) {
                         dayNum = "21,21,";
-                        //丧假
                     } else if (kqb.getClockResult() == 20) {
                         dayNum = "22,22,";
-                        //产假
                     } else if (kqb.getClockResult() == 21) {
                         dayNum = "23,23,";
-                        //陪产假
                     } else if (kqb.getClockResult() == 17) {
                         qk = personMapper.getQianKaByDateAndEmpnoA(kqb.getEmpNo(), kqb.getDateStr());
                         ws = personMapper.getWorkSetByMonthAndPositionLevelA(kqb.getYearMonth(), kqb.getPositionLevel());

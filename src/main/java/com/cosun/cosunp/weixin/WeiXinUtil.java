@@ -134,7 +134,7 @@ public class WeiXinUtil {
         boolean result = false;
         for (int i = 0; i < str.length(); i++) {
             int chr1 = (char) str.charAt(i);
-            if (chr1 >= 19968 && chr1 <= 171941) {// 汉字范围 \u4e00-\u9fa5 (中文)
+            if (chr1 >= 19968 && chr1 <= 171941) {
                 result = true;
             }
         }
@@ -189,7 +189,6 @@ public class WeiXinUtil {
 
             String message = new String(jsonBytes, "UTF-8");
             JSONObject demoJson = JSONObject.fromObject(message);
-            System.out.println("JSON字符串：" + demoJson);
             ticket = demoJson.getString("ticket");
             is.close();
         } catch (Exception e) {
@@ -217,7 +216,6 @@ public class WeiXinUtil {
             is.read(jsonBytes);
             String message = new String(jsonBytes, "UTF-8");
             JSONObject demoJson = JSONObject.fromObject(message);
-            System.out.println("JSON字符串：" + demoJson);
             ticket = demoJson.getString("ticket");
             is.close();
         } catch (Exception e) {
@@ -253,7 +251,6 @@ public class WeiXinUtil {
             is.read(jsonBytes);
             String message = new String(jsonBytes, "UTF-8");
             JSONObject demoJson = JSONObject.fromObject(message);
-            System.out.println("JSON字符串：" + demoJson);
             access_token = demoJson.getString("access_token");
             is.close();
 

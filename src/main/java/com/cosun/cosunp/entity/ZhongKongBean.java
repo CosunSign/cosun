@@ -22,7 +22,7 @@ public class ZhongKongBean implements Serializable {
     private String timeStr;
     private Date timeTime;
     private Date date;
-    private Integer machineNum;  // 1办公室 0.202   2 2号厂房钣金部 2.10  3 3号厂房门口 2.11  4.3号厂房精工部 2.12
+    private Integer machineNum;
 
     private Integer VerifyMode;
     private Integer InOutMode;

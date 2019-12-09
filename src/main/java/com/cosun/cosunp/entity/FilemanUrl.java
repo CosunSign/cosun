@@ -7,16 +7,16 @@ public class FilemanUrl implements Serializable {
 
     private static final long serialVersionUID = -8416020544103530588L;
     private Integer id;
-    private Integer fileInfoId; //关联 FileManFileInfo表
+    private Integer fileInfoId;
     private String userName;
-    private String orginName;//单个文件原始文件名
+    private String orginName;
     private Date upTime;
-    private String opRight; //op_right是对文件的操作权限的描述
-    private String logur1;//最后的保存地址
-    private Integer singleFileUpdateNum;//单个文件更新次数
-    private String modifyReason;//单次文件更新原因
-    private Date updateTime;//更新者
-    private String updateuser;//最新更改者
+    private String opRight;
+    private String logur1;
+    private Integer singleFileUpdateNum;
+    private String modifyReason;
+    private Date updateTime;
+    private String updateuser;
     private Integer uId;
 
     public Integer getuId() {

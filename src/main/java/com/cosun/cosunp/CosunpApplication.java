@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-//import javax.servlet.MultipartConfigElement;
 
 @EnableTransactionManagement
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
@@ -28,7 +27,6 @@ public class CosunpApplication extends SpringBootServletInitializer {
 
     public final Logger logger = LoggerFactory.getLogger(getClass());
 
-    // https://blog.csdn.net/weixin_44538107/article/details/86541805
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -38,16 +36,6 @@ public class CosunpApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(CosunpApplication.class, args);
     }
-
-//    @Bean
-//    public MultipartConfigElement multipartConfigElement() {
-//        MultipartConfigFactory factory = new MultipartConfigFactory();
-//        //单个文件最大
-//        factory.setMaxFileSize("3000MB");
-//        /// 设置总上传数据总大小
-//        factory.setMaxRequestSize("3000MB");
-//        return factory.createMultipartConfig();
-//    }
 
 
     @Bean

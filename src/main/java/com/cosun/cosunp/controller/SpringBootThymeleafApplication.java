@@ -13,8 +13,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringBootThymeleafApplication {
 
 
-//    public static void main(String[] args) {
-//        SpringApplication.run(SpringBootThymeleafApplication.class, args);
-//    }
 
 }

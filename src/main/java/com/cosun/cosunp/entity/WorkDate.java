@@ -23,7 +23,7 @@ public class WorkDate implements Serializable {
     private String[] workDates;
     private String[] workDatess;
     private List<String> empNos;
-    private Integer type;//0代表正班  1代表周末加班  2代表法定带薪假
+    private Integer type;
     private List<String> positionLevels;
 
     private List<SmallEmployee> empList;

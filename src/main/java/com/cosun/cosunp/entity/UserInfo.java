@@ -11,12 +11,12 @@ public class UserInfo implements Serializable {
     private Integer uId;
     private String userName;
     private String userPwd;
-    private Integer userActor;//角色
-    private Integer type; //type是不同的权限配置
-    private String fullName;//中文全名
-    private Integer useruploadright;//上传权限  0代表没有  默认1代表有
+    private Integer userActor;
+    private Integer type;
+    private String fullName;
+    private Integer useruploadright;
     private String empNo;
-    private Integer state;// 0代表未审核   1代表审核通过  2 代表审核未通过
+    private Integer state;
     private String deptNo;
     private Integer flag;
     private String positionName;
@@ -25,8 +25,8 @@ public class UserInfo implements Serializable {
     private String webPrivi;
     private String sortMethod;
     private String sortByName;
-    private String engName;//英文名
-    private String shortOrderName;//缩写订单代号
+    private String engName;
+    private String shortOrderName;
 
     private String stateStr;
     private String useruploadrightStr;
@@ -47,10 +47,9 @@ public class UserInfo implements Serializable {
     private String endIncomDateStr;
 
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
 

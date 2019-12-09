@@ -16,13 +16,13 @@ public class OutPunch implements Serializable {
     private static final long serialVersionUID = -6701336702244396168L;
 
     private Integer id;
-    private String userid;  //
+    private String userid;
     private String groupname;
     private String checkin_type;
     private String exception_type;
-    private Long checkin_time; //
+    private Long checkin_time;
     private String location_title;
-    private String location_detail;//
+    private String location_detail;
     private String wifiname;
     private String notes;
     private String wifimac;

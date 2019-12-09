@@ -16,7 +16,6 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author:homey Wong
  * @date:2019/1/23 0023 下午 4:01
- * @Description:批量下载工具类
  * @Modified By:
  * @Modified-date:
  */

@@ -16,15 +16,15 @@ public class OrderHead implements Serializable {
     private static final long serialVersionUID = 8581338015386967740L;
 
     private Integer id;
-    private String orderNo; //客户单号
-    private String productTotalName; //商品总名称
-    private String orderTimeStr; //下单时间
-    private Integer orderSetNum;//订单类别数量
-    private String SalorNo; //业务员
-    private Integer state;//0未审核  1审核通过  2审核未通过
-    private Integer singleOrProject; //代表是单项类还是项目类
+    private String orderNo;
+    private String productTotalName;
+    private String orderTimeStr;
+    private Integer orderSetNum;
+    private String SalorNo;
+    private Integer state;
+    private Integer singleOrProject;
     private Date headUpdateTime;
-    private Integer updateHeadTimes;//更改次数
+    private Integer updateHeadTimes;
     private String confirmEmpNo;
     private Date confirmTime;
     private String pmcConfirmEmpno;
@@ -55,18 +55,17 @@ public class OrderHead implements Serializable {
     private String stateStr;
     private String itemCreateTimeStr;
 
-    //item
-    private Integer orderHeadId;//关联Id
-    private String productBigType; //产品大类
-    private String productMainShape; //产品主体
-    private String newFinishProudNo; //新成品编号
-    private Double productSize; //产品尺寸
-    private Double edgeHightSize; //边高尺寸
-    private String mainMateriAndArt;//主体材质需求及工艺
-    private String backInstallSelect;//背部安装选项
-    private String electMateriNeeds;//电子类辅料需求
-    private String installTransfBacking;//安装运输包装
-    private String otherRemark;//其它说明
+    private Integer orderHeadId;
+    private String productBigType;
+    private String productMainShape;
+    private String newFinishProudNo;
+    private Double productSize;
+    private Double edgeHightSize;
+    private String mainMateriAndArt;
+    private String backInstallSelect;
+    private String electMateriNeeds;
+    private String installTransfBacking;
+    private String otherRemark;
     private String productName;
     private Integer needNum;
     private Date pmcDeliverTime;
@@ -84,10 +83,9 @@ public class OrderHead implements Serializable {
     private String folderName;
 
 
-    // 分页属性
-    private int currentPage = 1;// 用于接收页面传过来的当前页数
-    private int maxPage;// 最大页数
-    private int recordCount;// 总记录数
+    private int currentPage = 1;
+    private int maxPage;
+    private int recordCount;
     private int pageSize = 10;
     private int currentPageTotalNum;
     private String sortMethod;

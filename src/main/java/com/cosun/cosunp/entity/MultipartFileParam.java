@@ -28,21 +28,13 @@ public class MultipartFileParam implements Serializable {
     private String randomNum;
     private  String saveFolderName;
     private String filefolderNames;
-    // 用户id
     private String uid;
-    //任务ID
     private String id;
-    //总分片数量
     private int chunks;
-    //当前为第几块分片
     private int chunk;
-    //当前分片大小
     private long size = 0L;
-    //文件名
     private String name;
-    //分片对象
     private MultipartFile file;
-    // MD5
 
 
     public String getFilefolderNames() {

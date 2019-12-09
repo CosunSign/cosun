@@ -57,61 +57,32 @@ import java.util.Map;
  */
 public class HttpClientUtils {
 
-    /**
-     * 连接池最大连接数
-     */
+
     private static final int MAX_TOTAL_CONNECTIONS = 4000;
 
-    /**
-     * 设置每个路由上的默认连接个数
-     */
     private static final int DEFAULT_MAX_PER_ROUTE = 200;
 
-    /**
-     * 请求的请求超时时间 单位：毫秒
-     */
+
     private static final int REQUEST_CONNECTION_TIMEOUT = 8 * 1000;
 
-    /**
-     * 请求的等待数据超时时间 单位：毫秒
-     */
+
     private static final int REQUEST_SOCKET_TIMEOUT = 8 * 1000;
 
-    /**
-     * 请求的连接超时时间 单位：毫秒
-     */
     private static final int REQUEST_CONNECTION_REQUEST_TIMEOUT = 5 * 1000;
 
-    /**
-     * 连接闲置多久后需要重新检测 单位：毫秒
-     */
+
     private static final int VALIDATE_AFTER_IN_ACTIVITY = 2 * 1000;
 
-    /**
-     * 关闭Socket时，要么发送完所有数据，要么等待多少秒后，就关闭连接，此时socket.close()是阻塞的　单位秒
-     */
     private static final int SOCKET_CONFIG_SO_LINGER = 60;
 
-    /**
-     * 接收数据的等待超时时间,即读超时时间，单位ms
-     */
+
     private static final int SOCKET_CONFIG_SO_TIMEOUT = 5 * 1000;
-    /**
-     * 重试次数
-     */
+
     private static int RETRY_COUNT = 5;
-    /**
-     * 声明为 static volatile,会迫使线程每次读取时作为一个全局变量读取
-     */
+
     private static volatile CloseableHttpClient httpClient = null;
 
 
-    /**
-     * @param uri
-     * @return String
-     * @description get请求方式
-     * @author: long.he01
-     */
     public static String doGet(String uri) {
 
         StringBuilder result = new StringBuilder();
@@ -133,24 +104,14 @@ public class HttpClientUtils {
 
     }
 
-    /**
-     * @param uri
-     * @param params
-     * @return string
-     * @description 带map参数get请求, 此方法会将map参数拼接到连接地址上。
-     */
+
     public static String doGet(String uri, Map<String, String> params) {
 
         return doGet(getGetUrlFromParams(uri, params));
 
     }
 
-    /**
-     * @param uri
-     * @param params
-     * @return String
-     * @description 根据map参数拼接完整的url地址
-     */
+
     private static String getGetUrlFromParams(String uri, Map<String, String> params) {
 
 
@@ -184,12 +145,7 @@ public class HttpClientUtils {
     }
 
 
-    /**
-     * @param uri
-     * @param params
-     * @return String
-     * @description 带map参数的post请求方法
-     */
+
     public static String doPost(String uri, Map<String, String> params) {
 
         String responseBody;
@@ -216,13 +172,6 @@ public class HttpClientUtils {
     }
 
 
-    /**
-     * @param uri
-     * @param param
-     * @param contentType 根据具体请求情况指定,比如json可以是 ContentType.APPLICATION_JSON
-     * @return String
-     * @description 带单string参数执行post方法
-     */
     public static String doPost(String uri, String param, ContentType contentType) {
 
         String responseBody;
@@ -241,10 +190,6 @@ public class HttpClientUtils {
         return responseBody;
     }
 
-    /**
-     * @return RequestConfig
-     * @description: 获得请求配置信息
-     */
     private static RequestConfig getRequestConfig() {
 
 
@@ -264,12 +209,7 @@ public class HttpClientUtils {
     }
 
 
-    /**
-     * @param method
-     * @return String
-     * @throws IOException
-     * @description 通用执行请求方法
-     */
+
     private static String executeRequest(HttpUriRequest method) throws IOException {
 
         ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
@@ -296,10 +236,7 @@ public class HttpClientUtils {
     }
 
 
-    /**
-     * @return CloseableHttpClient
-     * @description 单例获取httpclient实例
-     */
+
     private static CloseableHttpClient getHttpClientInstance() {
 
         if (httpClient == null) {
@@ -313,48 +250,37 @@ public class HttpClientUtils {
 
     }
 
-    /**
-     * @return HttpRequestRetryHandler
-     * @description :获取重试handler
-     */
+
     private static HttpRequestRetryHandler getRetryHandler() {
 
-        // 请求重试处理
+
         return new HttpRequestRetryHandler() {
             @Override
             public boolean retryRequest(IOException exception,
                                         int executionCount, HttpContext context) {
                 if (executionCount >= RETRY_COUNT) {
-                    // 假设已经重试了5次，就放弃
                     return false;
                 }
                 if (exception instanceof NoHttpResponseException) {
-                    // 假设server丢掉了连接。那么就重试
                     return true;
                 }
                 if (exception instanceof SSLHandshakeException) {
-                    // 不要重试SSL握手异常
                     return false;
                 }
                 if (exception instanceof InterruptedIOException) {
-                    // 超时
                     return false;
                 }
                 if (exception instanceof UnknownHostException) {
-                    // 目标server不可达
                     return false;
                 }
                 if (exception instanceof ConnectTimeoutException) {
-                    // 连接被拒绝
                     return false;
                 }
                 if (exception instanceof SSLException) {
-                    // SSL握手异常
                     return false;
                 }
 
                 HttpRequest request = HttpClientContext.adapt(context).getRequest();
-                // 假设请求是幂等的，就再次尝试
                 return !(request instanceof HttpEntityEnclosingRequest);
             }
         };
@@ -362,10 +288,7 @@ public class HttpClientUtils {
     }
 
 
-    /**
-     * @return PoolingHttpClientConnectionManager
-     * @description 初始化连接池等配置信息
-     */
+
     private static PoolingHttpClientConnectionManager initConfig() {
 
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -375,17 +298,7 @@ public class HttpClientUtils {
 
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
 
-        /**
-         * 以下参数设置含义分别为:
-         * 1 是否立即发送数据，设置为true会关闭Socket缓冲，默认为false
-         * 2 是否可以在一个进程关闭Socket后，即使它还没有释放端口，其它进程还可以立即重用端口
-         * 3 接收数据的等待超时时间，单位ms
-         * 4 关闭Socket时，要么发送完所有数据，要么等待多少秒后，就关闭连接，此时socket.close()是阻塞的
-         * 5 开启监视TCP连接是否有效
-         * 其中setTcpNoDelay(true)设置是否启用Nagle算法，设置true后禁用Nagle算法，默认为false（即默认启用Nagle算法）。
-         * Nagle算法试图通过减少分片的数量来节省带宽。当应用程序希望降低网络延迟并提高性能时，
-         * 它们可以关闭Nagle算法，这样数据将会更早地发 送，但是增加了网络消耗。 单位为：毫秒
-         */
+
 
         SocketConfig socketConfig = SocketConfig.custom()
                 .setTcpNoDelay(true)

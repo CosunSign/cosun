@@ -21,13 +21,7 @@ import java.util.*;
  */
 public class DateUtil {
 
-    /**
-     * 计算两个日期之间的间隔天数
-     *
-     * @param startDate
-     * @param endDate
-     * @return
-     */
+
     public static long startToEnd(Date startDate, Date endDate) {
         String[] startStr = new SimpleDateFormat("yyyy-MM-dd").format(startDate).split("-");
         String[] endStr = new SimpleDateFormat("yyyy-MM-dd").format(endDate).split("-");

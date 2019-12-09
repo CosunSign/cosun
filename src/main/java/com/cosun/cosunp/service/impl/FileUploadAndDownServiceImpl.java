@@ -242,7 +242,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     /**
-     * 功能描述:文件修改功能,即更新覆盖
      *
      * @auther: homey Wong
      * @date: 2019/1/11  上午 9:37
@@ -295,7 +294,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:文件夹名验证
      *
      * @auther: homey Wong
      * @date: 2019/2/27 0027 上午 10:13
@@ -340,7 +338,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:文件夹上传功能 根据上传的文件夹
      *
      * @auther: homey Wong
      * @date: 2019/1/16 0016 下午 2:40
@@ -694,15 +691,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         }
     }
 
-    /**
-     * 功能描述:文件更新处理
-     *
-     * @auther: homey Wong
-     * @date: 2019/1/11 0011 上午 10:11
-     * @param:
-     * @return:
-     * @describtion
-     */
+
     @Transactional(rollbackFor = Exception.class)
     public void updateFilesData(List<FileManFileInfo> fileManFileInfo, DownloadView view, UserInfo userInfo) throws Exception {
         FileManFileInfo ffi = null;
@@ -717,7 +706,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
             fileUploadAndDownMapper.updateFileManFileInfo2(ffi.getUpdateCount(), ffi.getUpdateTime(), ffi.getUpdateUser(), ffi.getId());
             for (int i = 0; i < splitNames.length; i++) {
                 filemanUrl = fileUploadAndDownMapper.findFileUrlByFileInFoDataAndFileName(splitNames[i], fileManFileInfo.get(0).getId());
-                if (filemanUrl != null) { //取老文件信息
+                if (filemanUrl != null) {
                     record = new FilemanUpdateRecord();
                     record.setFileName(filemanUrl.getOrginName());
                     record.setOrderNum(ffi.getOrderNum());
@@ -913,15 +902,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return list;
     }
 
-    /**
-     * 功能描述:根据订单号获取相应订单信息
-     *
-     * @auther: homey Wong
-     * @date: 2019/2/20 0020 上午 11:27
-     * @param:
-     * @return:
-     * @describtion
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DownloadView findMessageByOrderNo(String orderNo) throws Exception {
@@ -929,7 +909,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:根据条件查询
      *
      * @auther: homey Wong
      * @date: 2019/2/20 0020 下午 3:11
@@ -962,7 +941,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:分页
      *
      * @auther: homey Wong
      * @date: 2018/12/29 0029 上午 9:47
@@ -1057,7 +1035,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:文件上传查看名是否有重复
      *
      * @auther: homey Wong
      * @date: 2019/1/18 0018 下午 4:31
@@ -1128,7 +1105,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 功能描述:查看要上传的文件夹有没重名和文件夹下的文件名有无重名
      *
      * @auther: homey Wong
      * @date: 2019/1/18 0018 下午 4:45
@@ -1528,7 +1504,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
                 boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
                 if (isOk) {
-                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                    System.out.println("");
 
                     boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
                 }
@@ -1607,7 +1583,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
                 boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
                 if (isOk) {
-                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                    System.out.println("");
 
                     boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
                 }
@@ -1659,7 +1635,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
                     mappedByteBuffer.clear();
                     boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
                     if (isOk) {
-                        System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                        System.out.println("");
                         boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
                     }
                 } catch (Exception e) {
@@ -1709,7 +1685,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
                 boolean isOk = checkAndSetUploadProgress(param, uploadDirPath);
                 if (isOk) {
-                    System.out.println("upload complete !! 可以删掉CONF文件 fileName");
+                    System.out.println("");
                     boolean isdeleteconf = deleteFile(uploadDirPath.concat(fileName).concat(".conf"));
                 }
             } catch (Exception e) {
@@ -1724,10 +1700,8 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
     @Override
     public void deleteAll() throws Exception {
-        logger.info("开发初始化清理数据，start");
         stringRedisTemplate.delete(Constants.FILE_UPLOAD_STATUS);
         stringRedisTemplate.delete(Constants.FILE_MD5_KEY);
-        logger.info("开发初始化清理数据，end");
     }
 
     @Override
@@ -1735,9 +1709,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         try {
             Files.createDirectory(rootPaht);
         } catch (FileAlreadyExistsException e) {
-            logger.error("文件夹已经存在了，不用再创建。");
         } catch (IOException e) {
-            logger.error("初始化root文件夹失败。", e);
         }
     }
 
@@ -1760,29 +1732,20 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         boolean isOk = checkAndSetUploadProgress(param, tempDirPath);
         if (isOk) {
             boolean flag = renameFile(tmpFile, fileName);
-            System.out.println("upload complete !!" + flag + " name=" + fileName);
         }
     }
 
 
-    /**
-     * 上传完成，删除片文件
-     *
-     * @param fileName 要删除的文件的文件名
-     * @return 单个文件删除成功返回true，否则返回false
-     */
+
     private boolean deleteFile(String fileName) throws Exception {
         File file = new File(fileName);
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
-                System.out.println("删除单个文件" + fileName + "成功！");
                 return true;
             } else {
-                System.out.println("删除单个文件" + fileName + "失败！");
                 return false;
             }
         } else {
-            System.out.println("删除单个文件失败：" + fileName + "不存在！");
             return false;
         }
     }
@@ -1792,14 +1755,7 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
         return fileUploadAndDownMapper.findAllSalorByDeptName();
     }
 
-    /**
-     * 检查并修改文件上传进度
-     *
-     * @param param
-     * @param uploadDirPath
-     * @return
-     * @throws
-     */
+
     private boolean checkAndSetUploadProgress(MultipartFileParam param, String uploadDirPath) throws IOException {
         String fileName = param.getName();
         File confFile = new File(uploadDirPath, fileName + ".conf");
@@ -1833,7 +1789,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
     }
 
     /**
-     * 文件重命名
      *
      * @param toBeRenamed   将要修改名字的文件
      * @param toFileNewName 新的名字
@@ -1855,7 +1810,6 @@ public class FileUploadAndDownServiceImpl implements IFileUploadAndDownServ {
 
 
     /**
-     * 功能描述:删除业务
      *
      * @auther: homey Wong
      * @date: 2019/3/22  上午 10:06

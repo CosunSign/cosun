@@ -52,7 +52,6 @@ public class AccountController {
         try {
             HttpSession session = request.getSession();
             int interval = session.getMaxInactiveInterval();
-            System.out.println("=============session time================" + interval);
             ModelAndView mav = new ModelAndView(INDEX);
             DownloadView downloadView = new DownloadView();
             downloadView.setFlag("true");
@@ -126,12 +125,12 @@ public class AccountController {
         try {
             int isExsitCount = userInfoServ.getUserInfoCountByUserName(username);
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(isExsitCount);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -155,12 +154,12 @@ public class AccountController {
             }
 
             String str1;
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str1 = x.writeValueAsString(returnMessage);
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str1); //返回前端ajax
+            response.getWriter().print(str1);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
@@ -176,7 +175,7 @@ public class AccountController {
         try {
             UserInfo userInfo = userInfoServ.findUserByUserNameandPassword(view.getUserName(), view.getPassword());
             if (userInfo != null && userInfo.getUserName() != null && userInfo.getState()==1) {
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 userInfoServ.updateUserInfoLoginTime(userInfo.getuId(),df.format(new Date()).toString());
                 session.setAttribute("account", userInfo);
                 view.setFullName(userInfo.getFullName());
@@ -185,22 +184,7 @@ public class AccountController {
                 session.setAttribute("username", userInfo.getUserName());
                 session.setAttribute("password", userInfo.getUserPwd());
                 mav.addObject("view", view);
-//                List<Rules> menuList = rulesServ.findAllRulesAll();
-//                mav.addObject("menuList", menuList);
                 Rules rules = rulesServ.getRulesByFirst();
-//                String htmlContent = "";
-//                if (rules != null) {
-//                    int index = rules.getFileDir().lastIndexOf(".");
-//                    String htmlName = rules.getFileDir().substring(0, index) + ".html";
-//                    BufferedReader br = new BufferedReader(
-//                            new InputStreamReader(new FileInputStream(htmlName), "UTF-8"));
-//                    String line;
-//
-//                    while ((line = br.readLine()) != null) {
-//                        htmlContent += line + "\n";
-//                    }
-//                }
-//                mav.addObject("htmlStr", htmlContent);
                 mav.addObject("userInfo",userInfo);
                 mav.addObject("showflaga", rules == null ? 0 : 1);
                 return mav;
@@ -235,9 +219,9 @@ public class AccountController {
         ModelAndView view = new ModelAndView("index");
         Employee employee = userInfoServ.getUserInfoByEmpNo(userInfo.getEmpNo());
         userInfo.setFullName(employee.getName());
-        userInfo.setState(0);// 0代表未审核
-        userInfo.setUseruploadright(1);//默认有上传
-        userInfo.setUserActor(4);//默认普通员工
+        userInfo.setState(0);
+        userInfo.setUseruploadright(1);
+        userInfo.setUserActor(4);
         userInfoServ.saveUserInfoByBean(userInfo);
         DownloadView vi = new DownloadView();
         vi.setFlag("3");
@@ -285,7 +269,6 @@ public class AccountController {
     public ModelAndView logout(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView(INDEX);
         try {
-            // 移除session
             session.removeAttribute("account");
             DownloadView downloadView = new DownloadView();
             downloadView.setFlag("true");
@@ -351,7 +334,7 @@ public class AccountController {
         String str = null;
         try {
             String mobileNum = userInfoServ.getMobileNumByUserName(userName);
-            ObjectMapper x = new ObjectMapper();//ObjectMapper类提供方法将list数据转为json数据
+            ObjectMapper x = new ObjectMapper();
 
             str = x.writeValueAsString(mobileNum);
 
@@ -363,7 +346,7 @@ public class AccountController {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html;charset=UTF-8");
-            response.getWriter().print(str); //返回前端ajax
+            response.getWriter().print(str);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             e.printStackTrace();
