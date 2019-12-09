@@ -1,5 +1,7 @@
 package com.cosun.cosunp.tool;
 
+import com.aspose.cad.internal.iG.M;
+import com.cosun.cosunp.entity.MonthKQInfo;
 import com.cosun.cosunp.entity.OutPutWorkData;
 import com.cosun.cosunp.entity.SalaryDataOutPut;
 import com.cosun.cosunp.entity.SubEmphours;
@@ -404,9 +406,9 @@ public class ExcelUtil {
                 cell = row.createCell(7);
                 cell.setCellValue(opw.getRemark());
                 cell = row.createCell(8);
-                cell.setCellValue((opw.getIsAonOk().equals("正常") ? "" : opw.getIsAonOk()+"==") +
-                         (opw.getIsAoffOk().equals("正常") ? "" : opw.getIsAoffOk()+"==")
-                        + (opw.getIsPOnOk().equals("正常") ? "" : opw.getIsPOnOk()+"==") +
+                cell.setCellValue((opw.getIsAonOk().equals("正常") ? "" : opw.getIsAonOk() + "==") +
+                        (opw.getIsAoffOk().equals("正常") ? "" : opw.getIsAoffOk() + "==")
+                        + (opw.getIsPOnOk().equals("正常") ? "" : opw.getIsPOnOk() + "==") +
                         (opw.getIsPOffOk().equals("正常") ? "" : opw.getIsPOffOk()));
             }
             OutputStream stream = new FileOutputStream(file);
@@ -417,6 +419,74 @@ public class ExcelUtil {
         }
         returnArray.add(pathname);
         return returnArray;
+    }
 
+
+    public static List<String> writeMKdataTOExcel(List<MonthKQInfo> outDatas, String finalDirPath, String fileName, String yearMonth) {
+        List<String> returnArray = new ArrayList<String>();
+        MonthKQInfo opw;
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        Sheet sheet1 = workbook.createSheet("sheet1");
+        String pathname = finalDirPath + "/linshi/" + fileName;
+        returnArray.add(fileName);
+        File file = new File(pathname);
+        if (file.exists()) {
+            file.delete();
+        }
+        File targetFile = new File(finalDirPath);
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+        try {
+            file.createNewFile();
+            MonthKQInfo outData = null;
+            Row row = null;
+            Cell cell = null;
+            row = sheet1.createRow(0);
+            row.createCell(0);
+            cell.setCellValue(yearMonth + "月份考勤表");
+
+            row = sheet1.createRow(1);
+            cell = row.createCell(0);
+            cell.setCellValue("序号");
+            cell = row.createCell(1);
+            cell.setCellValue("姓名");
+            cell = row.createCell(2);
+            cell.setCellValue("部门");
+            cell = row.createCell(3);
+            cell.setCellValue("原考勤整个时间");
+            cell = row.createCell(4);
+            cell.setCellValue("加班时间始");
+            cell = row.createCell(5);
+            cell.setCellValue("加班时间止");
+            cell = row.createCell(6);
+            cell.setCellValue("加班时长");
+            cell = row.createCell(7);
+            cell.setCellValue("备注");
+            cell = row.createCell(8);
+            cell.setCellValue("提示");
+            for (int i = 0; i < outDatas.size(); i++) {
+                opw = outDatas.get(i);
+                row = sheet1.createRow(i + 1);
+                cell = row.createCell(0);
+                cell = row.createCell(1);
+                cell = row.createCell(2);
+                cell.setCellValue(opw.getDeptName());
+                cell = row.createCell(3);
+                cell = row.createCell(4);
+                cell = row.createCell(5);
+                cell = row.createCell(6);
+                cell = row.createCell(7);
+                cell.setCellValue(opw.getRemark());
+                cell = row.createCell(8);
+            }
+            OutputStream stream = new FileOutputStream(file);
+            workbook.write(stream);
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        returnArray.add(pathname);
+        return returnArray;
     }
 }

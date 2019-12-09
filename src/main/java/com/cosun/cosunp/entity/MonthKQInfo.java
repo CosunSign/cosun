@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author:homey Wong
- * @Date: 2019/10/16 0016 下午 2:02
+ * @Date: 2019/10/16  下午 2:02
  * @Description:
  * @Modified By:
  * @Modified-date:
@@ -30,6 +30,16 @@ public class MonthKQInfo implements Serializable {
     private Double fullWorkReword;//全勤奖
     private Double highTempAllow;//高温补贴
     private String remark;
+
+
+    // 分页属性
+    private int currentPage = 1;// 用于接收页面传过来的当前页数
+    private int maxPage;// 最大页数
+    private int recordCount;// 总记录数
+    private int pageSize = 3;
+    private int currentPageTotalNum;
+    private String sortMethod;
+    private String sortByName;
 
 
     private String day01;
@@ -309,7 +319,7 @@ public class MonthKQInfo implements Serializable {
     private Integer renShiChecked;
 
     public Double getDay01AMRemark() {
-        if (day01Remark != null) {
+        if (day01Remark != null && day01Remark.contains(",")) {
             String[] remark = day01Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -321,7 +331,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay01PMRemark() {
-        if (day01Remark != null) {
+        if (day01Remark != null && day01Remark.contains(",")) {
             String[] remark = day01Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -333,7 +343,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay02AMRemark() {
-        if (day02Remark != null) {
+        if (day02Remark != null && day02Remark.contains(",")) {
             String[] remark = day02Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -345,7 +355,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay02PMRemark() {
-        if (day02Remark != null) {
+        if (day02Remark != null && day02Remark.contains(",")) {
             String[] remark = day02Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -357,7 +367,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay03AMRemark() {
-        if (day03Remark != null) {
+        if (day03Remark != null && day03Remark.contains(",")) {
             String[] remark = day03Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -369,7 +379,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay03PMRemark() {
-        if (day03Remark != null) {
+        if (day03Remark != null && day03Remark.contains(",")) {
             String[] remark = day03Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -381,7 +391,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay04AMRemark() {
-        if (day04Remark != null) {
+        if (day04Remark != null && day04Remark.contains(",")) {
             String[] remark = day04Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -393,7 +403,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay04PMRemark() {
-        if (day04Remark != null) {
+        if (day04Remark != null && day04Remark.contains(",")) {
             String[] remark = day04Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -405,7 +415,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay05AMRemark() {
-        if (day05Remark != null) {
+        if (day05Remark != null && day05Remark.contains(",")) {
             String[] remark = day05Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -417,7 +427,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay05PMRemark() {
-        if (day05Remark != null) {
+        if (day05Remark != null && day05Remark.contains(",")) {
             String[] remark = day05Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -429,7 +439,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay06AMRemark() {
-        if (day06Remark != null) {
+        if (day06Remark != null && day06Remark.contains(",")) {
             String[] remark = day06Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -441,7 +451,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay06PMRemark() {
-        if (day06Remark != null) {
+        if (day06Remark != null && day06Remark.contains(",")) {
             String[] remark = day06Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -453,7 +463,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay07AMRemark() {
-        if (day07Remark != null) {
+        if (day07Remark != null && day07Remark.contains(",")) {
             String[] remark = day07Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -465,7 +475,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay07PMRemark() {
-        if (day07Remark != null) {
+        if (day07Remark != null&& day07Remark.contains(",")) {
             String[] remark = day07Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -477,7 +487,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay08AMRemark() {
-        if (day08Remark != null) {
+        if (day08Remark != null&& day08Remark.contains(",")) {
             String[] remark = day08Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -489,7 +499,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay08PMRemark() {
-        if (day08Remark != null) {
+        if (day08Remark != null && day08Remark.contains(",")) {
             String[] remark = day08Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -501,7 +511,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay09AMRemark() {
-        if (day09Remark != null) {
+        if (day09Remark != null && day09Remark.contains(",")) {
             String[] remark = day09Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -513,7 +523,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay09PMRemark() {
-        if (day09Remark != null) {
+        if (day09Remark != null && day09Remark.contains(",")) {
             String[] remark = day09Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -525,7 +535,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay10AMRemark() {
-        if (day10Remark != null) {
+        if (day10Remark != null && day10Remark.contains(",")) {
             String[] remark = day10Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -537,7 +547,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay10PMRemark() {
-        if (day10Remark != null) {
+        if (day10Remark != null && day10Remark.contains(",")) {
             String[] remark = day10Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -549,7 +559,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay12AMRemark() {
-        if (day12Remark != null) {
+        if (day12Remark != null && day12Remark.contains(",")) {
             String[] remark = day12Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -561,7 +571,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay12PMRemark() {
-        if (day12Remark != null) {
+        if (day12Remark != null && day12Remark.contains(",")) {
             String[] remark = day12Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -573,7 +583,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay13AMRemark() {
-        if (day13Remark != null) {
+        if (day13Remark != null && day13Remark.contains(",")) {
             String[] remark = day13Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -585,7 +595,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay13PMRemark() {
-        if (day13Remark != null) {
+        if (day13Remark != null && day13Remark.contains(",")) {
             String[] remark = day13Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -597,7 +607,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay14AMRemark() {
-        if (day14Remark != null) {
+        if (day14Remark != null && day14Remark.contains(",")) {
             String[] remark = day14Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -609,7 +619,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay14PMRemark() {
-        if (day14Remark != null) {
+        if (day14Remark != null && day14Remark.contains(",")) {
             String[] remark = day14Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -621,7 +631,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay15AMRemark() {
-        if (day15Remark != null) {
+        if (day15Remark != null && day15Remark.contains(",")) {
             String[] remark = day15Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -633,7 +643,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay15PMRemark() {
-        if (day15Remark != null) {
+        if (day15Remark != null && day15Remark.contains(",")) {
             String[] remark = day15Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -645,7 +655,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay16AMRemark() {
-        if (day16Remark != null) {
+        if (day16Remark != null && day16Remark.contains(",")) {
             String[] remark = day16Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -657,7 +667,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay16PMRemark() {
-        if (day16Remark != null) {
+        if (day16Remark != null && day16Remark.contains(",")) {
             String[] remark = day16Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -669,7 +679,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay17AMRemark() {
-        if (day17Remark != null) {
+        if (day17Remark != null && day17Remark.contains(",")) {
             String[] remark = day17Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -681,7 +691,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay17PMRemark() {
-        if (day17Remark != null) {
+        if (day17Remark != null && day17Remark.contains(",")) {
             String[] remark = day17Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -693,7 +703,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay18AMRemark() {
-        if (day18Remark != null) {
+        if (day18Remark != null && day18Remark.contains(",")) {
             String[] remark = day18Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -705,7 +715,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay18PMRemark() {
-        if (day18Remark != null) {
+        if (day18Remark != null && day18Remark.contains(",")) {
             String[] remark = day18Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -717,7 +727,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay19AMRemark() {
-        if (day19Remark != null) {
+        if (day19Remark != null && day19Remark.contains(",")) {
             String[] remark = day19Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -729,7 +739,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay19PMRemark() {
-        if (day19Remark != null) {
+        if (day19Remark != null && day19Remark.contains(",")) {
             String[] remark = day19Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -741,7 +751,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay20AMRemark() {
-        if (day20Remark != null) {
+        if (day20Remark != null && day20Remark.contains(",")) {
             String[] remark = day20Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -753,7 +763,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay20PMRemark() {
-        if (day20Remark != null) {
+        if (day20Remark != null && day20Remark.contains(",")) {
             String[] remark = day20Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -765,7 +775,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay21AMRemark() {
-        if (day21Remark != null) {
+        if (day21Remark != null && day21Remark.contains(",")) {
             String[] remark = day21Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -777,7 +787,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay21PMRemark() {
-        if (day21Remark != null) {
+        if (day21Remark != null&& day21Remark.contains(",")) {
             String[] remark = day21Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -789,7 +799,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay22AMRemark() {
-        if (day22Remark != null) {
+        if (day22Remark != null&& day22Remark.contains(",")) {
             String[] remark = day22Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -801,7 +811,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay22PMRemark() {
-        if (day22Remark != null) {
+        if (day22Remark != null&& day22Remark.contains(",")) {
             String[] remark = day22Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -813,7 +823,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay23AMRemark() {
-        if (day23Remark != null) {
+        if (day23Remark != null&& day23Remark.contains(",")) {
             String[] remark = day23Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -825,7 +835,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay23PMRemark() {
-        if (day23Remark != null) {
+        if (day23Remark != null&& day23Remark.contains(",")) {
             String[] remark = day23Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -837,7 +847,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay24AMRemark() {
-        if (day24Remark != null) {
+        if (day24Remark != null&& day24Remark.contains(",")) {
             String[] remark = day24Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -849,7 +859,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay24PMRemark() {
-        if (day24Remark != null) {
+        if (day24Remark != null&& day24Remark.contains(",")) {
             String[] remark = day24Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -861,7 +871,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay25AMRemark() {
-        if (day25Remark != null) {
+        if (day25Remark != null&& day25Remark.contains(",")) {
             String[] remark = day25Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -873,7 +883,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay25PMRemark() {
-        if (day25Remark != null) {
+        if (day25Remark != null&& day25Remark.contains(",")) {
             String[] remark = day25Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -885,7 +895,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay26AMRemark() {
-        if (day26Remark != null) {
+        if (day26Remark != null&& day25Remark.contains(",")) {
             String[] remark = day26Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -897,7 +907,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay26PMRemark() {
-        if (day26Remark != null) {
+        if (day26Remark != null&& day26Remark.contains(",")) {
             String[] remark = day26Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -909,7 +919,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay27AMRemark() {
-        if (day27Remark != null) {
+        if (day27Remark != null&& day27Remark.contains(",")) {
             String[] remark = day27Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -921,7 +931,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay27PMRemark() {
-        if (day27Remark != null) {
+        if (day27Remark != null&& day27Remark.contains(",")) {
             String[] remark = day27Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -933,7 +943,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay28AMRemark() {
-        if (day28Remark != null) {
+        if (day28Remark != null&& day28Remark.contains(",")) {
             String[] remark = day28Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -945,7 +955,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay28PMRemark() {
-        if (day28Remark != null) {
+        if (day28Remark != null&& day28Remark.contains(",")) {
             String[] remark = day28Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -957,7 +967,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay29AMRemark() {
-        if (day29Remark != null) {
+        if (day29Remark != null && day29Remark.contains(",")) {
             String[] remark = day29Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -969,7 +979,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay29PMRemark() {
-        if (day29Remark != null) {
+        if (day29Remark != null && day29Remark.contains(",")) {
             String[] remark = day29Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -981,7 +991,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay30AMRemark() {
-        if (day30Remark != null) {
+        if (day30Remark != null && day30Remark.contains(",")) {
             String[] remark = day30Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -993,7 +1003,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay30PMRemark() {
-        if (day30Remark != null) {
+        if (day30Remark != null && day30Remark.contains(",")) {
             String[] remark = day30Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -1005,7 +1015,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay31AMRemark() {
-        if (day31Remark != null) {
+        if (day31Remark != null && day31Remark.contains(",")) {
             String[] remark = day31Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -1017,7 +1027,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay31PMRemark() {
-        if (day31Remark != null) {
+        if (day31Remark != null && day31Remark.contains(",")) {
             String[] remark = day31Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -1373,7 +1383,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay11AMRemark() {
-        if (day11Remark != null) {
+        if (day11Remark != null && day11Remark.contains(",")) {
             String[] remark = day11Remark.split(",");
             return Double.valueOf(remark[0]);
         }
@@ -1385,7 +1395,7 @@ public class MonthKQInfo implements Serializable {
     }
 
     public Double getDay11PMRemark() {
-        if (day11Remark != null) {
+        if (day11Remark != null && day11Remark.contains(",")) {
             String[] remark = day11Remark.split(",");
             return Double.valueOf(remark[1]);
         }
@@ -2748,5 +2758,61 @@ public class MonthKQInfo implements Serializable {
         this.day31ExHours = day31ExHours;
     }
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getMaxPage() {
+        return maxPage;
+    }
+
+    public void setMaxPage(int maxPage) {
+        this.maxPage = maxPage;
+    }
+
+    public int getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(int recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPageTotalNum() {
+        if (this.currentPage != 0)
+            return (currentPage - 1) * pageSize;
+        return 0;
+    }
+
+    public void setCurrentPageTotalNum(int currentPageTotalNum) {
+        this.currentPageTotalNum = currentPageTotalNum;
+    }
+
+    public String getSortMethod() {
+        return sortMethod;
+    }
+
+    public void setSortMethod(String sortMethod) {
+        this.sortMethod = sortMethod;
+    }
+
+    public String getSortByName() {
+        return sortByName;
+    }
+
+    public void setSortByName(String sortByName) {
+        this.sortByName = sortByName;
+    }
 }

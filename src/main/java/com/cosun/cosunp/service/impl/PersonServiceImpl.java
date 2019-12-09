@@ -672,14 +672,41 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllEmployeeZhongKongCount();
     }
 
-    public int saveOrUpdateZhongKongIdByEmpNo(ZhongKongEmployee zhongKongEmployee) throws Exception {
+
+    public List<Employee> findAllZKAndOutDataCondition(Employee employee) throws Exception {
+        return personMapper.findAllZKAndOutDataCondition(employee);
+    }
+
+
+    public List<KQBean> findAllKQBDataCondition(Employee employee) throws Exception {
+        return personMapper.findAllKQBDataCondition(employee);
+    }
+
+    public int findAllKQBDataConditionCount(Employee employee) throws Exception {
+        return personMapper.findAllKQBDataConditionCount(employee);
+    }
+
+    public List<String> getAllMKMonthList() throws Exception {
+        return personMapper.getAllMKMonthList();
+    }
+
+    public int findAllZKAndOutDataConditionCount(Employee employee) throws Exception {
+        return personMapper.findAllZKAndOutDataConditionCount(employee);
+
+    }
+
+    public List<String> findAllZKYearMonthList() throws Exception {
+        return personMapper.findAllZKYearMonthList();
+    }
+
+    public int saveOrUpdateZhongKongIdByEmpNo(WeiXinUsrId zhongKongEmployee) throws Exception {
         int isExsit = personMapper.getZhongKongByEmpNo(zhongKongEmployee.getEmpNo());
-        if (zhongKongEmployee.getEnrollNumber() == null) {
+        if (zhongKongEmployee.getUserid() == null || zhongKongEmployee.getUserid().trim().length() == 0) {
             personMapper.deleteZhongKongByEmpNo(zhongKongEmployee.getEmpNo());
             return 2;
         }
         if (isExsit == 0) {
-            int isNumExsit = personMapper.getBeanByEnrollNumber(zhongKongEmployee.getEnrollNumber());
+            int isNumExsit = personMapper.getBeanByEnrollNumber(zhongKongEmployee.getUserid());
             if (isNumExsit == 0) {
                 personMapper.saveZhongKongByBean(zhongKongEmployee);
                 return 1;
@@ -687,7 +714,7 @@ public class PersonServiceImpl implements IPersonServ {
                 return 9;
             }
         } else {
-            int isNumExsit = personMapper.getBeanByEnrollNumber(zhongKongEmployee.getEnrollNumber());
+            int isNumExsit = personMapper.getBeanByEnrollNumber(zhongKongEmployee.getUserid());
             if (isNumExsit == 0) {
                 personMapper.updateZhongKongByEmpNo(zhongKongEmployee);
                 return 3;
@@ -2300,6 +2327,14 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllEmployeeNotIsQuitandhaveEnrollNum();
     }
 
+    public String getWorkDateByMonthC(String yearMonth) throws Exception {
+        return personMapper.getWorkDateByMonthC(yearMonth);
+    }
+
+    public String getWorkDateByMonthD(String yearMonth) throws Exception {
+        return personMapper.getWorkDateByMonthD(yearMonth);
+    }
+
     @Transactional
     public List<KQBean> getAfterOperatorDataByOriginData(List<OutClockIn> clockDates, List<KQBean> kqBeans) throws Exception {
         List<KQBean> kqBeanList = new ArrayList<KQBean>();
@@ -3454,6 +3489,10 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllKQBData(employee);
     }
 
+    public List<String> getAllKQMonthListKQBean() throws Exception {
+        return personMapper.getAllKQMonthListKQBean();
+    }
+
     public List<String> getAllKQDateList() throws Exception {
         return personMapper.getAllKQDateList();
     }
@@ -3486,12 +3525,38 @@ public class PersonServiceImpl implements IPersonServ {
         return personMapper.findAllKQBDataCount();
     }
 
+    public List<MonthKQInfo> findAllMonthKQDataByCondition(Employee employee) throws Exception {
+        return personMapper.findAllMonthKQDataByCondition(employee);
+    }
+
+    public void updateRenShiByDates(List<String> dates) throws Exception {
+         personMapper.updateRenShiByDates(dates);
+    }
+
+    public int findAllMonthKQDataCountByCondition(Employee employee) throws Exception {
+        return personMapper.findAllMonthKQDataCountByCondition(employee);
+    }
+
     public void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state) throws Exception {
         personMapper.updateKQBeanDataByRenShi(id, extHours, state);
     }
 
-    public List<MonthKQInfo> findAllMonthKQData(String yearMonth) throws Exception {
-        return personMapper.findAllMonthKQData(yearMonth);
+    public List<MonthKQInfo> findAllMonthKQData(String yearMonth, Employee employee) throws Exception {
+        return personMapper.findAllMonthKQData(yearMonth, employee.getCurrentPageTotalNum(), employee.getPageSize());
+    }
+
+    public int findAllMonthKQDataCount(String yearMonth) throws Exception {
+        return personMapper.findAllMonthKQDataCount(yearMonth);
+    }
+
+
+    public List<MonthKQInfo> queryMKDataByCondition(Employee employee) throws Exception {
+        return personMapper.queryMKDataByCondition(employee);
+    }
+
+    public int queryMKDataByConditionCount(Employee employee) throws Exception {
+        return personMapper.queryMKDataByConditionCount(employee);
+
     }
 
 
@@ -4214,11 +4279,11 @@ public class PersonServiceImpl implements IPersonServ {
                                 oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
                                     //cishu = StringUtil.calTimesByOutClockIn(oci);
-                                   // if (cishu >= csu.getDayClockInTimes()) {
-                                        aOnStr = "108,";
-                                  //  } else {
+                                    // if (cishu >= csu.getDayClockInTimes()) {
+                                    aOnStr = "108,";
+                                    //  } else {
                                     //    aOnStr = "107,";
-                                   // }
+                                    // }
                                 } else {
                                     aOnStr = "106,";
                                 }
@@ -4238,12 +4303,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
-                                  //  if (cishu >= csu.getDayClockInTimes()) {
-                                        aOffStr = "108,";
-                                  //  } else {
-                                   //     aOffStr = "107,";
-                                   // }
+                                    // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    //  if (cishu >= csu.getDayClockInTimes()) {
+                                    aOffStr = "108,";
+                                    //  } else {
+                                    //     aOffStr = "107,";
+                                    // }
                                 } else {
                                     aOffStr = "106,";
                                 }
@@ -4263,12 +4328,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
-                                   // if (cishu >= csu.getDayClockInTimes()) {
-                                        pOnStr = "108,";
-                                   // } else {
+                                    // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    // if (cishu >= csu.getDayClockInTimes()) {
+                                    pOnStr = "108,";
+                                    // } else {
                                     //    pOnStr = "107,";
-                                   // }
+                                    // }
                                 } else {
                                     pOnStr = "106,";
                                 }
@@ -4288,12 +4353,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                  //  cishu = StringUtil.calTimesByOutClockIn(oci);
-                                   // if (cishu >= csu.getDayClockInTimes()) {
-                                        pOffStr = "108,";
-                                   // } else {
-                                   //     pOffStr = "107,";
-                                   // }
+                                    //  cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    // if (cishu >= csu.getDayClockInTimes()) {
+                                    pOffStr = "108,";
+                                    // } else {
+                                    //     pOffStr = "107,";
+                                    // }
                                 } else {
                                     pOffStr = "106,";
                                 }
@@ -4545,12 +4610,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                 //   cishu = StringUtil.calTimesByOutClockIn(oci);
-                                 //   if (cishu >= csu.getDayClockInTimes()) {
-                                        aOnStr = "1080,";
-                                 //   } else {
-                                      //  aOnStr = "1070,";
-                                  //  }
+                                    //   cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    //   if (cishu >= csu.getDayClockInTimes()) {
+                                    aOnStr = "1080,";
+                                    //   } else {
+                                    //  aOnStr = "1070,";
+                                    //  }
                                 } else {
                                     aOnStr = "1060,";
                                 }
@@ -4570,12 +4635,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDateAM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
-                                  //  if (cishu >= csu.getDayClockInTimes()) {
-                                        aOffStr = "1080,";
-                                   // } else {
-                                   //     aOffStr = "1070,";
-                                  //  }
+                                    // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    //  if (cishu >= csu.getDayClockInTimes()) {
+                                    aOffStr = "1080,";
+                                    // } else {
+                                    //     aOffStr = "1070,";
+                                    //  }
                                 } else {
                                     aOffStr = "1060,";
                                 }
@@ -4595,12 +4660,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                   // cishu = StringUtil.calTimesByOutClockIn(oci);
-                                   // if (cishu >= csu.getDayClockInTimes()) {
-                                        pOnStr = "1080,";
-                                   // } else {
-                                  //      pOnStr = "1070,";
-                                  //  }
+                                    // cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    // if (cishu >= csu.getDayClockInTimes()) {
+                                    pOnStr = "1080,";
+                                    // } else {
+                                    //      pOnStr = "1070,";
+                                    //  }
                                 } else {
                                     pOnStr = "1060,";
                                 }
@@ -4620,12 +4685,12 @@ public class PersonServiceImpl implements IPersonServ {
                                 csu = personMapper.getClockSetUpByDays(out.getInterDays());
                                 oci = personMapper.getOutClockInByEmpNoAndDatePM(kqb.getEmpNo(), kqb.getDateStr());
                                 if (oci != null) {
-                                  //  cishu = StringUtil.calTimesByOutClockIn(oci);
-                                  //  if (cishu >= csu.getDayClockInTimes()) {
-                                        pOffStr = "1080,";
-                                  //  } else {
-                                  //      pOffStr = "1070,";
-                                  //  }
+                                    //  cishu = StringUtil.calTimesByOutClockIn(oci);
+                                    //  if (cishu >= csu.getDayClockInTimes()) {
+                                    pOffStr = "1080,";
+                                    //  } else {
+                                    //      pOffStr = "1070,";
+                                    //  }
                                 } else {
                                     pOffStr = "1060,";
                                 }

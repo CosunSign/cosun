@@ -1,5 +1,7 @@
 package com.cosun.cosunp.Test;
 
+import com.cosun.cosunp.entity.MonthKQInfo;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,8 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) throws Exception {
+
+
 
         ZkemSDK sdk = new ZkemSDK();
         boolean connFlag = sdk.connect("192.168.1.201", 4370);

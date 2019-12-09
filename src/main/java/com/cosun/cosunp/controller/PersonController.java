@@ -98,7 +98,7 @@ public class PersonController {
 
 
     public void getBeforeDayZhongKongData() throws Exception {
-        String beforDay = "2019-12-01";
+        String beforDay = "2019-12-08";
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
         String[] afterDay = beforDay.split("-");
@@ -237,6 +237,7 @@ public class PersonController {
         }
     }
 
+
     public void getAllWeiXinUser() throws Exception {
         pool = new JedisPool(new JedisPoolConfig(), "127.0.0.1");
         jedis = pool.getResource();
@@ -281,7 +282,7 @@ public class PersonController {
         all.add(afterUserList3);
         all.add(afterUserList4);
         String day = null;
-        String beforDay = "2019-12-01";
+        String beforDay = "2019-12-08";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateStart = sdf.parse(beforDay + " 00:00:00");
         Date dateEnd = sdf.parse(beforDay + " 23:59:59");
@@ -438,11 +439,11 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/queryZKOUTDataByCondition", method = RequestMethod.POST)
-    public void queryZKOUTDataByCondition(KQBean kqBean, HttpServletResponse response, HttpSession session) throws
+    public void queryZKOUTDataByCondition(Employee kqBean, HttpServletResponse response, HttpSession session) throws
             Exception {
         try {
-            List<KQBean> financeImportDataList = personServ.queryKQBeanDataByCondition(kqBean);
-            int recordCount = personServ.queryKQBeanDataByConditionCount(kqBean);
+            List<Employee> financeImportDataList = personServ.findAllZKAndOutDataCondition(kqBean);
+            int recordCount = personServ.findAllZKAndOutDataConditionCount(kqBean);
             int maxPage = recordCount % kqBean.getPageSize() == 0 ? recordCount / kqBean.getPageSize() : recordCount / kqBean.getPageSize() + 1;
             if (financeImportDataList.size() > 0) {
                 financeImportDataList.get(0).setMaxPage(maxPage);
@@ -461,32 +462,229 @@ public class PersonController {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/importMKDataByDates")
+    public void importMKDataByDates(Employee employee, HttpServletResponse response, HttpSession session, HttpServletRequest request) throws Exception {
+        Cookie[] cookies = request.getCookies();
+        if (null == cookies) {
+        } else {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("downloadstatus")) {
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    System.out.println("被删除的cookie名字为:" + cookie.getName());
+                    response.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+
+        String filename = new Date().getTime() + ".xls";
+        employee.setPageSize(10000);
+        List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQDataByCondition(employee);
+        String wd = personServ.getWorkDateByMonthC(employee.getClockDateArray().get(0));
+        String wd2 = personServ.getWorkDateByMonthD(employee.getClockDateArray().get(0));
+        MKExcelUtil.writeMKdataTOExcel(financeImportDataList, this.finalDirPath + "linshi/" ,filename,employee.getClockDateArray().get(0),wd,wd2);
+        final File result = new File(this.finalDirPath + "linshi/" + filename);
+        BufferedInputStream bufferedInputStream = null;
+        OutputStream outputStream = null;
+        try {
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes(), "iso-8859-1"));
+            byte[] buff = new byte[1024];
+            outputStream = response.getOutputStream();
+            FileInputStream fis = new FileInputStream(result);
+            bufferedInputStream = new BufferedInputStream(fis);
+            int num = bufferedInputStream.read(buff);
+            Cookie cookie = new Cookie("downloadstatus", String.valueOf(new Date().getTime()));
+            cookie.setMaxAge(5 * 60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            while (num != -1) {
+                outputStream.write(buff, 0, num);
+                outputStream.flush();
+                num = bufferedInputStream.read(buff);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (bufferedInputStream != null) {
+                bufferedInputStream.close();
+            }
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/checkMKDataByDates")
+    public ModelAndView checkMKDataByDates(Employee employee, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("monthkqinfo");
+        try {
+            personServ.updateRenShiByDates(employee.getClockDates());
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            employee.setPageSize(3);
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<String> kqDateList = personServ.getAllKQDateList();
+            List<String> kqMonthList = personServ.getAllMKMonthList();
+            String[] yearMonth = null;
+            String today = null;
+            if (kqMonthList != null) {
+                today = kqDateList.get(0);
+                yearMonth = today.split("-");
+            }
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            employee.setYearMonth(yearMonth[0] + "-" + yearMonth[1]);
+            List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQDataByCondition(employee);
+            int recordCount = personServ.findAllMonthKQDataCountByCondition(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("kqDateList", kqDateList);
+            view.addObject("kqMonthList", kqMonthList);
+            view.addObject("today", today);
+            view.addObject("flag", 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            throw e;
+        }
+        return view;
+    }
+
+    @ResponseBody
+    @RequestMapping("/queryMonthKQListByCondition")
+    public ModelAndView queryMonthKQListByCondition(Employee employee, HttpSession session) throws Exception {
+        ModelAndView view = new ModelAndView("monthkqinfo");
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            employee.setPageSize(3);
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<String> kqDateList = personServ.getAllKQDateList();
+            List<String> kqMonthList = personServ.getAllMKMonthList();
+            String[] yearMonth = null;
+            String today = null;
+            if (kqMonthList != null) {
+                today = kqDateList.get(0);
+                yearMonth = today.split("-");
+            }
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            employee.setYearMonth(yearMonth[0] + "-" + yearMonth[1]);
+            List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQDataByCondition(employee);
+            int recordCount = personServ.findAllMonthKQDataCountByCondition(employee);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("kqDateList", kqDateList);
+            view.addObject("kqMonthList", kqMonthList);
+            view.addObject("today", today);
+            view.addObject("flag", 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            throw e;
+        }
+        return view;
+    }
+
     @ResponseBody
     @RequestMapping("/toMonthKQList")
     public ModelAndView toMonthKQList(HttpSession session) throws Exception {
         ModelAndView view = new ModelAndView("monthkqinfo");
-        UserInfo userInfo = (UserInfo) session.getAttribute("account");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String today = "2019-10-08";
-        String[] yearMonth = today.split("-");
-        Employee employee = new Employee();
-        List<Position> positionList = personServ.findAllPositionAll();
-        List<String> kqDateList = personServ.getAllKQDateList();
-        List<String> kqMonthList = personServ.getAllKQMonthList();
-        List<Dept> deptList = personServ.findAllDeptAll();
-        List<Employee> empList = personServ.findAllEmployeeAll();
-        List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQData(yearMonth[0] + "-" + yearMonth[1]);
-        view.addObject("financeImportDataList", financeImportDataList);
-        view.addObject("empList", empList);
-        view.addObject("employee", employee);
-        view.addObject("positionList", positionList);
-        view.addObject("deptList", deptList);
-        view.addObject("userInfo", userInfo);
-        view.addObject("kqDateList", kqDateList);
-        view.addObject("kqMonthList", kqMonthList);
-        view.addObject("today", today);
+        try {
+            UserInfo userInfo = (UserInfo) session.getAttribute("account");
+            Employee employee = new Employee();
+            employee.setPageSize(3);
+            List<Position> positionList = personServ.findAllPositionAll();
+            List<String> kqDateList = personServ.getAllKQDateList();
+            List<String> kqMonthList = personServ.getAllMKMonthList();
+            String[] yearMonth = null;
+            String today = null;
+            if (kqMonthList != null) {
+                today = kqDateList.get(0);
+                yearMonth = today.split("-");
+            }
+            List<Dept> deptList = personServ.findAllDeptAll();
+            List<Employee> empList = personServ.findAllEmployeeAll();
+            List<MonthKQInfo> financeImportDataList = personServ.findAllMonthKQData(yearMonth[0] + "-" + yearMonth[1], employee);
+            int recordCount = personServ.findAllMonthKQDataCount(yearMonth[0] + "-" + yearMonth[1]);
+            int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
+            employee.setMaxPage(maxPage);
+            employee.setRecordCount(recordCount);
+            view.addObject("financeImportDataList", financeImportDataList);
+            view.addObject("empList", empList);
+            view.addObject("employee", employee);
+            view.addObject("positionList", positionList);
+            view.addObject("deptList", deptList);
+            view.addObject("userInfo", userInfo);
+            view.addObject("kqDateList", kqDateList);
+            view.addObject("kqMonthList", kqMonthList);
+            view.addObject("today", today);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            throw e;
+        }
         return view;
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryKQBDataByCondition", method = RequestMethod.POST)
+    public void queryKQBDataByCondition(Employee kqBean, HttpServletResponse response, HttpSession session) throws
+            Exception {
+        List<KQBean> financeImportDataList = null;
+        int recordCount = 0;
+        try {
+
+            if (kqBean.getClockDates().size() > 0 || kqBean.getNameIds().size() > 0 ||
+                    (kqBean.getEmpNo() != null && kqBean.getEmpNo().trim().length() > 0)
+                    || kqBean.getDeptIds().size() > 0 || kqBean.getWorkTypes().size() > 0 || kqBean.getPositionIds().size() > 0
+                    || (kqBean.getSortMethod() != null && !"undefined".equals(kqBean.getSortMethod())
+                    && !"undefined".equals(kqBean.getSortByName()) && kqBean.getSortByName() != null)) {
+                financeImportDataList = personServ.findAllKQBDataCondition(kqBean);
+                recordCount = personServ.findAllKQBDataConditionCount(kqBean);
+            } else {
+                financeImportDataList = personServ.findAllKQBData(kqBean);
+                recordCount = personServ.findAllKQBDataCount();
+            }
+            int maxPage = recordCount % kqBean.getPageSize() == 0 ? recordCount / kqBean.getPageSize() : recordCount / kqBean.getPageSize() + 1;
+            if (financeImportDataList.size() > 0) {
+                financeImportDataList.get(0).setMaxPage(maxPage);
+                financeImportDataList.get(0).setRecordCount(recordCount);
+                financeImportDataList.get(0).setCurrentPage(kqBean.getCurrentPage());
+            }
+            ObjectMapper x = new ObjectMapper();
+            String str1 = x.writeValueAsString(financeImportDataList);
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().print(str1);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 
     @ResponseBody
     @RequestMapping("/toCompreAttenRecordPage")
@@ -497,6 +695,7 @@ public class PersonController {
         List<Position> positionList = personServ.findAllPositionAll();
         List<String> kqDateList = personServ.getAllKQDateList();
         List<Dept> deptList = personServ.findAllDeptAll();
+        List<String> kqMonthList = personServ.getAllKQMonthListKQBean();
         List<Employee> empList = personServ.findAllEmployeeAll();
         List<KQBean> financeImportDataList = personServ.findAllKQBData(employee);
         int recordCount = personServ.findAllKQBDataCount();
@@ -508,6 +707,7 @@ public class PersonController {
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
+        view.addObject("kqMonthList", kqMonthList);
         view.addObject("userInfo", userInfo);
         view.addObject("kqDateList", kqDateList);
         return view;
@@ -616,6 +816,7 @@ public class PersonController {
         List<Position> positionList = personServ.findAllPositionAll();
         List<Dept> deptList = personServ.findAllDeptAll();
         List<Employee> empList = personServ.findAllEmployeeAll();
+        List<String> zkYearMonthList = personServ.findAllZKYearMonthList();
         List<Employee> financeImportDataList = personServ.findAllZKAndOutData(employee);
         int recordCount = personServ.findAllZKAndOutDataCount();
         int maxPage = recordCount % employee.getPageSize() == 0 ? recordCount / employee.getPageSize() : recordCount / employee.getPageSize() + 1;
@@ -623,6 +824,7 @@ public class PersonController {
         employee.setRecordCount(recordCount);
         view.addObject("financeImportDataList", financeImportDataList);
         view.addObject("empList", empList);
+        view.addObject("kqMonthList", zkYearMonthList);
         view.addObject("employee", employee);
         view.addObject("positionList", positionList);
         view.addObject("deptList", deptList);
@@ -841,11 +1043,11 @@ public class PersonController {
 
     @ResponseBody
     @RequestMapping(value = "/saveOrUpdateZhongKongNumByEmpNo")
-    public ModelAndView saveOrUpdateZhongKongNumByEmpNo(ZhongKongEmployee zhongKongEmployee, HttpSession session) throws
+    public ModelAndView saveOrUpdateZhongKongNumByEmpNo(WeiXinUsrId weiXinUsrId, HttpSession session) throws
             Exception {
         ModelAndView view = new ModelAndView("zhongkong");
         try {
-            int isSaveOrUpdate = personServ.saveOrUpdateZhongKongIdByEmpNo(zhongKongEmployee);
+            int isSaveOrUpdate = personServ.saveOrUpdateZhongKongIdByEmpNo(weiXinUsrId);
             UserInfo userInfo = (UserInfo) session.getAttribute("account");
             Employee employee = new Employee();
             List<Position> positionList = personServ.findAllPositionAll();
@@ -1795,7 +1997,6 @@ public class PersonController {
     }
 
 
-
     @ResponseBody
     @RequestMapping(value = "/dataInMysqlOut", method = RequestMethod.POST)
     public ModelAndView dataInMysqlOut(@RequestParam("file5") MultipartFile file1, HttpServletResponse response) throws
@@ -1804,7 +2005,7 @@ public class PersonController {
             ModelAndView view = new ModelAndView("computeworkdate");
             List<Out> outList = personServ.translateTabletoOutBean(file1);
             String isRepeatData = personServ.checkOutRepeat(outList);
-            if (isRepeatData!=null && isRepeatData.trim().length() > 0) {
+            if (isRepeatData != null && isRepeatData.trim().length() > 0) {
                 view.addObject("flag5", isRepeatData);
                 return view;
             } else {

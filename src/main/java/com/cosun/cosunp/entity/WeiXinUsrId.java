@@ -17,7 +17,17 @@ public class WeiXinUsrId implements Serializable {
     private Integer id;
     private String userid;
     private String name;
+    private String empNo;
     private List<Integer> department;
+
+
+    public String getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(String empNo) {
+        this.empNo = empNo;
+    }
 
     public Integer getId() {
         return id;

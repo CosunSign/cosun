@@ -307,6 +307,7 @@ public class OrderServiceImpl implements IOrderServ {
                 fis = new FileInputStream(finalDirPath + "module/多项订单打印摸板.xls");
                 POIFSFileSystem ps = new POIFSFileSystem(fis);
                 wb = new HSSFWorkbook(ps);//这里使用的Excel2003，要注意Excel版本
+
                 CellStyle style = wb.createCellStyle();
                 style.setBorderBottom(CellStyle.BORDER_THIN);
                 style.setBottomBorderColor(IndexedColors.BLACK.getIndex());

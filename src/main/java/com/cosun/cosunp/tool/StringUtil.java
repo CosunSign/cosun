@@ -480,5 +480,12 @@ public class StringUtil {
         return n;
     }
 
+    public static String StringToDateStr(String empNo) {
+        String year = empNo.substring(2, 6);
+        String month = empNo.substring(6, 8);
+        String day = empNo.substring(8, 10);
+        return year + "-" + month + "-" +day;
+    }
+
 
 }

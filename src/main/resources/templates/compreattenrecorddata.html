@@ -152,11 +152,12 @@
             formData.append('clockDates', $("#clockDate").val());
             formData.append('sortMethod', sortMethod);
             formData.append('sortByName', sortByName);
+            formData.append('clockDateArray', $('#clockDateA').val());
             formData.append('currentPage', currentpage);
             $.ajax({
                 data: formData,
                 type: "POST",
-                url: "/person/queryZKOUTDataByCondition",
+                url: "/person/queryKQBDataByCondition",
                 async: true,
                 cache: false,
                 contentType: false,
@@ -303,12 +304,13 @@
             formData.append('workTypes', $("#workType").val());
             formData.append('clockDates', $("#clockDate").val());
             formData.append('sortMethod', sortMethod);
+            formData.append('clockDateArray', $('#clockDateA').val());
             formData.append('sortByName', sortByName);
             formData.append('currentPage', 1);
             $.ajax({
                 data: formData,
                 type: "POST",
-                url: "/person/queryZKOUTDataByCondition",
+                url: "/person/queryKQBDataByCondition",
                 async: true,
                 cache: false,
                 contentType: false,
@@ -499,7 +501,7 @@
             if (currentPage.trim() == 'undefined') {
                 currentPage = 1;
             }
-            window.location.href = "/person/updateKQBeanDataByRenShi?id="
+            window.location.href = "/person/?id="
                 + id + "&extWorkHours=" + extHours + "&currentPage=" + currentPage + "&clockResultByRenShi=" + state;
         }
 
@@ -595,7 +597,7 @@
                                         </td>
 
                                         <td style="text-align: right">
-                                            <label>职位：</label>
+                                            &nbsp;&nbsp;<label>职位：</label>
                                         </td>
                                         <td>
                                             <select id="positionId" multiple class="selectpicker show-tick form-control"
@@ -608,7 +610,7 @@
                                         </td>
 
                                         <td>
-                                            <label>&nbsp;&nbsp;工作方式：</label>
+                                            &nbsp;&nbsp;<label>&nbsp;&nbsp;工作方式：</label>
                                         </td>
                                         <td>
                                             <select id="workType" multiple class="selectpicker show-tick form-control"
@@ -621,6 +623,19 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>
+                                            &nbsp;&nbsp;&nbsp;<label>考勤月份：</label>
+                                        </td>
+                                        <td>
+                                            <select id="clockDateA"
+                                                    class="selectpicker show-tick form-control"
+                                                    data-live-search="true" data-actions-box="true"
+                                                    data-selected-text-format="count > 1">
+                                                <option th:each="c:${kqMonthList}" th:value="${c}"
+                                                        th:text="${c}"></option>
+                                            </select>
+                                        </td>
+
                                         <td>
                                             <label>&nbsp;&nbsp;考勤日期：</label>
                                         </td>

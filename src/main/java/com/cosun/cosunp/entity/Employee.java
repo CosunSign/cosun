@@ -16,6 +16,9 @@ public class Employee implements Serializable {
 
     private static final long serialVersionUID = 3941220683407513983L;
 
+    private Integer outDanId;
+
+    private String outDanIdStr;
 
     private String EnrollNumber;
 
@@ -104,6 +107,8 @@ public class Employee implements Serializable {
     private List<Integer> workTypes;
     private List<Integer> isQuits;
     private List<String> empNos;
+    private List<String> clockDateArray;
+    private List<String> clockDates;
     private String startIncomDateStr;
     private String endIncomDateStr;
     private String deptIdsstr;
@@ -144,6 +149,39 @@ public class Employee implements Serializable {
     private Integer pmOnUrlInt;
     private Integer nmOnUrlInt;
 
+    public List<String> getClockDates() {
+        return clockDates;
+    }
+
+    public void setClockDates(List<String> clockDates) {
+        this.clockDates = clockDates;
+    }
+
+    public String getOutDanIdStr() {
+        if (this.outDanId == null)
+            return "无";
+        return "有";
+    }
+
+    public void setOutDanIdStr(String outDanIdStr) {
+        this.outDanIdStr = outDanIdStr;
+    }
+
+    public Integer getOutDanId() {
+        return outDanId;
+    }
+
+    public void setOutDanId(Integer outDanId) {
+        this.outDanId = outDanId;
+    }
+
+    public List<String> getClockDateArray() {
+        return clockDateArray;
+    }
+
+    public void setClockDateArray(List<String> clockDateArray) {
+        this.clockDateArray = clockDateArray;
+    }
 
     public String getEnrollNumber() {
         return EnrollNumber;

@@ -147,6 +147,7 @@
         formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
         formData.append('workTypes', $("#workType").val());
+        formData.append('clockDateArray', $("#clockDate").val());
         formData.append('currentPage', currentpage);
         $.ajax({
             data: formData,
@@ -206,10 +207,10 @@
                         userType = 1;
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
+                                "disabled='true' onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
+                                "disable='true' onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
                         }
                         tr.append(td);
                         tr.appendTo(tbody);
@@ -283,6 +284,7 @@
         formData.append('sortMethod', sortMethod);
         formData.append('sortByName', sortByName);
         formData.append('workTypes', $("#workType").val());
+        formData.append('clockDateArray', $("#clockDate").val());
         formData.append('currentPage', 1);
         $.ajax({
             data: formData,
@@ -342,10 +344,10 @@
                         userType = 1;
                         if (userType == 1) {
                             td += " <a class=\"btn btn-xs btn-primary\" \n" +
-                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
+                                "disabled='true' onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a> </td>";
                         } else {
                             td += " <a class=\"btn btn-xs btn-primary\" disabled='disabled' \n" +
-                                "onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
+                                "disabled = 'true' onclick=\"updateFinanceImportData('" + data[num].id + "');\">编辑</a></td>";
                         }
                         tr.append(td);
                         tr.appendTo(tbody);
@@ -505,7 +507,7 @@
                                                   style="width:150px"></label>
                                 </td>
                                 <td style="text-align: right">
-                                    <label>部门：</label>
+                                    &nbsp; &nbsp; &nbsp;<label>部门：</label>
                                 </td>
                                 <td>
                                     <select id="deptId" multiple class="selectpicker show-tick form-control"
@@ -518,7 +520,7 @@
                                 </td>
 
                                 <td style="text-align: right">
-                                    <label>职位：</label>
+                                    <label> &nbsp; &nbsp; &nbsp;职位：</label>
                                 </td>
                                 <td>
                                     <select id="positionId" multiple class="selectpicker show-tick form-control"
@@ -529,6 +531,20 @@
                                                 th:text="${c.positionName}"></option>
                                     </select>
                                 </td>
+
+                                <td>
+                                    &nbsp;&nbsp;&nbsp;<label>考勤月份：</label>
+                                </td>
+                                <td>
+                                    <select id="clockDate"
+                                            class="selectpicker show-tick form-control"
+                                            data-live-search="true" data-actions-box="true"
+                                            data-selected-text-format="count > 1">
+                                        <option th:each="c:${kqMonthList}" th:value="${c}"
+                                                th:text="${c}"></option>
+                                    </select>
+                                </td>
+
                             </tr>
                             <tr>
                                 <td>
@@ -542,7 +558,7 @@
 
                                 </td>
                                 <td>
-                                    <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;入职时间止：</label>
+                                    <label>&nbsp;&nbsp;入职时间止：</label>
                                 </td>
                                 <td>
                                     <input type="text" id="endIncomDateStr"
@@ -633,7 +649,7 @@
                         <td align="left" th:text="${empH.timeStr}"></td>
                         <td align="center">
                             <a class="btn btn-xs btn-primary"
-                               th:disabled="${userInfo.type ne 1}"
+                               disabled="true"
                                th:onclick="updateFinanceImportData([[${empH.id}]]);">编辑</a>
                         </td>
                     </tr>

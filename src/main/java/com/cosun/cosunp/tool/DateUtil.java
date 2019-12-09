@@ -1,6 +1,7 @@
 package com.cosun.cosunp.tool;
 
 import com.cosun.cosunp.entity.DateSplit;
+import com.cosun.cosunp.entity.WorkDate;
 import com.cosun.cosunp.entity.WorkSet;
 import org.apache.el.parser.ParseException;
 
@@ -301,6 +302,56 @@ public class DateUtil {
             throw e;
         }
         return dayForWeek;
+    }
+
+    public static String getWeekStr(String datetime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+        Calendar cal = Calendar.getInstance();
+        Date date;
+        try {
+            date = sdf.parse(datetime);
+            cal.setTime(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        return weekDays[w];
+    }
+
+    public static int getDaysByYearMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    public static boolean checkIsWeekEnd(String dateStrs, String day) {
+        if (dateStrs != null) {
+            String[] dates = dateStrs.split(",");
+            for (int a = 0; a < dates.length; a++) {
+                if (dates[a].equals(day)) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+
+
+    public static boolean checkIsFaDing(String dateStrs, String day) {
+        if (dateStrs != null) {
+            String[] dates = dateStrs.split(",");
+            for (int a = 0; a < dates.length; a++) {
+                if (dates[a].equals(day)) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
 

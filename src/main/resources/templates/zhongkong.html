@@ -201,7 +201,6 @@
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
                         tr.append("<td align='center'>  <input type=\"text\" style=\"width: 150px;height:30px\"\n" +
                             "                               class=\"form-control\"\n" +
-                            "                               onBlur='validateDouble(this)'" +
                             "                               placeholder=\"请输入考勤机号码\" value=\"" + isNull(data[num].enrollNumber1) + "\"></td>");
                         td = "<td>";
                         if (userType == 1) {
@@ -340,7 +339,6 @@
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
                         tr.append("<td align='center'>  <input type=\"text\" style=\"width: 150px;height:30px\"\n" +
                             "                               class=\"form-control\"\n" +
-                            "                               onBlur='validateDouble(this)'" +
                             "                               placeholder=\"请输入考勤机号码\" value=\"" + isNull(data[num].enrollNumber1) + "\"></td>");
                         td = "<td>";
                         if (userType == 1) {
@@ -412,8 +410,9 @@
 
     function saveOrUpdateZhongKong(obj) {
         var empno = $(obj).parent().parent().find("td").eq(3).text();
+        var name = $(obj).parent().parent().find("td").eq(1).text();
         var EnrollNumber = $(obj).parent().parent().find("td").eq(5).find("input").eq(0).val();
-        window.location.href = "/person/saveOrUpdateZhongKongNumByEmpNo?empNo=" + empno + "&EnrollNumber=" + EnrollNumber;
+        window.location.href = "/person/saveOrUpdateZhongKongNumByEmpNo?empNo=" + empno + "&userid=" + EnrollNumber+"&name="+name;
     }
 
 
@@ -463,9 +462,9 @@
             <li>
                 <a th:href="@{/person/tooutsetpage}">外出考勤设置</a>
             </li>
-            <li>
-                <a th:href="@{/person/togongzhonghao}">公众号绑定</a>
-            </li>
+            <!--<li>-->
+                <!--<a th:href="@{/person/togongzhonghao}">公众号绑定</a>-->
+            <!--</li>-->
             <li class="active">
                 <a href="#compreAttendRecord" data-toggle="tab">考勤机绑定</a>
             </li>
@@ -519,7 +518,7 @@
                             </td>
 
                             <td style="text-align: right">
-                                <label>职位：</label>
+                                &nbsp;&nbsp;&nbsp;<label>职位：</label>
                             </td>
                             <td>
                                 <select id="positionId" style="width: 100px" multiple
@@ -533,7 +532,7 @@
                         </tr>
                         <tr>
                             <td style="text-align: right">
-                                <label>&nbsp;&nbsp;已绑定考勤机号码：</label>
+                                <label>已绑定考勤机号码：</label>
                             </td>
                             <td>
                                 <select id="isgongzhonghaoBangDing" class="selectpicker show-tick form-control"
@@ -603,8 +602,8 @@
                     <td align="center">
                         <input type="text" style="width: 150px;height:30px"
                                class="form-control"
-                               onblur="validateDouble(this)"
                                placeholder="请输入考勤机号码" th:value="${employ.EnrollNumber}">
+                        <!--onblur="validateDouble(this)"-->
                     </td>
                     <td align="center">
                         <a class="btn btn-xs btn-primary"

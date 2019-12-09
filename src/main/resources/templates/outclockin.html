@@ -197,7 +197,7 @@
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].outDanIdStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
@@ -348,7 +348,7 @@
                         tr.append("<td>" + isNull(data[num].name) + "</td>");
                         tr.append("<td>" + isNull(data[num].deptName) + "</td>");
                         tr.append("<td>" + isNull(data[num].positionName) + "</td>");
-                        tr.append("<td>" + isNull(data[num].beginLeaveStr) + ' ' + isNull(data[num].endLeaveStr) + "</td>");
+                        tr.append("<td>" + isNull(data[num].outDanIdStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInDateStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInDateAMOnStr) + "</td>");
                         tr.append("<td>" + isNull(data[num].clockInAddrAMOn) + "</td>");
@@ -526,14 +526,14 @@
                                 </td>
 
                                 <td style="text-align: right">
-                                    <label>工号：</label>
+                                    &nbsp;&nbsp;&nbsp;<label>工号：</label>
                                 </td>
                                 <td>
                                     <label><input type="text" id="empNo" class="form-control"
                                                   style="width:150px"></label>
                                 </td>
                                 <td style="text-align: right">
-                                    <label>部门：</label>
+                                    &nbsp;&nbsp;&nbsp;<label>部门：</label>
                                 </td>
                                 <td>
                                     <select id="deptId" multiple class="selectpicker show-tick form-control"
@@ -546,7 +546,7 @@
                                 </td>
 
                                 <td style="text-align: right">
-                                    <label>职位：</label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>职位：</label>
                                 </td>
                                 <td>
                                     <select id="positionId" style="width: 100px" multiple
@@ -559,7 +559,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <label>&nbsp;&nbsp;在职状态：</label>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;<label>在职状态：</label>
                                 </td>
                                 <td>
                                     <select id="isQuit" multiple class="selectpicker show-tick form-control"
@@ -686,7 +686,7 @@
                         <td align="center" th:text="${employ.name}"></td>
                         <td align="center" th:text="${employ.deptName}"></td>
                         <td align="center" th:text="${employ.positionName}"></td>
-                        <td align="center" th:text="${employ.beginLeaveStr}+' '+${employ.endLeaveStr}"></td>
+                        <td align="center" th:text="${employ.outDanIdStr}"></td>
                         <td align="center" th:text="${employ.clockInDateStr}"></td>
                         <td align="center" th:text="${employ.clockInDateAMOnStr}"></td>
                         <td align="center" th:text="${employ.clockInAddrAMOn}"></td>

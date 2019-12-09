@@ -55,11 +55,17 @@ public interface IPersonServ {
 
     List<Position> findAllPositionAll() throws Exception;
 
+    void updateRenShiByDates(List<String> dates) throws Exception;
+
     void deleteOutDateToMysql(Integer id) throws Exception;
 
     void deleteJiaBanDateToMysql(Integer id) throws Exception;
 
     void deleteLianBanDateToMysql(Integer id) throws Exception;
+
+    String getWorkDateByMonthC(String yearMonth) throws Exception;
+
+    String getWorkDateByMonthD(String yearMonth) throws Exception;
 
     void deletePinShiDateToMysql(Integer id) throws Exception;
 
@@ -67,7 +73,22 @@ public interface IPersonServ {
 
     void deleteQianKaDateToMysql(Integer id) throws Exception;
 
-    List<MonthKQInfo> findAllMonthKQData(String yearMonth) throws Exception;
+    List<MonthKQInfo> findAllMonthKQData(String yearMonth, Employee employee) throws Exception;
+
+
+    List<MonthKQInfo> findAllMonthKQDataByCondition(Employee employee) throws Exception;
+
+    int findAllMonthKQDataCountByCondition(Employee employee) throws Exception;
+
+    List<MonthKQInfo> queryMKDataByCondition(Employee employee) throws Exception;
+
+    int queryMKDataByConditionCount(Employee employee) throws Exception;
+
+    int findAllMonthKQDataCount(String yearMonth) throws Exception;
+
+    List<KQBean> findAllKQBDataCondition(Employee employee) throws Exception;
+
+    int findAllKQBDataConditionCount(Employee employee) throws Exception;
 
     void saveCheckKQBeanListByDates(List<OutClockIn> outClockIns) throws Exception;
 
@@ -75,11 +96,13 @@ public interface IPersonServ {
 
     List<String> getAllKQDateList() throws Exception;
 
+    List<String> getAllMKMonthList() throws Exception;
+
     List<String> getAllKQMonthList() throws Exception;
 
     void updateKQBeanDataByRenShi(Integer id, Double extHours, Integer state) throws Exception;
 
-    int saveOrUpdateZhongKongIdByEmpNo(ZhongKongEmployee zhongKongEmployee) throws Exception;
+    int saveOrUpdateZhongKongIdByEmpNo(WeiXinUsrId zhongKongEmployee) throws Exception;
 
     void deleteLeaveByBatch(List<Integer> ids) throws Exception;
 
@@ -92,6 +115,8 @@ public interface IPersonServ {
     Leave getLeaveById(Integer id) throws Exception;
 
     List<Dept> findAllDeptAll() throws Exception;
+
+    List<String> getAllKQMonthListKQBean() throws Exception;
 
     List<Out> findAllOut(Out out) throws Exception;
 
@@ -116,6 +141,12 @@ public interface IPersonServ {
     void addEmployeeData(MultipartFile educationLeFile, MultipartFile sateListAndLeaCertiFile, MultipartFile otherCertiFile, Employee employee) throws Exception;
 
     List<Employee> findAllEmployeeAll() throws Exception;
+
+    List<String> findAllZKYearMonthList() throws Exception;
+
+    List<Employee> findAllZKAndOutDataCondition(Employee employee) throws Exception;
+
+    int findAllZKAndOutDataConditionCount(Employee employee) throws Exception;
 
     Integer getDeptIdByDeptName(String deptName) throws Exception;
 
