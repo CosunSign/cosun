@@ -185,16 +185,15 @@
         uls.addClass('visible-xs');
         $('#main-menu').append(uls.clone());
 
-        //下一页
         $(".next").click(function () {
             if (current_num >= total_page) {
-                return false;//如果大于等于总页数就禁用下一页
+                return false;
             } else {
-                $(".current_page").text(++current_num);//点击下一页的时候当前页数的值就加1
+                $(".current_page").text(++current_num);
                 $.each($('#showdatatable li'), function (index, item) {
-                    var start = current_page * (current_num - 1);//起始范围
-                    var end = current_page * current_num;//结束范围
-                    if (index >= start && index < end) {//如果索引值是在start和end之间的元素就显示，否则就隐
+                    var start = current_page * (current_num - 1);
+                    var end = current_page * current_num;
+                    if (index >= start && index < end) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -202,16 +201,16 @@
                 });
             }
         });
-        //上一页方法
+
         $(".prev").click(function () {
             if (current_num == 1) {
                 return false;
             } else {
                 $(".current_page").text(--current_num);
                 $.each($('#showdatatable li'), function (index, item) {
-                    var start = current_page * (current_num - 1);//起始范围
-                    var end = current_page * current_num;//结束范围
-                    if (index >= start && index < end) {//如果索引值是start和end之间的元素就显示，否则就隐藏
+                    var start = current_page * (current_num - 1);
+                    var end = current_page * current_num;
+                    if (index >= start && index < end) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -222,35 +221,31 @@
 
     });
 
-    var currentPage; //当前页
-    var totalPage; //总多少页
-    var totaldata; //总共多少记录
-    var pageSize;//当前每页多少条
+    var currentPage;
+    var totalPage;
+    var totaldata;
+    var pageSize;
     var username;
     var password;
 
-    var current_page = 15;//每页显示的数据
-    var current_num = 1;//当前页数
-    var total_page;//总页数
+    var current_page = 15;
+    var current_num = 1;
+    var total_page;
     var fileDownloadCheckTimer;
 
     function blockUIForDownload() {
-        var token = "111"; //use the current timestamp as the token value
+        var token = "111";
         $('#download_token_value_id').val(token);
         fileDownloadCheckTimer = window.setInterval(function () {
             var cookieValue = getCookie('ccc');
             if (cookieValue == token) {
-                // alert("文件下载中，弹出下载框后再关闭此窗口!")
-                // $("#some-element").busyLoad("hide");
                 window.parent.document.getElementById('coverbehidepage').style.display = "none";
-
                 finishDownload();
             }
         }, 1000);
     }
 
     function alertMessageDiv() {
-        // $("#coverbehidepage").show();
         var ojb = window.parent.document.getElementById('innershowMessageDiv12');
         ojb.innerHTML = "<p>\n" +
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">一,您得需要有您准备删除的文件(夹)的删除权限.</font>\n" +
@@ -258,35 +253,24 @@
             "                    <font color=\"#000000\" size=\"2\" th:align=\"center\">二,本删除功能为物理删除，一旦执行删除操作，永不恢复。请谨慎操作.</font>\n";
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
         window.parent.document.getElementById('showMessageDiv').style.display = "block";
-        //$("#showMessageDiv").show();
     }
 
     function closeShowMessage() {
-        //$("#coverbehidepage").hide();
         window.parent.document.getElementById('coverbehidepage').style.display = "none";
-
-        // $("#showMessageDiv").hide();
     }
 
-    // 定义一个函数，用来读取特定的cookie值。
+
     function getCookie(cookie_name) {
         var allcookies = document.cookie;
-        //索引长度，开始索引的位置
         var cookie_pos = allcookies.indexOf(cookie_name);
-
-        // 如果找到了索引，就代表cookie存在,否则不存在
         if (cookie_pos != -1) {
-            // 把cookie_pos放在值的开始，只要给值加1即可
-            //计算取cookie值得开始索引，加的1为“=”
             cookie_pos = cookie_pos + cookie_name.length + 1;
-            //计算取cookie值得结束索引
             var cookie_end = allcookies.indexOf(";", cookie_pos);
 
             if (cookie_end == -1) {
                 cookie_end = allcookies.length;
 
             }
-            //得到想要的cookie的值
             var value = unescape(allcookies.substring(cookie_pos, cookie_end));
         }
         return value;
@@ -294,7 +278,7 @@
 
     function finishDownload() {
         window.clearInterval(fileDownloadCheckTimer);
-        delCookie('ccc'); //clears this cookie value
+        delCookie('ccc');
     }
 
     function delCookie(name) {
@@ -338,14 +322,14 @@
             contentType: "application/json",//上传内容格式为json结构
             url: "/fileupdown/findBackFoldersByQueryParam3",
             success: function (msg) {
-                var data = eval(msg); //data为URLS
+                var data = eval(msg);
                 var totalnum = data.length;
                 $.each(data, function (num) {
                     var ind = data[num].lastIndexOf('.');
                     var extenName = data[num].substr(ind + 1, data[num].length);
                     if (num < totalnum - 1 && totalnum > 1) {
                         if (num < 15) {
-                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
                                     $("#backfolder").attr("disabled", "disabled");
@@ -355,18 +339,18 @@
                                     " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone2 = 1;
-                            } else {//代表为文件
-                                if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                            } else {
+                                if (extensionarray.includes(extenName.toLowerCase())) {
                                     fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
                                         "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
                                         + data[num] + "</li>";
-                                    if (cominone2 == 0) {//代表没有文件夹
+                                    if (cominone2 == 0) {
                                         $("#foldername").val(data[num]);
                                     }
                                 }
                             }
                         } else {
-                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {
                                 $("#foldername").val(data[num]);
                                 if (reg.test(data[num])) {
                                     $("#backfolder").attr("disabled", "disabled");
@@ -376,12 +360,12 @@
                                     " align=\"middle\" border=\"0\" value='" + data[num] + "' ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone2 = 1;
-                            } else {//代表为文件
-                                if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                            } else {
+                                if (extensionarray.includes(extenName.toLowerCase())) {
                                     fileshtml += "<li style='display: none;'><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
                                         "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>" +
                                         data[num] + "</li>";
-                                    if (cominone2 == 0) {//代表没有文件夹
+                                    if (cominone2 == 0) {
                                         $("#foldername").val(data[num]);
                                     }
                                 }
@@ -393,12 +377,12 @@
                 $("#showdatatable").html(folderhtml + fileshtml)
                 var maxPages = Math.round((totalnum + 15 - 1) / 15);
 
-                var next = $(".next");//下一页
-                var prev = $(".prev");//上一页
-                $(".total").text(maxPages);//显示总页数
-                $(".current_page").text(1);//当前的页数
+                var next = $(".next");
+                var prev = $(".prev");
+                $(".total").text(maxPages);
+                $(".current_page").text(1);
                 $("#n_currentPage").val(1)
-                total_page = maxPages;//最大页数
+                total_page = maxPages;
                 $("#_tp").val(1);
                 $("#currentpagespan").val(1)
                 $("#nodatadiv").hide();
@@ -458,14 +442,14 @@
             contentType: "application/json",//上传内容格式为json结构
             url: "/fileupdown/findNextFoldersByQueryParam2",
             success: function (msg) {
-                var data = eval(msg); //data为URLS
+                var data = eval(msg);
                 var totalnum = data.length;
                 $.each(data, function (num) {
                     var ind = data[num].lastIndexOf('.');
                     var extenName = data[num].substr(ind + 1, data[num].length);
                     if (num < totalnum - 1 && totalnum > 1) {
                         if (num < 15) {
-                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {
                                 $("#foldername").val(data[num]);
 
                                 folderhtml += "<li ><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
@@ -474,8 +458,8 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone = 1;
 
-                            } else {//代表为文件
-                                if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                            } else {
+                                if (extensionarray.includes(extenName.toLowerCase())) {
                                     fileshtml += "<li><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
                                         + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
                                         + data[num] + "</li>";
@@ -485,7 +469,7 @@
                                 }
                             }
                         } else {
-                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {//代表为文件夹
+                            if (data[num].indexOf(".") <= 0 || !extensionarray.includes(extenName.toLowerCase())) {
                                 $("#foldername").val(data[num]);
 
                                 folderhtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">" +
@@ -494,8 +478,8 @@
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num] + "</li>";
                                 cominone = 1;
 
-                            } else {//代表为文件
-                                if (extensionarray.includes(extenName.toLowerCase())) {//含有效扩展名,为文件,
+                            } else {
+                                if (extensionarray.includes(extenName.toLowerCase())) {
                                     fileshtml += "<li style=\"display:none\"><input type=\"checkbox\" value='" + data[num] + "' id='" + data[num] + "' name=\"downloadlist\">"
                                         + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
                                         + data[num] + "</li>";
@@ -575,7 +559,7 @@
             contentType: "application/json",//上传内容格式为json结构
             url: "/fileupdown/deletebyquerycondition",
             success: function (msg) {
-                var data = eval(msg); //data为URLS
+                var data = eval(msg);
                 var image01 = $("#image01");
                 var image02 = $("#image02");
                 var image03 = $("#image03");
@@ -604,7 +588,7 @@
                         n_currentPage.val(currentPage);
                         inputpage.val(currentPage);
                         $.each(data, function (num) {
-                            if (data[num].orderNo.indexOf(".") <= 0) {//代表为文件夹
+                            if (data[num].orderNo.indexOf(".") <= 0) {
                                 $("#foldername").val(data[num].orderNo);
                                 if (reg.test(data[num].orderNo)) {
                                     $("#backfolder").attr("disabled", "disabled");
@@ -613,11 +597,11 @@
                                     " align=\"middle\" border=\"0\"  value=" + data[num].orderNo + " ondblclick=\"shownextfolderorfiles(this)\"\n" +
                                     " style=\"width: 30px; height: 30px; vertical-align: middle\"/>" + data[num].orderNo + "</li>";
                                 cominone2 = 1;
-                            } else {//代表为文件
+                            } else {
                                 fileshtml += "<li><input type=\"checkbox\" value='" + data[num].orderNo + "' id='" + data[num].orderNo + "'  name=\"downloadlist\">"
                                     + "<img src=\"/images/icon/File.png\" align=\"middle\" border=\"0\"  style=\"width: 30px; height: 30px; vertical-align: middle\"/>"
                                     + data[num].orderNo + "</li>";
-                                if (cominone2 == 0) {//代表没有文件夹
+                                if (cominone2 == 0) {
                                     $("#foldername").val(data[num].orderNo);
                                 }
                             }
@@ -808,7 +792,6 @@
         return arg1;
     }
 
-    //验证正整数
     function isInt(str) {
         var re = /^[0-9]*[1-9][0-9]*$/;
         return re.test(str);
@@ -824,8 +807,6 @@
     function deleteBySelect() {
 
         var reg1 = new RegExp(/^[A-Z]{5}[0-9]{8}[A-Z]{2}[0-9]{2}$/g)
-        //以下为勾选后,进行下载功能实现
-        //第一步,获取勾取的所属订单号值和当前的flderName或fileName
         var obj = document.getElementsByName("downloadlist");
         var checkval = [];
         var isChecked = 0;
@@ -856,7 +837,6 @@
             var orderno = $("#orderno").val();
             //$("#coverbehidepage").show();
             window.parent.document.getElementById('coverbehidepage').style.display = "block";
-            //第二步,向后台发送消息
             //window.location.href="/fileupdown/downloadfileorfolderforzip?orderno="+orderno+"&check_val="+check_val;
             var jsonarray = {
                 "orderNo": orderno, //订单编号
@@ -894,7 +874,6 @@
                     alert("删除失败");
                 }
             });
-            //第三步,下载完成
             //$("#coverbehidepage").hide();
             window.parent.document.getElementById('coverbehidepage').style.display = "none";
 

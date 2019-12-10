@@ -26,10 +26,10 @@
             $.ajax({
                 data: employeeId,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
+                contentType: "application/json",
                 url: "/person/getemployeebyId",
                 success: function (msg) {
-                    var data = eval(msg);//将msg化为数;
+                    var data = eval(msg);
                     $("#employeeNo").val(data[0].empNo);
                     $("#employeeId").val(data[0].id);
                     $("#incompDate").val(data[0].incomdateStr);
@@ -50,7 +50,7 @@
 
     }
 
-    function datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+    function datedifference(sDate1, sDate2) {
         var dateSpan,
             tempDate,
             iDays;

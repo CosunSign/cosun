@@ -26,10 +26,10 @@
             $.ajax({
                 data: employeeId,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
+                contentType: "application/json",
                 url: "/person/getemployeebyId",
                 success: function (msg) {
-                    var data = eval(msg);//将msg化为数;
+                    var data = eval(msg);
                     $("#employeeNo").val(data[0].empNo);
                     $("#empnono").val(data[0].empNo);
                     $("#employeeId").val(data[0].id);
@@ -56,7 +56,7 @@
 
     }
 
-    function datedifference(sDate1, sDate2) {    //sDate1和sDate2是2006-12-18格式
+    function datedifference(sDate1, sDate2) {
         var dateSpan,
             tempDate,
             iDays;
@@ -154,9 +154,6 @@
         var remark = $("#remark").val();
         var allSalary = $("#allSalary").val();
         if (employeeNo.trim().length > 0 && allSalary.trim().length >0) {
-            // window.location.href = "/finance/addSalaryToMysql?empNo=" + employeeNo
-            //     + "&compreSalary=" + $("#compreSalary").val() + "&endLeaveStr=" + endLeaveStr + "&leaveLong=" + leaveLong + "&leaveDescrip=" + leaveDescrip
-            //     + "&remark=" + remark+"&type="+typeValue;
             document.forms["addEmployee"].submit();
         } else {
             $("#errormessage").show();

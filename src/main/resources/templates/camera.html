@@ -16,8 +16,7 @@
     var wx;
     var openId;
     $(function () {
-        //自动获取url
-        var url = location.href.split('#').toString();//url不能写死
+        var url = location.href.split('#').toString();
         var bean = $("#bean").val();
         var path = "http://homey.nat100.top/weixin/getMobileLocateReal";
         $.post(path, {wxurl: url, bean: bean}, function (data) {
@@ -28,12 +27,12 @@
             appid = data[4];
             openId = data[5];
             wx.config({
-                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                appId: appid, // 必填，公众号的唯一标识
-                timestamp: l_timestamp, // 必填，生成签名的时间戳，上文通过后台获取的
-                nonceStr: l_noncestr, // 必填，生成签名的随机串，上文通过后台获取的
-                signature: l_signature,// 必填，签名，上文通过后台获取的
-                jsApiList: ['chooseImage', 'uploadImage'] // 必填，需要使用的JS接口列表，就是下文的分享朋友圈和转发给朋友的列表
+                debug: false,
+                appId: appid,
+                timestamp: l_timestamp,
+                nonceStr: l_noncestr,
+                signature: l_signature,
+                jsApiList: ['chooseImage', 'uploadImage']
             });
         });
     });
@@ -57,9 +56,9 @@
             alert("接口调取失败")
         });
         wx.chooseImage({
-            count: 1, // 最多可以选择的图片张数，默认9
-            sizeType: ['original', 'compressed'], // original 原图，compressed 压缩图，默认二者都有
-            sourceType: ['camera'], // album 从相册选图，camera 使用相机，默认二者都有
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['camera'],
             success: function (res) {
                 let localIds = res.localIds; // 返回选定照片的本地ID列表（手机上操作就是手机端的ID列表，是一个数组），localId可以作为img标签的src属性显示图片
                 wx.uploadImage({

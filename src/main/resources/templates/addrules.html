@@ -44,7 +44,7 @@
         $.ajax({
             data: deptId,
             type: "POST",
-            contentType: "application/json",//上传内容格式为json结构
+            contentType: "application/json",
             url: "/rules/checkRulesIsExsit",
             success: function (msg) {
                 var amsg = eval(msg)

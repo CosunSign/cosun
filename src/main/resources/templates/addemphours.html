@@ -34,7 +34,6 @@
         var accumulaFund = $("#accumulaFund").val();
         var errorInWork = $("#errorInWork").val();
         var meritScore = $("#meritScore").val();
-        // var sixDeductions = $("#sixDeductions").val();
         var usualExtHours = $("#usualExtHours").val();
         var chinaPaidLeave = $("#chinaPaidLeave").val();
         var otherPaidLeave = $("#otherPaidLeave").val();
@@ -169,14 +168,7 @@
             errormessagediv.style.color = "red";
             return;
         }
-        // else if (sixDeductions.trim().length == 0) {
-        //     isflag = false;
-        //     $("#errormessage").show();
-        //     var errormessagediv = document.getElementById("errormessage");
-        //     errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;六个代扣项不能为空!";
-        //     errormessagediv.style.color = "red";
-        //     return;
-        // }
+
         if (isflag) {
             $("#errormessage").hide();
             document.forms[0].submit();
@@ -240,7 +232,6 @@
     function checkNameisChineseOrRepeat(namestr) {
         $("#rightmessagename").hide();
         $("#errormessagename").hide();
-        //中文匹配后续补充
         var name = namestr.trim();
         if (name.length > 0) {
             $.ajax({
@@ -412,7 +403,7 @@
         $.ajax({
             data: empNo,
             type: "POST",
-            contentType: "application/json",//上传内容格式为json结构
+            contentType: "application/json",
             url: "/account/checkUserExsitAndReturnPinyinName",
             success: function (msg) {
                 var nameStr = msg.substring(1, msg.length - 1);
@@ -438,7 +429,6 @@
     }
 
     function checkUserNameExsitA() {
-        // 当鼠标不聚焦验证用户名input
         var username = $("#username").val();
         var str2 = check_user_name(username);
         if ("该用户名合法" == str2) {
@@ -457,7 +447,7 @@
             $.ajax({
                 data: username,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
+                contentType: "application/json",
                 url: "/account/checkUserNameExsit",
                 success: function (msg) {
                     var nameStr = msg.substring(1, msg.length - 1);
@@ -495,7 +485,6 @@
         return str2;
     }
 
-    // 验证用户名是否含有特殊字符
     function check_other_char(str) {
         var arr = ["&", "\\", "/", "*", ">", "<", "@", "!"];
         for (var i = 0; i < arr.length; i++) {
@@ -547,7 +536,7 @@
             contentType: false,
             processData: false,
             success: function (msg) {
-                var data = eval(msg);//将msg化为数;
+                var data = eval(msg);
                 if (data[0].type == 0) {
                     $("#errormessage").hide();
                     $("#empNo").val(data[0].empNo);

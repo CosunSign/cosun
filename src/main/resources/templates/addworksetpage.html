@@ -55,7 +55,7 @@
                 contentType: false,
                 processData: false,
                 success: function (msg) {
-                    var data = eval(msg);//将msg化为数;
+                    var data = eval(msg);
                     if (data.includes("$")) {
                         flag = true;
                         $("#errormessage").show();
@@ -108,31 +108,7 @@
             flag = false;
         }
 
-        // var morningOffStr = $("#morningOffStr").val();
-        // if (morningOffStr <= 0) {
-        //     flag = false;
-        // }
-        // var morningOffFromStr = $("#morningOffFromStr").val();
-        // if (morningOffFromStr <= 0) {
-        //     flag = false;
-        // }
-        // var morningOffEndStr = $("#morningOffEndStr").val();
-        // if (morningOffEndStr <= 0) {
-        //     flag = false;
-        // }
-        //
-        // var noonOnStr = $("#noonOnStr").val();
-        // if (noonOnStr <= 0) {
-        //     flag = false;
-        // }
-        // var noonOnFromStr = $("#noonOnFromStr").val();
-        // if (noonOnFromStr <= 0) {
-        //     flag = false;
-        // }
-        // var noonOnEndStr = $("#noonOnEndStr").val();
-        // if (noonOnEndStr <= 0) {
-        //     flag = false;
-        // }
+
         var noonOffStr = $("#noonOffStr").val();
         if (noonOffStr <= 0) {
             flag = false;

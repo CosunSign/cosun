@@ -128,7 +128,7 @@
                 $.ajax({
                     data: empoyeeNo,
                     type: "POST",
-                    contentType: "application/json",//上传内容格式为json结构
+                    contentType: "application/json",
                     url: "/person/checkEmployNoIsExsit",
                     success: function (msg) {
                         var amsg = eval(msg)
@@ -169,13 +169,12 @@
     function checkNameisChineseOrRepeat(namestr) {
         $("#rightmessagename").hide();
         $("#errormessagename").hide();
-        //中文匹配后续补充
         var name = namestr.trim();
         if (name.length > 0) {
             $.ajax({
                 data: name,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
+                contentType: "application/json",
                 url: "/person/checkEmployIsExsit",
                 success: function (msg) {
                     var amsg = eval(msg)
@@ -341,7 +340,7 @@
         $.ajax({
             data: empNo,
             type: "POST",
-            contentType: "application/json",//上传内容格式为json结构
+            contentType: "application/json",
             url: "/account/checkUserExsitAndReturnPinyinName",
             success: function (msg) {
                 var nameStr = msg.substring(1, msg.length - 1);
@@ -367,7 +366,6 @@
     }
 
     function checkUserNameExsitA() {
-        // 当鼠标不聚焦验证用户名input
         var username = $("#username").val();
         var str2 = check_user_name(username);
         if ("该用户名合法" == str2) {
@@ -386,7 +384,7 @@
             $.ajax({
                 data: username,
                 type: "POST",
-                contentType: "application/json",//上传内容格式为json结构
+                contentType: "application/json",
                 url: "/account/checkUserNameExsit",
                 success: function (msg) {
                     var nameStr = msg.substring(1, msg.length - 1);
@@ -424,7 +422,6 @@
         return str2;
     }
 
-    // 验证用户名是否含有特殊字符
     function check_other_char(str) {
         var arr = ["&", "\\", "/", "*", ">", "<", "@", "!"];
         for (var i = 0; i < arr.length; i++) {

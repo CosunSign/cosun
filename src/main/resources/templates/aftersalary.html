@@ -85,12 +85,11 @@
             return "";
         }
         return arg1;
-        //return !arg1 && arg1!==0 && typeof arg1!=="boolean"?true:false;
     }
 
     function goPage2() {
-        var tp = document.getElementById("_tp").value;//currentPage
-        var max = $("#maxPage").val(); //maxPage
+        var tp = document.getElementById("_tp").value;
+        var max = $("#maxPage").val();
         tp = tp.trim();
         var r = /^\+?[0-9][0-9]*$/;
         if (!(r.test(tp))) {
@@ -107,7 +106,6 @@
             return false;
         } else {
             $("#n_currentPage").val(tp);
-            // document.forms["form0"].submit();
             querySalaryDataOutPutByCondition2();
         }
     }
@@ -129,10 +127,10 @@
         querySalaryDataOutPutByCondition2();
     }
 
-    var currentPage; //当前页
-    var totalPage; //总多少页
-    var totaldata; //总共多少记录
-    var pageSize;//当前每页多少条
+    var currentPage;
+    var totalPage;
+    var totaldata;
+    var pageSize;
     function querySalaryDataOutPutByCondition2() {
         var currentpage = $("#n_currentPage").val();
         window.parent.document.getElementById('coverbehidepage').style.display = "block";
@@ -160,7 +158,7 @@
                 var errormessagediv = document.getElementById("errormessage");
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
                 errormessagediv.style.color = "green";
-                var data = eval(msg);//将msg化为数;
+                var data = eval(msg);
                 var tr = "";
                 var image01 = $("#image01");
                 var image02 = $("#image02");
@@ -181,9 +179,9 @@
                 if (data != null && data != "") {
                     $("#nodatadiv").hide();
                     $("#showdiv").show();
-                    currentPage = data[0].currentPage; //当前页
-                    totalPage = data[0].maxPage; //总多少页
-                    totaldata = data[0].recordCount; //总共多少记录
+                    currentPage = data[0].currentPage;
+                    totalPage = data[0].maxPage;
+                    totaldata = data[0].recordCount;
                     pageSize = data[0].pageSize;
                     userType = data[0].type;
                     maxpageid.val(totalPage);
@@ -325,7 +323,7 @@
                 var errormessagediv = document.getElementById("errormessage");
                 errormessagediv.innerHTML = "&nbsp;&nbsp;&nbsp;查询成功!";
                 errormessagediv.style.color = "green";
-                var data = eval(msg);//将msg化为数;
+                var data = eval(msg);
                 var tr = "";
                 var image01 = $("#image01");
                 var image02 = $("#image02");
@@ -346,9 +344,9 @@
                 if (data != null && data != "") {
                     $("#nodatadiv").hide();
                     $("#showdiv").show();
-                    currentPage = data[0].currentPage; //当前页
-                    totalPage = data[0].maxPage; //总多少页
-                    totaldata = data[0].recordCount; //总共多少记录
+                    currentPage = data[0].currentPage;
+                    totalPage = data[0].maxPage;
+                    totaldata = data[0].recordCount;
                     pageSize = data[0].pageSize;
                     userType = data[0].type;
                     maxpageid.val(totalPage);
